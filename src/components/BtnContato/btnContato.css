@@ -1,0 +1,30 @@
+/* =========================================================
+   btnContato.css — Estilos do botão de contato
+   ========================================================= */
+
+:root {
+  font-family: 'Bungee', sans-serif;
+}
+
+button {
+  background-color: var(--AmareloAuxApoio);
+  color: var(--Branco);
+
+  /* [Responsividade] Largura máxima de 315px no desktop.
+     No mobile, limitado a 60vw — botão menos largo que antes (era 80vw),
+     deixando espaço visual nas laterais da tela */
+  width: min(315px, 60vw);
+
+  /* [Responsividade] Altura fluida: mínimo 50px, escala com viewport (10vw),
+     máximo 70px */
+  height: clamp(50px, 10vw, 70px);
+}
+
+.sombreamentoBtn {
+  /* [Responsividade] Fonte fluida: mínimo 20px, escala com viewport (5vw),
+     máximo 35px */
+  font-size: clamp(20px, 5vw, 35px);
+  margin: 0;
+  padding: 0;
+  filter: drop-shadow(0 5px 4px rgba(0, 0, 0, 0.25));
+}

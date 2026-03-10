@@ -1,0 +1,79 @@
+/* =========================================================
+   app.css — Estilos do componente raiz (App)
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
+
+:root {
+  background-color: var(--vermelhoAuxDiretoria);
+  font-family: 'Bungee', sans-serif;
+}
+
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+
+  /* [Responsividade] box-sizing: border-box garante que o padding seja incluído
+     na largura total, evitando que o #app ultrapasse 100vw e cause scroll horizontal */
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Animação das ondas decorativas — desce 24px no meio do ciclo */
+@keyframes floatDown {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(24px); }
+}
+
+/* Animação das ondas decorativas — sobe 24px no meio do ciclo */
+@keyframes floatUp {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-24px); }
+}
+
+.WaveDown {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  z-index: -1; /* Fica atrás de todo o conteúdo */
+
+  /* [Responsividade] Largura fluida: mínimo 180px, escala com a viewport (55vw),
+     máximo 775px — as ondas se ajustam sem transbordar a tela */
+  width: clamp(180px, 55vw, 775px);
+
+  animation: floatDown 3s ease-in-out infinite;
+}
+
+.WaveUp {
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: -1; /* Fica atrás de todo o conteúdo */
+
+  /* [Responsividade] Mesma lógica da WaveDown */
+  width: clamp(180px, 55vw, 775px);
+
+  animation: floatUp 3s ease-in-out infinite;
+}
+
+.logo {
+  /* [Responsividade] min() escolhe o menor valor: 845px no desktop,
+     85vw no mobile — o logo nunca ultrapassa 85% da largura da tela */
+  width: min(845px, 85vw);
+  padding-bottom: 1.5em;
+
+  /* Centralização explícita: display block + margin auto garantem que
+     a logo fique centralizada independente do contexto pai */
+  display: block;
+  margin: 0 auto;
+}
+
+.logo.preact:hover {
+  filter: drop-shadow(0 0 2em #673ab8aa);
+}
+
+.card {
+  padding: 0;
+}

@@ -1,0 +1,91 @@
+/* =========================================================
+   index.css — Estilos globais da aplicação
+   ========================================================= */
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Paleta de cores do projeto */
+  --AmareloAuxApoio: #E79839;
+  --Branco: #FCF8F5;
+  --vermelhoDiretoria: #A10535;
+  --vermelhoAuxDiretoria: #730835;
+}
+
+a {
+  font-weight: 500;
+  color: var(--Branco);
+  text-decoration: inherit;
+}
+
+/* [Responsividade] Impede scroll horizontal e vertical em qualquer tela.
+   O html precisa de overflow hidden para que o body respeite a limitação. */
+html {
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-height: 100vh;
+
+  /* [Responsividade] Removido min-width: 320px que forçava largura mínima
+     e causava scroll horizontal em telas menores que 320px */
+
+  /* [Responsividade] Garante que o body não ultrapasse a largura da tela,
+     evitando scroll horizontal no mobile */
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+h1 {
+  /* [Responsividade] Tamanho fluido: mínimo 1.5rem, escala com a viewport (4vw),
+     máximo 3.2em — evita texto gigante no desktop e minúsculo no mobile */
+  font-size: clamp(1.5rem, 4vw, 3.2em);
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: var(--AmareloAuxApoio);
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: var(--AmareloAuxApoio);
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
