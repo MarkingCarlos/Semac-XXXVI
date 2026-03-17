@@ -1,6 +1,4 @@
-/* =========================================================
-   app.css — Estilos do componente raiz (App)
-   ========================================================= */
+
 
 @import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
 
@@ -41,7 +39,7 @@
 
   /* [Responsividade] Largura fluida: mínimo 180px, escala com a viewport (55vw),
      máximo 775px — as ondas se ajustam sem transbordar a tela */
-  width: clamp(180px, 55vw, 775px);
+  width: clamp(380px, 55vw, 775px);
 
   animation: floatDown 3s ease-in-out infinite;
 }
@@ -53,15 +51,15 @@
   z-index: -1; /* Fica atrás de todo o conteúdo */
 
   /* [Responsividade] Mesma lógica da WaveDown */
-  width: clamp(180px, 55vw, 775px);
+  width: clamp(380px, 55vw, 775px);
 
   animation: floatUp 3s ease-in-out infinite;
 }
 
 .logo {
-  /* [Responsividade] min() escolhe o menor valor: 845px no desktop,
-     85vw no mobile — o logo nunca ultrapassa 85% da largura da tela */
-  width: min(845px, 85vw);
+  /* [Responsividade] clamp garante mínimo de 200px no mobile,
+     escala com a viewport e limita em 560px em notebooks/desktops */
+  width: clamp(300px, 75vw, 660px);
   padding-bottom: 1.5em;
 
   /* Centralização explícita: display block + margin auto garantem que

@@ -21,7 +21,7 @@ export function App() {
       <div class="card">
         <ContagemRegressiva />
       </div>
-      <div style={{marginTop: "5em"}}>
+      <div style={{marginTop: "3em"}}>
         <BtnContato/>
       </div>
     </>

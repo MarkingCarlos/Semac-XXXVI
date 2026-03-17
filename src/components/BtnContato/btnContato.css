@@ -11,8 +11,7 @@ button {
   color: var(--Branco);
 
   /* [Responsividade] Largura máxima de 315px no desktop.
-     No mobile, limitado a 60vw — botão menos largo que antes (era 80vw),
-     deixando espaço visual nas laterais da tela */
+     No mobile, limitado a 60vw  */
   width: min(315px, 60vw);
 
   /* [Responsividade] Altura fluida: mínimo 50px, escala com viewport (10vw),
