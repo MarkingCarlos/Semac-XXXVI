@@ -1,0 +1,108 @@
+.modalPalestraFundo {
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.5);
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modalPalestra {
+    width: 600px;
+    max-width: 90%;
+    min-height: 350px;
+    background-color: var(--vermelhoAuxDiretoria);
+    text-align: left;
+    border: 2px solid white;
+    border-radius: 20px;
+    padding: 15px;
+}
+
+.modalPalestra p {
+    font-size: clamp(0.7rem, 4vw, 1em);
+}
+
+.divCabecalhoModal {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.infosCabecalho {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.imgCabecalho {
+    width: 140px;
+    height: 140px;
+    border: 1px solid white;
+    border-radius: 20px;
+    margin-right: 20px;
+}
+
+.divCloseModal {
+    height: stretch;
+    width: min-content;
+}
+
+.closeModal {
+    width: 30px;
+    cursor: pointer;
+}
+
+.divCabecalhoModal h2 {
+    font-size: clamp(1.5rem, 4vw, 1.6em);
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+
+.divCabecalhoModal h3 {
+    font-size: clamp(1.2rem, 4vw, 1.25em);
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+
+.divRedesSociais {
+    display: flex;
+    gap: 10px;
+}
+
+.divRedesSociais img {
+    height: 2vh;
+}
+
+.linkedin {
+    font-size: clamp(0.5rem, 4vw, 0.8em);
+    background-color: #52ABB1;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.instagram {
+    font-size: clamp(0.5rem, 4vw, 0.8em);
+    background-color: #B13571;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+@media (max-width: 500px) {
+    .infosCabecalho {
+        display: inline;
+    }
+
+    .imgCabecalho {
+        width: 120px;
+        height: 120px;
+    }
+}
