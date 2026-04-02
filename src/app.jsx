@@ -4,6 +4,7 @@ import waveDown from '/WaveDown.svg'
 import waveUp from '/waveup.svg'
 import ContagemRegressiva from "./components/contagemRegressiva/contagemRegressiva.jsx";
 import BtnContato from "./components/BtnContato/btnContato.jsx";
+import { BoxEstatistica } from './components/BoxEstatistica/boxEstatistica.jsx';
 import './app.css'
 
 export function App() {

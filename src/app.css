@@ -75,3 +75,23 @@
 .card {
   padding: 0;
 }
+
+.boxes-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 19px;
+    width: 100%;
+    width: calc(100% + 4rem); /* cancela o padding: 2rem de cada lado do #app */
+    margin-left: -2rem;       /* puxa o container para a esquerda */
+    box-sizing: border-box;
+}
+ 
+@media (max-width: 884px) {
+    .boxes-container {
+        flex-direction: column;
+        align-items: center;
+        padding: 0 2rem;
+    }
+}
