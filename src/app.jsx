@@ -4,6 +4,7 @@ import waveDown from '/WaveDown.svg'
 import waveUp from '/waveup.svg'
 import ContagemRegressiva from "./components/contagemRegressiva/contagemRegressiva.jsx";
 import BtnContato from "./components/BtnContato/btnContato.jsx";
+import Home from "./pages/Home.js";
 import './app.css'
 
 export function App() {
@@ -11,19 +12,20 @@ export function App() {
 
   return (
     <>
-      <div>
-          <img src={waveDown} className="WaveDown" alt="WaveDown logo" />
-          <img src={waveUp} className="WaveUp" alt="WaveDown logo" />
-          <a href="https://www.linkedin.com/company/semacsjrp/posts/?feedView=all" target="_blank">
-              <img src={logo} className="logo" alt="Vite logo"/>
-          </a>
-      </div>
-      <div class="card">
-        <ContagemRegressiva />
-      </div>
-      <div style={{marginTop: "3em"}}>
-        <BtnContato/>
-      </div>
+      {/*<div>*/}
+      {/*    <img src={waveDown} className="WaveDown" alt="WaveDown logo" />*/}
+      {/*    <img src={waveUp} className="WaveUp" alt="WaveDown logo" />*/}
+      {/*    <a href="https://www.linkedin.com/company/semacsjrp/posts/?feedView=all" target="_blank">*/}
+      {/*        <img src={logo} className="logo" alt="Vite logo"/>*/}
+      {/*    </a>*/}
+      {/*</div>*/}
+      {/*<div class="card">*/}
+      {/*  <ContagemRegressiva />*/}
+      {/*</div>*/}
+      {/*<div style={{marginTop: "3em"}}>*/}
+      {/*  <BtnContato/>*/}
+      {/*</div>*/}
+    <Home/>
     </>
   )
 }

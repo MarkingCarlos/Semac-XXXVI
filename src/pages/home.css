@@ -1,0 +1,93 @@
+:root {
+    margin: 0;
+    padding: 0;
+}
+
+.home-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.home-container::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 50% 50%, transparent 25%, rgba(0, 0, 0, 0.6) 100%),
+        linear-gradient(to bottom, rgba(115, 8, 53, 0.4) 0%, transparent 30%, transparent 70%, rgba(115, 8, 53, 0.5) 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+@keyframes logoReveal {
+    from {
+        opacity: 0;
+        transform: translate(-50%, calc(-50% + 24px));
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.logoSemac {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    width: clamp(360px, 50vw, 780px);
+    will-change: transform, opacity;
+    animation: logoReveal 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (max-width: 768px) {
+    .logoSemac {
+        animation: none;
+        transform: translate(-50%, -50%);
+        will-change: auto;
+    }
+}
+
+.fotos {
+    position: absolute;
+    height: 100%;
+    width: auto;
+    top: 0;
+    left: 0;
+    will-change: transform;
+    animation: panPhotos 25s ease-in-out infinite alternate;
+}
+
+@keyframes panPhotos {
+    from { transform: translateX(0); }
+    to   { transform: translateX(calc(100vw - 72%)); }
+}
+
+@keyframes waveFloatUp {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%       { transform: translateX(-50%) translateY(-7px); }
+}
+
+@keyframes waveFloatDown {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%       { transform: translateX(-50%) translateY(7px); }
+}
+
+.WaveUpHome {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 100%;
+    z-index: 2;
+    animation: waveFloatUp 5s ease-in-out infinite;
+}
+
+.WaveDownHome {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 100%;
+    z-index: 3;
+    animation: waveFloatDown 5s ease-in-out infinite;
+}
