@@ -1,12 +1,12 @@
 .box {
     width: 100%;
-    max-width: 434px;
+    max-width: clamp(400px, 50vw, 600px);
     height: clamp(150px, 32vw, 216px);
     border-radius: 25px;
     padding: 12px 16px;
 
     color: white;
-    font-family: bungee;
+    font-family: 'Bungee', sans-serif;
 
     display: flex;
     flex-direction: column;

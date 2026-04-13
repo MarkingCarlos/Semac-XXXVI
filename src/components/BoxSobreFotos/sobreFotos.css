@@ -1,0 +1,35 @@
+:root {
+    margin: 0;
+    padding: 0;
+}
+
+.boxFotos{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 25px;
+    max-height: 90vh;
+    max-width: 90vh;
+    height: 50vh;
+    width: 100vh;
+    background-image: linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0)),
+    url('../../assets/apresentacaoTrabalhos.png');
+    background-size: cover;
+
+}
+
+.textoFotos{
+    text-align: left;
+    font-family: "Montserrat", sans-serif;
+    margin-left: 20px;
+    font-size: 20px;
+    margin-top: 5px;
+}
+
+.tituloFotos{
+    margin-bottom: 5px;
+    font-size: 30px;
+    text-align: left;
+    margin-left: 20px;
+}
+

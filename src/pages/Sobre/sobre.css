@@ -1,0 +1,11 @@
+:root {
+    margin: 0;
+    padding: 0;
+}
+
+.divBoxEstatistica{
+    display: flex; /* Deixa os elementos um do lado do outro */
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+}
