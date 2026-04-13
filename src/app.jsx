@@ -4,6 +4,7 @@ import waveDown from '/WaveDown.svg'
 import waveUp from '/waveup.svg'
 import ContagemRegressiva from "./components/contagemRegressiva/contagemRegressiva.jsx";
 import BtnContato from "./components/BtnContato/btnContato.jsx";
+import ModalPix from './components/ModalPix/ModalPix';
 import './app.css'
 
 export function App() {
