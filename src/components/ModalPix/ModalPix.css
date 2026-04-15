@@ -12,6 +12,7 @@
     justify-content: top;
     align-items: center;
     flex-direction: column;
+    justify-self: center;
 
 }
 
