@@ -1,0 +1,78 @@
+.patrocinadores-section {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: sans-serif;
+}
+
+.tier {
+  padding: 0;
+}
+
+.tier-items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.tier-item {
+  text-align: center;
+  flex: 0 1 150px;
+}
+
+.tier-logo {
+  width: auto;
+  height: auto;
+  border-radius: 25px;
+  padding: 4px;
+  transition: transform 0.3s, border-color 0.3s;
+}
+
+.tier-platina .tier-logo {
+  max-width: 500px;
+  max-height: 200px;
+}
+
+.tier-ouro .tier-logo {
+  max-width: 410px;
+  max-height: 160px;
+}
+
+.tier-prata .tier-logo {
+  max-width: 300px;
+  max-height: 140px;
+}
+
+.tier-bronze .tier-logo {
+  max-width: 270px;
+  max-height: 120px;
+}
+
+.tier-logo:hover {
+  transform: scale(1.1);
+  border-color: #999; 
+}
+
+.tier-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin: 1.5rem 0;  
+  color: white;      
+  position: relative;
+}
+
+.tier-title::before,
+.tier-title::after {
+  content: "";
+  flex: 1;
+  height: 2px;
+  background-color: white;
+  margin: 0 1rem;
+  border-radius: 1px;
+}
