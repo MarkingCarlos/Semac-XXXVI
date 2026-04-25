@@ -1,29 +1,31 @@
 import "./doacao.css";
-import BtnContato from "../../components/BtnContato/btnContato.jsx";
-import imagemDoacao from "../../assets/imagemDoacao.png";
+import FacaUmaDoacao from "../../components/ComponentesDoacao/FacaUmaDoacao.jsx";
+import ComoSuaDoacaoAjuda from "../../components/ComponentesDoacao/ComoSuaDoacaoAjuda.jsx";
+import riscoGiz from "../../assets/riscoGiz.png";
 
 const doacao = () => {
     return(
         <section className="doacao-section">
-            <div className ="doacao-inner">
-                <div className="doacao-imagem">
-                    <img src= {imagemDoacao} alt="Ilustração de doação" />
-                </div>
-                
-                <div className="doacao-conteudo">
-                    <h2 className="doacao-titulo">Doação</h2>
+            <div className="doacao-inner">
+                <div className="doacao-esquerda">
+                    <h2 className="doacao-titulo">
+                        Apoie a <span className="texto-amarelo">SEMAC</span>
+                    </h2>
 
                     <p className="doacao-texto">
                         A <strong>SEMAC</strong> é um evento feito por alunos para alunos,{" "}
                         <span className="texto-amarelo">toda ajuda é de grande importância.</span>
                     </p>
 
-                    <div>
-                        <BtnContato/>
-                    </div>
+                    <img src={riscoGiz} alt="" className="doacao-risco" aria-hidden="true" />
+                    
+                    <ComoSuaDoacaoAjuda/>
                 </div>
+                <div className="doacao-direita">
+                    <FacaUmaDoacao/>
+                </div>
+
             </div>
-            <div className="doacao-barra" />
         </section>
     )
 }

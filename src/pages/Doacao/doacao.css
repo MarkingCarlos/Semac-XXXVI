@@ -8,73 +8,46 @@
 .doacao-section {
     display: flex;
     flex-direction: column;
-    min-height: 320px;
     width: 100%;
 }
- 
+
 .doacao-inner {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    flex: 1;
-    overflow: hidden;
+    gap: 2rem;
+    padding: 3rem 4rem;
 }
- 
-.doacao-barra {
-    width: 100%;
-    height: 50px;
-    flex-shrink: 0;
-    margin-top: -50px;
-    background: linear-gradient(to right, 
-        var(--AmareloAuxApoio) 19%, 
-        var(--vermelhoAuxDiretoria) 81%
-    );
-}
- 
-.doacao-imagem {
-    flex: 0 0 auto;
-    margin-left: -187px;
-    height: 100%;
-    display: flex;
-    align-items: flex-end;
-}
- 
-.doacao-imagem img {
-    width: 100%;
-    object-fit: contain;
-    display: block;
-}
- 
-.doacao-conteudo {
+
+/* Coluna esquerda */
+.doacao-esquerda {
     flex: 1;
     display: flex;
-    margin-left: -150px;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 2rem 3rem;
-    gap: 0.4rem;
+    gap: 1.2rem;
 }
- 
+
 .doacao-titulo {
-    font-size: clamp(40px, 12vw, 60px);
+    font-size: clamp(40px, 5vw, 70px);
     font-weight: 900;
-    color: #ffffff;
+    color: var(--Branco);
     text-transform: uppercase;
     letter-spacing: 2px;
-    margin: -160px 0 -40px 0;
+    margin: 0;
+    line-height: 1.1;
+    text-align: left;
 }
- 
+
 .doacao-texto {
     font-family: 'Montserrat', sans-serif;
-    font-size: clamp(17px, 5vw, 30px);
+    font-size: clamp(15px, 1.5vw, 30px);
     color: var(--Branco);
     line-height: 1.6;
-    max-width: 736px;
+    max-width: 573px;
+    margin: 0;
 }
- 
+
 .doacao-texto strong {
     color: var(--Branco);
     font-weight: 700;
@@ -85,18 +58,32 @@
     font-weight: 700;
 }
 
-@media (max-width: 884px) {
-    .doacao-imagem {
-        margin-left: -313px;
-    }
+/* Risco de giz abaixo do texto */
+.doacao-risco {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    display: block;
+    margin-top: -0.5rem;
 }
 
-@media (max-width: 790px) {
-    .doacao-conteudo {
-        margin-left: -575px;
+/* Coluna direita */
+.doacao-direita {
+    flex: 0 0 520px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Mobile */
+@media (max-width: 884px) {
+    .doacao-inner {
+        flex-direction: column;
+        padding: 2rem 1.5rem;
     }
 
-    .doacao-titulo {
-        margin: -300px 0 -30px 0;
+    .doacao-direita {
+        flex: 1;
+        width: 100%;
+        justify-content: center;
     }
 }
