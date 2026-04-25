@@ -8,6 +8,7 @@ export function App() {
     <>
       {/*<Home/>*/}
       <Sobre/>
+      {/* <Footer/> */}
     </>
   )
 }
