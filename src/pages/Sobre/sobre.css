@@ -28,9 +28,85 @@
     flex: 1;
 }
 
+.sobreLadoDireito .tituloFotos {
+    font-size: 20px;
+}
+
+.sobreLadoDireito .textoFotos {
+    font-size: 13px;
+}
+
+.sobreLadoDireito .boxFotosGlass {
+    padding: 8px 12px 10px;
+}
+
 .divBoxEstatistica{
-    display: flex; /* Deixa os elementos um do lado do outro */
+    display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     gap: 20px;
     width: 100%;
+}
+
+@media (max-width: 768px) {
+    .sobreSecao {
+        flex-direction: column;
+        height: auto;
+        padding: 15px 0;
+        gap: 15px;
+    }
+
+    .sobreLadoEsquerdo {
+
+        flex: none;
+        width: 100%;
+        height: 50vh;
+    }
+
+    .sobreLadoDireito {
+
+        flex: none;
+        flex-direction: row;
+        width: 100%;
+        height: 50vh;
+    }
+
+    .divBoxEstatistica {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sobreSecao {
+        gap: 10px;
+        padding: 10px 0;
+    }
+
+    .sobreLadoEsquerdo {
+        height: 50vh;
+    }
+
+    .sobreLadoDireito {
+        flex-direction: column;
+        height: auto;
+        gap: 10px;
+    }
+
+    .sobreLadoDireito > div {
+        flex: none;
+        height: 50vh;
+    }
+
+    .sobreLadoDireito .tituloFotos {
+        font-size: 20px;
+    }
+
+    .sobreLadoDireito .textoFotos {
+        font-size: 15px;
+    }
+
+    .sobreLadoDireito .boxFotosGlass {
+        padding: 8px 10px 10px;
+    }
 }
