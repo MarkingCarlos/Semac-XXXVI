@@ -34,7 +34,7 @@ a {
 /* [Responsividade] Impede scroll horizontal e vertical em qualquer tela.
    O html precisa de overflow hidden para que o body respeite a limitação. */
 html {
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 body {
@@ -50,7 +50,7 @@ body {
      evitando scroll horizontal no mobile */
   width: 100%;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 h1 {

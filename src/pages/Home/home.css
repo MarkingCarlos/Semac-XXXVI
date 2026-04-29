@@ -6,7 +6,8 @@
 .home-container {
     position: relative;
     width: 100vw;
-    height: 100vh;/
+    height: 100vh;
+    margin-left: -1em;
     overflow: hidden;
 }
 

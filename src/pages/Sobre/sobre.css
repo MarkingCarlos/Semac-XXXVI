@@ -3,6 +3,31 @@
     padding: 0;
 }
 
+.sobreSecao {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding: 20px 0;
+    height: calc(100vh - 140px);
+}
+
+.sobreLadoEsquerdo {
+    flex: 5;
+    height: 100%;
+}
+
+.sobreLadoDireito {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+}
+
+.sobreLadoDireito > div {
+    flex: 1;
+}
+
 .divBoxEstatistica{
     display: flex; /* Deixa os elementos um do lado do outro */
     justify-content: center;

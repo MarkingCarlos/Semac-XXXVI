@@ -3,15 +3,18 @@
     padding: 0;
 }
 
+.sobreFotosWrapper {
+    width: 100%;
+    height: 100%;
+}
+
 .boxFotos{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     border-radius: 25px;
-    max-height: 90vh;
-    max-width: 90vh;
-    height: 50vh;
-    width: 100vh;
+    width: 100%;
+    height: 100%;
     background-image: linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0)),
     url('../../assets/apresentacaoTrabalhos.png');
     background-size: cover;
@@ -19,6 +22,7 @@
 }
 
 .textoFotos{
+    color: var(--Branco);
     text-align: left;
     font-family: "Montserrat", sans-serif;
     margin-left: 20px;
@@ -27,6 +31,7 @@
 }
 
 .tituloFotos{
+    color: var(--Branco);
     margin-bottom: 5px;
     font-size: 30px;
     text-align: left;
