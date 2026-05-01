@@ -3,7 +3,7 @@ import './contagemRegressiva.css';
 
 const ContagemRegressiva = () => {
 
-    const [dataEvento, setDataEvento] = useState("2026-05-01T12:00:00");
+    const [dataEvento, setDataEvento] = useState("2026-05-15T12:00:00");
     const [incioContagem, setInicioContagem] = useState(true);
     const [tempoRestante, setTempoRestante] = useState(0);
 
