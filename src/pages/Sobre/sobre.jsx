@@ -1,11 +1,24 @@
+import { useEffect, useRef, useState } from 'preact/hooks';
 import {BoxEstatistica} from "../../components/BoxEstatistica/boxEstatistica.jsx";
 import './sobre.css'
 import SobreFotos from "../../components/BoxSobreFotos/sobreFotos.jsx";
 
 const sobre = () =>{
+    const sectionRef = useRef(null);
+    const [isExiting, setIsExiting] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (!sectionRef.current) return;
+            const rect = sectionRef.current.getBoundingClientRect();
+            setIsExiting(rect.top < -(rect.height * 0.3));
+        };
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     return (
-        <div>
+        <div ref={sectionRef} className={isExiting ? 'sobre-exiting' : ''}>
             <div className="sobreSecao">
                 <div className="sobreLadoEsquerdo">
                     <SobreFotos

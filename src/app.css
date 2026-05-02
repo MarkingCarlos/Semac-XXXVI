@@ -20,6 +20,13 @@
   min-height: 100vh;
 }
 
+.section-sticky {
+    position: sticky;
+    top: 0;
+    min-height: 100vh;
+    background-color: var(--vermelhoAuxDiretoria);
+}
+
 /* Animação das ondas decorativas — desce 24px no meio do ciclo */
 @keyframes floatDown {
   0%, 100% { transform: translateY(0px); }

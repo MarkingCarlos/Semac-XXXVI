@@ -14,6 +14,8 @@
 .sobreLadoEsquerdo {
     flex: 5;
     height: 100%;
+    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.55s ease;
+    will-change: transform, opacity;
 }
 
 .sobreLadoDireito {
@@ -22,6 +24,8 @@
     flex-direction: column;
     gap: 20px;
     height: 100%;
+    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1) 0.07s, opacity 0.55s ease 0.07s;
+    will-change: transform, opacity;
 }
 
 .sobreLadoDireito > div {
@@ -46,6 +50,34 @@
     justify-content: center;
     gap: 20px;
     width: 100%;
+}
+
+.divBoxEstatistica > .box {
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
+    will-change: transform, opacity;
+}
+
+.sobre-exiting .sobreLadoEsquerdo {
+    transform: translateX(-120px);
+    opacity: 0;
+}
+
+.sobre-exiting .sobreLadoDireito {
+    transform: translateX(120px);
+    opacity: 0;
+}
+
+.sobre-exiting .divBoxEstatistica > .box:nth-child(1),
+.sobre-exiting .divBoxEstatistica > .box:nth-child(2) {
+    animation: none;
+    transform: translateX(-150px);
+    opacity: 0;
+}
+
+.sobre-exiting .divBoxEstatistica > .box:nth-child(3) {
+    animation: none;
+    transform: translateX(150px);
+    opacity: 0;
 }
 
 @media (max-width: 768px) {

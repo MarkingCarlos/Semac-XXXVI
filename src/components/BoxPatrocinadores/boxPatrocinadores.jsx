@@ -1,7 +1,19 @@
 import './boxPatrocinadores.css';
 import exemploLogo from '../../assets/Logo_SEMAC.png';
+import { useEffect, useRef, useState } from 'preact/hooks';
 
 export default function Patrocinadores() {
+    const sectionRef = useRef(null);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => setIsVisible(entry.isIntersecting),
+            { threshold: 0.05 }
+        );
+        if (sectionRef.current) observer.observe(sectionRef.current);
+        return () => observer.disconnect();
+    }, []);
     const patrocinadores = [
     {
     tier: "PLATINA",
@@ -35,7 +47,7 @@ export default function Patrocinadores() {
 ]
 
   return (
-    <section className="patrocinadores-section">
+    <section ref={sectionRef} className={`patrocinadores-section${isVisible ? ' is-visible' : ''}`}>
       {patrocinadores.map((tier, i) => (
         <div className={`tier-${tier.tier.toLowerCase()}`} key={i}>
           <h2 className="tier-title">{tier.tier}</h2>

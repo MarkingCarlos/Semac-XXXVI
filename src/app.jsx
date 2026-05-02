@@ -8,9 +8,15 @@ export function App() {
 
   return (
     <>
-        <Home/>
-        <Sobre/>
-        <Patrocinadores/>
+        <div className="section-sticky" style={{zIndex: 1}}>
+            <Home/>
+        </div>
+        <div className="section-sticky" style={{zIndex: 2}}>
+            <Sobre/>
+        </div>
+        <div className="section-sticky" style={{zIndex: 3}}>
+            <Patrocinadores/>
+        </div>
         <Footer/>
     </>
   )
