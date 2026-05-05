@@ -14,9 +14,9 @@ export function sobreFotos({ titulo, texto }) {
     };
 
     return (
-        <div 
-            className="sobreFotosWrapper" 
-            ref={wrapperRef} 
+        <div
+            className="sobreFotosWrapper"
+            ref={wrapperRef}
             onMouseMove={handleMouseMove}
         >
             <div className="boxFotos">

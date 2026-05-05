@@ -11,9 +11,6 @@
 }
 
 #app {
-   padding-left: 1em;
-    padding-right: 1em;
-  margin: 0;
   text-align: center;
   box-sizing: border-box;
   width: 100%;
@@ -22,8 +19,7 @@
 
 .section-sticky {
     position: sticky;
-    top: 0;
-    min-height: 100vh;
+    max-height: 100vh;
     background-color: var(--vermelhoAuxDiretoria);
 }
 
@@ -79,8 +75,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: stretch;
-    gap: 19px;
-    width: 100%;
+    gap: 20px;
     width: calc(100% + 4rem); /* cancela o padding: 2rem de cada lado do #app */
     margin-left: -2rem;       /* puxa o container para a esquerda */
     box-sizing: border-box;

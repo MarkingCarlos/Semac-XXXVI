@@ -97,15 +97,4 @@
     }
 }
 
-@media (max-width: 480px) {
-    .tituloFotos {
-        font-size: 15px;
-        margin-left: 10px;
-    }
-
-    .textoFotos {
-        font-size: 11px;
-        margin-left: 10px;
-    }
-}
 

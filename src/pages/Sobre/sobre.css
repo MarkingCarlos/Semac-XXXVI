@@ -1,25 +1,34 @@
 :root {
-    margin: 0;
-    padding: 0;
+    padding: 5em;
+}
+
+.sobre-container {
+    margin-left: 1em;
+    margin-right: 1em;
+    height: 75vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .sobreSecao {
     display: flex;
     flex-direction: row;
     gap: 20px;
-    padding: 20px 0;
-    height: calc(100vh - 140px);
+    height: 100%;
 }
 
 .sobreLadoEsquerdo {
-    flex: 5;
+    flex: 3.5;
+    min-width: 0;
     height: 100%;
     transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.55s ease;
     will-change: transform, opacity;
 }
 
 .sobreLadoDireito {
-    flex: 3;
+    flex: 2.5;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -28,7 +37,18 @@
     will-change: transform, opacity;
 }
 
-.sobreLadoDireito > div {
+.sobreLadoEstatisticas {
+    flex: 2;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1) 0.14s, opacity 0.55s ease 0.14s;
+    will-change: transform, opacity;
+}
+
+.sobreLadoEstatisticas>div {
     flex: 1;
 }
 
@@ -40,21 +60,15 @@
     font-size: 13px;
 }
 
-.sobreLadoDireito .boxFotosGlass {
-    padding: 8px 12px 10px;
-}
-
-.divBoxEstatistica{
+.sobreLadoEstatisticas .boxWrapper {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    width: 100%;
+    flex-direction: column;
 }
 
-.divBoxEstatistica > .box {
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
-    will-change: transform, opacity;
+.sobreLadoEstatisticas .box {
+    width: 100%;
+    height: auto;
+    flex: 1;
 }
 
 .sobre-exiting .sobreLadoEsquerdo {
@@ -67,20 +81,16 @@
     opacity: 0;
 }
 
-.sobre-exiting .divBoxEstatistica > .box:nth-child(1),
-.sobre-exiting .divBoxEstatistica > .box:nth-child(2) {
-    animation: none;
-    transform: translateX(-150px);
-    opacity: 0;
-}
-
-.sobre-exiting .divBoxEstatistica > .box:nth-child(3) {
-    animation: none;
+.sobre-exiting .sobreLadoEstatisticas {
     transform: translateX(150px);
     opacity: 0;
 }
 
 @media (max-width: 768px) {
+    .sobre-container {
+        height: auto;
+    }
+
     .sobreSecao {
         flex-direction: column;
         height: auto;
@@ -88,24 +98,22 @@
         gap: 15px;
     }
 
-    .sobreLadoEsquerdo {
-
+    .sobreLadoEsquerdo .sobreLadoDireito{
         flex: none;
         width: 100%;
-        height: 50vh;
+        height: 30vh;
+
     }
 
-    .sobreLadoDireito {
-
+    .textoFotos {
+        font-size: 14px;
+        margin-left: 14px;
+    }
+    .sobreLadoEstatisticas {
         flex: none;
         flex-direction: row;
         width: 100%;
-        height: 50vh;
-    }
-
-    .divBoxEstatistica {
-        flex-wrap: wrap;
-        gap: 15px;
+        height: auto;
     }
 }
 
@@ -115,30 +123,24 @@
         padding: 10px 0;
     }
 
-    .sobreLadoEsquerdo {
-        height: 50vh;
-    }
-
     .sobreLadoDireito {
         flex-direction: column;
         height: auto;
         gap: 10px;
     }
 
-    .sobreLadoDireito > div {
-        flex: none;
-        height: 50vh;
+    .sobreLadoEstatisticas {
+        flex-direction: column;
+        height: auto;
+        gap: 10px;
     }
 
-    .sobreLadoDireito .tituloFotos {
-        font-size: 20px;
-    }
-
-    .sobreLadoDireito .textoFotos {
+    .tituloFotos {
         font-size: 15px;
     }
 
-    .sobreLadoDireito .boxFotosGlass {
-        padding: 8px 10px 10px;
+    .textoFotos {
+        font-size: 10px;
     }
+
 }

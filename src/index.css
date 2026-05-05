@@ -42,12 +42,6 @@ body {
   display: flex;
   place-items: center;
   min-height: 100vh;
-
-  /* [Responsividade] Removido min-width: 320px que forçava largura mínima
-     e causava scroll horizontal em telas menores que 320px */
-
-  /* [Responsividade] Garante que o body não ultrapasse a largura da tela,
-     evitando scroll horizontal no mobile */
   width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
@@ -79,15 +73,3 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: var(--AmareloAuxApoio);
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}

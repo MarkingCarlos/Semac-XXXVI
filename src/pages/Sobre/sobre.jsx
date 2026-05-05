@@ -11,14 +11,14 @@ const sobre = () =>{
         const handleScroll = () => {
             if (!sectionRef.current) return;
             const rect = sectionRef.current.getBoundingClientRect();
-            setIsExiting(rect.top < -(rect.height * 0.3));
+            setIsExiting(rect.top < -(rect.height * 0.9));
         };
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     return (
-        <div ref={sectionRef} className={isExiting ? 'sobre-exiting' : ''}>
+        <div ref={sectionRef} className={`sobre-container ${isExiting ? 'sobre-exiting' : ''}`}>
             <div className="sobreSecao">
                 <div className="sobreLadoEsquerdo">
                     <SobreFotos
@@ -39,11 +39,11 @@ const sobre = () =>{
                             ' dentro da universidade as discussões mais atuais do mercado e da academia. '}>
                     </SobreFotos>
                 </div>
-            </div>
-            <div className={"divBoxEstatistica"}>
-                <BoxEstatistica plataforma={'YouTube'} alcance={'100'} indice={0}></BoxEstatistica>
-                <BoxEstatistica plataforma={'LinkedIn'} alcance={'100'} indice={1}></BoxEstatistica>
-                <BoxEstatistica plataforma={'Instagram'} alcance={'100'} indice={2}></BoxEstatistica>
+                <div className="sobreLadoEstatisticas">
+                    <BoxEstatistica plataforma={'YouTube'} alcance={'100'} seguidores={'100'} visitas={'100'} indice={0}></BoxEstatistica>
+                    <BoxEstatistica plataforma={'LinkedIn'} alcance={'100'} seguidores={'100'} visitas={'100'} indice={1}></BoxEstatistica>
+                    <BoxEstatistica plataforma={'Instagram'} alcance={'100'} seguidores={'100'} visitas={'100'} indice={2}></BoxEstatistica>
+                </div>
             </div>
         </div>
     )
