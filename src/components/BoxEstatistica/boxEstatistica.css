@@ -10,8 +10,6 @@
 }
 
 .boxWrapper {
-    padding-right: 2em;
-
     border-radius: 25px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
@@ -100,9 +98,9 @@
     z-index: 1;
 }
 
-.box .header .logo {
+.box .header .logoIcon {
     width: min(35px, 8vw);
-    height: clamp(20px, 8vw, 35px);
+    height: clamp(20px, 6vw, 45px);
     flex-shrink: 0;
     display: block;
     margin: 0;

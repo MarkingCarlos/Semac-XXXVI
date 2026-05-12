@@ -12,7 +12,7 @@
 
 .doacao-card-titulo {
     font-family: 'Bungee', sans-serif;
-    font-size: clamp(30px, 3vw, 40px);
+    font-size: clamp(30px, 3vw, 70px);
     font-weight: 900;
     color: var(--Branco);
     text-transform: uppercase;
@@ -21,7 +21,7 @@
 
 .doacao-card-subtitulo {
     font-family: 'Montserrat', sans-serif;
-    font-size: clamp(15px, 1.5vw, 20px);
+    font-size: clamp(15px, 1.5vw, 30px);
     color: rgba(255, 255, 255, 0.5);
     margin: 0;
 }
@@ -147,4 +147,67 @@
     color: rgba(255, 255, 255, 0.68);
     cursor: not-allowed;
     transform: none;
+}
+
+/* ── Mobile pequeno — iPhone 14 (≤ 600px) ───────────────────────────── */
+@media (max-width: 600px) {
+    .doacao-card {
+        max-width: 100%;
+        padding: 1.4rem;
+        gap: 0.9rem;
+    }
+
+    .doacao-valores {
+        gap: 0.6rem;
+    }
+
+    .doacao-valor-btn {
+        padding: 0.75rem;
+    }
+
+    .doacao-input-wrapper {
+        padding: 0.75rem 0.9rem;
+        gap: 0.4rem;
+    }
+
+    .doacao-progresso-bg {
+        height: 5px;
+    }
+
+    .doacao-btn-doar {
+        padding: 0.85rem;
+    }
+}
+
+/* ── Monitores grandes (≥ 2560px) ───────────────────────────────────── */
+@media (min-width: 2560px) {
+    .doacao-card {
+        max-width: 1050px;
+        padding: 4.5rem;
+        gap: 2.5rem;
+    }
+
+    .doacao-valores {
+        gap: 1.8rem;
+    }
+
+    .doacao-valor-btn {
+        padding: 2.2rem;
+        border-radius: 14px;
+    }
+
+    .doacao-input-wrapper {
+        padding: 2rem 2.5rem;
+        gap: 1.2rem;
+        border-radius: 14px;
+    }
+
+    .doacao-progresso-bg {
+        height: 14px;
+    }
+
+    .doacao-btn-doar {
+        padding: 2.2rem;
+        border-radius: 14px;
+    }
 }
