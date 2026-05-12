@@ -38,7 +38,7 @@ export default function CronogramaFiltro() {
     <div className="cronograma-wrapper">
       <div className="cronograma-card">
 
-        <h1 className="cronograma-title">{selectedDay}-FEIRA</h1>
+        <h1 className="cronograma-title titulo-secao">{selectedDay}-FEIRA</h1>
 
         <div className="days-row">
           {DAYS.map((day, idx) => {
