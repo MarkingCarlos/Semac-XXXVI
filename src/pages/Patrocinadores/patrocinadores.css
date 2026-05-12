@@ -5,4 +5,19 @@
     position: relative;
     z-index: 3;
     background-color: var(--vermelhoAuxDiretoria);
+    padding: 0 2rem;
+}
+
+/* ── Mobile pequeno — iPhone 14 (≤ 600px) ───────────────────────────── */
+@media (max-width: 600px) {
+    .patrocinadores-page {
+        padding: 0 1rem;
+    }
+}
+
+/* ── Monitores grandes (≥ 2560px) ───────────────────────────────────── */
+@media (min-width: 2560px) {
+    .patrocinadores-page {
+        padding: 0 4rem;
+    }
 }

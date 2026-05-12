@@ -8,9 +8,9 @@ const doacao = () => {
         <section className="doacao-section">
             <div className="doacao-inner">
                 <div className="doacao-esquerda">
-                    <h2 className="doacao-titulo">
+                    <h1 className="doacao-titulo titulo-secao">
                         Apoie a <span className="texto-amarelo">SEMAC</span>
-                    </h2>
+                    </h1>
 
                     <p className="doacao-texto">
                         A <strong>SEMAC</strong> é um evento feito por alunos para alunos,{" "}
