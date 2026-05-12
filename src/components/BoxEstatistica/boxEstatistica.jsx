@@ -97,7 +97,7 @@ export function BoxEstatistica({
                 <div className="mancha" style={{ backgroundColor: corMancha }} />
 
                 <div className="header">
-                    <img src={logo} alt={plataforma} className="logo" />
+                    <img src={logo} alt={plataforma} className="logoIcon" />
                     <h3 className="titulo">{plataforma}</h3>
                 </div>
 

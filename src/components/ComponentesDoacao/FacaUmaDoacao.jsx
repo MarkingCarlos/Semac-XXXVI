@@ -1,5 +1,5 @@
 import "./FacaUmaDoacao.css";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 const FacaUmaDoacao = () => {
     const [valorSelecionado, setValorSelecionado] = useState(20);

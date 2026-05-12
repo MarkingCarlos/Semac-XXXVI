@@ -41,7 +41,7 @@
 
 .doacao-texto {
     font-family: 'Montserrat', sans-serif;
-    font-size: clamp(15px, 1.5vw, 30px);
+    font-size: clamp(15px, 2vw, 35px);
     color: var(--Branco);
     line-height: 1.6;
     max-width: 573px;
