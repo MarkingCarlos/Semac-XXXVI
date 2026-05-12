@@ -4,6 +4,7 @@ import Sobre from "./pages/Sobre/sobre.jsx";
 import Footer from "./pages/Footer/footer.jsx";
 import Patrocinadores from "./pages/Patrocinadores/Patrocinadores.jsx";
 
+import Doacao from "./pages/Doacao/doacao.jsx";
 
 export function App() {
 
