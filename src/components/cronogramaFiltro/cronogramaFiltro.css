@@ -1,0 +1,277 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Base (mobile-first: iPhone 14 = 390px) ─────────────────────────── */
+
+.cronograma-wrapper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 28px 14px 20px;
+}
+
+.cronograma-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 18px 16px 16px;
+}
+
+.cronograma-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--Branco);
+  margin-bottom: 14px;
+  line-height: 1;
+}
+
+.days-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.day-btn {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  outline: none;
+}
+
+.day-btn.disabled {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.22);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  cursor: default;
+  pointer-events: none;
+}
+
+.day-btn.inactive {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+}
+
+.day-btn.inactive:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.85);
+}
+
+.day-btn.active {
+  background: var(--AmareloAuxApoio);
+  color: #ffffff;
+  border: 1.5px solid var(--Branco);
+}
+
+.filters-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-family: Montserrat;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  margin-right: 4px;
+}
+
+.filter-btn {
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  outline: none;
+}
+
+.filter-btn.inactive {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.filter-btn.inactive:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.filter-btn.active {
+  background: #ffffff;
+  color: var(--vermelhoDiretoria);
+  border: 1px solid var(--Branco);
+  font-weight: 700;
+}
+
+/* ── Monitores normais (≥ 1024px, até 2559px) ────────────────────────── */
+
+@media (min-width: 1024px) {
+  .cronograma-wrapper {
+    padding: 52px 32px 36px;
+  }
+
+  .cronograma-card {
+    max-width: 860px;
+    padding: 32px 48px 28px;
+  }
+
+  .cronograma-title {
+    font-size: 2.6rem;
+    margin-bottom: 24px;
+    letter-spacing: 0.14em;
+  }
+
+  .days-row {
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .day-btn {
+    font-size: 0.85rem;
+    padding: 8px 22px;
+    border-radius: 9px;
+  }
+
+  .filters-row {
+    gap: 8px;
+  }
+
+  .filter-label {
+    font-size: 0.75rem;
+  }
+
+  .filter-btn {
+    font-size: 0.72rem;
+    padding: 5px 14px;
+    border-radius: 8px;
+  }
+}
+
+/* ── Monitores grandes (≥ 2560px, > 27 pol 4K / ultrawide) ─────────── */
+
+@media (min-width: 2560px) {
+  .cronograma-wrapper {
+    padding: 90px 60px 64px;
+  }
+
+  .cronograma-card {
+    max-width: 1600px;
+    padding: 56px 96px 48px;
+  }
+
+  .cronograma-title {
+    font-size: 4.5rem;
+    margin-bottom: 44px;
+    letter-spacing: 0.16em;
+  }
+
+  .days-row {
+    gap: 22px;
+    margin-bottom: 32px;
+  }
+
+  .day-btn {
+    font-size: 1.25rem;
+    padding: 14px 38px;
+    border-radius: 14px;
+    border-width: 2px;
+  }
+
+  .day-btn.disabled,
+  .day-btn.inactive {
+    border-width: 2px;
+  }
+
+  .day-btn.active {
+    border-width: 2px;
+  }
+
+  .filters-row {
+    gap: 12px;
+  }
+
+  .filter-label {
+    font-size: 1.05rem;
+    margin-right: 8px;
+  }
+
+  .filter-btn {
+    font-size: 1rem;
+    padding: 8px 24px;
+    border-radius: 12px;
+  }
+}
+
+/*
+.eventos-container {
+  margin-top: 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.evento-card {
+  background: rgba(255,255,255,0.08);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  border-radius: 8px;
+
+  padding: 14px;
+}
+
+.evento-card h2 {
+  color: white;
+
+  font-size: 1rem;
+
+  margin-bottom: 6px;
+}
+
+.evento-card p {
+  color: rgba(255,255,255,0.75);
+
+  font-size: 0.9rem;
+
+  margin-bottom: 8px;
+}
+
+.evento-card span {
+  color: #ffb347;
+
+  font-size: 0.75rem;
+
+  font-weight: 600;
+}
+
+.sem-eventos {
+  margin-top: 20px;
+
+  text-align: center;
+
+  color: rgba(255,255,255,0.65);
+}
+*/
