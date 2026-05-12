@@ -29,9 +29,7 @@
 }
 
 .doacao-titulo {
-    font-size: clamp(40px, 5vw, 70px);
     font-weight: 900;
-    color: var(--Branco);
     text-transform: uppercase;
     letter-spacing: 2px;
     margin: 0;
@@ -41,7 +39,7 @@
 
 .doacao-texto {
     font-family: 'Montserrat', sans-serif;
-    font-size: clamp(15px, 1.5vw, 30px);
+    font-size: clamp(15px, 2vw, 35px);
     color: var(--Branco);
     line-height: 1.6;
     max-width: 573px;
