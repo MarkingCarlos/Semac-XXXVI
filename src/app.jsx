@@ -5,6 +5,7 @@ import Footer from "./pages/Footer/footer.jsx";
 import Patrocinadores from "./pages/Patrocinadores/Patrocinadores.jsx";
 import Cronograma from "./pages/Cronograma/Cronograma.jsx";
 import Doacao from "./pages/Doacao/doacao.jsx";
+import SobreComissao from "./pages/SobreComissao/sobreComissao.jsx";
 
 
 export function App() {
@@ -25,6 +26,9 @@ export function App() {
         </div>
         <div>
             <Doacao/>
+        </div>
+        <div style={{marginTop: '2.5rem'}}>
+            <SobreComissao/>
         </div>
         <Footer/>
     </>
