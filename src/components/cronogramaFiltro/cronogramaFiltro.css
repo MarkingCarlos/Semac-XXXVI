@@ -27,6 +27,7 @@
   line-height: 1;
 }
 
+
 .days-row {
   display: flex;
   gap: 6px;
@@ -130,7 +131,7 @@
   }
 
   .cronograma-card {
-    max-width: 860px;
+    max-width: 100vw;
     padding: 32px 48px 28px;
   }
 
@@ -145,7 +146,7 @@
   }
 
   .day-btn {
-    font-size: 0.85rem;
+    font-size: 1.2rem;
     padding: 8px 22px;
     border-radius: 9px;
   }
@@ -159,7 +160,7 @@
   }
 
   .filter-btn {
-    font-size: 0.72rem;
+    font-size: 1rem;
     padding: 5px 14px;
     border-radius: 8px;
   }
@@ -188,7 +189,7 @@
   }
 
   .day-btn {
-    font-size: 1.25rem;
+    font-size: 2rem;
     padding: 14px 38px;
     border-radius: 14px;
     border-width: 2px;
@@ -218,55 +219,3 @@
     border-radius: 12px;
   }
 }
-
-/*
-.eventos-container {
-  margin-top: 20px;
-
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.evento-card {
-  background: rgba(255,255,255,0.08);
-
-  border: 1px solid rgba(255,255,255,0.08);
-
-  border-radius: 8px;
-
-  padding: 14px;
-}
-
-.evento-card h2 {
-  color: white;
-
-  font-size: 1rem;
-
-  margin-bottom: 6px;
-}
-
-.evento-card p {
-  color: rgba(255,255,255,0.75);
-
-  font-size: 0.9rem;
-
-  margin-bottom: 8px;
-}
-
-.evento-card span {
-  color: #ffb347;
-
-  font-size: 0.75rem;
-
-  font-weight: 600;
-}
-
-.sem-eventos {
-  margin-top: 20px;
-
-  text-align: center;
-
-  color: rgba(255,255,255,0.65);
-}
-*/

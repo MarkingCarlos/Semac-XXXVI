@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./CronogramaFiltro.css";
+import SplitText from "./SplitText";
 
 const exemplo = [
   {
@@ -18,27 +19,31 @@ const SEMANA_INICIO = 1;
 
 export default function CronogramaFiltro() {
   const [selectedDay, setSelectedDay] = useState(DAYS[SEMANA_INICIO]);
-  // null = sem filtro ativo = mostra todos
   const [selectedFilter, setSelectedFilter] = useState(null);
 
   function handleFilterClick(category) {
-    // Clicar no filtro ativo desativa e volta a mostrar todos
     setSelectedFilter(prev => prev === category ? null : category);
   }
-
-  const eventosFiltrados = exemplo.filter((evento) => {
-    const dia = evento.dia === selectedDay;
-
-    const categoria = evento.categoria === null || evento.categoria === selectedFilter;
-
-    return dia && categoria;
-  }); 
 
   return (
     <div className="cronograma-wrapper">
       <div className="cronograma-card">
 
-        <h1 className="cronograma-title titulo-secao">{selectedDay}-FEIRA</h1>
+        <h1 className="cronograma-title titulo-secao">
+          <SplitText
+            key={selectedDay}
+            tag="span"
+            text={`${selectedDay}-FEIRA`}
+            textAlign="center"
+            delay={40}
+            duration={0.5}
+            ease="power3.out"
+            from={{ opacity: 0, y: 30 }}
+            to={{ opacity: 1, y: 0 }}
+            threshold={0}
+            rootMargin="0px"
+          />
+        </h1>
 
         <div className="days-row">
           {DAYS.map((day, idx) => {
@@ -87,16 +92,12 @@ export default function CronogramaFiltro() {
             eventosFiltrados.map((evento, index) => (
               <div className="evento-card" key={index}>
                 <h2>{evento.titulo}</h2>
-
                 <p>{evento.descricao}</p>
-
                 <span>{evento.categoria}</span>
               </div>
             ))
           ) : (
-            <p className="sem-eventos">
-              Nenhum evento
-            </p>
+            <p className="sem-eventos">Nenhum evento</p>
           )}
         </div> */}
 
@@ -104,4 +105,3 @@ export default function CronogramaFiltro() {
     </div>
   );
 }
-
