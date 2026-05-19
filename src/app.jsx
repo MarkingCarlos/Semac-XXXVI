@@ -5,6 +5,7 @@ import waveUp from '/waveup.svg'
 import ContagemRegressiva from "./components/contagemRegressiva/contagemRegressiva.jsx";
 import BtnContato from "./components/BtnContato/btnContato.jsx";
 import ModalPix from './components/ModalPix/ModalPix';
+import ModalPatrocinadores from './components/ModalPatrocinadores/ModalPatrocinadores';
 import './app.css'
 
 export function App() {
@@ -12,19 +13,21 @@ export function App() {
 
   return (
     <>
-      <div>
-          <img src={waveDown} className="WaveDown" alt="WaveDown logo" />
-          <img src={waveUp} className="WaveUp" alt="WaveDown logo" />
-          <a href="https://www.linkedin.com/company/semacsjrp/posts/?feedView=all" target="_blank">
-              <img src={logo} className="logo" alt="Vite logo"/>
-          </a>
+      {/* <div>
+            <img src={waveDown} className="WaveDown" alt="WaveDown logo" />
+            <img src={waveUp} className="WaveUp" alt="WaveDown logo" />
+            <a href="https://www.linkedin.com/company/semacsjrp/posts/?feedView=all" target="_blank">
+                <img src={logo} className="logo" alt="Vite logo"/>
+            </a>
       </div>
       <div class="card">
-        <ContagemRegressiva />
-      </div>
-      <div style={{marginTop: "3em"}}>
-        <BtnContato/>
-      </div>
+          <ContagemRegressiva />
+        </div>
+        <div style={{marginTop: "3em"}}>
+          <BtnContato/>
+      </div> */} 
+      <ModalPatrocinadores/>
+
     </>
   )
 }

@@ -1,0 +1,110 @@
+
+
+[
+    {
+        "logo":"../../src/assets/tests/image.png",
+        "name":"Visum",
+        "desc":"Empresa tal tal tal",
+        "category": "platina"
+
+    },
+        {
+        "logo":"../../src/assets/tests/image.png",
+        "name":"Visum",
+        "desc":"Empresa tal tal tal",
+        "category": "ouro"
+
+    },
+            {
+        "logo":"../../src/assets/tests/image.png",
+        "name":"Visum",
+        "desc":"Empresa tal tal tal",
+        "category": "ouro"
+
+    },
+            {
+        "logo":"../../src/assets/tests/image.png",
+        "name":"Visum",
+        "desc":"Empresa tal tal tal",
+        "category": "ouro"
+
+    },
+                {
+        "logo":"../../src/assets/tests/image.png",
+        "name":"Visum",
+        "desc":"Empresa tal tal tal",
+        "category": "prata"
+
+    },
+                {
+        "logo":"../../src/assets/tests/image.png",
+        "name":"Visum",
+        "desc":"Empresa x y z",
+        "category": "platina"
+
+    },
+
+    {
+        "logo":"../../src/assets/tests/image.png",
+        "name":"Visum",
+        "desc":"Empresa tal tal tal",
+        "category": "bronze"
+
+    },
+
+    {
+        "logo":"../../src/assets/tests/image.png",
+        "name":"Visum",
+        "desc":"Empresa tal tal tal",
+        "category": "prata"
+
+    },
+
+    {
+        "logo":"../../src/assets/tests/image.png",
+        "name":"Visum",
+        "desc":"Empresa tal tal tal",
+        "category": "prata"
+
+    },
+
+        {
+        "logo":"../../src/assets/tests/image.png",
+        "name":"Visum",
+        "desc":"Empresa tal tal tal",
+        "category": "bronze"
+
+    },
+
+        {
+        "logo":"../../src/assets/tests/image.png",
+        "name":"Visum",
+        "desc":"Empresa tal tal tal",
+        "category": "bronze"
+
+    },
+
+    {
+        "logo":"../../src/assets/tests/image.png",
+        "name":"Visum",
+        "desc":"Empresa tal tal tal",
+        "category": "prata"
+
+    },
+        {
+        "logo":"../../src/assets/tests/image.png",
+        "name":"Visum",
+        "desc":"Empresa tal tal tal",
+        "category": "bronze"
+
+    },
+        {
+        "logo":"../../src/assets/tests/image.png",
+        "name":"Visum",
+        "desc":"Empresa tal tal tal",
+        "category": "bronze"
+
+    }
+    
+
+]
