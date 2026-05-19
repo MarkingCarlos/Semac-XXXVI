@@ -1,0 +1,121 @@
+/* ── Fontes necessárias (Bungee · Barlow Condensed · IBM Plex Mono) ──── */
+@import url('https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+/* ── Animação: ponto pulsante do badge "EM CONSTRUÇÃO" ─────── */
+@keyframes pulsaPonto {
+  0%, 100% { opacity: 1;    box-shadow: 0 0 0 0   rgba(231,152,57,0.6); }
+  50%      { opacity: 0.85; box-shadow: 0 0 0 8px rgba(231,152,57,0);   }
+}
+
+/* ════════════════════════════════════════════════════════════
+   PÁGINA
+   ════════════════════════════════════════════════════════════ */
+.paginaCronograma {
+  margin-top: 4rem;
+  background: #730835;
+  width: 100%;
+  max-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Barlow Condensed', sans-serif;
+  align-self: flex-start; /* ancora à esquerda no container flex do body */
+  text-align: left;
+}
+
+/* ════════════════════════════════════════════════════════════
+   CABEÇALHO
+   ════════════════════════════════════════════════════════════ */
+.cabecalho {
+  padding: 28px 64px 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Linha superior: "XXXVI SEMAC · 2026" e "↳ PROGRAMAÇÃO" */
+.cabecalhoMeta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+/* Linha de navegação: abas + espaço flexível + badge de status */
+.cabecalhoNav {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Empurra o badge de status para a direita */
+.espacoFlexivel { flex: 1; }
+
+/* ── Badge "EM CONSTRUÇÃO" ─────────────────────────────────── */
+.badgeStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Ponto laranja pulsante ao lado do texto do badge */
+.badgeStatusPonto {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #E79839;
+  animation: pulsaPonto 1.6s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+/* ════════════════════════════════════════════════════════════
+   CONTEÚDO PRINCIPAL — grid de 2 colunas
+   ════════════════════════════════════════════════════════════ */
+.conteudoPrincipal {
+  flex: 1;
+  padding: 32px 64px 48px;
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 56px;
+  position: relative;
+  z-index: 1;
+  align-items: center;
+}
+
+/* ════════════════════════════════════════════════════════════
+   TIPOGRAFIA MONO (rótulos em fonte monospace)
+   ════════════════════════════════════════════════════════════ */
+.textoMono {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+
+.textoMonoLaranja  { color: #E79839; }
+.textoMonoEsmaecido { color: rgba(252,248,245,0.45); }
+.textoMonoPequeno  { font-size: 9px; }
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVIDADE
+   ════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .cabecalho {
+    padding: 20px 24px 0;
+  }
+
+  /* Empilha as duas labels do meta em coluna */
+  .cabecalhoMeta {
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+
+  /* Empilha o grid de colunas em mobile */
+  .conteudoPrincipal {
+    grid-template-columns: 1fr;
+    padding: 24px 24px 40px;
+    gap: 32px;
+  }
+}

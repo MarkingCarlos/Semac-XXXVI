@@ -1,0 +1,77 @@
+/* ── Container principal do countdown ──────────────────────── */
+.contagem {
+  display: flex;
+  align-items: flex-end;
+}
+.contagem--grande { gap: 18px; }
+.contagem--pequena { gap: 8px; }
+
+/* ── Bloco de cada unidade (Dias / Horas / Min / Seg) ──────── */
+.contagem-bloco {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.contagem-bloco--grande { min-width: 80px; }
+.contagem-bloco--pequeno { min-width: 44px; }
+
+/* ── Número grande ─────────────────────────────────────────── */
+.contagem-numero {
+  font-family: 'Bungee', sans-serif;
+  color: #FCF8F5;
+  line-height: 0.95;
+  letter-spacing: -1px;
+}
+.contagem--grande .contagem-numero { font-size: 96px; }
+.contagem--pequena .contagem-numero { font-size: 48px; }
+
+/* Animação de flip aplicada ao bloco dos segundos */
+.contagem-numero--flip {
+  animation: flip-segundo 1s ease infinite;
+}
+
+/* ── Linha fina entre número e rótulo ──────────────────────── */
+.contagem-divisor {
+  width: 100%;
+  height: 1px;
+  background: rgba(252,248,245,0.14);
+}
+.contagem--grande .contagem-divisor { margin: 8px 0 6px; }
+.contagem--pequena .contagem-divisor { margin: 4px 0 3px; }
+
+/* ── Rótulo de texto (DIAS, HORAS, MIN, SEG) ───────────────── */
+.contagem-rotulo {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  color: var(--AmareloAuxApoio);
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+.contagem--grande .contagem-rotulo { font-size: 15px; }
+.contagem--pequena .contagem-rotulo { font-size: 8px; }
+
+/* ── Separador ":" entre os blocos ────────────────────────── */
+.contagem-dois-pontos {
+  font-family: 'Bungee', sans-serif;
+  color: #E79839;
+  font-size: 22px;
+  padding-bottom: 12px;
+  animation: pisca-dois-pontos 3s infinite;
+}
+.contagem-dois-pontos--grande {
+  font-size: 45px;
+  padding-bottom: 23px;
+}
+
+/* ── Keyframes ─────────────────────────────────────────────── */
+@keyframes flip-segundo {
+  0%   { transform: translateY(0);    opacity: 1; }
+  45%  { transform: translateY(-8px); opacity: 0; }
+  55%  { transform: translateY(8px);  opacity: 0; }
+  100% { transform: translateY(0);    opacity: 1; }
+}
+
+@keyframes pisca-dois-pontos {
+  0%, 96%, 100% { opacity: 1;   }
+  97%, 99%      { opacity: 0.7; }
+}
