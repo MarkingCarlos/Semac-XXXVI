@@ -6,6 +6,7 @@ import Patrocinadores from "./pages/Patrocinadores/Patrocinadores.jsx";
 import Cronograma from "./pages/Cronograma/Cronograma.jsx";
 import Doacao from "./pages/Doacao/doacao.jsx";
 import SobreComissao from "./pages/SobreComissao/sobreComissao.jsx";
+import CronogramaBreve from "./pages/cronogramaBreve/CronogramaBreve.jsx";
 
 
 export function App() {
@@ -19,7 +20,7 @@ export function App() {
             <Sobre/>
         </div>
         <div>
-            <Cronograma/>
+            <CronogramaBreve/>
         </div>
         <div style={{marginTop: '2.5rem'}}>
             <Patrocinadores/>
