@@ -56,7 +56,17 @@ h1 {
   color: var(--Branco);
   margin-bottom: 0.5em;
   margin-top: 0;
-  /* [Responsividade] Título fluido: mínimo 1.2rem, escala com viewport (4vw),
-     máximo 3.2rem */
   font-size: clamp(1.2rem, 4vw, 3.2rem);
+}
+
+.encrypted-char {
+  opacity: 0.5;
+  color: var(--AmareloAuxApoio);
+  transition: color 0.1s, opacity 0.1s;
+}
+
+.revealed-char {
+  opacity: 1;
+  color: var(--Branco);
+  transition: color 0.15s, opacity 0.15s;
 }
