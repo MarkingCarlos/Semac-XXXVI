@@ -5,7 +5,6 @@
 }
 
 .container > h1 {
-    /* margin-left: 10px; */
     text-align: start;
 }
 
@@ -26,56 +25,89 @@
     white-space: pre-line;
 }
 
-.botoes-comissoes-container {
-    height: 80%;
+.lateral-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: end;
+    justify-content: flex-start;
+    gap: 24px;
+}
+
+.carrossel-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    overflow: hidden;
+}
+
+.botoes-comissoes-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
     gap: 30px;
 }
 
-.botoes-comissoes-container button {
+/* Botão do meio — comissão ativa */
+.botoes-comissoes-container .ativo {
     width: clamp(175px, 35vw, 250px);
-    font-size: clamp(0.7em, 2vw, 1.1em);
-    background-color: #8F395C;
+    font-size: clamp(0.8em, 2.5vw, 1.2em);
+    margin-right: 30px;
     transition: all ease 0.25s;
 }
 
-.botoes-comissoes-container button:hover {
-    margin-right: 30px;
-    font-size: clamp(0.8em, 2.5vw, 1.2em);
+/* Botões de cima e baixo — navegação */
+.botoes-comissoes-container .inativo {
+    width: clamp(150px, 28vw, 210px);
+    font-size: clamp(0.65em, 1.8vw, 1em);
+    opacity: 0.55;
+    cursor: pointer;
+    transition: all ease 0.25s;
+}
+
+.botoes-comissoes-container .inativo:hover {
+    opacity: 0.85;
+    margin-right: 12px;
     border: 2px solid var(--rosaMarketing);
 }
 
-.botoes-comissoes-container .ativo {
-    margin-right: 30px;
-    font-size: clamp(0.8em, 2.5vw, 1.2em);
-    background-color: var(--rosaMarketing);
+@keyframes slide-from-top {
+    from {
+        transform: translateY(-32px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-from-bottom {
+    from {
+        transform: translateY(32px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.rotating-cima {
+    animation: slide-from-top 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rotating-baixo {
+    animation: slide-from-bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .imagens-container {
     width: 100%;
-    /* background-color: #8F395C; */
     display: flex;
     justify-content: center;
 }
 
-.imagens-container img{
+.imagens-container img {
     border-radius: 50%;
     width: 40px;
     height: 40px;
     margin-left: -8px;
-}
-
-.imgFundo {
-    z-index: 0;
-}
-
-.imgMeio {
-    z-index: 1;
-}
-
-.imgTopo {
-    z-index: 2;
 }

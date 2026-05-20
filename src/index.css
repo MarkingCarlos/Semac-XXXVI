@@ -68,7 +68,9 @@ button {
 button:hover {
   border-color: var(--AmareloAuxApoio);
 }
-button:focus,
+button:focus:not(:focus-visible) {
+  outline: none;
+}
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
