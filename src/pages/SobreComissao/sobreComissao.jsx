@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./sobreComissao.css";
 import fotoGuilherme from '/src/assets/fotosPessoas/guilherme-foto.png';
 import SplitText from '../../components/cronogramaFiltro/SplitText';
+import AnimatedTooltip from '../../components/AnimatedTooltip/AnimatedTooltip';
 
 const placeholder = fotoGuilherme;
 
@@ -12,42 +13,70 @@ const comissoes = [
         nome: 'Presidência',
         cor: 'var(--vermelhoDiretoria)', // trocar pela cor real
         descricao: 'A comissão de presidência é responsável por coordenar todas as outras comissões e garantir que o evento ocorra da melhor forma possível.',
-        membros: [placeholder, placeholder, placeholder],
+        membros: [
+            { foto: placeholder, nome: 'Carlos Alberto', cargo: 'Diretor' },
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+        ],
     },
     {
         id: 'conteudo',
         nome: 'Conteúdo',
         cor: 'var(--azulConteudo)', // trocar pela cor real
         descricao: 'A comissão de conteúdo é responsável por criar conteúdos para o evento, além de entrar em contato com possíveis palestrantes para realizar o convite para palestrar na Semac.',
-        membros: [placeholder, placeholder, placeholder, placeholder],
+        membros: [
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+        ],
     },
     {
         id: 'apoio',
         nome: 'Apoio',
         cor: 'var(--AmareloAuxApoio)', // trocar pela cor real
         descricao: 'A comissão de apoio é responsável por dar apoio na organização do evento, marcando a presença dos participantes e ajudando no Coffee Break.',
-        membros: [placeholder, placeholder, placeholder, placeholder],
+        membros: [
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+        ],
     },
     {
         id: 'marketing',
         nome: 'Marketing',
         cor: 'var(--rosaMarketing)', // trocar pela cor real
         descricao: 'A comissão de marketing é responsável por divulgar o evento nas redes sociais e criar artes para a divulgação da Semac.',
-        membros: [placeholder, placeholder, placeholder],
+        membros: [
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+        ],
     },
     {
         id: 'desenvolvimento',
         nome: 'Desenvolvimento',
         cor: 'var(--rosaMarketing)', // trocar pela cor real
         descricao: 'A comissão de desenvolvimento é responsável por desenvolver os sistemas para o evento, como o site que você está vendo agora.',
-        membros: [placeholder, placeholder, placeholder, placeholder, placeholder],
+        membros: [
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+        ],
     },
     {
         id: 'patrocinio',
         nome: 'Patrocínio',
         cor: '#94499E', // trocar pela cor real
         descricao: 'A comissão de patrocínio é responsável por conseguir patrocinadores para o evento, garantindo recursos para a realização da Semac.',
-        membros: [placeholder, placeholder, placeholder],
+        membros: [
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
+        ],
     },
 ];
 
@@ -116,16 +145,7 @@ const SobreComissao = () => {
                             ))}
                         </div>
                     </div>
-                    <div className="imagens-container">
-                        {ativa.membros.map((foto, i) => (
-                            <img
-                                key={i}
-                                src={foto}
-                                alt={`membro ${i + 1}`}
-                                style={{ zIndex: i }}
-                            />
-                        ))}
-                    </div>
+                    <AnimatedTooltip key={ativa.id} membros={ativa.membros} />
                 </div>
             </div>
         </div>
