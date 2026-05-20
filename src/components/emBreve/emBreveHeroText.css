@@ -1,0 +1,91 @@
+/* ── Pequeno texto acima do título (// Programação) ─────────── */
+.textoSupratitulo {
+  font-family: 'Bungee', sans-serif;
+  font-weight: 900;
+  font-size: 14px;
+  color: #E79839;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  margin: 0 0 14px;
+}
+
+/* ── Título principal "EM BREVE" ────────────────────────────── */
+.tituloPrincipal {
+  font-family: 'Bungee', sans-serif;
+  /* clamp: mín 64px → escala com a viewport → máx 132px */
+  font-size: clamp(64px, 10vw, 132px);
+  line-height: 0.85;
+  color: var(--Branco);
+  letter-spacing: -3px;
+  margin: 0;
+}
+
+/* Palavra em laranja dentro do título ("BREVE") */
+.tituloDestaque {
+  color: #E79839;
+}
+
+/* ── Barra decorativa laranja abaixo do título ───────────────── */
+.barraLaranja {
+  width: 80px;
+  height: 3px;
+  background: #E79839;
+  margin: 28px 0 22px;
+}
+
+/* ── Parágrafo de descrição ─────────────────────────────────── */
+.descricao {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 1.45;
+  color: var(--Branco);
+  max-width: 500px;
+  margin: 0;
+}
+
+/* Trecho esmaecido dentro da descrição */
+.descricaoEsmaecida {
+  color: rgba(252,248,245,0.65);
+}
+
+/* ── Área com os botões de ação ─────────────────────────────── */
+.grupoDeAcoes {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+/* Base compartilhada entre todos os botões */
+.botao {
+  padding: 13px 22px;
+  border-radius: 999px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+.botao:hover  { opacity: 0.88; transform: translateY(-1px); }
+.botao:active { transform: translateY(0); }
+
+/* Botão laranja sólido (ação principal) */
+.botaoPrimario {
+  background: #E79839;
+  color: #3D0118;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Botão transparente com borda fina (ação secundária) */
+.botaoFantasma {
+  background: transparent;
+  color: #FCF8F5;
+  border: 1px solid rgba(252,248,245,0.14);
+}

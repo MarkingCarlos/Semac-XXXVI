@@ -1,0 +1,127 @@
+.bordaBrilhante {
+
+  position: relative;
+  border-radius: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  z-index: 0; /* Cria um contexto de empilhamento */
+}
+
+.bordaBrilhante:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 6px 12px rgba(115, 8, 53, 0.4);
+}
+
+.bordaBrilhante::before,
+.bordaBrilhante::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 15px;
+  background: radial-gradient(
+          circle 350px at var(--mouse-x, 0) var(--mouse-y, 0),
+          rgba(255, 255, 255, 0.9) 0%,
+          var(--Branco) 15%,
+          transparent 50%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.bordaBrilhante::after {
+  filter: blur(20px);
+  z-index: -2;
+}
+
+.bordaBrilhante:hover::before,
+.bordaBrilhante:hover::after {
+  opacity: 1;
+}
+
+
+/* ── Container principal do card ────────────────────────────── */
+.cardInfo {
+  border-radius: 15px;
+  background-color: var(--vermelhoAuxDiretoria);
+  position: relative; /* necessário para BracketCorners */
+  border: 1px solid rgba(252,248,245,0.14);
+  padding: 35px 35px 30px;
+  box-shadow: 0px 4px 28px rgba(0, 0, 0, 0.6);
+}
+
+/* ── Rótulo de seção (texto pequeno em caixa-alta) ───────────── */
+.rotulo {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--Branco);
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Variante laranja do rótulo */
+.rotuloLaranja {
+  color: var(--AmareloAuxApoio);
+  font-size: 13px;
+}
+
+/* Variante menor usada nas estatísticas */
+.rotuloMinusculo {
+  font-size: 1rem;
+  margin-top: 5px;
+}
+
+/* ── Data do anúncio dos palestrantes ───────────────────────── */
+.dataAnuncio {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--Branco);
+  letter-spacing: 1.5px;
+  margin: 5px 0 28px;
+  /*margin-bottom: 28px;*/
+}
+
+/* ── Espaçadores verticais ──────────────────────────────────── */
+.espacadorPequeno { height: 15px; }
+.espacadorMedio   { height: 28px; }
+.espacadorGrande  { height: 40px; }
+
+/* ── Linha divisória horizontal ─────────────────────────────── */
+.linhaDivisoria {
+  height: 1px;
+  background: rgba(252,248,245,0.14);
+  margin-bottom: 23px;
+}
+
+/* ── Painel de estatísticas (grade de 3 colunas) ────────────── */
+.painelEstatisticas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 18px 20px;
+  border: 1px solid rgba(252,248,245,0.08);
+  border-radius: 10px;
+}
+
+/* ── Item individual dentro do painel ───────────────────────── */
+.itemEstatistica {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Número grande em laranja (ex: "25+", "5", "3") */
+.numeroEstatistica {
+  font-family: 'Bungee', sans-serif;
+  font-size: 3rem;
+  color: #E79839;
+  line-height: 1;
+}
