@@ -20,7 +20,9 @@
 }
 
 .descricao-container p {
-    font-size: clamp(0.8em, 2vw, 1.2em);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: bold;
+    font-size: clamp(0.8em, 2vw, 2em);
     text-align: justify;
     white-space: pre-line;
 }

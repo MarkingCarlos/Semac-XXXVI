@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./sobreComissao.css";
 import fotoGuilherme from '/src/assets/fotosPessoas/guilherme-foto.png';
 import SplitText from '../../components/cronogramaFiltro/SplitText';
+import TextHighlight from '../../components/TextHighlight/TextHighlight.jsx';
 
 const placeholder = fotoGuilherme;
 
@@ -18,7 +19,12 @@ const comissoes = [
         id: 'conteudo',
         nome: 'Conteúdo',
         cor: 'var(--azulConteudo)', // trocar pela cor real
-        descricao: 'A comissão de conteúdo é responsável por criar conteúdos para o evento, além de entrar em contato com possíveis palestrantes para realizar o convite para palestrar na Semac.',
+        descricao: 'Comissão responsável por planejar a programação da SEMAC, desde os temas das palestras e minicursos até os demais eventos proporcionados durante a semana. Ao longo do ano, os membros do conteúdo buscam por pessoas qualificadas para as atividades, elaboram os convites e mantém contato até o dia de recebê-las.',
+        highlight: {
+            phrase: 'programação da SEMAC',
+            delay: 400,
+            color: 'var(--azulConteudo)',
+        },
         membros: [placeholder, placeholder, placeholder, placeholder],
     },
     {
@@ -50,6 +56,28 @@ const comissoes = [
         membros: [placeholder, placeholder, placeholder],
     },
 ];
+
+function renderDescricao(comissao) {
+    const { descricao, highlight, id } = comissao;
+    if (!highlight) return <p>{descricao}</p>;
+
+    const idx = descricao.indexOf(highlight.phrase);
+    const before = descricao.slice(0, idx);
+    const after = descricao.slice(idx + highlight.phrase.length);
+
+    return (
+        <p>
+            {before}
+            <TextHighlight
+                key={id}
+                text={highlight.phrase}
+                delay={highlight.delay}
+                color={highlight.color}
+            />
+            {after}
+        </p>
+    );
+}
 
 const SobreComissao = () => {
     const [offset, setOffset] = useState(0);
@@ -96,7 +124,7 @@ const SobreComissao = () => {
             </h1>
             <div className="conteudo-container">
                 <div className="descricao-container">
-                    <p>{ativa.descricao}</p>
+                    {renderDescricao(ativa)}
                 </div>
                 <div className="lateral-container">
                     <div className="carrossel-wrapper">

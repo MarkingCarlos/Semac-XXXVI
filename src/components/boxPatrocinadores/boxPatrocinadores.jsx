@@ -1,7 +1,16 @@
 import './boxPatrocinadores.css';
 import exemploLogo from '../../assets/exemplo.png';
+import LogoSlider from '../LogoSlider/LogoSlider.jsx';
 
 export default function Patrocinadores() {
+    const apoiadores = [
+        { nome: "nome", logo: exemploLogo },
+        { nome: "nome", logo: exemploLogo },
+        { nome: "nome", logo: exemploLogo },
+        { nome: "nome", logo: exemploLogo },
+        { nome: "nome", logo: exemploLogo },
+    ];
+
     const patrocinadores = [
     {
     tier: "PLATINA",
@@ -48,6 +57,13 @@ export default function Patrocinadores() {
           </div>
         </div>
       ))}
+
+      {apoiadores.length > 0 && (
+        <div className="tier-apoiadores">
+          <h2 className="tier-title">APOIADORES</h2>
+          <LogoSlider logos={apoiadores} />
+        </div>
+      )}
     </section>
   );
 

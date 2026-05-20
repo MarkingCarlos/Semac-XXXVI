@@ -32,5 +32,5 @@ export const DATA_ANUNCIO = new Date('2026-07-15T09:00:00-03:00');
 export const STATS = [
   { valor: '80+', label: 'HORAS DE CONTEÚDO'  },
   { valor: '4',   label: 'DIAS'       },
-  { valor: '9',   label: 'MINE-CURSO' },
+  { valor: '9',   label: 'MINICURSO' },
 ];
