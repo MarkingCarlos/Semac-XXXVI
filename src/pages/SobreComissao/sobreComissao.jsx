@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./sobreComissao.css";
 import fotoGuilherme from '/src/assets/fotosPessoas/guilherme-foto.png';
 import SplitText from '../../components/cronogramaFiltro/SplitText';
-import AnimatedTooltip from '../../components/AnimatedTooltip/AnimatedTooltip';
+import TextHighlight from '../../components/TextHighlight/TextHighlight.jsx';
 
 const placeholder = fotoGuilherme;
 
@@ -13,72 +13,71 @@ const comissoes = [
         nome: 'Presidência',
         cor: 'var(--vermelhoDiretoria)', // trocar pela cor real
         descricao: 'A comissão de presidência é responsável por coordenar todas as outras comissões e garantir que o evento ocorra da melhor forma possível.',
-        membros: [
-            { foto: placeholder, nome: 'Carlos Alberto', cargo: 'Diretor' },
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-        ],
+        membros: [placeholder, placeholder, placeholder],
     },
     {
         id: 'conteudo',
         nome: 'Conteúdo',
         cor: 'var(--azulConteudo)', // trocar pela cor real
-        descricao: 'A comissão de conteúdo é responsável por criar conteúdos para o evento, além de entrar em contato com possíveis palestrantes para realizar o convite para palestrar na Semac.',
-        membros: [
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-        ],
+        descricao: 'Comissão responsável por planejar a programação da SEMAC, desde os temas das palestras e minicursos até os demais eventos proporcionados durante a semana. Ao longo do ano, os membros do conteúdo buscam por pessoas qualificadas para as atividades, elaboram os convites e mantém contato até o dia de recebê-las.',
+        highlight: {
+            phrase: 'programação da SEMAC',
+            delay: 400,
+            color: 'var(--azulConteudo)',
+        },
+        membros: [placeholder, placeholder, placeholder, placeholder],
     },
     {
         id: 'apoio',
         nome: 'Apoio',
         cor: 'var(--AmareloAuxApoio)', // trocar pela cor real
         descricao: 'A comissão de apoio é responsável por dar apoio na organização do evento, marcando a presença dos participantes e ajudando no Coffee Break.',
-        membros: [
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-        ],
+        membros: [placeholder, placeholder, placeholder, placeholder],
     },
     {
         id: 'marketing',
         nome: 'Marketing',
         cor: 'var(--rosaMarketing)', // trocar pela cor real
         descricao: 'A comissão de marketing é responsável por divulgar o evento nas redes sociais e criar artes para a divulgação da Semac.',
-        membros: [
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-        ],
+        membros: [placeholder, placeholder, placeholder],
     },
     {
         id: 'desenvolvimento',
         nome: 'Desenvolvimento',
         cor: 'var(--rosaMarketing)', // trocar pela cor real
         descricao: 'A comissão de desenvolvimento é responsável por desenvolver os sistemas para o evento, como o site que você está vendo agora.',
-        membros: [
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-        ],
+        membros: [placeholder, placeholder, placeholder, placeholder, placeholder],
     },
     {
         id: 'patrocinio',
         nome: 'Patrocínio',
         cor: '#94499E', // trocar pela cor real
         descricao: 'A comissão de patrocínio é responsável por conseguir patrocinadores para o evento, garantindo recursos para a realização da Semac.',
-        membros: [
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-            { foto: placeholder, nome: 'placeholder', cargo: 'placeholder' },
-        ],
+        membros: [placeholder, placeholder, placeholder],
     },
 ];
+
+function renderDescricao(comissao) {
+    const { descricao, highlight, id } = comissao;
+    if (!highlight) return <p>{descricao}</p>;
+
+    const idx = descricao.indexOf(highlight.phrase);
+    const before = descricao.slice(0, idx);
+    const after = descricao.slice(idx + highlight.phrase.length);
+
+    return (
+        <p>
+            {before}
+            <TextHighlight
+                key={id}
+                text={highlight.phrase}
+                delay={highlight.delay}
+                color={highlight.color}
+            />
+            {after}
+        </p>
+    );
+}
 
 const SobreComissao = () => {
     const [offset, setOffset] = useState(0);
@@ -125,7 +124,7 @@ const SobreComissao = () => {
             </h1>
             <div className="conteudo-container">
                 <div className="descricao-container">
-                    <p>{ativa.descricao}</p>
+                    {renderDescricao(ativa)}
                 </div>
                 <div className="lateral-container">
                     <div className="carrossel-wrapper">
@@ -145,7 +144,16 @@ const SobreComissao = () => {
                             ))}
                         </div>
                     </div>
-                    <AnimatedTooltip key={ativa.id} membros={ativa.membros} />
+                    <div className="imagens-container">
+                        {ativa.membros.map((foto, i) => (
+                            <img
+                                key={i}
+                                src={foto}
+                                alt={`membro ${i + 1}`}
+                                style={{ zIndex: i }}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>

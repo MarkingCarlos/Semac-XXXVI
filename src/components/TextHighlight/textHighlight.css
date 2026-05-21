@@ -1,0 +1,30 @@
+@keyframes text-highlight {
+    from {
+        background-size: 0% 100%;
+    }
+    to {
+        background-size: 100% 100%;
+    }
+}
+
+.text-highlight {
+    background-color: transparent;
+    background-image: linear-gradient(
+        var(--highlight-color, #E79839),
+        var(--highlight-color, #E79839)
+    );
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: 0% 100%;
+    border-radius: 4px;
+    padding: 0 3px;
+    color: inherit;
+
+    animation: text-highlight var(--highlight-duration, 2000ms) ease-out forwards;
+    animation-delay: var(--highlight-delay, 0ms);
+    transition: color var(--highlight-duration, 2000ms) ease-out var(--highlight-delay, 0ms);
+}
+
+.text-highlight:where([style*='--highlight-text-end-color']) {
+    color: var(--highlight-text-end-color);
+}

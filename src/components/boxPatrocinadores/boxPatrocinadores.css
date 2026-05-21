@@ -77,6 +77,10 @@
   border-radius: 1px;
 }
 
+.tier-apoiadores {
+  width: 100%;
+}
+
 /* ── Mobile pequeno — iPhone 14 (≤ 600px) ───────────────────────────── */
 @media (max-width: 600px) {
   .patrocinadores-section {
