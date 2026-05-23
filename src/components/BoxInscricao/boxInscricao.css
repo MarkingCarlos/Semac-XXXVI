@@ -1,0 +1,275 @@
+/* =================================================================
+   boxInscricao.css — estilos do box de inscrição/login
+   Subcomponentes: CampoTexto, CampoSenha, Indicador
+   ================================================================= */
+
+/* ── Box container ───────────────────────────────────────────── */
+
+.box-inscricao {
+    background: rgba(115, 8, 53, 0.55);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
+    border-radius: 16px;
+    padding: 2rem;
+    width: 100%;
+    color: var(--Branco);
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* ── Abas (BoxInscricao) ─────────────────────────────────────── */
+
+.box-abas {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.aba {
+    background: none;
+    border: none;
+    border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.35);
+    font-family: 'Bungee', sans-serif;
+    font-size: 1.5rem;
+    padding: 0 0 0.5rem 0;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.aba-ativa {
+    color: var(--Branco);
+    border-bottom-color: var(--AmareloAuxApoio);
+}
+
+/* ── Formulário ──────────────────────────────────────────────── */
+
+.box-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* ── CampoTexto / CampoSenha ─────────────────────────────────── */
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.campo-label {
+    font-size: 1.25rem;
+    font-family: 'Montserrat', sans-serif;
+    text-align: left;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.8;
+}
+
+.campo-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid var(--AmareloAuxApoio);
+    color: var(--Branco);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.3rem 0;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+}
+.campo-input:focus       { border-bottom-color: var(--Branco); }
+.campo-input::placeholder { color: rgba(255, 255, 255, 0.25); }
+
+/* ── Indicador de requisito de senha ─────────────────────────── */
+
+.senha-validacao {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 0.35rem;
+}
+
+.indicador {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.4);
+    transition: color 0.25s;
+}
+
+.indicador-ok { color: var(--AmareloAuxApoio); }
+
+.indicador-box {
+    width: 10px;
+    height: 10px;
+    border: 1.5px solid currentColor;
+    border-radius: 2px;
+    flex-shrink: 0;
+    transition: background-color 0.25s;
+}
+
+.indicador-ok .indicador-box { background-color: var(--AmareloAuxApoio); }
+
+/* ── Seletor de camiseta ─────────────────────────────────────── */
+
+.camisa-secao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.camisa-modelos {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.btn-modelo {
+    flex: 1;
+    padding: 0.8rem 0.5rem;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.12);
+    background-color: rgba(0, 0, 0, 0.2);
+    color: rgba(255, 255, 255, 0.45);
+    font-family: 'Bungee', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-modelo-ativo {
+    border-color: var(--AmareloAuxApoio);
+    background-color: rgba(231, 152, 57, 0.18);
+    color: var(--Branco);
+}
+
+.camisa-tamanhos {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-tamanho {
+    flex: 1;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.12);
+    background-color: rgba(0, 0, 0, 0.2);
+    color: rgba(255, 255, 255, 0.45);
+    font-family: 'Bungee', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-tamanho-ativo {
+    border-color: #8B459E;
+    background-color: #8B459E;
+    color: var(--Branco);
+}
+
+.camisa-aviso {
+    text-align: left;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+/* ── Botão de submissão ──────────────────────────────────────── */
+
+.btn-confirmar {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    background-color: var(--AmareloAuxApoio);
+    color: var(--Branco);
+    font-family: 'Bungee', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: filter 0.2s;
+    margin-top: 0.25rem;
+}
+.btn-confirmar:hover { filter: brightness(1.1); }
+
+/* ── Wide monitors ───────────────────────────────────────────── */
+@media (min-width: 1440px) {
+    .box-inscricao {
+        padding: 3rem;
+    }
+
+    .campo-label {
+        font-size: 1.4rem;
+    }
+
+    .aba {
+        font-size: 1.7rem;
+    }
+
+    .btn-modelo,
+    .btn-tamanho,
+    .btn-confirmar {
+        font-size: 1.7rem;
+    }
+}
+
+/* ── Mobile ──────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+    .box-inscricao {
+        padding: 1rem;
+        border-radius: 12px;
+        min-width: 90vw;
+    }
+
+    .box-abas {
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .aba {
+        font-size: 1.1rem;
+    }
+
+    .box-form {
+        gap: 0.7rem;
+    }
+
+    .campo-label {
+        font-size: 0.85rem;
+    }
+
+    .campo-input {
+        font-size: 0.9rem;
+    }
+
+    .indicador {
+        font-size: 0.4rem;
+    }
+
+    .btn-modelo {
+        font-size: 0.7rem;
+        padding: 0.6rem 0.4rem;
+    }
+
+    .btn-tamanho {
+        font-size: 0.6rem;
+        border-radius: 8px;
+    }
+
+    .camisa-aviso {
+        font-size: 0.7rem;
+    }
+
+    .btn-confirmar {
+        font-size: 1.1rem;
+        padding: 0.85rem;
+    }
+}

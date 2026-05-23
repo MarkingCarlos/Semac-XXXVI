@@ -1,0 +1,53 @@
+.inscricao-container {
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+.inscricao-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url('../../assets/fotosInscricao.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 0;
+}
+
+
+/* Box flutua sobre a imagem, centralizado na página */
+.inscricao-lado-direito {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    width: 70vw;
+}
+
+/* ── Wide monitors ───────────────────────────────────────────── */
+@media (min-width: 1440px) {
+    .inscricao-lado-direito {
+        width: auto;
+    }
+}
+
+/* ── Tablet ──────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .inscricao-lado-direito {
+        width: auto;
+    }
+}
+
+/* ── Mobile ──────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+    .inscricao-lado-direito {
+        width: auto;
+        max-height: 90svh;
+        overflow-y: auto;
+    }
+}

@@ -54,4 +54,7 @@ public class Pessoa {
 
     @OneToMany(mappedBy = "participante")
     private List<GanhadoresSorteio> ganhadoresSorteio = new ArrayList<>();
+
+    @OneToMany(mappedBy = "pessoa")
+    private List<CamisaPedido> camisaPedidos = new ArrayList<>();
 }

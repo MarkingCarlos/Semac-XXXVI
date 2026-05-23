@@ -1,5 +1,15 @@
 import { render } from 'preact'
 import './index.css'
 import { App } from './app.jsx'
+import { Switch, Route } from 'wouter'
+import Admin from './pages/Admin/Admin.jsx'
+import Inscricao from "./pages/Inscricao/Inscricao.jsx";
 
-render(<App />, document.getElementById('app'))
+render(
+    <Switch>
+        <Route path="/admin"><Admin /></Route>
+        <Route path="/inscricao"><Inscricao /></Route>
+        <Route><App /></Route>
+    </Switch>,
+    document.getElementById('app')
+)
