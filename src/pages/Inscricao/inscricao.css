@@ -19,6 +19,27 @@
 }
 
 
+/* ── Botão voltar ────────────────────────────────────────────── */
+
+.btn-voltar {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: var(--Branco);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: background 0.2s;
+}
+.btn-voltar:hover { background: rgba(255, 255, 255, 0.22); }
+
 /* Box flutua sobre a imagem, centralizado na página */
 .inscricao-lado-direito {
     position: absolute;

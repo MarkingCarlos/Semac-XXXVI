@@ -37,6 +37,7 @@ export default function BoxInscricao() {
         maiusculo: /[A-Z]/.test(form.senha),
         minimo8:  form.senha.length >= 8,
     }
+    const senhaValida = senhaOk.especial && senhaOk.maiusculo && senhaOk.minimo8
 
     function setField(campo, valor) {
         setForm(prev => ({ ...prev, [campo]: valor }))
@@ -80,23 +81,27 @@ export default function BoxInscricao() {
                         label="Nome Completo"
                         value={form.nome}
                         onInput={e => setField('nome', e.target.value)}
+                        required
                     />
                     <CampoTexto
                         label="CPF"
                         value={form.cpf}
                         onInput={e => setField('cpf', mascaraCPF(e.target.value))}
                         inputMode="numeric"
+                        required
                     />
                     <CampoTexto
                         label="E-mail"
                         type="email"
                         value={form.email}
                         onInput={e => setField('email', e.target.value)}
+                        required
                     />
                     <CampoSenha
                         value={form.senha}
                         onInput={e => setField('senha', e.target.value)}
                         senhaOk={senhaOk}
+                        required
                     />
 
                     <div class="camisa-secao">
@@ -133,7 +138,7 @@ export default function BoxInscricao() {
                         </span>
                     </div>
 
-                    <button type="submit" class="btn-confirmar">
+                    <button type="submit" class="btn-confirmar" disabled={!senhaValida}>
                         Confirmar Inscrição
                     </button>
                 </form>
@@ -147,10 +152,12 @@ export default function BoxInscricao() {
                         type="email"
                         value={form.email}
                         onInput={e => setField('email', e.target.value)}
+                        required
                     />
                     <CampoSenha
                         value={form.senha}
                         onInput={e => setField('senha', e.target.value)}
+                        required
                     />
                     <button type="submit" class="btn-confirmar">
                         Entrar
@@ -164,7 +171,7 @@ export default function BoxInscricao() {
 // ── Subcomponentes ──────────────────────────────────────────────
 
 // Campo de texto genérico com label uppercase e borda inferior
-function CampoTexto({ label, type = 'text', value, onInput, inputMode }) {
+function CampoTexto({ label, type = 'text', value, onInput, inputMode, required }) {
     return (
         <div class="campo">
             <label class="campo-label">{label}</label>
@@ -174,6 +181,7 @@ function CampoTexto({ label, type = 'text', value, onInput, inputMode }) {
                 value={value}
                 onInput={onInput}
                 inputMode={inputMode}
+                required={required}
             />
         </div>
     )
@@ -181,7 +189,7 @@ function CampoTexto({ label, type = 'text', value, onInput, inputMode }) {
 
 // Campo de senha com indicadores de validação abaixo.
 // `senhaOk` é opcional — quando ausente (aba "Entrar"), os indicadores são omitidos.
-function CampoSenha({ value, onInput, senhaOk }) {
+function CampoSenha({ value, onInput, senhaOk, required }) {
     return (
         <div class="campo">
             <label class="campo-label">Senha</label>
@@ -190,6 +198,7 @@ function CampoSenha({ value, onInput, senhaOk }) {
                 type="password"
                 value={value}
                 onInput={onInput}
+                required={required}
             />
             {senhaOk && (
                 <div class="senha-validacao">

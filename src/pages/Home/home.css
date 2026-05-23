@@ -83,6 +83,26 @@
     animation: waveFloatUp 5s ease-in-out infinite;
 }
 
+.botao-inscricao{
+    position: absolute;
+    width: 12vw;
+    top: 90%;
+    left: 85%;
+    z-index: 4;
+    padding: 1rem;
+    background-color: var(--AmareloAuxApoio);
+
+}
+.botao-entrar{
+    position: absolute;
+    width: 13vw;
+    top: 3%;
+    left: 85%;
+    z-index: 4;
+    padding: 1rem;
+    background-color: var(--Branco);
+    color: var(--vermelhoAuxDiretoria);
+}
 .WaveDownHome {
     position: absolute;
     bottom: 0;

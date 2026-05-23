@@ -72,7 +72,7 @@
 .campo-input {
     background: transparent;
     border: none;
-    border-bottom: 1.5px solid var(--AmareloAuxApoio);
+    border-bottom: 2px solid var(--AmareloAuxApoio);
     color: var(--Branco);
     font-family: 'Montserrat', sans-serif;
     font-size: 1rem;
@@ -104,7 +104,7 @@
     transition: color 0.25s;
 }
 
-.indicador-ok { color: var(--AmareloAuxApoio); }
+.indicador-ok { color: #4caf50; }
 
 .indicador-box {
     width: 10px;
@@ -115,7 +115,9 @@
     transition: background-color 0.25s;
 }
 
-.indicador-ok .indicador-box { background-color: var(--AmareloAuxApoio); }
+.indicador-ok .indicador-box {
+    background-color: #4caf50;
+}
 
 /* ── Seletor de camiseta ─────────────────────────────────────── */
 
@@ -198,9 +200,10 @@
     transition: filter 0.2s;
     margin-top: 0.25rem;
 }
-.btn-confirmar:hover { filter: brightness(1.1); }
+.btn-confirmar:hover    { filter: brightness(1.1); }
+.btn-confirmar:disabled { opacity: 0.45; cursor: not-allowed; filter: none; }
 
-/* ── Wide monitors ───────────────────────────────────────────── */
+/* ── monitor largo ───────────────────────────────────────────── */
 @media (min-width: 1440px) {
     .box-inscricao {
         padding: 3rem;

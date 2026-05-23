@@ -1,9 +1,32 @@
+import { useRef, useEffect } from 'preact/hooks'
+import { useLocation } from 'wouter'
+import gsap from 'gsap'
 import './inscricao.css'
 import BoxInscricao from '../../components/BoxInscricao/BoxInscricao.jsx'
 
 const Inscricao = () => {
+    const containerRef = useRef(null)
+    const [, navigate] = useLocation()
+
+    useEffect(() => {
+        gsap.fromTo(containerRef.current,
+            { x: '100vw' },
+            { x: 0, duration: 0.5, ease: 'power2.inOut' }
+        )
+    }, [])
+
+    function voltar() {
+        gsap.to(containerRef.current, {
+            x: '100vw',
+            duration: 0.5,
+            ease: 'power2.inOut',
+            onComplete: () => navigate('/')
+        })
+    }
+
     return (
-        <div className="inscricao-container">
+        <div className="inscricao-container" ref={containerRef}>
+            <button className="btn-voltar" onClick={voltar}>&#8592; Voltar</button>
             <div className="inscricao-lado-direito">
                 <BoxInscricao />
             </div>
