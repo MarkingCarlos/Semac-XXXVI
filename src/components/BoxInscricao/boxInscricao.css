@@ -160,14 +160,12 @@
 
 .btn-tamanho {
     flex: 1;
-    aspect-ratio: 1;
     border-radius: 10px;
     border: 2px solid rgba(255, 255, 255, 0.12);
     background-color: rgba(0, 0, 0, 0.2);
     color: rgba(255, 255, 255, 0.45);
     font-family: 'Bungee', sans-serif;
     font-size: 1.5rem;
-    letter-spacing: 0.03em;
     cursor: pointer;
     transition: all 0.2s;
 }
@@ -182,6 +180,27 @@
     text-align: left;
     font-size: 1rem;
     color: rgba(255, 255, 255, 0.55);
+}
+
+/* ── Feedback de submissão ───────────────────────────────────── */
+
+.feedback {
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: center;
+    margin: 0;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+}
+
+.feedback-sucesso {
+    background: rgba(76, 175, 80, 0.15);
+    color: #4caf50;
+}
+
+.feedback-erro {
+    background: rgba(244, 67, 54, 0.15);
+    color: #f44336;
 }
 
 /* ── Botão de submissão ──────────────────────────────────────── */
@@ -210,7 +229,7 @@
     }
 
     .campo-label {
-        font-size: 1.4rem;
+        font-size: 1rem;
     }
 
     .aba {

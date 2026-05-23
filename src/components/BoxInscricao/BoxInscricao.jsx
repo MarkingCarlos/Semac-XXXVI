@@ -1,14 +1,16 @@
 // Box de inscrição e login — renderizado na página /inscricao.
 //
 // Duas abas:
-//   "INSCREVER-SE" → formulário completo (nome, cpf, email, senha, camisa)
+//   "INSCREVER-SE" → formulário completo (nome, cpf, ra, email, senha, camisa)
 //   "ENTRAR"       → formulário simplificado (email, senha)
 //
 // Os dados mapeiam diretamente para os modelos Java:
-//   Pessoa (nome, cpf, email, senha) + CamisaPedido (modelo, tamanho)
+//   Pessoa (nome, cpf, ra, email, senha) + CamisaPedido (modelo, tamanho)
 
 import { useState } from 'preact/hooks'
 import './boxInscricao.css'
+
+const API_URL = 'http://localhost:8080'
 
 const MODELOS  = ['BABY_LOOK', 'NORMAL']
 const TAMANHOS = ['PP', 'P', 'M', 'G', 'GG']
@@ -27,9 +29,12 @@ function mascaraCPF(valor) {
 export default function BoxInscricao() {
     const [aba, setAba] = useState('inscricao')
 
-    const [form, setForm] = useState({ nome: '', cpf: '', email: '', senha: '' })
+    const [form, setForm] = useState({ nome: '', cpf: '', ra: '', email: '', senha: '' })
     const [modelo,  setModelo]  = useState('BABY_LOOK')
     const [tamanho, setTamanho] = useState('M')
+
+    const [enviando, setEnviando] = useState(false)
+    const [feedback, setFeedback] = useState(null) // { tipo: 'sucesso'|'erro', msg: string }
 
     // Validação em tempo real dos requisitos da senha
     const senhaOk = {
@@ -43,10 +48,39 @@ export default function BoxInscricao() {
         setForm(prev => ({ ...prev, [campo]: valor }))
     }
 
-    function handleSubmitInscricao(e) {
+    async function handleSubmitInscricao(e) {
         e.preventDefault()
-        // TODO: POST /api/pessoas (Pessoa) + POST /api/camisa-pedido (CamisaPedido)
-        console.log({ ...form, modelo, tamanho })
+        setEnviando(true)
+        setFeedback(null)
+
+        try {
+            const res = await fetch(`${API_URL}/api/inscricao`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nome:    form.nome,
+                    cpf:     form.cpf.replace(/\D/g, ''),
+                    ra:      form.ra || null,
+                    email:   form.email,
+                    senha:   form.senha,
+                    modelo,
+                    tamanho,
+                }),
+            })
+
+            if (res.status === 201) {
+                setFeedback({ tipo: 'sucesso', msg: 'Inscrição realizada com sucesso!' })
+                setForm({ nome: '', cpf: '', ra: '', email: '', senha: '' })
+            } else if (res.status === 409) {
+                setFeedback({ tipo: 'erro', msg: 'CPF ou e-mail já cadastrado.' })
+            } else {
+                setFeedback({ tipo: 'erro', msg: 'Erro ao realizar inscrição. Tente novamente.' })
+            }
+        } catch {
+            setFeedback({ tipo: 'erro', msg: 'Não foi possível conectar ao servidor.' })
+        } finally {
+            setEnviando(false)
+        }
     }
 
     function handleSubmitEntrar(e) {
@@ -89,6 +123,12 @@ export default function BoxInscricao() {
                         onInput={e => setField('cpf', mascaraCPF(e.target.value))}
                         inputMode="numeric"
                         required
+                    />
+                    <CampoTexto
+                        label="RA (opcional)"
+                        value={form.ra}
+                        onInput={e => setField('ra', e.target.value)}
+                        inputMode="numeric"
                     />
                     <CampoTexto
                         label="E-mail"
@@ -138,8 +178,12 @@ export default function BoxInscricao() {
                         </span>
                     </div>
 
-                    <button type="submit" class="btn-confirmar" disabled={!senhaValida}>
-                        Confirmar Inscrição
+                    {feedback && (
+                        <p class={`feedback feedback-${feedback.tipo}`}>{feedback.msg}</p>
+                    )}
+
+                    <button type="submit" class="btn-confirmar" disabled={!senhaValida || enviando}>
+                        {enviando ? 'Enviando...' : 'Confirmar Inscrição'}
                     </button>
                 </form>
             )}
