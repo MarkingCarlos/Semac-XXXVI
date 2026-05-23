@@ -31,15 +31,7 @@ const ComoSuaDoacaoAjuda = () => {
             <p className="como-ajuda-label">Como sua doação ajuda</p>
 
             <div className="como-ajuda-grid">
-                {itens.map((item) => (
-                    <div key={item.titulo} className="como-ajuda-card">
-                        <img src={item.icone} alt={item.titulo} className="como-ajuda-icone" />
-                        <div className="como-ajuda-texto">
-                            <span className="como-ajuda-card-titulo">{item.titulo}</span>
-                            <span className="como-ajuda-card-descricao">{item.descricao}</span>
-                        </div>
-                    </div>
-                ))}
+                <p>Sua doação contriui para que a formação de nossos participantes seja ainda mais completa e diversa.</p>
             </div>
         </div>
     );

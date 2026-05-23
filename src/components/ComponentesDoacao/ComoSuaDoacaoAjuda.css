@@ -8,7 +8,7 @@
 .como-ajuda-label {
     font-size: clamp(15px, 1.5vw, 25px);
     font-family: 'Montserrat', sans-serif;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--Branco);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -16,6 +16,8 @@
 }
 
 .como-ajuda-grid {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: normal;
     display: grid;
     grid-template-columns: 1fr 1fr;
     row-gap: 1.5rem;

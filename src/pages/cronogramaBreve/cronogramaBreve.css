@@ -1,5 +1,3 @@
-/* ── Fontes necessárias (Bungee · Barlow Condensed · IBM Plex Mono) ──── */
-@import url('https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 /* ── Animação: ponto pulsante do badge "EM CONSTRUÇÃO" ─────── */
 @keyframes pulsaPonto {
@@ -20,7 +18,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: 'Bungee', sans-serif;
   align-self: flex-start; /* ancora à esquerda no container flex do body */
   text-align: left;
 }
