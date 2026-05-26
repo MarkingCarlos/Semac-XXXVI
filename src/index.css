@@ -23,6 +23,13 @@
   --azulAuxConteudo: #469197;
   --rosaMarketing: #B13571;
   --rosaAuxMarketing: #962D60;
+
+  /* Tipografia */
+  --titulo-size-desktop-wide: clamp(4rem, 4.5rem, 5rem);
+
+  /* Fontes */
+  --fonteTituloBungee: 'Bungee', cursive;
+  --fonteCorpoMontserrat: 'Montserrat', sans-serif;
 }
 
 a {
