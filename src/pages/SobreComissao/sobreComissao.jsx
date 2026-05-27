@@ -15,8 +15,8 @@ const comissoes = [
         descricao: 'A comissão de presidência é responsável por coordenar todas as outras comissões e garantir que o evento ocorra da melhor forma possível.',
         membros: [
             { foto: placeholder, nome: 'Maria Clara', cargo: 'Presidente' },
-            { foto: placeholder, nome: 'Vitória Reis', cargo: 'Vice-Presidente' },
             { foto: placeholder, nome: 'Profa. Dra. Adriana Barbosa', cargo: 'Coordenadora' },
+            { foto: placeholder, nome: 'Vitória Reis', cargo: 'Vice-Presidente' },
         ],
     },
     {
@@ -91,6 +91,11 @@ const comissoes = [
             ' as empresas, apresentando as cotas e pedindo o apoio das mesmas para o evento. Também é responsabilidade ' +
             'do patrocínio manter uma fiscalização constante das finanças da SEMAC, trabalhando em conjunto com as demais ' +
             'comissões para realizar os orçamentos das atividades de cada uma.',
+        highlight: {
+            phrase: 'fiscalização constante das finanças da SEMAC',
+            delay: 400,
+            color: '#94499E',
+        },
         membros: [
             { foto: placeholder, nome: 'Leonardo Takeshi', cargo: 'Diretor' },
             { foto: placeholder, nome: 'Hugo Tartari', cargo: 'Membro' },
@@ -160,7 +165,10 @@ const SobreComissao = () => {
                             </button>
                         ))}
                     </div>
-                    <AnimatedTooltip key={ativa.id} membros={ativa.membros} />
+
+                    <div className="membrosBox">
+                        <AnimatedTooltip key={ativa.id} membros={ativa.membros} />
+                    </div>
                 </div>
             </div>
         </div>

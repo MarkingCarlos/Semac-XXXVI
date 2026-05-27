@@ -14,7 +14,7 @@ export default function PatrocinadoresCompacto() {
             <div class="patroc-compacto-topo">
                 <div class="subraTitulo">
                     <span class="tracoHorizontal"/>
-                    <span class="styleSubraTitulo">HISTÓRICO · PATROCINADORES</span>
+                    <span class="styleSubraTitulo">HISTÓRICO</span>
                     <span class="tracoHorizontal"/>
                 </div>
                 <h2 class="patroc-compacto-titulo">
@@ -22,9 +22,6 @@ export default function PatrocinadoresCompacto() {
                     COM A GENTE
                 </h2>
                 <div>
-                    <p className="patroc-compacto-texto">
-                        Sua marca ao lado de mais de <strong>500 estudantes</strong> de computação.
-                    </p>
                     <p className="patroc-compacto-texto">
                         Conecte sua empresa às lideranças tecnológicas do futuro e faça parte da história da SEMAC.
                     </p>

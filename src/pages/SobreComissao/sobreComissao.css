@@ -39,16 +39,18 @@
 }
 
 .lateral-container {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 0.7fr;
     gap: 24px;
 }
+
 
 .botoes-comissoes-container {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 12px;
+    max-height: 80%;
 }
 
 @keyframes flutuarAtivo {

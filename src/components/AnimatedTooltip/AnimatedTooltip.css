@@ -1,8 +1,7 @@
 .tooltip-container {
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 8px 0;
+    justify-content: flex-end;
 }
 
 .tooltip-item {
