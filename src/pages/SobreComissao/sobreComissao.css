@@ -1,7 +1,10 @@
+
 .container {
     max-width: 100%;
-    height: 640px;
-    padding: 3rem;
+    padding: 56px;
+    min-height: 620px;
+    display: flex;
+    flex-direction: column;
 }
 
 .container > h1 {
@@ -9,14 +12,22 @@
 }
 
 .conteudo-container {
-    height: 100%;
+    flex: 1;
     display: flex;
+    flex-direction: column;
     margin-top: 20px;
-    gap: clamp(5vw, 10vw, 20vw);
+    gap: 2rem;
+}
+
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 .descricao-container {
+    flex: 1;
     width: 100%;
+    animation: fadeSlideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .descricao-container p {
@@ -30,74 +41,37 @@
 .lateral-container {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
     gap: 24px;
-}
-
-.carrossel-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    overflow: hidden;
 }
 
 .botoes-comissoes-container {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 30px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
-/* Botão do meio — comissão ativa */
+@keyframes flutuarAtivo {
+    0%, 100% { transform: translateY(-2px);  box-shadow: 0 6px 16px rgba(0,0,0,0.25); }
+    50%       { transform: translateY(-8px);  box-shadow: 0 14px 28px rgba(0,0,0,0.35); }
+}
+
 .botoes-comissoes-container .ativo {
-    width: clamp(175px, 35vw, 250px);
-    font-size: clamp(0.8em, 2.5vw, 1.2em);
-    margin-right: 30px;
-    transition: all ease 0.25s;
+    font-size: clamp(0.75em, 1.5vw, 1em);
+    opacity: 1;
+    outline: 3px solid var(--Branco);
+    outline-offset: 2px;
+    animation: flutuarAtivo 2s ease-in-out infinite;
 }
 
-/* Botões de cima e baixo — navegação */
 .botoes-comissoes-container .inativo {
-    width: clamp(150px, 28vw, 210px);
-    font-size: clamp(0.65em, 1.8vw, 1em);
+    font-size: clamp(0.75em, 1.5vw, 1em);
     opacity: 0.55;
     cursor: pointer;
-    transition: all ease 0.25s;
+    transition: all ease 0.2s;
 }
 
 .botoes-comissoes-container .inativo:hover {
     opacity: 0.85;
-    margin-right: 12px;
-    border: 2px solid var(--rosaMarketing);
+    transform: translateY(-1px);
 }
-
-@keyframes slide-from-top {
-    from {
-        transform: translateY(-32px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-@keyframes slide-from-bottom {
-    from {
-        transform: translateY(32px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-.rotating-cima {
-    animation: slide-from-top 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.rotating-baixo {
-    animation: slide-from-bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-}
-

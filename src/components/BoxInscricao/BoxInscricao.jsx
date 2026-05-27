@@ -117,19 +117,21 @@ export default function BoxInscricao() {
                         onInput={e => setField('nome', e.target.value)}
                         required
                     />
-                    <CampoTexto
-                        label="CPF"
-                        value={form.cpf}
-                        onInput={e => setField('cpf', mascaraCPF(e.target.value))}
-                        inputMode="numeric"
-                        required
-                    />
-                    <CampoTexto
-                        label="RA (opcional)"
-                        value={form.ra}
-                        onInput={e => setField('ra', e.target.value)}
-                        inputMode="numeric"
-                    />
+                    <div style={{ display: 'flex', flexDirection: 'row', gap: '10px' }} >
+                        <CampoTexto
+                            label="CPF"
+                            value={form.cpf}
+                            onInput={e => setField('cpf', mascaraCPF(e.target.value))}
+                            inputMode="numeric"
+                            required
+                        />
+                        <CampoTexto
+                            label="RA (opcional)"
+                            value={form.ra}
+                            onInput={e => setField('ra', e.target.value)}
+                            inputMode="numeric"
+                        />
+                    </div>
                     <CampoTexto
                         label="E-mail"
                         type="email"
@@ -174,7 +176,7 @@ export default function BoxInscricao() {
                         </div>
 
                         <span class="camisa-aviso">
-                            Você receberá a camisa juntamente com o kit SEMAC
+                            Você receberá a camisa juntamente com o kit SEMAC no dia do evento.
                         </span>
                     </div>
 
@@ -248,7 +250,7 @@ function CampoSenha({ value, onInput, senhaOk, required }) {
                 <div class="senha-validacao">
                     <Indicador ok={senhaOk.especial}  texto="1 caractere especial" />
                     <Indicador ok={senhaOk.maiusculo} texto="1 caractere maiúsculo" />
-                    <Indicador ok={senhaOk.minimo8}   texto="no mínimo 8 caracteres" />
+                    <Indicador ok={senhaOk.minimo8}   texto="No mínimo 8 caracteres" />
                 </div>
             )}
         </div>

@@ -9,18 +9,18 @@
    PÁGINA
    ════════════════════════════════════════════════════════════ */
 .paginaCronograma {
-  margin-top: 2rem;
-  padding-top: 2rem ;
+  padding: 56px;
   background: #730835;
   width: 100%;
   max-height: 100vh;
   position: relative;
   overflow: hidden;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   font-family: 'Bungee', sans-serif;
   align-self: flex-start; /* ancora à esquerda no container flex do body */
   text-align: left;
+  box-sizing: border-box;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -67,24 +67,18 @@
   flex-shrink: 0;
 }
 
-/* ════════════════════════════════════════════════════════════
-   CONTEÚDO PRINCIPAL — grid de 2 colunas
-   ════════════════════════════════════════════════════════════ */
 .conteudoPrincipal {
   flex: 1;
-  padding: 32px 64px 48px;
-  display: grid;
-  grid-template-columns: 1fr 1.25fr;
-  gap: 56px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
   position: relative;
   z-index: 1;
   align-items: center;
 }
 
-/* ════════════════════════════════════════════════════════════
-   TIPOGRAFIA MONO (rótulos em fonte monospace)
-   ════════════════════════════════════════════════════════════ */
 .textoMono {
+  /* TODO: 'IBM Plex Mono' não está importada — substituir por fonte importada ou adicionar @import em app.css */
   font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
   font-weight: 600;

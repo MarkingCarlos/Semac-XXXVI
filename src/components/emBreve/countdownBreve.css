@@ -1,6 +1,7 @@
 /* ── Container principal do countdown ──────────────────────── */
 .contagem {
   display: flex;
+  justify-content: center;
   align-items: flex-end;
 }
 .contagem--grande { gap: 18px; }

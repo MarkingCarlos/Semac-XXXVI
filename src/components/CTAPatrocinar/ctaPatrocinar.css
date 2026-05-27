@@ -1,0 +1,93 @@
+/* =================================================================
+   ctaPatrocinar.css
+   Faixa escura no rodapé da página de patrocinadores anteriores.
+   Mostra o total de empresas apoiadoras e um CTA para novas.
+   ================================================================= */
+
+.cta-patrocinar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 16px 22px;
+    background: #3D0118;
+    border-radius: 12px;
+    border: 1px solid rgba(252, 248, 245, 0.08);
+    flex-shrink: 0;
+    margin-top: 22px;
+}
+
+/* Lado esquerdo: número grande + rótulo + subtítulo */
+.cta-info {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.cta-numero {
+    font-family: 'Bungee', cursive;
+    font-size: 1.75rem; /* 28px */
+    color: #E79839;
+    line-height: 1;
+}
+
+.cta-rotulo {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 0.5625rem; /* 9px */
+    color: rgba(252, 248, 245, 0.42);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.cta-subtitulo {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.9375rem; /* 15px */
+    color: #FCF8F5;
+}
+
+/* Botão pill laranja */
+.cta-botao {
+    padding: 13px 28px;
+    background: #E79839;
+    color: #3D0118;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 0.75rem; /* 12px */
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 999px;
+    white-space: nowrap;
+    transition: filter 0.18s ease;
+}
+
+.cta-botao:hover {
+    filter: brightness(1.1);
+}
+
+/* ── Mobile: empilha verticalmente ──────────────────────────── */
+@media (max-width: 768px) {
+    .cta-patrocinar {
+        flex-direction: column;
+        text-align: center;
+        padding: 18px 16px;
+    }
+
+    .cta-info {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .cta-numero {
+        font-size: 1.375rem;
+    }
+
+    .cta-botao {
+        width: 100%;
+        padding: 13px 0;
+    }
+}

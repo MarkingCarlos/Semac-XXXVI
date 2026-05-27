@@ -1,0 +1,83 @@
+/* =================================================================
+   carrosselPatrocinadores.css
+   Carrossel automático de logos — 5 por vez, fade a cada 3s.
+   ================================================================= */
+
+.carrossel {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+}
+
+/* Grid de logos */
+.carrossel-grupo {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    min-height: 150px;
+    animation-fill-mode: both;
+}
+
+/* Cards dentro do carrossel: altura fixa */
+.carrossel .logo-card-patrocinador {
+    aspect-ratio: unset;
+    height: 150px;
+}
+
+/* Entrada: sobe com fade — ease-out (mais longa) */
+.carrossel-entrando {
+    animation: carrossel-enter 0.42s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* Saída: sobe levemente com fade — ease-in (mais curta, ~65% da entrada) */
+.carrossel-saindo {
+    animation: carrossel-exit 0.28s cubic-bezier(0.55, 0.06, 0.68, 0.19) both;
+}
+
+@keyframes carrossel-enter {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes carrossel-exit {
+    from { opacity: 1; transform: translateY(0);    }
+    to   { opacity: 0; transform: translateY(-10px); }
+}
+
+/* Dots de navegação */
+.carrossel-dots {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.carrossel-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(252, 248, 245, 0.2);
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.carrossel-dot:hover {
+    background: rgba(252, 248, 245, 0.5);
+}
+
+.carrossel-dot-ativo {
+    background: var(--AmareloAuxApoio);
+    transform: scale(1.5);
+}
+
+/* ── Mobile: 3 colunas (5 itens = 2 linhas) ─────────────────── */
+@media (max-width: 600px) {
+    .carrossel-grupo {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+}

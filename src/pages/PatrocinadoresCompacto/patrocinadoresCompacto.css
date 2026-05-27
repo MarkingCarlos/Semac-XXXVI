@@ -1,0 +1,124 @@
+/* =================================================================
+   patrocinadoresCompacto.css
+   Layout centralizado: texto + CTA no topo, carrossel abaixo.
+   ================================================================= */
+
+.patroc-compacto {
+    background: var(--vermelhoAuxDiretoria);
+    padding: 56px 56px 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    font-family: 'Montserrat', sans-serif;
+    color: #FCF8F5;
+    box-sizing: border-box;
+}
+
+/* ── Bloco de topo: tudo centralizado ────────────────────────── */
+
+.patroc-compacto-topo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+.patroc-compacto-rotulo-linha {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+
+
+.patroc-compacto-rotulo {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #E79839;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+}
+
+.patroc-compacto-titulo {
+    font-family: 'Bungee', cursive;
+    font-size: var(--titulo-size-desktop-wide);
+    line-height: 1;
+    color: var(--Branco);
+    margin: 0;
+}
+
+.patroc-compacto-destaque {
+    color: #E79839;
+}
+
+.patroc-compacto-texto {
+    text-align: center;
+    font-size: 1.5rem;
+    color: rgba(252, 248, 245, 0.6);
+}
+
+.patroc-compacto-texto strong {
+    color: #FCF8F5;
+    font-weight: 700;
+}
+
+/* ── Botão CTA ───────────────────────────────────────────────── */
+
+.btnPatrocinar {
+    display: inline-block;
+    background: #E79839;
+    color: #3D0118;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 0.8rem;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: filter 0.2s ease, transform 0.18s ease;
+}
+
+.btnPatrocinar:hover {
+    filter: brightness(1.08);
+    transform: translateY(-2px);
+}
+
+/* ── Área do carrossel: largura total ────────────────────────── */
+
+.patroc-compacto-carrossel {
+    width: 100%;
+    max-width: 1280px;
+}
+
+/* ── Wide monitors ───────────────────────────────────────────── */
+@media (min-width: 1440px) {
+    .patroc-compacto {
+        padding: 68px 80px 56px;
+    }
+}
+
+/* ── Tablet ──────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .patroc-compacto {
+        padding: 40px 32px 36px;
+        gap: 32px;
+    }
+}
+
+/* ── Mobile ──────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+    .patroc-compacto {
+        padding: 32px 18px 28px;
+        gap: 24px;
+    }
+
+    .patroc-compacto-titulo {
+        font-size: clamp(1.75rem, 8vw, 2.5rem);
+    }
+}

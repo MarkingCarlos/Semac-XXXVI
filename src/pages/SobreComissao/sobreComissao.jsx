@@ -14,49 +14,60 @@ const comissoes = [
         cor: 'var(--vermelhoDiretoria)',
         descricao: 'A comissão de presidência é responsável por coordenar todas as outras comissões e garantir que o evento ocorra da melhor forma possível.',
         membros: [
-            { foto: placeholder, nome: 'Membro 1', cargo: 'Presidente' },
-            { foto: placeholder, nome: 'Membro 2', cargo: 'Vice-Presidente' },
-            { foto: placeholder, nome: 'Membro 3', cargo: 'Assessor' },
+            { foto: placeholder, nome: 'Maria Clara', cargo: 'Presidente' },
+            { foto: placeholder, nome: 'Vitória Reis', cargo: 'Vice-Presidente' },
+            { foto: placeholder, nome: 'Profa. Dra. Adriana Barbosa', cargo: 'Coordenadora' },
         ],
     },
     {
         id: 'conteudo',
         nome: 'Conteúdo',
         cor: 'var(--azulConteudo)',
-        descricao: 'Comissão responsável por planejar a programação da SEMAC, desde os temas das palestras e minicursos até os demais eventos proporcionados durante a semana. Ao longo do ano, os membros do conteúdo buscam por pessoas qualificadas para as atividades, elaboram os convites e mantém contato até o dia de recebê-las.',
+        descricao: 'Comissão responsável por planejar a programação da SEMAC, desde os temas das palestras e minicursos ' +
+            'até os demais eventos proporcionados durante a semana. Ao longo do ano, os membros do conteúdo buscam por ' +
+            'pessoas qualificadas para as atividades, elaboram os convites e mantém contato até o dia de recebê-las.',
         highlight: {
             phrase: 'programação da SEMAC',
             delay: 400,
             color: 'var(--azulConteudo)',
         },
         membros: [
-            { foto: placeholder, nome: 'Membro 1', cargo: 'Coordenador' },
-            { foto: placeholder, nome: 'Membro 2', cargo: 'Membro' },
-            { foto: placeholder, nome: 'Membro 3', cargo: 'Membro' },
-            { foto: placeholder, nome: 'Membro 4', cargo: 'Membro' },
+            { foto: placeholder, nome: 'Ana Clara', cargo: 'Diretora' },
+            { foto: placeholder, nome: 'Daniel Tozzo', cargo: 'Membro' },
+            { foto: placeholder, nome: 'Mariana Rosset', cargo: 'Membro' },
+            { foto: placeholder, nome: 'Maria Augusta', cargo: 'Membro' },
         ],
     },
     {
         id: 'apoio',
         nome: 'Apoio',
         cor: 'var(--AmareloAuxApoio)',
-        descricao: 'A comissão de apoio é responsável por dar apoio na organização do evento, marcando a presença dos participantes e ajudando no Coffee Break.',
+        descricao: 'A Comissão de apoio une esforços durante o ano para tornar o evento possível, pesquisando ' +
+            'orçamentos para a confecção dos produtos e para o fornecimento do coffee break na semana. Dentre as ' +
+            'atividades feitas está a preparação dos kits e escolha dos brindes sorteados no evento. Durante a semana, essa comissão também é responsável por dar suporte às atividades realizadas.',
+        highlight: {
+            phrase: 'tornar o evento possível',
+            delay: 400,
+            color: 'var(--AmareloAuxApoio)',
+        },
         membros: [
-            { foto: placeholder, nome: 'Membro 1', cargo: 'Coordenador' },
-            { foto: placeholder, nome: 'Membro 2', cargo: 'Membro' },
-            { foto: placeholder, nome: 'Membro 3', cargo: 'Membro' },
-            { foto: placeholder, nome: 'Membro 4', cargo: 'Membro' },
+            { foto: placeholder, nome: 'Enrico Gorzelak', cargo: 'Diretor' },
+            { foto: placeholder, nome: 'João Rampim', cargo: 'Membro' },
+            { foto: placeholder, nome: 'Paulo Sérgio', cargo: 'Membro' },
+            { foto: placeholder, nome: 'Vincent Frias', cargo: 'Membro' },
         ],
     },
     {
         id: 'marketing',
         nome: 'Marketing',
         cor: 'var(--rosaMarketing)',
-        descricao: 'A comissão de marketing é responsável por divulgar o evento nas redes sociais e criar artes para a divulgação da Semac.',
+        descricao: 'A comissão é responsável por toda a identidade visual da SEMAC, desde de paleta de cores até' +
+            ' as cartas que serão enviadas para os patrocinadores e apoiadores, além de produz conteúdos para redes ' +
+            'sociais, como posts, stories e artes informativas, ajudando na divulgação e no engajamento do público.',
         membros: [
-            { foto: placeholder, nome: 'Membro 1', cargo: 'Coordenador' },
-            { foto: placeholder, nome: 'Membro 2', cargo: 'Designer' },
-            { foto: placeholder, nome: 'Membro 3', cargo: 'Designer' },
+            { foto: placeholder, nome: 'Miguel Augusto', cargo: 'Diretor' },
+            { foto: placeholder, nome: 'Vitor Vitor', cargo: 'Designer' },
+            { foto: placeholder, nome: 'Vítor Henrique', cargo: 'Designer' },
         ],
     },
     {
@@ -65,22 +76,25 @@ const comissoes = [
         cor: 'var(--rosaMarketing)',
         descricao: 'A comissão de desenvolvimento é responsável por desenvolver os sistemas para o evento, como o site que você está vendo agora.',
         membros: [
-            { foto: placeholder, nome: 'Membro 1', cargo: 'Coordenador' },
-            { foto: placeholder, nome: 'Membro 2', cargo: 'Desenvolvedor' },
-            { foto: placeholder, nome: 'Membro 3', cargo: 'Desenvolvedor' },
-            { foto: placeholder, nome: 'Membro 4', cargo: 'Desenvolvedor' },
-            { foto: placeholder, nome: 'Membro 5', cargo: 'Desenvolvedor' },
+            { foto: placeholder, nome: 'Carlos Alberto', cargo: 'Diretor' },
+            { foto: placeholder, nome: 'Maria Rodrigues', cargo: 'Desenvolvedor' },
+            { foto: placeholder, nome: 'Guilherme Soares', cargo: 'Desenvolvedor' },
+            { foto: placeholder, nome: 'Ravi Bellini', cargo: 'Desenvolvedor' },
+            { foto: placeholder, nome: 'Arthur Rezende', cargo: 'Desenvolvedor' },
         ],
     },
     {
         id: 'patrocinio',
         nome: 'Patrocínio',
         cor: '#94499E',
-        descricao: 'A comissão de patrocínio é responsável por conseguir patrocinadores para o evento, garantindo recursos para a realização da Semac.',
+        descricao: 'Comissão responsável pela elaboração das cotas de patrocínio da SEMAC e por entrar em contato com' +
+            ' as empresas, apresentando as cotas e pedindo o apoio das mesmas para o evento. Também é responsabilidade ' +
+            'do patrocínio manter uma fiscalização constante das finanças da SEMAC, trabalhando em conjunto com as demais ' +
+            'comissões para realizar os orçamentos das atividades de cada uma.',
         membros: [
-            { foto: placeholder, nome: 'Membro 1', cargo: 'Coordenador' },
-            { foto: placeholder, nome: 'Membro 2', cargo: 'Membro' },
-            { foto: placeholder, nome: 'Membro 3', cargo: 'Membro' },
+            { foto: placeholder, nome: 'Leonardo Takeshi', cargo: 'Diretor' },
+            { foto: placeholder, nome: 'Hugo Tartari', cargo: 'Membro' },
+            { foto: placeholder, nome: 'Ricardo Martins', cargo: 'Membro' },
         ],
     },
 ];
@@ -108,29 +122,8 @@ function renderDescricao(comissao) {
 }
 
 const SobreComissao = () => {
-    const [offset, setOffset] = useState(0);
-    const [animDir, setAnimDir] = useState(null);
-
-    const total = comissoes.length;
-
-    // visible[0] = topo, visible[1] = meio (ativo), visible[2] = baixo
-    const visible = [0, 1, 2].map(i => comissoes[(offset + i) % total]);
-    const ativa = visible[1];
-
-    function girar(direcao) {
-        setAnimDir(direcao);
-        setOffset(prev =>
-            direcao === 'baixo'
-                ? (prev + 1) % total
-                : (prev - 1 + total) % total
-        );
-    }
-
-    function clicar(posicao) {
-        if (posicao === 1) return;
-        if (posicao === 0) girar('cima');
-        if (posicao === 2) girar('baixo');
-    }
+    const [ativaIdx, setAtivaIdx] = useState(0);
+    const ativa = comissoes[ativaIdx];
 
     return (
         <>
@@ -151,26 +144,21 @@ const SobreComissao = () => {
                 />
             </h1>
             <div className="conteudo-container">
-                <div className="descricao-container">
+                <div key={ativa.id} className="descricao-container">
                     {renderDescricao(ativa)}
                 </div>
                 <div className="lateral-container">
-                    <div className="carrossel-wrapper">
-                        <div
-                            className={`botoes-comissoes-container${animDir ? ` rotating-${animDir}` : ''}`}
-                            onAnimationEnd={() => setAnimDir(null)}
-                        >
-                            {visible.map((comissao, i) => (
-                                <button
-                                    key={comissao.id}
-                                    className={i === 1 ? 'ativo' : 'inativo'}
-                                    style={{ backgroundColor: comissao.cor, color: 'var(--Branco)' }}
-                                    onClick={() => clicar(i)}
-                                >
-                                    {comissao.nome}
-                                </button>
-                            ))}
-                        </div>
+                    <div className="botoes-comissoes-container">
+                        {comissoes.map((comissao, i) => (
+                            <button
+                                key={comissao.id}
+                                className={i === ativaIdx ? 'ativo' : 'inativo'}
+                                style={{ backgroundColor: comissao.cor, color: 'var(--Branco)' }}
+                                onClick={() => setAtivaIdx(i)}
+                            >
+                                {comissao.nome}
+                            </button>
+                        ))}
                     </div>
                     <AnimatedTooltip key={ativa.id} membros={ativa.membros} />
                 </div>

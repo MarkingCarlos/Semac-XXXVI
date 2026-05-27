@@ -1,5 +1,5 @@
 import "./doacao.css";
-import FacaUmaDoacao from "../../components/ComponentesDoacao/FacaUmaDoacao.jsx";
+import DoacaoQRCode from "../../components/ComponentesDoacao/DoacaoQRCode.jsx";
 import ComoSuaDoacaoAjuda from "../../components/ComponentesDoacao/ComoSuaDoacaoAjuda.jsx";
 import riscoGiz from "../../assets/riscoGiz.png";
 
@@ -22,7 +22,7 @@ const doacao = () => {
                     <ComoSuaDoacaoAjuda/>
                 </div>
                 <div className="doacao-direita">
-                    <FacaUmaDoacao/>
+                    <DoacaoQRCode/>
                 </div>
 
             </div>

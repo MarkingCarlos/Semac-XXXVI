@@ -20,10 +20,13 @@ const CronogramaBreve = () => {
   return (
     <section className="paginaCronograma">
 
-      {/* ── Conteúdo principal: grid de 2 colunas ──────────────────── */}
       <main className="conteudoPrincipal">
         <EmBreveHeroText />
         <EmBreveInfoCard />
+          <div className="grupoDeAcoes">
+              <button className="botao botaoPrimario">Avise-me ↗</button>
+              <button className="botao botaoFantasma">@semac.ibilce</button>
+          </div>
       </main>
 
     </section>

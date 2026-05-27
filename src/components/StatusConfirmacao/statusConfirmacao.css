@@ -1,0 +1,90 @@
+/* =================================================================
+   statusConfirmacao.css
+   Pill pulsante que indica que os patrocinadores do ano atual
+   ainda estão sendo confirmados.
+   ================================================================= */
+
+.status-confirmacao {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+/* Pill com borda laranja e dot animado */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: rgba(231, 152, 57, 0.12);
+    border: 1px solid rgba(231, 152, 57, 0.5);
+    border-radius: 999px;
+}
+
+/* Dot laranja pulsante */
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #E79839;
+    flex-shrink: 0;
+    animation: pulsar 1.8s ease-in-out infinite;
+}
+
+@keyframes pulsar {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+}
+
+.status-label {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 0.5625rem; /* 9px */
+    color: #E79839;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+}
+
+.status-descricao {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 0.8125rem; /* 13px */
+    line-height: 1.4;
+    color: rgba(252, 248, 245, 0.65);
+    text-align: right;
+    max-width: 300px;
+}
+
+.status-descricao strong {
+    color: #FCF8F5;
+    font-weight: 700;
+}
+
+/* ── Mobile: vira banner horizontal ────────────────────────── */
+@media (max-width: 768px) {
+    .status-confirmacao {
+        align-items: flex-start;
+        flex-direction: row;
+        gap: 10px;
+        padding: 12px 14px;
+        background: rgba(231, 152, 57, 0.08);
+        border: 1px solid rgba(231, 152, 57, 0.33);
+        border-radius: 10px;
+    }
+
+    .status-pill {
+        display: none; /* no mobile o dot fica sozinho à esquerda */
+    }
+
+    .status-dot {
+        display: block;
+        margin-top: 5px;
+    }
+
+    .status-descricao {
+        text-align: left;
+        font-size: 0.78rem;
+    }
+}

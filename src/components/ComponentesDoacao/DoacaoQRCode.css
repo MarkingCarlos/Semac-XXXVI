@@ -1,0 +1,165 @@
+/* =================================================================
+   DoacaoQRCode.css
+   Variante do box de doação que exibe o QR Code PIX diretamente.
+   ================================================================= */
+
+/* ── Wrapper com efeito glow no mouse ────────────────────────── */
+
+.qr-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    border-radius: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    z-index: 0;
+}
+
+.qr-wrapper:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 6px 12px rgba(115, 8, 53, 0.4);
+}
+
+.qr-wrapper::before,
+.qr-wrapper::after {
+    content: "";
+    position: absolute;
+    top: -3px; left: -3px; right: -3px; bottom: -3px;
+    border-radius: 28px;
+    background: radial-gradient(
+        circle 350px at var(--mouse-x, 0) var(--mouse-y, 0),
+        rgba(255, 255, 255, 0.9) 0%,
+        var(--AmareloAuxApoio, #E79839) 15%,
+        transparent 50%
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.qr-wrapper::after {
+    filter: blur(20px);
+    z-index: -2;
+}
+
+.qr-wrapper:hover::before,
+.qr-wrapper:hover::after {
+    opacity: 1;
+}
+
+/* ── Card ────────────────────────────────────────────────────── */
+
+.qr-card {
+    background-color: var(--vermelhoAuxDiretoria);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 25px;
+    box-shadow: 0px 4px 28px rgba(0, 0, 0, 0.6);
+    gap: 1.56rem;
+    width: 100%;
+    max-width: 730px;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.qr-card:hover {
+    box-shadow: none;
+}
+
+/* ── Cabeçalho ───────────────────────────────────────────────── */
+
+.qr-cabecalho {
+    width: 100%;
+}
+
+.qr-titulo {
+    font-family: 'Bungee', sans-serif;
+    font-size: clamp(30px, 3vw, 40px);
+    font-weight: 900;
+    color: var(--Branco);
+    text-transform: uppercase;
+    margin: 0 0 0.25rem 0;
+}
+
+.qr-subtitulo {
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(15px, 1.5vw, 20px);
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0;
+}
+
+/* ── QR Code ─────────────────────────────────────────────────── */
+
+.qr-imagem {
+    width: 50%;
+    border-radius: 12px;
+    background: var(--Branco);
+    padding: 1rem;
+    object-fit: contain;
+}
+
+/* ── Chave PIX ───────────────────────────────────────────────── */
+
+.qr-chave-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+}
+
+.qr-chave-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.qr-chave-valor {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(0.7rem, 1.5rem, 1.7rem);
+    font-weight: 600;
+    color: var(--Branco);
+    word-break: break-all;
+    text-align: center;
+}
+
+/* ── Botão copiar ────────────────────────────────────────────── */
+
+.qr-btn-copiar {
+    width: 100%;
+    font-family: 'Bungee', sans-serif;
+    font-size: clamp(17px, 5vw, 30px);
+    font-weight: 900;
+    text-transform: uppercase;
+    color: var(--Branco);
+    background-color: var(--AmareloAuxApoio);
+    border: none;
+    border-radius: 8px;
+    padding: 1.56rem;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.15s;
+}
+
+.qr-btn-copiar:hover {
+    transform: scale(1.02);
+}
+
+/* ── Mobile ──────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+    .qr-card {
+        padding: 1.75rem;
+        gap: 1.1rem;
+    }
+
+    .qr-imagem {
+        width: 170px;
+        height: 170px;
+    }
+}

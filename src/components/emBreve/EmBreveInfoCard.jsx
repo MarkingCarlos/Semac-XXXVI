@@ -1,6 +1,6 @@
 import BracketCorners from './BracketCorners.jsx';
 import CountdownBreve from './CountdownBreve.jsx';
-import TrilhasConfirmadas from './TrackChips.jsx';
+import TrilhasConfirmadas from './Trilhas.jsx';
 import { STATS } from './tokens.js';
 import './emBreveInfoCard.css';
 import {useRef} from "preact/hooks";
@@ -40,26 +40,27 @@ export default function EmBreveInfoCard() {
           {/* Countdown regressivo */}
           <CountdownBreve tamanho="lg" />
 
-          <div className="espacadorGrande" />
           <div className="linhaDivisoria" />
 
           {/* Trilhas */}
-          <p className="rotulo">Temas confirmados:</p>
-          <div className="espacadorPequeno" />
-          <TrilhasConfirmadas />
+           <div className="trilhas">
+               <div className={"boxTrilhasTexto"}>
+                   <p className="rotulo" style={{textAlign: 'left'}}>Temas confirmados:</p>
+                   <TrilhasConfirmadas />
+               </div>
 
-          <div className="espacadorPequeno" />
-
-          {/* Painel de estatísticas */}
-          <div className="painelEstatisticas">
-            {STATS.map(({ valor, label }) => (
-              <div key={label} className="itemEstatistica">
-                <span className="numeroEstatistica">{valor}</span>
-                <span className="rotulo rotuloMinusculo">{label}</span>
+              <div className="painelEstatisticas">
+                {STATS.map(({ valor, label }) => (
+                  <div key={label} className="itemEstatistica">
+                    <span className="numeroEstatistica">{valor}</span>
+                    <span className="rotulo rotuloMinusculo">{label}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+
+           </div>
         </div>
+
       </div>
   );
 }

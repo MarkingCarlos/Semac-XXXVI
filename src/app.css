@@ -19,7 +19,7 @@
 
 /* Títulos de seção — aplicar em todos os h1 que encabeçam seções da página */
 .titulo-secao {
-    font-size: clamp(1.5rem, 3vw, 4.5rem);
+    font-size: var(--titulo-size-desktop-wide);
     font-weight: 700;
     color: var(--Branco);
 }

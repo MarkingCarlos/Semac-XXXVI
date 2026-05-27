@@ -1,3 +1,12 @@
+.trilhas{
+  display: grid;
+  grid-template-columns: 1fr 1.75fr;
+  gap: 1rem;
+}
+
+.boxTrilhasTexto{
+  width: auto;
+}
 .bordaBrilhante {
 
   position: relative;
@@ -56,9 +65,10 @@
 
 /* ── Rótulo de seção (texto pequeno em caixa-alta) ───────────── */
 .rotulo {
+  text-align: center;
   font-family: "Montserrat", sans-serif;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 1.5rem;
   color: var(--Branco);
   letter-spacing: 2.5px;
   text-transform: uppercase;
@@ -68,24 +78,24 @@
 /* Variante laranja do rótulo */
 .rotuloLaranja {
   color: var(--AmareloAuxApoio);
-  font-size: 13px;
+  font-size: 1rem;
+}
+
+/* ── Data do anúncio dos palestrantes ───────────────────────── */
+.dataAnuncio {
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: var(--Branco);
+  letter-spacing: 1.5px;
+  margin: 5px 0 28px;
 }
 
 /* Variante menor usada nas estatísticas */
 .rotuloMinusculo {
   font-size: 1rem;
   margin-top: 5px;
-}
-
-/* ── Data do anúncio dos palestrantes ───────────────────────── */
-.dataAnuncio {
-  font-family: "Montserrat", sans-serif;
-  font-weight: 800;
-  font-size: 18px;
-  color: var(--Branco);
-  letter-spacing: 1.5px;
-  margin: 5px 0 28px;
-  /*margin-bottom: 28px;*/
 }
 
 /* ── Espaçadores verticais ──────────────────────────────────── */
@@ -97,14 +107,14 @@
 .linhaDivisoria {
   height: 1px;
   background: rgba(252,248,245,0.14);
-  margin-bottom: 23px;
+  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 /* ── Painel de estatísticas (grade de 3 colunas) ────────────── */
 .painelEstatisticas {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
   padding: 18px 20px;
   border: 1px solid rgba(252,248,245,0.08);
   border-radius: 10px;

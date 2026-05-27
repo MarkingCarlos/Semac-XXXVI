@@ -1,47 +1,35 @@
-/* ── Pequeno texto acima do título (// Programação) ─────────── */
-.textoSupratitulo {
-  font-family: 'Bungee', sans-serif;
-  font-weight: 900;
-  font-size: 14px;
-  color: #E79839;
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  margin: 0 0 14px;
-}
+.colunaTexto{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
 
+}
 /* ── Título principal "EM BREVE" ────────────────────────────── */
 .tituloPrincipal {
+  text-align: center;
   font-family: 'Bungee', sans-serif;
-  /* clamp: mín 64px → escala com a viewport → máx 132px */
-  font-size: clamp(64px, 10vw, 132px);
+  font-size: var(--titulo-size-desktop-wide);
   line-height: 0.85;
   color: var(--Branco);
   letter-spacing: -3px;
   margin: 0;
 }
 
+
 /* Palavra em laranja dentro do título ("BREVE") */
 .tituloDestaque {
   color: #E79839;
 }
 
-/* ── Barra decorativa laranja abaixo do título ───────────────── */
-.barraLaranja {
-  width: 80px;
-  height: 3px;
-  background: #E79839;
-  margin: 28px 0 22px;
-}
-
 /* ── Parágrafo de descrição ─────────────────────────────────── */
 .descricao {
+  text-align: center;
+  font-size: 1.5rem;
   font-family: "Montserrat", sans-serif;
   font-weight: 500;
-  font-size: 18px;
   line-height: 1.45;
   color: var(--Branco);
-  max-width: 500px;
-  margin: 0;
 }
 
 /* Trecho esmaecido dentro da descrição */
@@ -52,17 +40,16 @@
 /* ── Área com os botões de ação ─────────────────────────────── */
 .grupoDeAcoes {
   display: flex;
-  gap: 12px;
-  align-items: center;
+  gap: 1rem;
+  justify-content: center;
   flex-wrap: wrap;
-  margin-top: 28px;
 }
 
 /* Base compartilhada entre todos os botões */
 .botao {
   padding: 13px 22px;
   border-radius: 999px;
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: var(--fonteCorpoMontserrat), sans-serif;
   font-weight: 900;
   font-size: 13px;
   letter-spacing: 2px;

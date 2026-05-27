@@ -1,6 +1,5 @@
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -31,6 +30,31 @@
   --fonteTituloBungee: 'Bungee', cursive;
   --fonteCorpoMontserrat: 'Montserrat', sans-serif;
 }
+
+.tracoHorizontal{
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: #E79839;
+  flex-shrink: 0;
+}
+
+.subraTitulo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.styleSubraTitulo{
+  font-family: var(--fonteCorpoMontserrat), sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--AmareloAuxApoio);
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+
 
 a {
   font-weight: 500;
