@@ -1,7 +1,7 @@
 import { useRef } from 'preact/hooks';
 import './sobreFotos.css';
 
-export function sobreFotos({ titulo, texto }) {
+export function sobreFotos({ titulo, texto, imagem }) {
     const wrapperRef = useRef(null);
 
     const handleMouseMove = (e) => {
@@ -15,11 +15,11 @@ export function sobreFotos({ titulo, texto }) {
 
     return (
         <div
-            className="sobreFotosWrapper"
+            className="brilhoInterativo"
             ref={wrapperRef}
             onMouseMove={handleMouseMove}
         >
-            <div className="boxFotos">
+            <div className="boxFotos" style={imagem ? { backgroundImage: `url(${imagem})` } : undefined}>
                 <div className="boxFotosGlass">
                     <h3 className="tituloFotos">{titulo}</h3>
                     <p className="textoFotos">{texto}</p>

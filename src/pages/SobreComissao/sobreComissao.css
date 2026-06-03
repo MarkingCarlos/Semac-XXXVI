@@ -2,7 +2,7 @@
 .container {
     max-width: 100%;
     padding: 56px;
-    min-height: 620px;
+    min-height: 60vh;
     display: flex;
     flex-direction: column;
 }
@@ -26,14 +26,14 @@
 
 .descricao-container {
     flex: 1;
-    width: 100%;
+    overflow-y: auto;
     animation: fadeSlideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .descricao-container p {
     font-family: 'Montserrat', sans-serif;
     font-weight: normal;
-    font-size: clamp(0.8em, 2vw, 2em);
+    font-size: clamp(0.8em, 1.5vw, 2em);
     text-align: justify;
     white-space: pre-line;
 }
@@ -65,6 +65,9 @@
     outline-offset: 2px;
     animation: flutuarAtivo 2s ease-in-out infinite;
 }
+.botoes-comissoes-container .ativo:hover {
+    outline: 3px solid var(--Branco);
+}
 
 .botoes-comissoes-container .inativo {
     font-size: clamp(0.75em, 1.5vw, 1em);
@@ -74,6 +77,38 @@
 }
 
 .botoes-comissoes-container .inativo:hover {
+    outline: 2px solid var(--Branco);
     opacity: 0.85;
     transform: translateY(-1px);
 }
+
+
+/* ── Mobile (≤ 767px) ────────────────────────────────────────── */
+@media (max-width: 767px) {
+    .container {
+        padding: 32px 20px;
+        min-height: unset;
+    }
+
+    /* Empilha botões e membros em coluna única */
+    .lateral-container {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    /* Remove o teto de altura nos botões de comissão */
+    .botoes-comissoes-container {
+        max-height: unset;
+    }
+
+    .botoes-comissoes-container .ativo,
+    .botoes-comissoes-container .inativo {
+        font-size: 0.6rem;
+
+    }
+
+    .botoes-comissoes-container .ativo:hover {
+        outline: 1px solid var(--Branco);
+    }
+}
+

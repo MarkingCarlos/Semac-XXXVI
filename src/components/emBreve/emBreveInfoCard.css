@@ -135,3 +135,43 @@
   color: #E79839;
   line-height: 1;
 }
+
+/* ── Mobile (≤ 767px) ────────────────────────────────────── */
+@media (max-width: 768px) {
+  .cardInfo {
+    max-width: 90vw;
+    padding: 20px 18px 18px;
+  }
+
+  .rotulo {
+    font-size: 0.8rem;
+  }
+
+  .trilhas {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .dataAnuncio {
+    font-size: 1rem;
+  }
+}
+
+/* ── Mobile pequeno (≤ 430px) ───────────────────────────── */
+@media (max-width: 480px) {
+  .cardInfo {
+    padding: 16px 14px 14px;
+  }
+
+  .painelEstatisticas {
+    padding: 12px 8px;
+  }
+
+  .numeroEstatistica {
+    font-size: 2rem;
+  }
+
+  .rotuloMinusculo {
+    font-size: 0.75rem;
+  }
+}

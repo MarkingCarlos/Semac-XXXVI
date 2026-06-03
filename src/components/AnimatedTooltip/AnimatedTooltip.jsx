@@ -1,10 +1,11 @@
-import { useRef, useLayoutEffect } from 'react';
+import { useRef, useLayoutEffect, useState } from 'react';
 import { gsap } from 'gsap';
 import './AnimatedTooltip.css';
 
 function TooltipItem({ membro, index }) {
     const containerRef = useRef(null);
     const tooltipRef = useRef(null);
+    const [carregada, setCarregada] = useState(false);
 
     useLayoutEffect(() => {
         gsap.set(tooltipRef.current, {
@@ -64,7 +65,12 @@ function TooltipItem({ membro, index }) {
                 <p className="tooltip-nome">{membro.nome}</p>
                 <p className="tooltip-cargo">{membro.cargo}</p>
             </div>
-            <img src={membro.foto} alt={membro.nome} className="tooltip-foto" />
+            <img
+                src={membro.foto}
+                alt={membro.nome}
+                className={`tooltip-foto${carregada ? ' carregada' : ''}`}
+                onLoad={() => setCarregada(true)}
+            />
         </div>
     );
 }

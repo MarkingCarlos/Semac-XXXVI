@@ -60,8 +60,6 @@
     box-shadow: 0px 4px 28px rgba(0, 0, 0, 0.6);
     gap: 1.56rem;
     width: 100%;
-    max-width: 730px;
-    z-index: 1;
     overflow: hidden;
 }
 
@@ -77,7 +75,7 @@
 
 .qr-titulo {
     font-family: 'Bungee', sans-serif;
-    font-size: clamp(30px, 3vw, 40px);
+    font-size: clamp(1.5rem, 3vw, 40px);
     font-weight: 900;
     color: var(--Branco);
     text-transform: uppercase;
@@ -92,7 +90,17 @@
     margin: 0;
 }
 
+.qr-subtitulo--mobile {
+    display: none;
+}
+
 /* ── QR Code ─────────────────────────────────────────────────── */
+
+.qr-imagem-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
 
 .qr-imagem {
     width: 50%;
@@ -123,7 +131,7 @@
 
 .qr-chave-valor {
     font-family: 'Montserrat', sans-serif;
-    font-size: clamp(0.7rem, 1.5rem, 1.7rem);
+    font-size: clamp(1.2rem, 2.5vw, 1.7rem);
     font-weight: 600;
     color: var(--Branco);
     word-break: break-all;
@@ -151,15 +159,88 @@
     transform: scale(1.02);
 }
 
+/* ── Botão toggle QR (só mobile) ─────────────────────────────── */
+.qr-btn-toggle {
+    display: none;
+}
+
+/*Desktop*/
+@media (max-width: 1280px) {
+    .qr-wrapper {
+        width: 80%;
+    }
+}
+
+
 /* ── Mobile ──────────────────────────────────────────────────── */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
+    .qr-wrapper {
+        width: 100%;
+    }
+
     .qr-card {
         padding: 1.75rem;
         gap: 1.1rem;
     }
 
+    /* Subtítulos */
+    .qr-subtitulo--desktop {
+        display: none;
+    }
+
+    .qr-subtitulo--mobile {
+        display: block;
+    }
+
+    /* QR container: oculto por padrão em mobile */
+    .qr-imagem-container {
+        overflow: hidden;
+        max-height: 0;
+        transition: max-height 0.4s ease;
+    }
+
+    .qr-imagem-container--visivel {
+        max-height: 250px;
+    }
+
     .qr-imagem {
         width: 170px;
         height: 170px;
+    }
+
+    /* Chave PIX mais proeminente em mobile */
+    .qr-chave-area {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+    }
+
+    .qr-chave-valor {
+        font-size: 1.2rem;
+    }
+
+    .qr-btn-copiar {
+        width: 100%;
+        font-size: 1rem;
+    }
+
+    /* Botão toggle visível em mobile */
+    .qr-btn-toggle {
+        display: block;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: rgba(255, 255, 255, 0.6);
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.5rem 1.25rem;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: border-color 0.2s, color 0.2s;
+    }
+
+    .qr-btn-toggle:hover {
+        border-color: rgba(255, 255, 255, 0.6);
+        color: rgba(255, 255, 255, 0.9);
     }
 }

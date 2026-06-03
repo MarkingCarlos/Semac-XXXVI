@@ -29,12 +29,6 @@
 }
 
 .doacao-titulo {
-    font-weight: 900;
-    color: var(--Branco);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin: 0;
-    line-height: 1.1;
     text-align: left;
 }
 
@@ -52,7 +46,7 @@
     font-weight: 700;
 }
 
-.texto-amarelo {
+.textoAmarelo {
     color: var(--AmareloAuxApoio);
     font-weight: 700;
 }
@@ -75,7 +69,13 @@
 }
 
 /* Mobile */
-@media (max-width: 884px) {
+@media (max-width: 780px) {
+    .doacao-titulo {
+        text-align: center;
+    }
+    .doacao-texto {
+        text-align: center;
+    }
     .doacao-inner {
         flex-direction: column;
         padding: 2rem 1.5rem;

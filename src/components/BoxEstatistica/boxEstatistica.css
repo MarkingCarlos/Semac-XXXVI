@@ -92,7 +92,7 @@
     justify-content: left;
     gap: 8px;
     margin-left: -5px;
-    margin-top: 10px;
+    margin-bottom: 5px;
     width: 100%;
     position: relative;
     z-index: 1;
@@ -123,11 +123,15 @@
 .box .linha {
     display: flex;
     justify-content: space-between;
-    font-size: clamp(17px, 5vw, 30px);
+    font-size: clamp(1rem, 5vw, 30px);
     line-height: 1;
     position: relative;
     z-index: 1;
 }
-@media (max-width: 768px) {
+@media (max-width: 1280px) {
+    .box .linha {
 
+        font-size: clamp(1rem, 1.75vw, 2rem);
+
+    }
 }

@@ -1,0 +1,350 @@
+/* ══════════════════════════════════════════════════════════════
+   FOOTER NOVO — tema vinho escuro
+   Paleta:
+     corpo:    #3D0118 (vinho escuro)
+     acima:    #730835 (vinho — seção anterior)
+     destaque: #E79839 (laranja)
+     texto:    #FCF8F5 (creme)
+   ══════════════════════════════════════════════════════════════ */
+
+/* Container raiz — fundo vinho (cor da seção anterior) para a onda encaixar */
+.footerNovo {
+  width: 100%;
+  background: #730835;
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* ── Onda de transição ──────────────────────────────────────── */
+
+.onda {
+  line-height: 0;
+}
+
+.ondaSvg {
+  display: block;
+  width: 100%;
+  height: 56px;
+  color: #3D0118;
+}
+
+/* ── Corpo do footer ────────────────────────────────────────── */
+
+.corpo {
+  background: #3D0118;
+  padding: 14px 64px 26px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Anel decorativo de fundo (sutil) */
+.anelDecorativo {
+  position: absolute;
+  top: -120px;
+  right: -90px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  border: 60px solid #8A0F42;
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+/* ── Grade principal — 3 colunas: marca | nav | contato ─────── */
+
+.grade {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1.4fr 2fr 1.2fr;
+  gap: 44px;
+  padding-bottom: 30px;
+}
+
+/* ── Bloco de marca ─────────────────────────────────────────── */
+
+.marca {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logoImagem {
+  height: 68px;
+  width: auto;
+  display: block;
+}
+
+.logoNome {
+  text-align: left;
+  font-family: 'Bungee', cursive;
+  font-size: 28px;
+  color: var(--Branco);
+  line-height: 1;
+  letter-spacing: -0.5px;
+}
+
+.logoTagline {
+  text-align: left;
+  font-weight: 600;
+  font-size: 12.5px;
+  color: rgba(252, 248, 245, 0.66);
+  letter-spacing: 0.3px;
+  margin-top: 6px;
+  max-width: 230px;
+  line-height: 1.35;
+}
+
+/* ── Ícones de redes sociais ────────────────────────────────── */
+
+.redes {
+  display: flex;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.botaoRede {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  border: 1px solid rgba(252, 248, 245, 0.18);
+  background: rgba(252, 248, 245, 0.04);
+  color: #FCF8F5;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.botaoRede:hover {
+  transform: translateY(-2px);
+  background: #E79839;
+  border-color: #E79839;
+  color: #3D0118;
+}
+
+/* ── Colunas de navegação (wrapper 2-col) ───────────────────── */
+
+.colunasNav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 44px;
+}
+
+/* ── Coluna genérica de links ───────────────────────────────── */
+
+.colunaTitulo {
+  text-align: left;
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--AmareloAuxApoio);
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.colunaLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.linkNavegacao {
+  text-align: left;
+  font-weight: 500;
+  font-size: 14px;
+  text-decoration: none;
+  letter-spacing: 0.2px;
+  color: rgba(252, 248, 245, 0.66);
+  transition: color 0.16s ease, padding-left 0.16s ease;
+  display: inline-block;
+}
+
+.linkNavegacao:hover {
+  color: #E79839;
+  padding-left: 4px;
+}
+
+/* ── Coluna de contato ──────────────────────────────────────── */
+
+.contatoLinha {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.contatoLinhaEmail {
+  align-items: center;
+}
+
+.contatoIcone {
+  color: #E79839;
+  margin-top: 1px;
+  flex-shrink: 0;
+  display: flex;
+}
+
+.contatoLinhaEmail .contatoIcone {
+  margin-top: 0;
+}
+
+.contatoTexto {
+  text-align: left;
+  font-size: 13.5px;
+  color: rgba(252, 248, 245, 0.66);
+  line-height: 1.4;
+}
+
+.textoEmail {
+  font-size: 14px;
+  font-weight: 600;
+  color: #E79839;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.16s ease;
+}
+
+.textoEmail:hover {
+  border-bottom-color: #E79839;
+}
+
+/* ── Barra inferior ─────────────────────────────────────────── */
+
+.divisor {
+  height: 1px;
+  background: rgba(252, 248, 245, 0.12);
+  position: relative;
+  z-index: 1;
+}
+
+.barraInferior {
+  position: relative;
+  z-index: 1;
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.copyright {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: rgba(252, 248, 245, 0.46);
+  letter-spacing: 0.2px;
+}
+
+.linksLegais {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.linkLegal {
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  color: rgba(252, 248, 245, 0.5);
+  transition: color 0.16s ease;
+}
+
+.linkLegal:hover {
+  color: #E79839;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVO — Mobile (≤ 768px)
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .ondaSvg {
+    height: 36px;
+  }
+
+  .corpo {
+    padding: 14px 22px 26px;
+  }
+
+  .anelDecorativo {
+    display: none;
+  }
+
+  /* Empilha os 3 blocos verticalmente */
+  .grade {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .marca {
+    margin-bottom: 4px;
+  }
+
+  .logo {
+    gap: 12px;
+  }
+
+  .logoImagem {
+    height: 52px;
+  }
+
+  .logoNome {
+    font-size: 22px;
+  }
+
+  .logoTagline {
+    font-size: 11px;
+  }
+
+  .redes {
+    margin-top: 18px;
+    margin-bottom: 24px;
+  }
+
+  .botaoRede {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* Nav columns mantém 2 colunas no mobile */
+  .colunasNav {
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .colunaTitulo {
+    font-size: 11px;
+  }
+
+  /* Contato com margem embaixo */
+  .grade > .coluna:last-child {
+    margin-bottom: 22px;
+  }
+
+  .contatoTexto {
+    font-size: 13px;
+  }
+
+  .textoEmail {
+    font-size: 13.5px;
+  }
+
+  .copyright {
+    font-size: 11.5px;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  .linksLegais {
+    gap: 16px;
+  }
+
+  .linkLegal {
+    font-size: 11.5px;
+  }
+}

@@ -1,7 +1,3 @@
-:root {
-    padding: 5em;
-}
-
 .sobre-container {
     margin-left: 1em;
     margin-right: 1em;
@@ -28,7 +24,7 @@
 
 .sobreLadoDireito {
     flex: 2.5;
-    min-width: 0;
+
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -86,61 +82,72 @@
     opacity: 0;
 }
 
+/* ── Tablet (≤ 1024px): reduz a altura fixa para não ocupar demais ── */
+@media (max-width: 1024px) {
+    .sobre-container {
+        height: auto;
+        min-height: 60vh;
+    }
+}
+
+/* ── Mobile (≤ 767px): empilha as três colunas verticalmente ── */
 @media (max-width: 768px) {
     .sobre-container {
         height: auto;
+        min-height: unset;
+        margin: 0;
+        padding: 1rem;
     }
 
     .sobreSecao {
         flex-direction: column;
         height: auto;
-        padding: 15px 0;
-        gap: 15px;
+        gap: 12px;
     }
 
-    .sobreLadoEsquerdo .sobreLadoDireito{
+    .sobreLadoEsquerdo {
         flex: none;
-        width: 100%;
-        height: 30vh;
-
-    }
-
-    .textoFotos {
-        font-size: 14px;
-        margin-left: 14px;
-    }
-    .sobreLadoEstatisticas {
-        flex: none;
-        flex-direction: row;
         width: 100%;
         height: auto;
     }
-}
 
-@media (max-width: 480px) {
-    .sobreSecao {
-        gap: 10px;
-        padding: 10px 0;
+    .sobreLadoEsquerdo > * {
+        height: 40vh;
     }
 
     .sobreLadoDireito {
-        flex-direction: column;
+        flex: none;
+        width: 100%;
         height: auto;
-        gap: 10px;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .sobreLadoDireito > * {
+        height: 40vh;
     }
 
     .sobreLadoEstatisticas {
-        flex-direction: column;
+        flex-direction: row;
+        width: 100%;
         height: auto;
-        gap: 10px;
+        gap: 12px;
+        padding: 0 16px;
+        scroll-padding-left: 16px;
+        overflow-x: scroll;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
     }
 
-    .tituloFotos {
-        font-size: 15px;
+    .sobreLadoEstatisticas::-webkit-scrollbar {
+        display: none;
     }
 
-    .textoFotos {
-        font-size: 10px;
+    .sobreLadoEstatisticas > div {
+        flex: 0 0 calc(100% - 32px);
+        scroll-snap-align: start;
     }
-
 }
+
+

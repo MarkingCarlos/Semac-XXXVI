@@ -27,6 +27,22 @@
 
 .boxTrilha:hover { opacity: 0.8; }
 
+
+@media (max-width: 768px) {
+  .containerBoxsTrilhas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    max-width: 100%;
+  }
+  .boxTrilha {
+    gap: 3px;
+    padding-left: 10px;
+    font-size: 9px;
+    letter-spacing: 1px;
+  }
+}
+
 /* ── Ponto colorido à esquerda do label da trilha ───────────── */
 .boxTrilhaPonto {
   width: 5px;

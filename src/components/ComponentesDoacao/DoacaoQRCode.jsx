@@ -6,6 +6,7 @@ const CHAVE_PIX = "semac@exemplo.com.br"; // substituir pela chave real
 
 const DoacaoQRCode = () => {
     const [copiado, setCopiado] = useState(false);
+    const [mostrarQR, setMostrarQR] = useState(false);
     const wrapperRef = useRef(null);
 
     const handleMouseMove = (e) => {
@@ -27,10 +28,13 @@ const DoacaoQRCode = () => {
             <div class="qr-card">
                 <div class="qr-cabecalho">
                     <h2 class="qr-titulo">Faça uma Doação</h2>
-                    <p class="qr-subtitulo">Escaneie o QR Code PIX</p>
+                    <p class="qr-subtitulo qr-subtitulo--desktop">Escaneie o QR Code PIX</p>
+                    <p class="qr-subtitulo qr-subtitulo--mobile">Copie a chave PIX abaixo</p>
                 </div>
 
-                <img src={qrCode} alt="QR Code PIX" class="qr-imagem" />
+                <div class={`qr-imagem-container${mostrarQR ? " qr-imagem-container--visivel" : ""}`}>
+                    <img src={qrCode} alt="QR Code PIX" class="qr-imagem" />
+                </div>
 
                 <div class="qr-chave-area">
                     <span class="qr-chave-label">Chave PIX</span>
@@ -39,6 +43,10 @@ const DoacaoQRCode = () => {
 
                 <button class="qr-btn-copiar" onClick={copiarChave}>
                     {copiado ? "Copiado ✓" : "Copiar Chave PIX"}
+                </button>
+
+                <button class="qr-btn-toggle" onClick={() => setMostrarQR(!mostrarQR)}>
+                    {mostrarQR ? "Ocultar QR Code" : "Ver QR Code"}
                 </button>
             </div>
         </div>

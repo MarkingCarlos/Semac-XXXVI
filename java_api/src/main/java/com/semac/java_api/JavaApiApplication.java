@@ -1,4 +1,4 @@
-package com.semac.java_api;
+git pupackage com.semac.java_api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

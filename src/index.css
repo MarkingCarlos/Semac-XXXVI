@@ -24,7 +24,8 @@
   --rosaAuxMarketing: #962D60;
 
   /* Tipografia */
-  --titulo-size-desktop-wide: clamp(4rem, 4.5rem, 5rem);
+  /* clamp(mín, preferido-em-vw, máx) — escala de ~2.25rem em mobile até 5rem no wide */
+  --titulo-size-desktop-wide: clamp(2.25rem, 5vw, 5rem);
 
   /* Fontes */
   --fonteTituloBungee: 'Bungee', cursive;
@@ -46,6 +47,15 @@
   gap: 1rem;
 }
 
+.tituloPrincipal{
+  text-align: center;
+  font-family: 'Bungee', sans-serif;
+  font-size: var(--titulo-size-desktop-wide);
+  line-height: 1;
+  color: var(--Branco);
+  margin: 0;
+}
+
 .styleSubraTitulo{
   font-family: var(--fonteCorpoMontserrat), sans-serif;
   font-size: 1rem;
@@ -55,6 +65,11 @@
   text-transform: uppercase;
 }
 
+@media (max-width: 768px) {
+  .styleSubraTitulo{
+    font-size: 0.8rem;
+  }
+}
 
 a {
   font-weight: 500;
@@ -104,5 +119,52 @@ button:focus:not(:focus-visible) {
 }
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* ── Efeito de brilho interativo que segue o cursor ─────────── */
+.brilhoInterativo {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 25px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  z-index: 0;
+}
+
+.brilhoInterativo:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 6px 12px rgba(115, 8, 53, 0.4);
+}
+
+.brilhoInterativo::before,
+.brilhoInterativo::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 28px;
+  background: radial-gradient(
+    circle 350px at var(--mouse-x, 0) var(--mouse-y, 0),
+    rgba(255, 255, 255, 0.9) 0%,
+    var(--AmareloAuxApoio, #E79839) 15%,
+    transparent 50%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.brilhoInterativo::after {
+  filter: blur(20px);
+  z-index: -2;
+}
+
+.brilhoInterativo:hover::before,
+.brilhoInterativo:hover::after {
+  opacity: 1;
 }
 

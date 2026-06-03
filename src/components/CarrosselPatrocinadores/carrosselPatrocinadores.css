@@ -74,10 +74,16 @@
     transform: scale(1.5);
 }
 
-/* ── Mobile: 3 colunas (5 itens = 2 linhas) ─────────────────── */
+/* ── Mobile: 3 por linha, última linha centralizada ─────────── */
 @media (max-width: 600px) {
     .carrossel-grupo {
-        grid-template-columns: repeat(3, 1fr);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
         gap: 8px;
+    }
+
+    .carrossel-grupo > * {
+        width: calc(33.333% - 6px);
     }
 }

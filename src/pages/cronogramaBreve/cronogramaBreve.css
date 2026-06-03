@@ -12,7 +12,7 @@
   padding: 56px;
   background: #730835;
   width: 100%;
-  max-height: 100vh;
+  max-height: 120vh;
   position: relative;
   overflow: hidden;
   display: flex;
@@ -93,22 +93,33 @@
 /* ════════════════════════════════════════════════════════════
    RESPONSIVIDADE
    ════════════════════════════════════════════════════════════ */
-@media (max-width: 900px) {
-  .cabecalho {
-    padding: 20px 24px 0;
+
+/* ── Tablet (≤ 1024px) ───────────────────────────────────── */
+@media (max-width: 1024px) {
+  .paginaCronograma {
+    padding: 40px 32px;
+  }
+}
+
+/* ── Mobile (≤ 767px) ────────────────────────────────────── */
+@media (max-width: 767px) {
+  .paginaCronograma {
+    padding: 32px 20px;
+    max-height: unset; /* permite expandir além de 100vh se o conteúdo for maior */
   }
 
-  /* Empilha as duas labels do meta em coluna */
-  .cabecalhoMeta {
-    flex-direction: column;
-    gap: 4px;
-    margin-bottom: 12px;
-  }
-
-  /* Empilha o grid de colunas em mobile */
   .conteudoPrincipal {
-    grid-template-columns: 1fr;
-    padding: 24px 24px 40px;
-    gap: 32px;
+    gap: 28px;
+  }
+}
+
+/* ── Mobile pequeno (≤ 430px / iPhone 14) ───────────────── */
+@media (max-width: 430px) {
+  .paginaCronograma {
+    padding: 24px 16px;
+  }
+
+  .conteudoPrincipal {
+    gap: 20px;
   }
 }

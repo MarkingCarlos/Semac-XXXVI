@@ -17,7 +17,7 @@ export default function PatrocinadoresCompacto() {
                     <span class="styleSubraTitulo">HISTÓRICO</span>
                     <span class="tracoHorizontal"/>
                 </div>
-                <h2 class="patroc-compacto-titulo">
+                <h2 class="tituloPrincipal">
                     QUEM JÁ <span class="patroc-compacto-destaque">ESTEVE </span>
                     COM A GENTE
                 </h2>

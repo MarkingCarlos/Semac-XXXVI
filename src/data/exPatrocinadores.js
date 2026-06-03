@@ -27,6 +27,7 @@ import WZTECH   from '../assets/exPatrocinador/waztec.png'
 import alura   from '../assets/exPatrocinador/alura.svg'
 import Accurate    from '../assets/exPatrocinador/logo-accurate.svg'
 import cengage    from '../assets/exPatrocinador/cengage.png'
+import hit   from '../assets/exPatrocinador/hit.png'
 
 export const EX_PATROCINADORES = [
     { nome: 'Profitor',                      src: profitor       },
@@ -49,4 +50,5 @@ export const EX_PATROCINADORES = [
     { nome: 'Alura',                      src: alura   },
     { nome: 'Accurate software',          src: Accurate    },
     { nome: 'cengage',          src: cengage    },
+    { nome: 'HIT Academia',          src: hit    },
 ]

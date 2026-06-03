@@ -44,12 +44,91 @@
     border-bottom-color: var(--AmareloAuxApoio);
 }
 
+/* ── Transição suave na troca de aba ────────────────────────── */
+
+.tab-area {
+    /* sem transition aqui — o fade-out é feito pela classe .tab-saindo */
+}
+
+.tab-saindo {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+/* ── Animação de entrada das etapas ──────────────────────────── */
+
+@keyframes etapaEntrada {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Indicador de progresso ──────────────────────────────────── */
+
+.etapa-indicador {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+    justify-content: center;
+}
+
+.etapa-passo {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    opacity: 0.35;
+    transition: opacity 0.3s;
+}
+
+.etapa-passo-ativo     { opacity: 1; }
+.etapa-passo-concluido { opacity: 0.65; }
+
+.etapa-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.etapa-passo-ativo .etapa-num {
+    background: var(--AmareloAuxApoio);
+    border-color: var(--AmareloAuxApoio);
+}
+
+.etapa-passo-concluido .etapa-num {
+    background: rgba(231, 152, 57, 0.35);
+    border-color: var(--AmareloAuxApoio);
+}
+
+.etapa-nome {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.etapa-linha {
+    flex: 1;
+    max-width: 48px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 2px;
+}
+
 /* ── Formulário ──────────────────────────────────────────────── */
 
 .box-form {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
+    animation: etapaEntrada 0.35s ease both;
 }
 
 /* ── CampoTexto / CampoSenha ─────────────────────────────────── */
@@ -96,7 +175,7 @@
     margin-top: 0.35rem;
 }
 
-.indicador {
+.indicadorSenha {
     display: flex;
     align-items: center;
     gap: 0.3rem;
@@ -184,6 +263,52 @@
     color: rgba(255, 255, 255, 0.55);
 }
 
+/* ── Tela de comemoração ─────────────────────────────────────── */
+
+.comemoracao-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    min-height: 340px;
+    position: relative;
+    padding: 1.5rem 1rem 2rem;
+    text-align: center;
+    overflow: hidden;
+}
+
+.comemoracao-titulo {
+    font-family: 'Bungee', sans-serif;
+    font-size: 2.4rem;
+    color: var(--AmareloAuxApoio);
+    text-shadow:
+        0 0 24px rgba(231, 152, 57, 0.5),
+        0 2px 8px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+    letter-spacing: 0.03em;
+    line-height: 1.15;
+}
+
+.comemoracao-subtitulo {
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    color: var(--Branco);
+    line-height: 1.55;
+    max-width: 290px;
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    opacity: 0.92;
+}
+
+.comemoracao-subtitulo strong {
+    color: var(--AmareloAuxApoio);
+    font-weight: 800;
+}
+
 /* ── Feedback de submissão ───────────────────────────────────── */
 
 .feedback {
@@ -215,7 +340,7 @@
     background-color: var(--AmareloAuxApoio);
     color: var(--Branco);
     font-family: 'Bungee', sans-serif;
-    font-size: 1.5rem;
+    font-size: 1rem;
     letter-spacing: 0.06em;
     cursor: pointer;
     transition: filter 0.2s;
@@ -241,12 +366,28 @@
     .btn-modelo,
     .btn-tamanho,
     .btn-confirmar {
-        font-size: 1.7rem;
+        font-size: 1.3rem;
     }
 }
 
 /* ── Mobile ──────────────────────────────────────────────────── */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
+    .indicadorSenha {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.4);
+        transition: color 0.25s;
+    }
+
+    .senha-validacao{
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
     .box-inscricao {
         padding: 1rem;
         border-radius: 12px;
@@ -274,10 +415,6 @@
         font-size: 0.9rem;
     }
 
-    .indicador {
-        font-size: 0.4rem;
-    }
-
     .btn-modelo {
         font-size: 0.7rem;
         padding: 0.6rem 0.4rem;
@@ -293,7 +430,12 @@
     }
 
     .btn-confirmar {
-        font-size: 1.1rem;
+        font-size: 0.9rem;
         padding: 0.85rem;
     }
+
+    .etapa-nome { display: none; }
+
+    .comemoracao-titulo    { font-size: 1.7rem; }
+    .comemoracao-subtitulo { font-size: 1rem; }
 }

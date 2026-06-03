@@ -1,7 +1,7 @@
 import Home from "./pages/Home/Home.jsx";
 import './app.css'
 import Sobre from "./pages/Sobre/sobre.jsx";
-import Footer from "./pages/Footer/footer.jsx";
+import FooterNovo from "./pages/FooterNovo/FooterNovo.jsx";
 import Patrocinadores from "./pages/Patrocinadores/Patrocinadores.jsx";
 import Cronograma from "./pages/Cronograma/Cronograma.jsx";
 import Doacao from "./pages/Doacao/doacao.jsx";
@@ -19,22 +19,22 @@ export function App() {
         <div style={{position:'sticky'}}>
             <Home/>
         </div>
-        <div style={{ minHeight:'75vh'}}>
+        <div>
             <Sobre/>
         </div>
         <div>
             <CronogramaBreve/>
         </div>
-        <div style={{marginTop: '2.5rem'}}>
+        <div>
             <PatrocinadoresCompacto/>
         </div>
         <div>
             <Doacao/>
         </div>
-        <div style={{marginTop: '2.5rem'}}>
+        <div>
             <SobreComissao/>
         </div>
-        <Footer/>
+        <FooterNovo/>
     </>
   )
 }

@@ -24,7 +24,7 @@ const FacaUmaDoacao = () => {
     };
 
     return (
-        <div className="sobreFotosWrapper"
+        <div className="brilhoInterativo"
              ref={wrapperRef}
              onMouseMove={handleMouseMove}>
             <div className="doacao-card">
