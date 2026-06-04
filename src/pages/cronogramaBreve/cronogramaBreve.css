@@ -12,7 +12,7 @@
   padding: 56px;
   background: #730835;
   width: 100%;
-  max-height: 120vh;
+  /*max-height: 120vh;*/
   position: relative;
   overflow: hidden;
   display: flex;
