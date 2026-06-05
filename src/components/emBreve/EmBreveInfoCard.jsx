@@ -53,7 +53,7 @@ export default function EmBreveInfoCard() {
                 {STATS.map(({ valor, label }) => (
                   <div key={label} className="itemEstatistica">
                     <span className="numeroEstatistica">{valor}</span>
-                    <span className="rotulo rotuloMinusculo">{label}</span>
+                    <span style={{margin:0}} className="rotulo rotuloMinusculo">{label}</span>
                   </div>
                 ))}
               </div>
