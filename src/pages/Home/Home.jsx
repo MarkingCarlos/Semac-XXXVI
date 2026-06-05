@@ -11,14 +11,14 @@ const Home = () =>{
 
     return (
         <div className="home-container">
-            <div className="divBotoes">
-                <button className="btn" onClick={() => navigate('/inscricao')}>
-                    Inscreva-se
-                </button>
-                <button className="btn" onClick={() => navigate('/inscricao')}>
-                    Entrar
-                </button>
-            </div>
+            {/*<div className="divBotoes">*/}
+            {/*    <button className="btn" onClick={() => navigate('/inscricao')}>*/}
+            {/*        Inscreva-se*/}
+            {/*    </button>*/}
+            {/*    <button className="btn" onClick={() => navigate('/inscricao')}>*/}
+            {/*        Entrar*/}
+            {/*    </button>*/}
+            {/*</div>*/}
 
             <img src={fotos} className="fotos" alt="fotos home" />
             <div className="retanguloGlass" />

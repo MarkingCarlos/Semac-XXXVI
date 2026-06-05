@@ -23,7 +23,7 @@ const sobre = () =>{
     return (
         <div ref={sectionRef} className={`sobre-container ${isExiting ? 'sobre-exiting' : ''}`}>
             <div className="sobreSecao">
-                <div className="sobreLadoEsquerdo">
+                <div className="colunasSobreNos">
                     <SobreFotos
                         titulo={'QUEM SOMOS'}
                         texto={'A SEMAC é um evento universitário organizado pelos discentes' +
@@ -31,13 +31,16 @@ const sobre = () =>{
                         imagem={imgQuemSomos}>
                     </SobreFotos>
                 </div>
-                <div className="sobreLadoDireito">
+                <div className="colunasSobreNos">
                     <SobreFotos
                         titulo={'O que oferecemos'}
                         texto={'Oferecemos palestras, minicursos e mesas redondas, além de um ' +
                             'ambiente propício para a inovação e o desenvolvimento de carreiras na Computação. '}
                         imagem={imgOQueOferecemos}>
                     </SobreFotos>
+                </div>
+                <div className="colunasSobreNos">
+
                     <SobreFotos
                         titulo={'O que buscamos'}
                         texto={'O evento busca promover o acesso ao conhecimento tecnológico, trazendo para' +
@@ -45,11 +48,11 @@ const sobre = () =>{
                         imagem={imgOQueBuscamos}>
                     </SobreFotos>
                 </div>
-                <div className="sobreLadoEstatisticas">
-                    <BoxEstatistica plataforma={'YouTube'} alcance={'100'} seguidores={'100'} visitas={'100'} indice={0}></BoxEstatistica>
-                    <BoxEstatistica plataforma={'LinkedIn'} alcance={'100'} seguidores={'100'} visitas={'100'} indice={1}></BoxEstatistica>
-                    <BoxEstatistica plataforma={'Instagram'} alcance={'100'} seguidores={'100'} visitas={'100'} indice={2}></BoxEstatistica>
-                </div>
+            </div>
+            <div className="sobreLadoEstatisticas">
+                <BoxEstatistica plataforma={'YouTube'} alcance={'100'} seguidores={'100'} visitas={'100'} indice={0}></BoxEstatistica>
+                <BoxEstatistica plataforma={'LinkedIn'} alcance={'100'} seguidores={'100'} visitas={'100'} indice={1}></BoxEstatistica>
+                <BoxEstatistica plataforma={'Instagram'} alcance={'100'} seguidores={'100'} visitas={'100'} indice={2}></BoxEstatistica>
             </div>
         </div>
     )
