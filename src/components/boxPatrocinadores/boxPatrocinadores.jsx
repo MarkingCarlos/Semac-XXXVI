@@ -1,5 +1,5 @@
 import './boxPatrocinadores.css';
-import exemploLogo from '../../assets/exemplo.png';
+import exemploLogo from '../../assets/exPatrocinador/alura.svg';
 import LogoSlider from '../LogoSlider/LogoSlider.jsx';
 
 export default function Patrocinadores() {
