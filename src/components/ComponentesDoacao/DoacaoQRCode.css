@@ -1,13 +1,6 @@
-/* =================================================================
-   DoacaoQRCode.css
-   Variante do box de doação que exibe o QR Code PIX diretamente.
-   ================================================================= */
-
-/* ── Wrapper com efeito glow no mouse ────────────────────────── */
 
 .qr-wrapper {
-    width: 100%;
-    height: 100%;
+
     position: relative;
     border-radius: 25px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -58,8 +51,7 @@
     align-items: center;
     border-radius: 25px;
     box-shadow: 0px 4px 28px rgba(0, 0, 0, 0.6);
-    gap: 1.56rem;
-    width: 100%;
+    gap: 1.5rem;
     overflow: hidden;
 }
 
