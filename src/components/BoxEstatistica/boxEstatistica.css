@@ -53,19 +53,15 @@
 }
 
 .box {
-
-    height: clamp(150px, 32vw, 216px);
+    height: clamp(150px, 3vw, 200px);
     animation: boxEntrada 0.6s ease-out both;
     border-radius: 25px;
     padding: 12px 16px;
-
     color: white;
     font-family: 'Bungee', sans-serif;
-
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-
     position: relative;
     overflow: hidden;
 }

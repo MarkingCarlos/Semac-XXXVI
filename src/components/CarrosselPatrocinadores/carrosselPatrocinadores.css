@@ -83,13 +83,7 @@
         gap: 8px;
         /*grid-template-columns: repeat(4, 1fr);*/
     }
-    /*.carrossel-grupo {*/
-    /*    display: grid;*/
-    /*    grid-template-columns: repeat(5, 1fr);*/
-    /*    gap: 10px;*/
-    /*    min-height: 150px;*/
-    /*    animation-fill-mode: both;*/
-    /*}*/
+
 
     .carrossel-grupo > * {
         width: 29%
