@@ -92,6 +92,6 @@
     /*}*/
 
     .carrossel-grupo > * {
-        width: calc(33.333% - 6px);
+        width: 29%
     }
 }
