@@ -37,7 +37,7 @@ const SobreComissao = () => {
     return (
         <>
         <div className="container">
-            <h1>
+            <h1 className="nomeComissao">
                 <SplitText
                     key={ativa.id}
                     tag="span"
