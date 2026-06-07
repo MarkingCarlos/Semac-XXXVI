@@ -14,7 +14,7 @@
 
   /* Paleta de cores do projeto */
   --AmareloAuxApoio: #E79839;
-  --Branco: #faf3f3;
+  --Branco: #edecec;
   --vermelhoDiretoria: #A10535;
   --vermelhoAuxDiretoria: #730835;
   --vermelhoAux2Diretoria: #850735;
@@ -22,6 +22,7 @@
   --azulAuxConteudo: #469197;
   --rosaMarketing: #B13571;
   --rosaAuxMarketing: #962D60;
+  --Preto: rgb(11 11 11 );
 
   /* Tipografia */
   /* clamp(mín, preferido-em-vw, máx) — escala de ~2.25rem em mobile até 5rem no wide */
@@ -30,6 +31,11 @@
   /* Fontes */
   --fonteTituloBungee: 'Bungee', cursive;
   --fonteCorpoMontserrat: 'Montserrat', sans-serif;
+}
+
+.textoAmarelo {
+  color: var(--AmareloAuxApoio);
+  font-weight: 700;
 }
 
 .tracoHorizontal{

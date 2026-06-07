@@ -17,7 +17,7 @@
 }
 .boxTextoSobreNos {
     flex: 2;
-    background: var(--vermelhoDiretoria);
+    background: var(--Branco);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border-top: 1px solid rgba(255, 255, 255, 0.15);
@@ -26,7 +26,7 @@
 }
 
 .textoFotos{
-    color: var(--Branco);
+    color: var(--Preto);
     text-align: left;
     font-family: "Montserrat", sans-serif;
     font-size: clamp(1rem, 0.5rem + 0.7vw, 1.5rem);
@@ -34,7 +34,7 @@
 }
 
 .tituloFotos{
-    color: var(--Branco);
+    color: var(--vermelhoDiretoria);
     margin: 0 0 4px;
     font-size: clamp(1rem, 0.5rem + 1.2vw, 2rem);
     text-align: left;
