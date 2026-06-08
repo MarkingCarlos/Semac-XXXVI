@@ -6,9 +6,10 @@ export const COTAS = [
     {
         id: 'apoiador',
         nome: 'Apoiador',
-        corFundo: '#3D0118',
-        corDestaque: '#FCF8F5',
-        corTexto: 'rgba(252,248,245,0.82)',
+        preco: null,
+        corFundo: '#f3e8e8',
+        corDestaque: '#400505',
+        corTexto: 'rgba(0,0,0,0.82)',
         beneficios: [
             'Logo no site do evento',
             'Menção nas redes sociais',
@@ -18,6 +19,7 @@ export const COTAS = [
     {
         id: 'bronze',
         nome: 'Bronze',
+        preco: 'R$ 1.500,00',
         corFundo: '#A10535',
         corDestaque: '#FCF8F5',
         corTexto: 'rgba(252,248,245,0.85)',
@@ -31,6 +33,7 @@ export const COTAS = [
     {
         id: 'prata',
         nome: 'Prata',
+        preco: 'R$ 3.000,00',
         corFundo: '#52ABB1',
         corDestaque: '#FCF8F5',
         corTexto: 'rgba(252,248,245,0.9)',
@@ -44,6 +47,7 @@ export const COTAS = [
     {
         id: 'ouro',
         nome: 'Ouro',
+        preco: 'R$ 6.000,00',
         corFundo: '#E79839',
         corDestaque: '#3D0118', // texto escuro: fundo dourado é claro
         corTexto: 'rgba(61,1,24,0.82)',
@@ -61,6 +65,7 @@ export const COTAS = [
     {
         id: 'platina',
         nome: 'Platina',
+        preco: 'R$ 10.000,00',
         corFundo: '#33021A',
         corDestaque: '#E8E8FF',
         corTexto: 'rgba(232,232,255,0.85)',
@@ -75,6 +80,7 @@ export const COTAS = [
     {
         id: 'especial',
         nome: 'Especial',
+        preco: 'R$ 15.000,00',
         corFundo: '#26002C',
         corDestaque: '#FCF8F5',
         corTexto: 'rgba(252,248,245,0.88)',

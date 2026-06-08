@@ -1,0 +1,377 @@
+/* ── Página de cotas: layout full-page ──────────────────────────── */
+
+.cotas-pagina {
+    min-height: 100dvh;
+    background: var(--vermelhoAuxDiretoria);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    animation: pagina-enter 0.3s ease-out both;
+}
+
+@keyframes pagina-enter {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.cotas-painel {
+    width: 100%;
+    max-width: 1400px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+}
+
+/* ── Cabeçalho ───────────────────────────────────────────────── */
+
+.cotas-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.cotas-voltar {
+    align-self: flex-start;
+    background: rgba(252, 248, 245, 0.08);
+    border: 1px solid rgba(252, 248, 245, 0.15);
+    color: rgba(252, 248, 245, 0.75);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.cotas-voltar:hover {
+    background: rgba(252, 248, 245, 0.15);
+    color: #FCF8F5;
+}
+
+.cotas-rotulo-linha {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.cotas-acento {
+    display: block;
+    width: 28px;
+    height: 2.5px;
+    background: #E79839;
+    flex-shrink: 0;
+}
+
+.cotas-rotulo {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 0.65rem;
+    color: #E79839;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+}
+
+.cotas-titulo {
+    text-align: left;
+    font-family: 'Bungee', cursive;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    color: #FCF8F5;
+    letter-spacing: -0.5px;
+    line-height: 1;
+    margin: 0;
+}
+
+.cotas-subtitulo {
+    text-align: left;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    color: rgba(252, 248, 245, 0.5);
+    margin: -1rem 0 0 0;
+    line-height: 1.5;
+}
+
+/* ── Grid de cotas ───────────────────────────────────────────── */
+
+.cotas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+/* ── Card de cada cota ───────────────────────────────────────── */
+
+.cota-card {
+    background: var(--cota-fundo);
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    padding: 1.4rem 1.15rem;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    position: relative;
+    min-width: 0;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+    opacity: 0.88;
+    animation: card-enter 0.35s ease-out both;
+}
+
+@keyframes card-enter {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 0.88; transform: translateY(0); }
+}
+
+.cota-card:hover {
+    transform: translateY(-3px);
+    opacity: 1;
+    filter: brightness(1.08);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+}
+
+.cota-card-selecionada {
+    opacity: 1;
+    filter: brightness(1.1);
+    border: 2px solid var(--cota-destaque);
+    box-shadow: 0 0 0 1px var(--cota-destaque), 0 8px 28px rgba(0, 0, 0, 0.4);
+}
+
+.cota-card.platina {
+    background-size: 200% auto;
+    animation: shimmer-platina 4s linear infinite;
+}
+
+@keyframes shimmer-platina {
+    0%   { background-position: 0% center; }
+    100% { background-position: 200% center; }
+}
+
+.cota-card.especial {
+    background-size: 200% auto;
+    animation: shimmer-especial 3s linear infinite;
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+@keyframes shimmer-especial {
+    0%   { background-position: 0% center; }
+    100% { background-position: 200% center; }
+}
+
+/* ── Conteúdo do card ────────────────────────────────────────── */
+
+.cota-cabecalho {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cota-nome {
+    font-family: 'Bungee', cursive;
+    font-size: 1.15rem;
+    color: var(--cota-destaque);
+    letter-spacing: 0.5px;
+    line-height: 1;
+}
+
+.cota-preco {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--cota-destaque);
+    opacity: 0.85;
+    line-height: 1;
+}
+
+.cota-preco-sob-consulta {
+    font-size: 0.75rem;
+    font-weight: 600;
+    opacity: 0.5;
+    font-style: italic;
+}
+
+.cota-beneficios {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    flex: 1;
+}
+
+.cota-beneficio {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--cota-texto);
+    line-height: 1.6;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.cota-beneficio span:last-child {
+    flex: 1;
+    min-width: 0;
+}
+
+.cota-check-icone {
+    color: var(--cota-destaque);
+    font-size: 0.65rem;
+    margin-top: 1px;
+    flex-shrink: 0;
+    font-weight: 700;
+}
+
+.cota-badge-selecionada {
+    display: inline-block;
+    background: var(--cota-destaque);
+    color: var(--cota-fundo);
+    font-family: 'Bungee', cursive;
+    font-size: 0.55rem;
+    letter-spacing: 1px;
+    padding: 3px 7px;
+    border-radius: 4px;
+    margin-top: 4px;
+    align-self: flex-start;
+}
+
+/* ── Formulário ──────────────────────────────────────────────── */
+
+.cotas-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border-top: 1px solid rgba(252, 248, 245, 0.08);
+    padding-top: 1rem;
+}
+
+.cotas-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.cotas-campo-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: rgba(252, 248, 245, 0.5);
+}
+
+.cotas-campo-input {
+    background: rgba(252, 248, 245, 0.05);
+    border: 1.5px solid rgba(252, 248, 245, 0.12);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    color: #FCF8F5;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.cotas-campo-input::placeholder {
+    color: rgba(252, 248, 245, 0.25);
+}
+
+.cotas-campo-input:focus {
+    border-color: #E79839;
+}
+
+/* ── Botão de envio ──────────────────────────────────────────── */
+
+.cotas-btn-enviar {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 10px;
+    background: #E79839;
+    color: var(--vermelhoAuxDiretoria);
+    font-family: 'Bungee', cursive;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: filter 0.2s, transform 0.15s;
+}
+
+.cotas-btn-enviar:hover:not(:disabled) {
+    filter: brightness(1.1);
+    transform: scale(1.01);
+}
+
+.cotas-btn-enviar:disabled {
+    background: rgba(252, 248, 245, 0.1);
+    color: rgba(252, 248, 245, 0.3);
+    cursor: not-allowed;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+}
+
+/* ── Tablet: 3 colunas ───────────────────────────────────────── */
+@media (max-width: 1100px) {
+    .cotas-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ── Tablet estreito: 2 colunas ─────────────────────────────── */
+@media (max-width: 720px) {
+    .cotas-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .cotas-pagina {
+        padding: 2rem 1rem 3rem;
+    }
+}
+
+/* ── Mobile: carrossel horizontal com snap ───────────────────── */
+@media (max-width: 560px) {
+    .cotas-pagina {
+        padding: 1.5rem 1rem 2.5rem;
+    }
+
+    .cotas-grid {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 10px;
+        padding-bottom: 4px;
+        padding-right: 40px;
+    }
+
+    .cotas-grid::-webkit-scrollbar {
+        display: none;
+    }
+
+    .cota-card {
+        flex: 0 0 200px;
+        scroll-snap-align: start;
+        align-self: flex-start;
+        padding: 1.1rem 0.9rem;
+        border-radius: 12px;
+    }
+
+    .cota-nome {
+        font-size: 1rem;
+    }
+
+    .cota-beneficio {
+        font-size: 0.8rem;
+    }
+}

@@ -1,11 +1,10 @@
-import { useState } from 'preact/hooks'
+import { useLocation } from 'wouter'
 import CarrosselPatrocinadores from '../../components/CarrosselPatrocinadores/CarrosselPatrocinadores.jsx'
-import ModalCotas             from '../../components/ModalCotas/ModalCotas.jsx'
 import { EX_PATROCINADORES }  from '../../data/exPatrocinadores.js'
 import './patrocinadoresCompacto.css'
 
 export default function PatrocinadoresCompacto() {
-    const [modalAberto, setModalAberto] = useState(false)
+    const [, navigate] = useLocation()
 
     return (
         <section class="patroc-compacto">
@@ -34,12 +33,11 @@ export default function PatrocinadoresCompacto() {
             </div>
             <button
                 className="btnPatrocinar"
-                onClick={() => setModalAberto(true)}
+                onClick={() => navigate('/cotas')}
             >
                 Seja um Patrocinador
             </button>
 
-            <ModalCotas aberto={modalAberto} onFechar={() => setModalAberto(false)}/>
         </section>
     )
 }
