@@ -73,14 +73,3 @@
     font-size: 1rem;
   }
 }
-
-/* ── Mobile pequeno (≤ 430px) ───────────────────────────── */
-@media (max-width: 430px) {
-  .tituloPrincipal {
-    letter-spacing: -1px;
-  }
-
-  .descricao {
-    font-size: 0.9rem;
-  }
-}

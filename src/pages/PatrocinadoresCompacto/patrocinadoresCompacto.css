@@ -1,8 +1,3 @@
-/* =================================================================
-   patrocinadoresCompacto.css
-   Layout centralizado: texto + CTA no topo, carrossel abaixo.
-   ================================================================= */
-
 .patroc-compacto {
     background: var(--vermelhoAuxDiretoria);
     padding: 23px 56px;
@@ -59,6 +54,7 @@
     text-align: center;
     font-size: 1.5rem;
     color: rgba(252, 248, 245, 0.6);
+    margin: 0;
 }
 
 .patroc-compacto-texto strong {
@@ -104,21 +100,13 @@
 }
 
 /* ── Tablet ──────────────────────────────────────────────────── */
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
     .patroc-compacto {
-        padding: 40px 32px 36px;
+        padding: 16px;
         gap: 32px;
     }
-}
-
-/* ── Mobile ──────────────────────────────────────────────────── */
-@media (max-width: 480px) {
-    .patroc-compacto {
-        padding: 32px 18px 28px;
-        gap: 24px;
-    }
-
-    .patroc-compacto-titulo {
-        font-size: clamp(1.75rem, 8vw, 2.5rem);
+    .patroc-compacto-texto{
+        font-size: 0.9rem;
     }
 }
+
