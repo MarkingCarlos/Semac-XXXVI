@@ -1,15 +1,3 @@
-/* =================================================================
-   modalCotas.css
-   Modal de seleção de cotas de patrocínio.
-   6 tiers: Apoiador → Bronze → Prata → Ouro → Platina → Especial
-
-   CSS custom properties por card (definidas via inline style no JSX):
-     --cota-fundo    : cor de fundo sólida do card
-     --cota-destaque : cor do nome, ícone ✓ e badge (contrasta com o fundo)
-     --cota-texto    : cor dos itens de benefício
-   ================================================================= */
-
-/* ── Overlay ─────────────────────────────────────────────────── */
 
 .modal-overlay {
     position: fixed;
@@ -127,6 +115,7 @@
 }
 
 .modal-subtitulo {
+    text-align: left;
     font-family: 'Montserrat', sans-serif;
     font-size: 0.9rem;
     color: rgba(252, 248, 245, 0.5);
@@ -138,7 +127,7 @@
 
 .modal-cotas-grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 14px;
 }
 
@@ -184,12 +173,7 @@
 
 /* ── Shimmer: Platina (navy → navy claro) ────────────────────── */
 .cota-card.platina {
-    background: linear-gradient(
-        135deg,
-        #1C1C2E 0%,
-        #26264A 50%,
-        #1C1C2E 100%
-    );
+
     background-size: 200% auto;
     animation: shimmer-platina 4s linear infinite;
 }
@@ -201,12 +185,7 @@
 
 /* ── Shimmer: Especial (roxo → roxo claro) ───────────────────── */
 .cota-card.especial {
-    background: linear-gradient(
-        135deg,
-        #94499E 0%,
-        #B05EBB 45%,
-        #94499E 100%
-    );
+
     background-size: 200% auto;
     animation: shimmer-especial 3s linear infinite;
     border-color: rgba(255, 255, 255, 0.25);
@@ -235,7 +214,7 @@
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 1px;
     flex: 1;
 }
 
@@ -248,7 +227,7 @@
     font-size: 0.7rem;
     font-weight: 500;
     color: var(--cota-texto);
-    line-height: 1.35;
+    line-height: 1.6;
     /* min-width: 0 + overflow-wrap impedem que texto longo extravase o card */
     min-width: 0;
     overflow-wrap: break-word;
@@ -290,7 +269,7 @@
     flex-direction: column;
     gap: 1rem;
     border-top: 1px solid rgba(252, 248, 245, 0.08);
-    padding-top: 1.5rem;
+    padding-top: 1rem;
 }
 
 .modal-campo {

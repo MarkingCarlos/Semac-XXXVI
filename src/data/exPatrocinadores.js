@@ -50,5 +50,5 @@ export const EX_PATROCINADORES = [
     { nome: 'Alura',                      src: alura   },
     { nome: 'Accurate software',          src: Accurate    },
     { nome: 'cengage',          src: cengage    },
-    { nome: 'HIT Academia',          src: hit    },
+    // { nome: 'HIT Academia',          src: hit    },
 ]

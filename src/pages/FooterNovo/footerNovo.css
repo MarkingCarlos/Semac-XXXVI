@@ -1,13 +1,4 @@
-/* ══════════════════════════════════════════════════════════════
-   FOOTER NOVO — tema vinho escuro
-   Paleta:
-     corpo:    #3D0118 (vinho escuro)
-     acima:    #730835 (vinho — seção anterior)
-     destaque: #E79839 (laranja)
-     texto:    #FCF8F5 (creme)
-   ══════════════════════════════════════════════════════════════ */
 
-/* Container raiz — fundo vinho (cor da seção anterior) para a onda encaixar */
 .footerNovo {
   width: 100%;
   background: #730835;
@@ -281,12 +272,9 @@
     gap: 0;
   }
 
-  .marca {
-    margin-bottom: 4px;
-  }
 
   .logo {
-    gap: 12px;
+    margin: 0;
   }
 
   .logoImagem {

@@ -82,9 +82,11 @@
   display: none;
 }
 
-/* ── Mobile: carrossel ─────────────────────────────── */
 
 @media (max-width: 780px) {
+  .doacaoAjudaTitulo{
+    text-align: center;
+  }
   .gradeDesktop {
     display: none;
   }

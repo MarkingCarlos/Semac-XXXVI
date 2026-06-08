@@ -5,14 +5,13 @@
   50%      { opacity: 0.85; box-shadow: 0 0 0 8px rgba(231,152,57,0);   }
 }
 
-/* ════════════════════════════════════════════════════════════
-   PÁGINA
-   ════════════════════════════════════════════════════════════ */
+
 .paginaCronograma {
-  padding: 56px;
-  background: #730835;
+
+  padding: 23px 56px;
+
   width: 100%;
-  max-height: 120vh;
+  /*max-height: 120vh;*/
   position: relative;
   overflow: hidden;
   display: flex;

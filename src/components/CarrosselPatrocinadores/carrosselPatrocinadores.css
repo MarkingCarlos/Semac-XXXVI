@@ -75,15 +75,17 @@
 }
 
 /* ── Mobile: 3 por linha, última linha centralizada ─────────── */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     .carrossel-grupo {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         gap: 8px;
+        /*grid-template-columns: repeat(4, 1fr);*/
     }
 
+
     .carrossel-grupo > * {
-        width: calc(33.333% - 6px);
+        width: 29%
     }
 }

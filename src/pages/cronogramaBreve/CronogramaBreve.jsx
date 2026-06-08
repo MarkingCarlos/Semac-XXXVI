@@ -68,7 +68,7 @@ const CronogramaBreve = () => {
         <EmBreveInfoCard />
           <div className="grupoDeAcoes">
               <button className="botao botaoPrimario" onClick={adicionarAoCalendario}>Avise-me ↗</button>
-              <button className="botao botaoFantasma" onClick={abrirInstagram}>@semac.ibilce</button>
+              <button className="botao botaoFantasma" onClick={abrirInstagram}>@semacsjrp</button>
           </div>
       </main>
 

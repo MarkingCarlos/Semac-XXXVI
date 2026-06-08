@@ -1,4 +1,7 @@
-
+.nomeComissao{
+    text-align: left;
+    margin-bottom: 0;
+}
 .container {
     max-width: 100%;
     padding: 56px;
@@ -8,6 +11,7 @@
 }
 
 .container > h1 {
+    margin: 0;
     text-align: start;
 }
 
@@ -15,7 +19,6 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    margin-top: 20px;
     gap: 2rem;
 }
 
@@ -31,6 +34,7 @@
 }
 
 .descricao-container p {
+    margin-top: 0;
     font-family: 'Montserrat', sans-serif;
     font-weight: normal;
     font-size: clamp(0.8em, 1.5vw, 2em);
@@ -83,8 +87,16 @@
 }
 
 
-/* ── Mobile (≤ 767px) ────────────────────────────────────────── */
-@media (max-width: 767px) {
+
+@media (max-width: 768px) {
+    .container > h1 {
+        text-align: center;
+    }
+    .nomeComissao{
+        text-align: center;
+    }
+
+
     .container {
         padding: 32px 20px;
         min-height: unset;

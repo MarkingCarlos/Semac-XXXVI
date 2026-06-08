@@ -55,7 +55,7 @@
 }
 
 /* ── Mobile ──────────────────────────────────────────────────── */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
     .logo-card-iniciais {
         font-size: 1.375rem; /* 22px */
     }

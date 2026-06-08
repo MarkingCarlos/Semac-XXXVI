@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./CronogramaFiltro.css";
+// import "./CronogramaFiltro.css";
 import SplitText from "./SplitText";
 
 const exemplo = [

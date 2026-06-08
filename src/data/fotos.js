@@ -90,6 +90,11 @@ export const comissoes = [
             'decisões estratégicas, acompanhar o andamento das atividades, assegurar a comunicação eficiente entre as ' +
             'comissões e representar o evento institucionalmente, atuando como elo central para que o planejamento seja ' +
             'cumprido com organização e qualidade dentro dos prazos estabelecidos.',
+        highlight: {
+            phrase: "garantindo que todas as comissões trabalhem de forma integrada e alinhada aos objetivos do evento.",
+            delay: 400,
+            color: 'var(--vermelhoDiretoria)',
+        },
         membros: [
             { foto: Maria_Clara, nome: 'Maria Clara', cargo: 'Presidente' },
             { foto: adriana, nome: 'Profa. Dra. Adriana Barbosa', cargo: 'Coordenadora' },
@@ -149,6 +154,11 @@ export const comissoes = [
         descricao: 'A comissão é responsável por toda a identidade visual da SEMAC, desde de paleta de cores até' +
             ' as cartas que serão enviadas para os patrocinadores e apoiadores, além de produz conteúdos para redes ' +
             'sociais, como posts, stories e artes informativas, ajudando na divulgação e no engajamento do público.',
+        highlight: {
+            phrase: "ajudando na divulgação e no engajamento do público.",
+            delay: 400,
+            color: 'var(--rosaMarketing)',
+        },
         membros: [
             { foto: Miguel, nome: 'Miguel Augusto', cargo: 'Diretor' },
             { foto: Joao_victor, nome: 'Vitor Vitor', cargo: 'Designer' },
@@ -166,6 +176,11 @@ export const comissoes = [
             'na qual os participantes podem acompanhar o evento e vivenciar a experiência de forma dinâmica e engajante.' +
             ' Também é responsabilidade da equipe assegurar o bom funcionamento do site durante todo o período do evento,' +
             ' trabalhando em conjunto com as demais comissões para atender às necessidades tecnológicas de cada uma.',
+        highlight: {
+            phrase: "uma plataforma interativa na qual os participantes podem acompanhar o evento e vivenciar a experiência de forma dinâmica e engajante.",
+            delay: 400,
+            color: 'var(--rosaMarketing)',
+        },
         membros: [
             { foto: Carlos, nome: 'Carlos Alberto', cargo: 'Diretor' },
             { foto: Maria_Rodrigues, nome: 'Maria Rodrigues', cargo: 'Desenvolvedor' },

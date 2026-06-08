@@ -37,7 +37,10 @@ const SobreComissao = () => {
     return (
         <>
         <div className="container">
-            <h1>
+            <h1 className="tituloPrincipal">
+                Quem somos <span className="textoAmarelo">?</span>
+            </h1>
+            <h2 className="nomeComissao">
                 <SplitText
                     key={ativa.id}
                     tag="span"
@@ -51,7 +54,7 @@ const SobreComissao = () => {
                     threshold={0}
                     rootMargin="0px"
                 />
-            </h1>
+            </h2>
             <div className="conteudo-container">
                 <div key={ativa.id} className="descricao-container">
                     {renderDescricao(ativa)}

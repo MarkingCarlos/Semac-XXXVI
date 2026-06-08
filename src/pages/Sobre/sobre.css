@@ -1,7 +1,7 @@
 .sobre-container {
-    margin-left: 1em;
-    margin-right: 1em;
-    height: 75vh;
+    /*background-color: var(--Branco);*/
+    padding: 23px 56px;
+    gap: 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -11,35 +11,20 @@
     display: flex;
     flex-direction: row;
     gap: 20px;
-    height: 100%;
 }
 
-.sobreLadoEsquerdo {
-    flex: 3.5;
-    min-width: 0;
-    height: 100%;
-    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.55s ease;
-    will-change: transform, opacity;
-}
-
-.sobreLadoDireito {
-    flex: 2.5;
-
+.colunasSobreNos{
     display: flex;
+    flex: 1;
     flex-direction: column;
-    gap: 20px;
-    height: 100%;
     transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1) 0.07s, opacity 0.55s ease 0.07s;
     will-change: transform, opacity;
 }
 
 .sobreLadoEstatisticas {
-    flex: 2;
-    min-width: 0;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 20px;
-    height: 100%;
     transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1) 0.14s, opacity 0.55s ease 0.14s;
     will-change: transform, opacity;
 }
@@ -48,13 +33,6 @@
     flex: 1;
 }
 
-.sobreLadoDireito .tituloFotos {
-    font-size: 20px;
-}
-
-.sobreLadoDireito .textoFotos {
-    font-size: 13px;
-}
 
 .sobreLadoEstatisticas .boxWrapper {
     display: flex;
@@ -62,8 +40,6 @@
 }
 
 .sobreLadoEstatisticas .box {
-    width: 100%;
-    height: auto;
     flex: 1;
 }
 
@@ -82,15 +58,7 @@
     opacity: 0;
 }
 
-/* ── Tablet (≤ 1024px): reduz a altura fixa para não ocupar demais ── */
-@media (max-width: 1024px) {
-    .sobre-container {
-        height: auto;
-        min-height: 60vh;
-    }
-}
 
-/* ── Mobile (≤ 767px): empilha as três colunas verticalmente ── */
 @media (max-width: 768px) {
     .sobre-container {
         height: auto;
@@ -101,30 +69,7 @@
 
     .sobreSecao {
         flex-direction: column;
-        height: auto;
-        gap: 12px;
-    }
-
-    .sobreLadoEsquerdo {
-        flex: none;
-        width: 100%;
-        height: auto;
-    }
-
-    .sobreLadoEsquerdo > * {
-        height: 40vh;
-    }
-
-    .sobreLadoDireito {
-        flex: none;
-        width: 100%;
-        height: auto;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .sobreLadoDireito > * {
-        height: 40vh;
+        gap: 15px;
     }
 
     .sobreLadoEstatisticas {

@@ -1,6 +1,8 @@
 import './boxPatrocinadores.css';
-import exemploLogo from '../../assets/Logo_SEMAC.png';
-import { useEffect, useRef, useState } from 'preact/hooks';
+
+import exemploLogo from '../../assets/exPatrocinador/alura.svg';
+import LogoSlider from '../LogoSlider/LogoSlider.jsx';
+
 
 export default function Patrocinadores() {
     const sectionRef = useRef(null);

@@ -19,8 +19,11 @@ export function sobreFotos({ titulo, texto, imagem }) {
             ref={wrapperRef}
             onMouseMove={handleMouseMove}
         >
-            <div className="boxFotos" style={imagem ? { backgroundImage: `url(${imagem})` } : undefined}>
-                <div className="boxFotosGlass">
+            <div className="boxFotos" >
+                <div className="boxFotoSobreNos">
+                    <img src={imagem} alt="Foto"  />
+                </div>
+                <div className="boxTextoSobreNos">
                     <h3 className="tituloFotos">{titulo}</h3>
                     <p className="textoFotos">{texto}</p>
                 </div>
