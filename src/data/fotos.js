@@ -161,8 +161,8 @@ export const comissoes = [
         },
         membros: [
             { foto: Miguel, nome: 'Miguel Augusto', cargo: 'Diretor' },
-            { foto: Joao_victor, nome: 'Vitor Vitor', cargo: 'Designer' },
-            { foto: Vitor, nome: 'Vítor Henrique', cargo: 'Designer' },
+            { foto: Joao_victor, nome: 'Vitor Vitor', cargo: 'Membro' },
+            { foto: Vitor, nome: 'Vítor Henrique', cargo: 'Membro' },
             { foto: Beatriz, nome: 'Beatriz', cargo: 'Membro' },
             { foto: Helena, nome: 'Helena', cargo: 'Membro' },
             { foto: Heitor, nome: 'Heitor Rogério', cargo: 'Membro' },
@@ -183,10 +183,10 @@ export const comissoes = [
         },
         membros: [
             { foto: Carlos, nome: 'Carlos Alberto', cargo: 'Diretor' },
-            { foto: Maria_Rodrigues, nome: 'Maria Rodrigues', cargo: 'Desenvolvedor' },
-            { foto: guilherme_foto, nome: 'Guilherme Soares', cargo: 'Desenvolvedor' },
-            { foto: ravi, nome: 'Ravi Bellini', cargo: 'Desenvolvedor' },
-            { foto: Arthur, nome: 'Arthur Rezende', cargo: 'Desenvolvedor' },
+            { foto: Maria_Rodrigues, nome: 'Maria Rodrigues', cargo: 'Membro' },
+            { foto: guilherme_foto, nome: 'Guilherme Soares', cargo: 'Membro' },
+            { foto: ravi, nome: 'Ravi Bellini', cargo: 'Membro' },
+            { foto: Arthur, nome: 'Arthur Rezende', cargo: 'Membro' },
         ],
     },
     {
