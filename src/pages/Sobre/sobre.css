@@ -1,5 +1,4 @@
-.sobre-container {
-    /*background-color: var(--Branco);*/
+.conteinerSecaoSobre {
     padding: 23px 56px;
     gap: 20px;
     display: flex;
@@ -43,24 +42,14 @@
     flex: 1;
 }
 
-.sobre-exiting .sobreLadoEsquerdo {
-    transform: translateX(-120px);
-    opacity: 0;
-}
-
-.sobre-exiting .sobreLadoDireito {
-    transform: translateX(120px);
-    opacity: 0;
-}
-
-.sobre-exiting .sobreLadoEstatisticas {
+.secaoSaindoSobre .sobreLadoEstatisticas {
     transform: translateX(150px);
     opacity: 0;
 }
 
 
 @media (max-width: 768px) {
-    .sobre-container {
+    .conteinerSecaoSobre {
         height: auto;
         min-height: unset;
         margin: 0;

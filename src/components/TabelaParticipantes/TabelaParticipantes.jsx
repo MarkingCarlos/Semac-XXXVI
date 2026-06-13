@@ -12,25 +12,25 @@ import { STATUS, contarStatus } from './mockParticipantes.js'
 
 // Linha individual da tabela para um participante.
 // Separada para manter o map() do tbody limpo e legível.
-function LinhaParticipante({ p }) {
-    const confirmados = contarStatus(p.eventoParticipantes, STATUS.PRESENTE)
-    const aguardando  = contarStatus(p.eventoParticipantes, STATUS.INSCRITO)
-    const ausencias   = contarStatus(p.eventoParticipantes, STATUS.AUSENTE)
+function LinhaParticipante({ participante }) {
+    const confirmados = contarStatus(participante.eventoParticipantes, STATUS.PRESENTE)
+    const aguardando  = contarStatus(participante.eventoParticipantes, STATUS.INSCRITO)
+    const ausencias   = contarStatus(participante.eventoParticipantes, STATUS.AUSENTE)
 
     return (
         <tr>
-            <td class="td-nome">{p.nome}</td>
-            <td class="td-email">{p.email}</td>
-            <td class="td-ra">{p.ra ?? '—'}</td>
+            <td class="celulaNomeAdmin">{participante.nome}</td>
+            <td class="celulaEmailAdmin">{participante.email}</td>
+            <td class="celulaRaAdmin">{participante.ra ?? '—'}</td>
             <td>
-                <span class={`badge ${p.ativo ? 'badge-ativo' : 'badge-inativo'}`}>
-                    {p.ativo ? 'Ativo' : 'Inativo'}
+                <span class={`badgeContaAdmin ${participante.ativo ? 'badgeContaAtivoAdmin' : 'badgeContaInativoAdmin'}`}>
+                    {participante.ativo ? 'Ativo' : 'Inativo'}
                 </span>
             </td>
-            <td class="td-numero">{p.eventoParticipantes.length}</td>
-            <td class="td-numero td-confirmados">{confirmados}</td>
-            <td class="td-numero td-aguardando">{aguardando}</td>
-            <td class="td-numero td-ausencias">{ausencias}</td>
+            <td class="celulaNumeroAdmin">{participante.eventoParticipantes.length}</td>
+            <td class="celulaNumeroAdmin celulaConfirmadosAdmin">{confirmados}</td>
+            <td class="celulaNumeroAdmin celulaAguardandoAdmin">{aguardando}</td>
+            <td class="celulaNumeroAdmin celulaAusenciasAdmin">{ausencias}</td>
         </tr>
     )
 }
@@ -39,19 +39,19 @@ export default function TabelaParticipantes({ participantes }) {
     const [busca, setBusca] = useState('')
 
     const filtrados = useMemo(() =>
-        participantes.filter(p =>
-            p.nome.toLowerCase().includes(busca.toLowerCase()) ||
-            p.email.toLowerCase().includes(busca.toLowerCase())
+        participantes.filter(participante =>
+            participante.nome.toLowerCase().includes(busca.toLowerCase()) ||
+            participante.email.toLowerCase().includes(busca.toLowerCase())
         ),
         [participantes, busca]
     )
 
     return (
-        <div class="tabela-container">
-            <div class="tabela-topo">
-                <h2 class="tabela-titulo">Participantes</h2>
+        <div class="conteinerTabelaAdmin">
+            <div class="topoTabelaAdmin">
+                <h2 class="tituloTabelaAdmin">Participantes</h2>
                 <input
-                    class="busca-input"
+                    class="inputBuscaAdmin"
                     type="text"
                     placeholder="Buscar por nome ou e-mail..."
                     value={busca}
@@ -59,8 +59,8 @@ export default function TabelaParticipantes({ participantes }) {
                 />
             </div>
 
-            <div class="tabela-scroll">
-                <table class="tabela">
+            <div class="scrollTabelaAdmin">
+                <table class="tabelaAdmin">
                     <thead>
                         <tr>
                             <th>Nome</th>
@@ -76,18 +76,18 @@ export default function TabelaParticipantes({ participantes }) {
                     <tbody>
                         {filtrados.length === 0 ? (
                             <tr>
-                                <td colSpan={8} class="tabela-vazia">
+                                <td colSpan={8} class="tabelaVaziaAdmin">
                                     Nenhum participante encontrado.
                                 </td>
                             </tr>
-                        ) : filtrados.map(p => (
-                            <LinhaParticipante key={p.id} p={p} />
+                        ) : filtrados.map(participante => (
+                            <LinhaParticipante key={participante.id} participante={participante} />
                         ))}
                     </tbody>
                 </table>
             </div>
 
-            <div class="tabela-rodape">
+            <div class="rodapeTabelaAdmin">
                 Exibindo {filtrados.length} de {participantes.length} participantes
             </div>
         </div>

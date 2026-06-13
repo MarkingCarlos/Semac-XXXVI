@@ -3,7 +3,7 @@
    Carrossel automático de logos — 5 por vez, fade a cada 3s.
    ================================================================= */
 
-.carrossel {
+.carrosselPatrocinadores {
     display: flex;
     flex-direction: column;
     gap: 18px;
@@ -11,7 +11,7 @@
 }
 
 /* Grid de logos */
-.carrossel-grupo {
+.grupoCarrosselPatrocinadores {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 10px;
@@ -20,18 +20,18 @@
 }
 
 /* Cards dentro do carrossel: altura fixa */
-.carrossel .logo-card-patrocinador {
+.carrosselPatrocinadores .cartaoLogoPatrocinador {
     aspect-ratio: unset;
     height: 150px;
 }
 
 /* Entrada: sobe com fade — ease-out (mais longa) */
-.carrossel-entrando {
+.carrosselPatrocinadoresEntrando {
     animation: carrossel-enter 0.42s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }
 
 /* Saída: sobe levemente com fade — ease-in (mais curta, ~65% da entrada) */
-.carrossel-saindo {
+.carrosselPatrocinadoresSaindo {
     animation: carrossel-exit 0.28s cubic-bezier(0.55, 0.06, 0.68, 0.19) both;
 }
 
@@ -46,7 +46,7 @@
 }
 
 /* Dots de navegação */
-.carrossel-dots {
+.dotsCarrosselPatrocinadores {
     display: flex;
     gap: 10px;
     justify-content: center;
@@ -54,7 +54,7 @@
 
 }
 
-.carrossel-dot {
+.dotCarrosselPatrocinadores {
     width: 7px;
     height: 7px;
     border-radius: 50%;
@@ -65,27 +65,54 @@
     transition: background 0.25s ease, transform 0.25s ease;
 }
 
-.carrossel-dot:hover {
+.dotCarrosselPatrocinadores:hover {
     background: rgba(252, 248, 245, 0.5);
 }
 
-.carrossel-dot-ativo {
+.dotCarrosselPatrocinadoresAtivo {
     background: var(--AmareloAuxApoio);
     transform: scale(1.5);
 }
 
+.botaoPausaCarrosselPatrocinadores {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(252, 248, 245, 0.12);
+    cursor: pointer;
+    padding: 0;
+    color: rgba(252, 248, 245, 0.5);
+    font-size: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.25s ease, color 0.25s ease;
+    margin-left: 6px;
+    flex-shrink: 0;
+}
+
+.botaoPausaCarrosselPatrocinadores:hover {
+    background: rgba(252, 248, 245, 0.28);
+    color: var(--AmareloAuxApoio);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .carrosselPatrocinadoresEntrando,
+    .carrosselPatrocinadoresSaindo { animation: none; opacity: 1; }
+}
+
 /* ── Mobile: 3 por linha, última linha centralizada ─────────── */
 @media (max-width: 768px) {
-    .carrossel-grupo {
+    .grupoCarrosselPatrocinadores {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         gap: 8px;
-        /*grid-template-columns: repeat(4, 1fr);*/
     }
 
 
-    .carrossel-grupo > * {
+    .grupoCarrosselPatrocinadores > * {
         width: 29%
     }
 }

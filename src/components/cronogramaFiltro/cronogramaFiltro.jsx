@@ -1,5 +1,5 @@
 import { useState } from "react";
-// import "./CronogramaFiltro.css";
+import "./CronogramaFiltro.css";
 import SplitText from "./SplitText";
 
 const exemplo = [
@@ -26,10 +26,10 @@ export default function CronogramaFiltro() {
   }
 
   return (
-    <div className="cronograma-wrapper">
-      <div className="cronograma-card">
+    <div className="wrapperCronograma">
+      <div className="cartaoCronograma">
 
-        <h1 className="cronograma-title titulo-secao">
+        <h1 className="tituloCronograma tituloSecao">
           <SplitText
             key={selectedDay}
             tag="span"
@@ -45,16 +45,16 @@ export default function CronogramaFiltro() {
           />
         </h1>
 
-        <div className="days-row">
+        <div className="linhaDiasCronograma">
           {DAYS.map((day, idx) => {
             const isDisabled = idx < SEMANA_INICIO;
             const isActive = day === selectedDay;
-            const cls = isDisabled ? "disabled" : isActive ? "active" : "inactive";
+            const cls = isDisabled ? "diaDesabilitadoCronograma" : isActive ? "diaAtivoCronograma" : "diaInativoCronograma";
 
             return (
               <button
                 key={day}
-                className={`day-btn ${cls}`}
+                className={`botaoDiaCronograma ${cls}`}
                 onClick={() => !isDisabled && setSelectedDay(day)}
               >
                 {day}
@@ -65,11 +65,11 @@ export default function CronogramaFiltro() {
 
         {/* <div className="divider" /> */}
 
-        <div className="filters-row">
-          <span className="filter-label">Filtrar:</span>
+        <div className="linhaFiltrosCronograma">
+          <span className="rotuloFiltroCronograma">Filtrar:</span>
 
           <button
-            className={`filter-btn ${selectedFilter === null ? "active" : "inactive"}`}
+            className={`botaoFiltroCronograma ${selectedFilter === null ? "filtroAtivoCronograma" : "filtroInativoCronograma"}`}
             onClick={() => setSelectedFilter(null)}
           >
             TODOS
@@ -78,7 +78,7 @@ export default function CronogramaFiltro() {
           {CATEGORIES.map((category) => (
             <button
               key={category}
-              className={`filter-btn ${category === selectedFilter ? "active" : "inactive"}`}
+              className={`botaoFiltroCronograma ${category === selectedFilter ? "filtroAtivoCronograma" : "filtroInativoCronograma"}`}
               onClick={() => handleFilterClick(category)}
             >
               {category}

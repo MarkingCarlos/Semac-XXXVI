@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from "preact/hooks";
 import "./sobreComissao.css";
 import { comissoes } from '../../data/fotos.js';
 
@@ -36,7 +36,7 @@ const SobreComissao = () => {
 
     return (
         <>
-        <div className="container">
+        <div id="comissao" className="conteinerPaginaComissao">
             <h1 className="tituloPrincipal">
                 Quem somos <span className="textoAmarelo">?</span>
             </h1>
@@ -55,16 +55,16 @@ const SobreComissao = () => {
                     rootMargin="0px"
                 />
             </h2>
-            <div className="conteudo-container">
-                <div key={ativa.id} className="descricao-container">
+            <div className="conteinerConteudoComissao">
+                <div key={ativa.id} className="conteinerDescricaoComissao">
                     {renderDescricao(ativa)}
                 </div>
-                <div className="lateral-container">
-                    <div className="botoes-comissoes-container">
+                <div className="conteinerLateralComissao">
+                    <div className="conteinerBotoesComissao">
                         {comissoes.map((comissao, i) => (
                             <button
                                 key={comissao.id}
-                                className={i === ativaIdx ? 'ativo' : 'inativo'}
+                                className={i === ativaIdx ? 'botaoComissaoAtivo' : 'botaoComissaoInativo'}
                                 style={{ backgroundColor: comissao.cor, color: 'var(--Branco)' }}
                                 onClick={() => setAtivaIdx(i)}
                             >

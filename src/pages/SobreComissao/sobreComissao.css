@@ -2,20 +2,20 @@
     text-align: left;
     margin-bottom: 0;
 }
-.container {
+.conteinerPaginaComissao {
     max-width: 100%;
     padding: 56px;
-    min-height: 60vh;
+    min-height: 50vh;
     display: flex;
     flex-direction: column;
 }
 
-.container > h1 {
+.conteinerPaginaComissao > h1 {
     margin: 0;
     text-align: start;
 }
 
-.conteudo-container {
+.conteinerConteudoComissao {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -27,13 +27,13 @@
     to   { opacity: 1; transform: translateY(0); }
 }
 
-.descricao-container {
+.conteinerDescricaoComissao {
     flex: 1;
     overflow-y: auto;
     animation: fadeSlideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.descricao-container p {
+.conteinerDescricaoComissao p {
     margin-top: 0;
     font-family: 'Montserrat', sans-serif;
     font-weight: normal;
@@ -42,14 +42,14 @@
     white-space: pre-line;
 }
 
-.lateral-container {
+.conteinerLateralComissao {
     display: grid;
     grid-template-columns: 1fr 0.7fr;
     gap: 24px;
 }
 
 
-.botoes-comissoes-container {
+.conteinerBotoesComissao {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -62,25 +62,25 @@
     50%       { transform: translateY(-8px);  box-shadow: 0 14px 28px rgba(0,0,0,0.35); }
 }
 
-.botoes-comissoes-container .ativo {
+.conteinerBotoesComissao .botaoComissaoAtivo {
     font-size: clamp(0.75em, 1.5vw, 1em);
     opacity: 1;
     outline: 3px solid var(--Branco);
     outline-offset: 2px;
     animation: flutuarAtivo 2s ease-in-out infinite;
 }
-.botoes-comissoes-container .ativo:hover {
+.conteinerBotoesComissao .botaoComissaoAtivo:hover {
     outline: 3px solid var(--Branco);
 }
 
-.botoes-comissoes-container .inativo {
+.conteinerBotoesComissao .botaoComissaoInativo {
     font-size: clamp(0.75em, 1.5vw, 1em);
     opacity: 0.55;
     cursor: pointer;
     transition: all ease 0.2s;
 }
 
-.botoes-comissoes-container .inativo:hover {
+.conteinerBotoesComissao .botaoComissaoInativo:hover {
     outline: 2px solid var(--Branco);
     opacity: 0.85;
     transform: translateY(-1px);
@@ -88,8 +88,19 @@
 
 
 
+@media (prefers-reduced-motion: reduce) {
+    .conteinerBotoesComissao .botaoComissaoAtivo {
+        animation: none;
+        transform: translateY(-2px);
+    }
+
+    .conteinerDescricaoComissao {
+        animation: none;
+    }
+}
+
 @media (max-width: 768px) {
-    .container > h1 {
+    .conteinerPaginaComissao > h1 {
         text-align: center;
     }
     .nomeComissao{
@@ -97,30 +108,29 @@
     }
 
 
-    .container {
+    .conteinerPaginaComissao {
         padding: 16px;
         min-height: unset;
     }
 
     /* Empilha botões e membros em coluna única */
-    .lateral-container {
+    .conteinerLateralComissao {
         grid-template-columns: 1fr;
         gap: 16px;
     }
 
     /* Remove o teto de altura nos botões de comissão */
-    .botoes-comissoes-container {
+    .conteinerBotoesComissao {
         max-height: unset;
     }
 
-    .botoes-comissoes-container .ativo,
-    .botoes-comissoes-container .inativo {
+    .conteinerBotoesComissao .botaoComissaoAtivo,
+    .conteinerBotoesComissao .botaoComissaoInativo {
         font-size: 0.6rem;
 
     }
 
-    .botoes-comissoes-container .ativo:hover {
+    .conteinerBotoesComissao .botaoComissaoAtivo:hover {
         outline: 1px solid var(--Branco);
     }
 }
-

@@ -8,7 +8,7 @@ export const STATUS = {
 // Conta quantos registros de eventoParticipantes têm o status informado.
 // Usada em StatsGrid (totais globais) e TabelaParticipantes (totais por linha).
 export function contarStatus(eventoParticipantes, status) {
-    return eventoParticipantes.filter(e => e.status === status).length
+    return eventoParticipantes.filter(eventoParticipante => eventoParticipante.status === status).length
 }
 
 // Dados de exemplo para desenvolvimento do painel admin.

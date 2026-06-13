@@ -3,14 +3,14 @@ import { useLocation } from 'wouter'
 import { COTAS } from '../../data/cotas.js'
 import './paginaCotas.css'
 
-const EMAIL_COMISSAO = 'patrocinio@semac.com.br'
+const EMAIL_COMISSAO = 'patrocinio@semac.cc'
 
 export default function PaginaCotas() {
     const [, navigate] = useLocation()
     const [cotaSelecionada, setCotaSelecionada] = useState(null)
     const [nomeEmpresa, setNomeEmpresa]         = useState('')
 
-    const cota       = COTAS.find(c => c.id === cotaSelecionada)
+    const cota       = COTAS.find(cotaItem => cotaItem.id === cotaSelecionada)
     const podeEnviar = cotaSelecionada && nomeEmpresa.trim()
 
     function handleSubmit(e) {
@@ -20,73 +20,81 @@ export default function PaginaCotas() {
         const body    = encodeURIComponent(
             `Olá, equipe SEMAC!\n\nEmpresa: ${nomeEmpresa}\nCota de interesse: ${cota.nome}\n\nAguardamos o retorno de vocês.\n\nAtenciosamente,\n${nomeEmpresa}`
         )
-        window.location.href = `mailto:${EMAIL_COMISSAO}?subject=${subject}&body=${body}`
+        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+        if (isMobile) {
+            window.location.href = `mailto:${EMAIL_COMISSAO}?subject=${subject}&body=${body}`
+        } else {
+            window.open(
+                `https://mail.google.com/mail/?view=cm&to=${EMAIL_COMISSAO}&su=${subject}&body=${body}`,
+                '_blank'
+            )
+        }
     }
 
     return (
-        <div class="cotas-pagina">
-            <div class="cotas-painel">
+        <section class="paginaCotas">
+            <div class="painelCotas">
 
                 {/* ── Cabeçalho ──────────────────────────────── */}
-                <div class="cotas-header">
-                    <button class="cotas-voltar" onClick={() => navigate('~/')} aria-label="Voltar">
+                <div class="cabecalhoPaginaCotas">
+                    <button class="botaoVoltarCotas" onClick={() => navigate('~/')} aria-label="Voltar">
                         ← Voltar
                     </button>
                     <div>
-                        <div class="cotas-rotulo-linha">
-                            <span class="cotas-acento" />
-                            <span class="cotas-rotulo">PATROCÍNIO · SEMAC 2026</span>
+                        <div class="linhaRotuloCotas">
+                            <span class="acentoRotuloCotas" />
+                            <span class="rotuloCotas">PATROCÍNIO · SEMAC 2026</span>
                         </div>
-                        <h2 class="cotas-titulo">ESCOLHA SUA COTA</h2>
+                        <h2 class="tituloCotas">ESCOLHA SUA COTA</h2>
                     </div>
                 </div>
-                <p class="cotas-subtitulo">
+                <p class="subtituloCotas">
                     Selecione a cota ideal para sua empresa e entre em contato com nossa equipe de patrocínio.
                 </p>
 
                 {/* ── Grid das cotas ──────────────────────────── */}
-                <div class="cotas-grid">
-                    {COTAS.map((c, i) => (
+                <div class="gradeCotas">
+                    {COTAS.map((cotaItem, i) => (
                         <button
-                            key={c.id}
-                            class={`cota-card ${c.id} ${cotaSelecionada === c.id ? 'cota-card-selecionada' : ''}`}
+                            key={cotaItem.id}
+                            class={`cartaoCota ${cotaItem.id} ${cotaSelecionada === cotaItem.id ? 'cartaoCotaSelecionada' : ''}`}
                             style={{
-                                '--cota-fundo':    c.corFundo,
-                                '--cota-destaque': c.corDestaque,
-                                '--cota-texto':    c.corTexto,
+                                '--cota-fundo':    cotaItem.corFundo,
+                                '--cota-destaque': cotaItem.corDestaque,
+                                '--cota-texto':    cotaItem.corTexto,
                                 animationDelay: `${0.08 + i * 0.06}s`,
                             }}
-                            onClick={() => setCotaSelecionada(c.id)}
-                            aria-pressed={cotaSelecionada === c.id}
+                            onClick={() => setCotaSelecionada(cotaItem.id)}
+                            aria-pressed={cotaSelecionada === cotaItem.id}
                         >
-                            <div class="cota-cabecalho">
-                                <span class="cota-nome">{c.nome}</span>
-                                {c.preco
-                                    ? <span class="cota-preco">{c.preco}</span>
-                                    : <span class="cota-preco cota-preco-sob-consulta">Sob consulta</span>
+                            <div class="cabecalhoCota">
+                                <span class="nomeCota">{cotaItem.nome}</span>
+                                {cotaItem.preco
+                                    ? <span class="precoCota">{cotaItem.preco}</span>
+                                    : <span class="precoCota precoCotaSobConsulta">Sob consulta</span>
                                 }
                             </div>
-                            <ul class="cota-beneficios">
-                                {c.beneficios.map((b, j) => (
-                                    <li key={j} class="cota-beneficio">
-                                        <span class="cota-check-icone">✓</span>
-                                        <span>{b}</span>
+                            <ul class="beneficiosCota">
+                                {cotaItem.beneficios.map((beneficio, j) => (
+                                    <li key={j} class="beneficioCota">
+                                        <span class="iconeCheckCota">✓</span>
+                                        <span>{beneficio}</span>
                                     </li>
                                 ))}
                             </ul>
-                            {cotaSelecionada === c.id && (
-                                <span class="cota-badge-selecionada">SELECIONADA</span>
+                            {cotaSelecionada === cotaItem.id && (
+                                <span class="badgeCotaSelecionada">SELECIONADA</span>
                             )}
                         </button>
                     ))}
                 </div>
 
                 {/* ── Formulário ──────────────────────────────── */}
-                <form class="cotas-form" onSubmit={handleSubmit}>
-                    <div class="cotas-campo">
-                        <label class="cotas-campo-label">Nome da Empresa</label>
+                <form class="formularioCotas" onSubmit={handleSubmit}>
+                    <div class="campoCotas">
+                        <label class="rotuloCampoCotas">Nome da Empresa</label>
                         <input
-                            class="cotas-campo-input"
+                            class="inputCampoCotas"
                             type="text"
                             placeholder="Ex: Empresa Ltda."
                             value={nomeEmpresa}
@@ -94,7 +102,7 @@ export default function PaginaCotas() {
                             required
                         />
                     </div>
-                    <button type="submit" class="cotas-btn-enviar" disabled={!podeEnviar}>
+                    <button type="submit" class="botaoEnviarCotas" disabled={!podeEnviar}>
                         {cotaSelecionada
                             ? `Entrar em Contato — Cota ${cota.nome}`
                             : 'Selecione uma cota para continuar'}
@@ -102,6 +110,6 @@ export default function PaginaCotas() {
                 </form>
 
             </div>
-        </div>
+        </section>
     )
 }

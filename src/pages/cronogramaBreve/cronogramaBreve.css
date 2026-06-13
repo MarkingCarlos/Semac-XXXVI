@@ -1,69 +1,12 @@
 
-/* ── Animação: ponto pulsante do badge "EM CONSTRUÇÃO" ─────── */
-@keyframes pulsaPonto {
-  0%, 100% { opacity: 1;    box-shadow: 0 0 0 0   rgba(231,152,57,0.6); }
-  50%      { opacity: 0.85; box-shadow: 0 0 0 8px rgba(231,152,57,0);   }
-}
-
-
 .paginaCronograma {
-
   padding: 23px 56px;
-
   width: 100%;
-  /*max-height: 120vh;*/
   position: relative;
   overflow: hidden;
   display: flex;
-  flex-direction: row;
   font-family: 'Bungee', sans-serif;
-  align-self: flex-start; /* ancora à esquerda no container flex do body */
-  text-align: left;
   box-sizing: border-box;
-}
-
-/* ════════════════════════════════════════════════════════════
-   CABEÇALHO
-   ════════════════════════════════════════════════════════════ */
-.cabecalho {
-  padding: 28px 64px 0;
-  position: relative;
-  z-index: 1;
-}
-
-/* Linha superior: "XXXVI SEMAC · 2026" e "↳ PROGRAMAÇÃO" */
-.cabecalhoMeta {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 18px;
-}
-
-/* Linha de navegação: abas + espaço flexível + badge de status */
-.cabecalhoNav {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-/* Empurra o badge de status para a direita */
-.espacoFlexivel { flex: 1; }
-
-/* ── Badge "EM CONSTRUÇÃO" ─────────────────────────────────── */
-.badgeStatus {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Ponto laranja pulsante ao lado do texto do badge */
-.badgeStatusPonto {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #E79839;
-  animation: pulsaPonto 1.6s ease-in-out infinite;
-  flex-shrink: 0;
 }
 
 .conteudoPrincipal {
@@ -75,19 +18,6 @@
   z-index: 1;
   align-items: center;
 }
-
-.textoMono {
-  /* TODO: 'IBM Plex Mono' não está importada — substituir por fonte importada ou adicionar @import em app.css */
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-}
-
-.textoMonoLaranja  { color: #E79839; }
-.textoMonoEsmaecido { color: rgba(252,248,245,0.45); }
-.textoMonoPequeno  { font-size: 9px; }
 
 /* ════════════════════════════════════════════════════════════
    RESPONSIVIDADE

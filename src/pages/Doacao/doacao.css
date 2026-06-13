@@ -1,11 +1,11 @@
 
-.doacao-section {
+.secaoDoacao {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
 
-.doacao-inner {
+.conteinerInternoDoacao {
     display: flex;
     flex-direction: row;
     align-items: stretch;
@@ -15,18 +15,18 @@
 }
 
 /* Coluna esquerda */
-.doacao-esquerda {
+.colunaEsquerdaDoacao {
     flex: 1.5;
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
 }
 
-.doacao-titulo {
+.tituloDoacao {
     text-align: left;
 }
 
-.doacao-texto {
+.textoDoacao {
     text-align: left;
     font-family: 'Montserrat', sans-serif;
     font-size: clamp(1rem, 0.5rem + 1.5vw, 3rem);
@@ -36,14 +36,14 @@
     margin: 0;
 }
 
-.doacao-texto strong {
+.textoDoacao strong {
     color: var(--Branco);
     font-weight: 700;
 }
 
 
 /* Risco de giz abaixo do texto */
-.doacao-risco {
+.imagemRiscoDoacao {
     width: 100%;
     max-width: 320px;
     height: auto;
@@ -52,7 +52,7 @@
 }
 
 /* Coluna direita */
-.doacao-direita {
+.colunaDireitaDoacao {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -61,18 +61,18 @@
 
 /* Mobile */
 @media (max-width: 780px) {
-    .doacao-titulo {
+    .tituloDoacao {
         text-align: center;
     }
-    .doacao-texto {
+    .textoDoacao {
         text-align: center;
     }
-    .doacao-inner {
+    .conteinerInternoDoacao {
         flex-direction: column;
         padding: 16px;
     }
 
-    .doacao-direita {
+    .colunaDireitaDoacao {
         flex: 1;
         width: 100%;
         /*justify-content: center;*/

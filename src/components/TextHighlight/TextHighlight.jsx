@@ -9,7 +9,7 @@ export default function TextHighlight({
 }) {
     return (
         <mark
-            className="text-highlight"
+            className="marcaTextoDestaque"
             style={{
                 '--highlight-color': color,
                 '--highlight-duration': `${duration}ms`,

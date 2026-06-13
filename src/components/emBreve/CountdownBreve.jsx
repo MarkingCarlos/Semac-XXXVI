@@ -26,10 +26,10 @@ function useContagem() {
 function Unidade({ valor, label, grande, animado }) {
   const num = String(valor).padStart(2, '0');
   return (
-    <div className={`contagem-bloco ${grande ? 'contagem-bloco--grande' : 'contagem-bloco--pequeno'}`}>
-      <span className={`contagem-numero ${animado ? 'contagem-numero--flip' : ''}`}>{num}</span>
-      <div className="contagem-divisor" />
-      <span className="contagem-rotulo">{label}</span>
+    <div className={`blocoContagemBreve ${grande ? 'blocoContagemBreveGrande' : 'blocoContagemBrevePequeno'}`}>
+      <span className={`numeroContagemBreve ${animado ? 'numeroContagemBreveFlip' : ''}`}>{num}</span>
+      <div className="divisorContagemBreve" />
+      <span className="rotuloContagemBreve">{label}</span>
     </div>
   );
 }
@@ -51,12 +51,12 @@ export default function CountdownBreve({ tamanho = 'lg' }) {
   ];
 
   return (
-    <div className={`contagem ${grande ? 'contagem--grande' : 'contagem--pequena'}`}>
-      {unidades.map((u, i) => (
-        <span key={u.label} style={{ display: 'contents' }}>
-          <Unidade valor={u.valor} label={u.label} grande={grande} animado={u.animado} />
+    <div className={`contagemBreve ${grande ? 'contagemBreveGrande' : 'contagemBrevePequena'}`}>
+      {unidades.map((unidade, i) => (
+        <span key={unidade.label} style={{ display: 'contents' }}>
+          <Unidade valor={unidade.valor} label={unidade.label} grande={grande} animado={unidade.animado} />
           {i < unidades.length - 1 && (
-            <span className={`contagem-dois-pontos ${grande ? 'contagem-dois-pontos--grande' : ''}`}>:</span>
+            <span className={`doisPontosContagemBreve ${grande ? 'doisPontosContagemBreveGrande' : ''}`}>:</span>
           )}
         </span>
       ))}

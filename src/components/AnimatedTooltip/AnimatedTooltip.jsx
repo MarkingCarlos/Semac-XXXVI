@@ -1,4 +1,4 @@
-import { useRef, useLayoutEffect, useState } from 'react';
+import { useRef, useLayoutEffect, useState } from 'preact/hooks';
 import { gsap } from 'gsap';
 import './AnimatedTooltip.css';
 
@@ -29,12 +29,12 @@ function TooltipItem({ membro, index }) {
     }
 
     function handleMouseMove(e) {
-        const rect = containerRef.current.getBoundingClientRect();
-        const relX = e.clientX - rect.left - rect.width / 2;
-        const extraX = Math.round(relX * 0.3);
+        const retanguloContainer = containerRef.current.getBoundingClientRect();
+        const deslocamentoRelativoX = e.clientX - retanguloContainer.left - retanguloContainer.width / 2;
+        const deslocamentoExtraX = Math.round(deslocamentoRelativoX * 0.3);
 
         gsap.to(tooltipRef.current, {
-            x: extraX,
+            x: deslocamentoExtraX,
             duration: 0.3,
             ease: 'power2.out',
         });
@@ -55,20 +55,20 @@ function TooltipItem({ membro, index }) {
     return (
         <div
             ref={containerRef}
-            className="tooltip-item"
+            className="itemTooltip"
             style={{ zIndex: index + 1 }}
             onMouseEnter={handleMouseEnter}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
         >
-            <div ref={tooltipRef} className="tooltip-card">
-                <p className="tooltip-nome">{membro.nome}</p>
-                <p className="tooltip-cargo">{membro.cargo}</p>
+            <div ref={tooltipRef} className="cartaoTooltip">
+                <p className="nomeTooltip">{membro.nome}</p>
+                <p className="cargoTooltip">{membro.cargo}</p>
             </div>
             <img
                 src={membro.foto}
                 alt={membro.nome}
-                className={`tooltip-foto${carregada ? ' carregada' : ''}`}
+                className={`fotoTooltip${carregada ? ' fotoTooltipCarregada' : ''}`}
                 onLoad={() => setCarregada(true)}
             />
         </div>
@@ -77,7 +77,7 @@ function TooltipItem({ membro, index }) {
 
 export default function AnimatedTooltip({ membros }) {
     return (
-        <div className="tooltip-container">
+        <div className="conteinerTooltip">
             {membros.map((membro, i) => (
                 <TooltipItem key={i} membro={membro} index={i} />
             ))}

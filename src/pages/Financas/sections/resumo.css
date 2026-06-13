@@ -1,0 +1,184 @@
+/* ── Resumo do saldo — livro-razão da comissão ───────────────── */
+
+.gradeResumoFinancas {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+/* ── Extrato ─────────────────────────────────────────────────── */
+
+.blocoExtratoResumo {
+    background: rgba(61, 1, 24, 0.35);
+    border: 1px solid rgba(252, 248, 245, 0.08);
+    border-radius: 14px;
+    padding: 24px 28px;
+}
+
+.rotuloBlocoResumo {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: rgba(252, 248, 245, 0.55);
+    margin: 0 0 14px;
+    text-align: left;
+}
+
+.listaLancamentosResumo {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.linhaLancamentoResumo {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(252, 248, 245, 0.07);
+}
+
+.textoLancamentoResumo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: left;
+}
+
+.rotuloLancamentoResumo {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #edecec;
+    text-align: left;
+}
+
+.notaLancamentoResumo {
+    font-size: 0.76rem;
+    color: rgba(252, 248, 245, 0.45);
+    text-align: left;
+}
+
+.valorLancamentoResumo {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.valorEntradaResumo { color: #52ABB1; }
+.valorSaidaResumo   { color: #B13571; }
+
+/* Linha final do extrato — o saldo consolidado */
+.linhaSaldoResumo {
+    border-bottom: none;
+    margin-top: 6px;
+    padding-top: 18px;
+    border-top: 2px solid rgba(231, 152, 57, 0.35);
+}
+
+.linhaSaldoResumo .rotuloLancamentoResumo {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-size: 0.82rem;
+}
+
+.valorSaldoLinhaResumo {
+    color: #E79839;
+    font-size: 1.1rem;
+}
+
+/* ── Coluna do saldo ─────────────────────────────────────────── */
+
+.colunaSaldoResumo {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.blocoSaldoResumo {
+    background: #3D0118;
+    border: 1px solid rgba(252, 248, 245, 0.1);
+    border-radius: 14px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+}
+
+.valorSaldoResumo {
+    font-family: 'Bungee', cursive;
+    font-weight: 400;
+    font-size: clamp(1.7rem, 3.5vw, 2.6rem);
+    line-height: 1.1;
+    color: #E79839;
+    font-variant-numeric: tabular-nums;
+    text-align: left;
+}
+
+.notaSaldoResumo {
+    font-size: 0.78rem;
+    color: rgba(252, 248, 245, 0.5);
+    line-height: 1.45;
+    text-align: left;
+}
+
+.blocoCaixaAnteriorResumo {
+    background: rgba(82, 171, 177, 0.07);
+    border: 1px solid rgba(82, 171, 177, 0.22);
+    border-radius: 14px;
+    padding: 22px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+}
+
+.valorCaixaAnteriorResumo {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1.35rem;
+    color: #52ABB1;
+    font-variant-numeric: tabular-nums;
+    text-align: left;
+}
+
+.blocoAReceberResumo {
+    background: rgba(231, 152, 57, 0.07);
+    border: 1px solid rgba(231, 152, 57, 0.3);
+    border-radius: 14px;
+    padding: 22px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+}
+
+.valorAReceberResumo {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1.35rem;
+    color: #E79839;
+    font-variant-numeric: tabular-nums;
+    text-align: left;
+}
+
+/* ── Responsivo ──────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+    .gradeResumoFinancas {
+        grid-template-columns: 1fr;
+    }
+
+    /* No mobile o saldo vem primeiro — é a informação principal */
+    .colunaSaldoResumo {
+        order: -1;
+    }
+}

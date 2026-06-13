@@ -38,7 +38,7 @@
 /* Base compartilhada entre todos os botões */
 .botao {
   padding: 13px 22px;
-  border-radius: 999px;
+  border-radius: 8px;
   font-family: var(--fonteCorpoMontserrat), sans-serif;
   font-weight: 900;
   font-size: 13px;

@@ -1,5 +1,5 @@
 
-.qr-wrapper {
+.wrapperQrDoacao {
 
     position: relative;
     border-radius: 25px;
@@ -8,13 +8,13 @@
     z-index: 0;
 }
 
-.qr-wrapper:hover {
+.wrapperQrDoacao:hover {
     transform: translateY(-6px) scale(1.02);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 6px 12px rgba(115, 8, 53, 0.4);
 }
 
-.qr-wrapper::before,
-.qr-wrapper::after {
+.wrapperQrDoacao::before,
+.wrapperQrDoacao::after {
     content: "";
     position: absolute;
     top: -3px; left: -3px; right: -3px; bottom: -3px;
@@ -31,19 +31,19 @@
     pointer-events: none;
 }
 
-.qr-wrapper::after {
+.wrapperQrDoacao::after {
     filter: blur(20px);
     z-index: -2;
 }
 
-.qr-wrapper:hover::before,
-.qr-wrapper:hover::after {
+.wrapperQrDoacao:hover::before,
+.wrapperQrDoacao:hover::after {
     opacity: 1;
 }
 
 /* ── Card ────────────────────────────────────────────────────── */
 
-.qr-card {
+.cartaoQrDoacao {
     background-color: var(--vermelhoAuxDiretoria);
     padding: 2rem;
     display: flex;
@@ -55,17 +55,17 @@
     overflow: hidden;
 }
 
-.qr-card:hover {
+.cartaoQrDoacao:hover {
     box-shadow: none;
 }
 
 /* ── Cabeçalho ───────────────────────────────────────────────── */
 
-.qr-cabecalho {
+.cabecalhoQrDoacao {
     width: 100%;
 }
 
-.qr-titulo {
+.tituloQrDoacao {
     font-family: 'Bungee', sans-serif;
     font-size: clamp(1.5rem, 3vw, 40px);
     font-weight: 900;
@@ -74,7 +74,7 @@
     margin: 0 0 0.25rem 0;
 }
 
-.qr-subtitulo {
+.subtituloQrDoacao {
     text-align: center;
     font-family: 'Montserrat', sans-serif;
     font-size: clamp(15px, 1.5vw, 20px);
@@ -82,19 +82,19 @@
     margin: 0;
 }
 
-.qr-subtitulo--mobile {
+.subtituloQrDoacaoMobile {
     display: none;
 }
 
 /* ── QR Code ─────────────────────────────────────────────────── */
 
-.qr-imagem-container {
+.conteinerImagemQrDoacao {
     display: flex;
     justify-content: center;
     width: 100%;
 }
 
-.qr-imagem {
+.imagemQrDoacao {
     width: 50%;
     border-radius: 12px;
     background: var(--Branco);
@@ -104,7 +104,7 @@
 
 /* ── Chave PIX ───────────────────────────────────────────────── */
 
-.qr-chave-area {
+.areaChaveQrDoacao {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -112,7 +112,7 @@
     width: 100%;
 }
 
-.qr-chave-label {
+.rotuloChaveQrDoacao {
     font-family: 'Montserrat', sans-serif;
     font-size: 0.7rem;
     font-weight: 700;
@@ -121,7 +121,7 @@
     color: rgba(255, 255, 255, 0.45);
 }
 
-.qr-chave-valor {
+.valorChaveQrDoacao {
     font-family: 'Montserrat', sans-serif;
     font-size: clamp(1rem, 0.5rem + 1vw, 3rem);
     font-weight: 600;
@@ -132,7 +132,7 @@
 
 /* ── Botão copiar ────────────────────────────────────────────── */
 
-.qr-btn-copiar {
+.botaoCopiarQrDoacao {
     width: 80%;
     font-family: 'Bungee', sans-serif;
     font-size: clamp(1rem, 0.5rem + 1vw, 3rem);
@@ -147,12 +147,12 @@
     transition: background-color 0.2s, transform 0.15s;
 }
 
-.qr-btn-copiar:hover {
+.botaoCopiarQrDoacao:hover {
     transform: scale(1.02);
 }
 
 /* ── Botão toggle QR (só mobile) ─────────────────────────────── */
-.qr-btn-toggle {
+.botaoAlternarQrDoacao {
     display: none;
 }
 
@@ -160,58 +160,58 @@
 
 /* ── Mobile ──────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-    .qr-wrapper {
+    .wrapperQrDoacao {
         width: 100%;
     }
 
-    .qr-card {
+    .cartaoQrDoacao {
         padding: 1.75rem;
         gap: 1.1rem;
     }
 
     /* Subtítulos */
-    .qr-subtitulo--desktop {
+    .subtituloQrDoacaoDesktop {
         display: none;
     }
 
-    .qr-subtitulo--mobile {
+    .subtituloQrDoacaoMobile {
         display: block;
     }
 
     /* QR container: oculto por padrão em mobile */
-    .qr-imagem-container {
+    .conteinerImagemQrDoacao {
         overflow: hidden;
         max-height: 0;
         transition: max-height 0.4s ease;
     }
 
-    .qr-imagem-container--visivel {
+    .conteinerImagemQrDoacaoVisivel {
         max-height: 250px;
     }
 
-    .qr-imagem {
+    .imagemQrDoacao {
         width: 170px;
         height: 170px;
     }
 
     /* Chave PIX mais proeminente em mobile */
-    .qr-chave-area {
+    .areaChaveQrDoacao {
         background: rgba(0, 0, 0, 0.2);
         border-radius: 10px;
         padding: 0.75rem 1rem;
     }
 
-    .qr-chave-valor {
+    .valorChaveQrDoacao {
         font-size: 1.2rem;
     }
 
-    .qr-btn-copiar {
+    .botaoCopiarQrDoacao {
         width: 100%;
         font-size: 1rem;
     }
 
     /* Botão toggle visível em mobile */
-    .qr-btn-toggle {
+    .botaoAlternarQrDoacao {
         display: block;
         background: transparent;
         border: 1px solid rgba(255, 255, 255, 0.3);
@@ -225,7 +225,7 @@
         transition: border-color 0.2s, color 0.2s;
     }
 
-    .qr-btn-toggle:hover {
+    .botaoAlternarQrDoacao:hover {
         border-color: rgba(255, 255, 255, 0.6);
         color: rgba(255, 255, 255, 0.9);
     }

@@ -7,7 +7,7 @@
     }
 }
 
-.text-highlight {
+.marcaTextoDestaque {
     background-color: transparent;
     background-image: linear-gradient(
         var(--highlight-color, #E79839),
@@ -25,6 +25,6 @@
     transition: color var(--highlight-duration, 2000ms) ease-out var(--highlight-delay, 0ms);
 }
 
-.text-highlight:where([style*='--highlight-text-end-color']) {
+.marcaTextoDestaque:where([style*='--highlight-text-end-color']) {
     color: var(--highlight-text-end-color);
 }

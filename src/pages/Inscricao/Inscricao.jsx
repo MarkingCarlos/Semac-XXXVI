@@ -25,9 +25,9 @@ const Inscricao = () => {
     }
 
     return (
-        <div className="inscricao-container" ref={containerRef}>
-            <button className="btn-voltar" onClick={voltar}>&#8592; Voltar</button>
-            <div className="inscricao-lado-direito">
+        <div className="conteinerInscricao" ref={containerRef}>
+            <button className="botaoVoltarInscricao" onClick={voltar}>&#8592; Voltar</button>
+            <div className="ladoDireitoInscricao">
                 <BoxInscricao />
             </div>
         </div>

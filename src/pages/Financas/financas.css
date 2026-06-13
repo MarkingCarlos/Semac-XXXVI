@@ -1,0 +1,591 @@
+/* ══════════════════════════════════════════════════════════════
+   MÓDULO FINANCEIRO — shell, tabelas, formulários e botões
+   Identidade: crimson drenched, âmbar como única voz de ação,
+   profundidade tonal (Main #730835 → Deep #3D0118), sem sombras
+   decorativas em repouso.
+   ══════════════════════════════════════════════════════════════ */
+
+/* Fontes — garante disponibilidade ao acessar /financeiro direto,
+   sem passar pela landing (app.css). Browsers deduplicam o request. */
+@import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* O body centraliza o #app via flex (index.css); garante shell cheio */
+#app {
+    width: 100%;
+}
+
+.paginaFinancas {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background: #730835;
+    color: #edecec;
+    font-family: 'Montserrat', sans-serif;
+    text-align: left;
+}
+
+/* ── Sidebar — a lombada do livro-razão ──────────────────────── */
+
+.sidebarFinancas {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 232px;
+    flex-shrink: 0;
+    background: #3D0118;
+    border-right: 1px solid rgba(252, 248, 245, 0.08);
+    display: flex;
+    flex-direction: column;
+    padding: 28px 18px 22px;
+    box-sizing: border-box;
+}
+
+.cabecalhoSidebarFinancas {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 12px 26px;
+}
+
+.marcaSidebarFinancas {
+    font-family: 'Bungee', cursive;
+    font-size: 1.45rem;
+    line-height: 1;
+    color: #edecec;
+}
+
+.moduloSidebarFinancas {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    color: #E79839;
+}
+
+.navegacaoSidebarFinancas {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.itemNavegacaoFinancas {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 11px 12px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: rgba(252, 248, 245, 0.6);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease;
+}
+
+.itemNavegacaoFinancas:hover {
+    background: rgba(252, 248, 245, 0.05);
+    color: #edecec;
+    border-color: transparent;
+}
+
+.itemNavegacaoFinancas:focus-visible {
+    outline: 2px solid #E79839;
+    outline-offset: 2px;
+}
+
+.itemNavegacaoAtivoFinancas,
+.itemNavegacaoAtivoFinancas:hover {
+    background: rgba(231, 152, 57, 0.12);
+    color: #E79839;
+}
+
+.linkVoltarSiteFinancas {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(252, 248, 245, 0.5);
+    text-decoration: none;
+    border-radius: 10px;
+    transition: color 0.16s ease, background 0.16s ease;
+}
+
+.linkVoltarSiteFinancas:hover {
+    color: #E79839;
+    background: rgba(252, 248, 245, 0.04);
+}
+
+/* ── Área de conteúdo ────────────────────────────────────────── */
+
+.conteudoFinancas {
+    flex: 1;
+    min-width: 0;
+    padding: clamp(24px, 4vw, 52px);
+    box-sizing: border-box;
+}
+
+.secaoFinancas {
+    max-width: 1080px;
+    margin: 0 auto;
+    animation: entradaSecaoFinancas 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* O estado final precisa ser transform: none — um transform residual
+   (mesmo translateY(0)) criaria containing block para position: fixed */
+@keyframes entradaSecaoFinancas {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ── Cabeçalho padrão das seções ─────────────────────────────── */
+
+.cabecalhoSecaoFinancas {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+}
+
+.tituloSecaoFinancas {
+    font-family: 'Bungee', cursive;
+    font-weight: 400;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    line-height: 1.05;
+    color: #edecec;
+    margin: 0;
+    text-align: left;
+}
+
+.subtituloSecaoFinancas {
+    font-size: 0.85rem;
+    color: rgba(252, 248, 245, 0.55);
+    margin: 6px 0 0;
+    text-align: left;
+}
+
+/* ── Filtro das tabelas ──────────────────────────────────────── */
+
+.controlesCabecalhoFinancas {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filtroTabelaFinancas {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(252, 248, 245, 0.05);
+    border: 1px solid rgba(252, 248, 245, 0.12);
+    border-radius: 8px;
+    padding: 0 12px;
+    transition: border-color 0.15s;
+}
+
+.filtroTabelaFinancas:focus-within {
+    border-color: rgba(252, 248, 245, 0.32);
+}
+
+.iconeFiltroFinancas {
+    color: rgba(252, 248, 245, 0.32);
+    flex-shrink: 0;
+    display: flex;
+}
+
+.entradaFiltroFinancas {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: rgba(252, 248, 245, 0.85);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    padding: 8px 0;
+    width: 190px;
+}
+
+.entradaFiltroFinancas::placeholder {
+    color: rgba(252, 248, 245, 0.28);
+}
+
+/* ── Botões ──────────────────────────────────────────────────── */
+
+.botaoPrimarioFinancas {
+    background-color: #E79839;
+    color: #0B0B0B;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 0.65rem 1.15rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: filter 0.18s ease;
+}
+
+.botaoPrimarioFinancas:hover {
+    filter: brightness(1.08);
+    border-color: transparent;
+}
+
+.botaoPrimarioFinancas:focus-visible {
+    outline: 2px solid #edecec;
+    outline-offset: 2px;
+}
+
+.botaoFantasmaFinancas {
+    background: transparent;
+    color: #edecec;
+    border: 1px solid rgba(252, 248, 245, 0.25);
+    border-radius: 8px;
+    padding: 0.65rem 1.15rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.18s ease, color 0.18s ease;
+}
+
+.botaoFantasmaFinancas:hover {
+    border-color: #E79839;
+    color: #E79839;
+}
+
+/* ── Tabelas ─────────────────────────────────────────────────── */
+
+.envelopeTabelaFinancas {
+    background: rgba(61, 1, 24, 0.35);
+    border: 1px solid rgba(252, 248, 245, 0.08);
+    border-radius: 14px;
+    overflow: hidden;
+    overflow-x: auto;
+}
+
+.tabelaFinancas {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.tabelaFinancas thead th {
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: rgba(252, 248, 245, 0.5);
+    text-align: left;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(252, 248, 245, 0.12);
+    white-space: nowrap;
+}
+
+.tabelaFinancas tbody td {
+    padding: 13px 16px;
+    border-bottom: 1px solid rgba(252, 248, 245, 0.06);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.tabelaFinancas tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tabelaFinancas tbody tr:hover {
+    background: rgba(61, 1, 24, 0.5);
+}
+
+.celulaValorFinancas {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.celulaDataFinancas {
+    font-variant-numeric: tabular-nums;
+    color: rgba(252, 248, 245, 0.6);
+    white-space: nowrap;
+}
+
+.celulaVaziaFinancas {
+    text-align: center !important;
+    padding: 36px 16px !important;
+    color: rgba(252, 248, 245, 0.45);
+}
+
+/* ── Selos de status ─────────────────────────────────────────── */
+
+.seloStatusFinancas {
+    display: inline-flex;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    border: 1px solid;
+    white-space: nowrap;
+}
+
+.seloAReceberFinancas {
+    color: #E79839;
+    border-color: rgba(231, 152, 57, 0.5);
+    background: rgba(231, 152, 57, 0.08);
+}
+
+.seloRecebidoFinancas {
+    color: #52ABB1;
+    border-color: rgba(82, 171, 177, 0.45);
+    background: rgba(82, 171, 177, 0.08);
+}
+
+/* ── Ações de linha ──────────────────────────────────────────── */
+
+.grupoAcoesLinhaFinancas {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.botaoAcaoLinhaFinancas {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid rgba(252, 248, 245, 0.15);
+    background: transparent;
+    color: rgba(252, 248, 245, 0.6);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+    transition: color 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+
+.botaoAcaoLinhaFinancas:hover {
+    color: #E79839;
+    border-color: rgba(231, 152, 57, 0.5);
+}
+
+/* Segundo clique confirma — o botão vira o alerta */
+.botaoConfirmarExclusaoFinancas,
+.botaoConfirmarExclusaoFinancas:hover {
+    color: #edecec;
+    background: #B13571;
+    border-color: #B13571;
+}
+
+.botaoStatusLinhaFinancas {
+    border: 1px solid rgba(252, 248, 245, 0.2);
+    background: transparent;
+    color: rgba(252, 248, 245, 0.7);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.16s ease, border-color 0.16s ease;
+}
+
+.botaoStatusLinhaFinancas:hover {
+    color: #E79839;
+    border-color: rgba(231, 152, 57, 0.5);
+}
+
+/* ── Formulários (painel lateral) ────────────────────────────── */
+
+.formularioFinancas {
+    display: flex;
+    flex-direction: column;
+}
+
+.divisorFormularioFinancas {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: #E79839;
+    margin: 0 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(252, 248, 245, 0.1);
+    text-align: left;
+}
+
+.divisorFormularioFinancas:not(:first-child) {
+    margin-top: 26px;
+}
+
+.campoFormularioFinancas {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+    text-align: left;
+    flex: 1;
+    min-width: 0;
+}
+
+.rotuloCampoFinancas {
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    color: rgba(252, 248, 245, 0.65);
+    text-align: left;
+}
+
+.entradaFormularioFinancas {
+    background: rgba(252, 248, 245, 0.05);
+    border: 1px solid rgba(252, 248, 245, 0.18);
+    color: #edecec;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.88rem;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.16s ease;
+}
+
+.entradaFormularioFinancas:focus {
+    outline: none;
+    border-color: #E79839;
+}
+
+.entradaFormularioFinancas:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.entradaFormularioFinancas::placeholder {
+    color: rgba(252, 248, 245, 0.35);
+}
+
+select.entradaFormularioFinancas option {
+    background: #3D0118;
+    color: #edecec;
+}
+
+.areaTextoFinancas {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.entradaMoedaFinancas {
+    font-variant-numeric: tabular-nums;
+}
+
+.linhaDuplaFormularioFinancas {
+    display: flex;
+    gap: 14px;
+}
+
+/* Valor calculado em destaque — final do patrocínio, total da compra */
+.blocoValorFinalFinancas {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: rgba(231, 152, 57, 0.07);
+    border: 1px solid rgba(231, 152, 57, 0.3);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.valorCalculadoFinancas {
+    font-family: 'Bungee', cursive;
+    font-weight: 400;
+    font-size: 1.3rem;
+    color: #E79839;
+    font-variant-numeric: tabular-nums;
+    text-align: left;
+}
+
+.rodapeFormularioFinancas {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(252, 248, 245, 0.1);
+}
+
+/* ── Responsivo — sidebar vira barra superior ────────────────── */
+
+@media (max-width: 820px) {
+    .paginaFinancas {
+        flex-direction: column;
+    }
+
+    .sidebarFinancas {
+        position: static;
+        height: auto;
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgba(252, 248, 245, 0.08);
+        padding: 16px 18px;
+        gap: 12px;
+    }
+
+    .cabecalhoSidebarFinancas {
+        flex-direction: row;
+        align-items: baseline;
+        gap: 10px;
+        padding: 0 0 10px;
+    }
+
+    .navegacaoSidebarFinancas {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 6px;
+        padding-bottom: 4px;
+    }
+
+    .itemNavegacaoFinancas {
+        white-space: nowrap;
+        padding: 9px 12px;
+    }
+
+    .linkVoltarSiteFinancas {
+        display: none;
+    }
+
+    .linhaDuplaFormularioFinancas {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+
+/* ── Reduced motion ──────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .secaoFinancas {
+        animation: none;
+    }
+
+    .itemNavegacaoFinancas,
+    .botaoPrimarioFinancas,
+    .botaoFantasmaFinancas,
+    .botaoAcaoLinhaFinancas,
+    .botaoStatusLinhaFinancas,
+    .linkVoltarSiteFinancas,
+    .entradaFormularioFinancas {
+        transition: none;
+    }
+}

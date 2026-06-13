@@ -1,0 +1,36 @@
+/* ── Seção de fornecedores ───────────────────────────────────── */
+
+.nomeFornecedorTabelaFornecedores {
+    font-weight: 600;
+    color: #edecec;
+}
+
+.celulaContatoFornecedores {
+    color: rgba(252, 248, 245, 0.75);
+    white-space: nowrap;
+}
+
+.celulaObservacaoFornecedores {
+    color: rgba(252, 248, 245, 0.55);
+    font-size: 0.8rem;
+    max-width: 280px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.celulaContagemFornecedores {
+    font-variant-numeric: tabular-nums;
+    color: rgba(252, 248, 245, 0.75);
+}
+
+/* Botão de exclusão bloqueado quando há compras vinculadas */
+.botaoAcaoLinhaFinancas:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.botaoAcaoLinhaFinancas:disabled:hover {
+    color: rgba(252, 248, 245, 0.6);
+    border-color: rgba(252, 248, 245, 0.15);
+}

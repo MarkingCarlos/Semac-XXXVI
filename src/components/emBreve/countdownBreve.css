@@ -1,65 +1,65 @@
 /* ── Container principal do countdown ──────────────────────── */
-.contagem {
+.contagemBreve {
   display: flex;
   justify-content: center;
   align-items: flex-end;
 }
-.contagem--grande { gap: 18px; }
-.contagem--pequena { gap: 8px; }
+.contagemBreveGrande { gap: 18px; }
+.contagemBrevePequena { gap: 8px; }
 
 /* ── Bloco de cada unidade (Dias / Horas / Min / Seg) ──────── */
-.contagem-bloco {
+.blocoContagemBreve {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
-.contagem-bloco--grande { min-width: 80px; }
-.contagem-bloco--pequeno { min-width: 44px; }
+.blocoContagemBreveGrande { min-width: 80px; }
+.blocoContagemBrevePequeno { min-width: 44px; }
 
 /* ── Número grande ─────────────────────────────────────────── */
-.contagem-numero {
+.numeroContagemBreve {
   font-family: 'Bungee', sans-serif;
   color: #FCF8F5;
   line-height: 0.95;
   letter-spacing: -1px;
 }
-.contagem--grande .contagem-numero { font-size: 96px; }
-.contagem--pequena .contagem-numero { font-size: 48px; }
+.contagemBreveGrande .numeroContagemBreve { font-size: 96px; }
+.contagemBrevePequena .numeroContagemBreve { font-size: 48px; }
 
 /* Animação de flip aplicada ao bloco dos segundos */
-.contagem-numero--flip {
+.numeroContagemBreveFlip {
   animation: flip-segundo 1s ease infinite;
 }
 
 /* ── Linha fina entre número e rótulo ──────────────────────── */
-.contagem-divisor {
+.divisorContagemBreve {
   width: 100%;
   height: 1px;
   background: rgba(252,248,245,0.14);
 }
-.contagem--grande .contagem-divisor { margin: 8px 0 6px; }
-.contagem--pequena .contagem-divisor { margin: 4px 0 3px; }
+.contagemBreveGrande .divisorContagemBreve { margin: 8px 0 6px; }
+.contagemBrevePequena .divisorContagemBreve { margin: 4px 0 3px; }
 
 /* ── Rótulo de texto (DIAS, HORAS, MIN, SEG) ───────────────── */
-.contagem-rotulo {
+.rotuloContagemBreve {
   font-family: "Montserrat", sans-serif;
   font-weight: 600;
   color: var(--AmareloAuxApoio);
   letter-spacing: 2.5px;
   text-transform: uppercase;
 }
-.contagem--grande .contagem-rotulo { font-size: 15px; }
-.contagem--pequena .contagem-rotulo { font-size: 8px; }
+.contagemBreveGrande .rotuloContagemBreve { font-size: 15px; }
+.contagemBrevePequena .rotuloContagemBreve { font-size: 8px; }
 
 /* ── Separador ":" entre os blocos ────────────────────────── */
-.contagem-dois-pontos {
+.doisPontosContagemBreve {
   font-family: 'Bungee', sans-serif;
   color: #E79839;
   font-size: 22px;
   padding-bottom: 12px;
   animation: pisca-dois-pontos 3s infinite;
 }
-.contagem-dois-pontos--grande {
+.doisPontosContagemBreveGrande {
   font-size: 45px;
   padding-bottom: 23px;
 }
@@ -79,17 +79,17 @@
 
 /* ── Mobile (≤ 767px): reduz números para caber na tela ── */
 @media (max-width: 767px) {
-  .contagem--grande { gap: 10px; }
-  .contagem--grande .contagem-numero { font-size: 56px; }
-  .contagem-bloco--grande { min-width: 50px; }
-  .contagem-dois-pontos--grande { font-size: 26px; padding-bottom: 14px; }
-  .contagem--grande .contagem-rotulo { font-size: 10px; }
+  .contagemBreveGrande { gap: 10px; }
+  .contagemBreveGrande .numeroContagemBreve { font-size: 56px; }
+  .blocoContagemBreveGrande { min-width: 50px; }
+  .doisPontosContagemBreveGrande { font-size: 26px; padding-bottom: 14px; }
+  .contagemBreveGrande .rotuloContagemBreve { font-size: 10px; }
 }
 
 /* ── Mobile pequeno (≤ 430px / iPhone 14) ───────────────── */
 @media (max-width: 430px) {
-  .contagem--grande { gap: 8px; }
-  .contagem--grande .contagem-numero { font-size: 42px; }
-  .contagem-bloco--grande { min-width: 38px; }
-  .contagem-dois-pontos--grande { font-size: 20px; padding-bottom: 10px; }
+  .contagemBreveGrande { gap: 8px; }
+  .contagemBreveGrande .numeroContagemBreve { font-size: 42px; }
+  .blocoContagemBreveGrande { min-width: 38px; }
+  .doisPontosContagemBreveGrande { font-size: 20px; padding-bottom: 10px; }
 }

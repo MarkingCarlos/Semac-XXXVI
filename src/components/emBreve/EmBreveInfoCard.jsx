@@ -20,11 +20,11 @@ export default function EmBreveInfoCard() {
     const wrapperRef = useRef(null);
     const handleMouseMove = (e) => {
         if (!wrapperRef.current) return;
-        const rect = wrapperRef.current.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        wrapperRef.current.style.setProperty('--mouse-x', `${x}px`);
-        wrapperRef.current.style.setProperty('--mouse-y', `${y}px`);
+        const retanguloCartao = wrapperRef.current.getBoundingClientRect();
+        const posicaoX = e.clientX - retanguloCartao.left;
+        const posicaoY = e.clientY - retanguloCartao.top;
+        wrapperRef.current.style.setProperty('--mouse-x', `${posicaoX}px`);
+        wrapperRef.current.style.setProperty('--mouse-y', `${posicaoY}px`);
     };
   return (
       <div className="bordaBrilhante"

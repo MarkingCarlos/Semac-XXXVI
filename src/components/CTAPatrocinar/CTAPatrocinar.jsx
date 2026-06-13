@@ -5,18 +5,18 @@ import './ctaPatrocinar.css'
 
 export default function CTAPatrocinar({ total }) {
     return (
-        <div class="cta-patrocinar">
+        <div class="faixaCtaPatrocinar">
             {/* Contador de empresas + subtítulo */}
-            <div class="cta-info">
-                <span class="cta-numero">{total}</span>
+            <div class="infoCtaPatrocinar">
+                <span class="numeroCtaPatrocinar">{total}</span>
                 <div>
-                    <p class="cta-rotulo">EMPRESAS · ÚLTIMAS EDIÇÕES</p>
-                    <p class="cta-subtitulo">Sua empresa pode ser a próxima.</p>
+                    <p class="rotuloCtaPatrocinar">EMPRESAS · ÚLTIMAS EDIÇÕES</p>
+                    <p class="subtituloCtaPatrocinar">Sua empresa pode ser a próxima.</p>
                 </div>
             </div>
 
             {/* Botão de ação */}
-            <button class="cta-botao">
+            <button class="botaoCtaPatrocinar">
                 Seja patrocinador 2026 ↗
             </button>
         </div>

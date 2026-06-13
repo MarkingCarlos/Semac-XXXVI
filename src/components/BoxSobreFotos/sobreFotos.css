@@ -1,54 +1,67 @@
 
-.boxFotos{
+.boxFotos {
     display: flex;
     flex-direction: column;
     border-radius: 25px;
     height: 100%;
 }
-.boxFotoSobreNos{
-    border-radius: 25px;
-    flex: 1;
+
+.boxFotoSobreNos {
+    border-radius: 25px 25px 0 0;
+    flex: 2;
+    min-height: 0;
 }
+
 .boxFotoSobreNos img {
     border-radius: 25px 25px 0 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
+
 .boxTextoSobreNos {
-    flex: 2;
-    background: var(--Branco);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    flex: 1;
+    background: #3D0118;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding: 16px 20px 20px;
     border-radius: 0 0 25px 25px;
 }
 
-.textoFotos{
-    color: var(--Preto);
-    text-align: left;
-    font-family: "Montserrat", sans-serif;
-    font-size: clamp(1rem, 0.5rem + 0.7vw, 1.5rem);
+.textoFotos {
+    color: rgba(252, 248, 245, 0.82);
+    text-align: justify;
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(0.875rem, 0.5rem + 0.6vw, 2rem);
+    line-height: 1.55;
     margin: 4px 0 0;
+    text-wrap: pretty;
 }
 
-.tituloFotos{
-    color: var(--vermelhoDiretoria);
-    margin: 0 0 4px;
-    font-size: clamp(1rem, 0.5rem + 1.2vw, 2rem);
+.tituloFotos {
+    font-family: 'Bungee', cursive;
+    color: #E79839;
+    margin: 0 0 6px;
+    font-size: clamp(1rem, 0.5rem + 1vw, 1.5rem);
+    font-weight: 400;
+    line-height: 1.1;
     text-align: left;
+    letter-spacing: 0em;
 }
 
 @media (max-width: 768px) {
     .tituloFotos {
-        font-size: 22px;
-        margin-left: 14px;
+        font-size: 1.2rem;
     }
 
     .textoFotos {
-        font-size: 14px;
-        margin-left: 14px;
+        font-size: 0.875rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .boxFotoSobreNos img {
+        transition: none;
     }
 }
 

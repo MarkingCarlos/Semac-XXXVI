@@ -1,4 +1,4 @@
-.patroc-compacto {
+.secaoPatrocinadoresCompacto {
     background: var(--vermelhoAuxDiretoria);
     padding: 23px 56px;
     display: flex;
@@ -12,7 +12,7 @@
 
 /* ── Bloco de topo: tudo centralizado ────────────────────────── */
 
-.patroc-compacto-topo {
+.topoPatrocinadoresCompacto {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -21,50 +21,20 @@
     width: 100%;
 }
 
-.patroc-compacto-rotulo-linha {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-}
-
-
-
-.patroc-compacto-rotulo {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #E79839;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-}
-
-.patroc-compacto-titulo {
-    font-family: 'Bungee', cursive;
-    font-size: var(--titulo-size-desktop-wide);
-    line-height: 1;
-    color: var(--Branco);
-    margin: 0;
-}
-
-.patroc-compacto-destaque {
+.destaquePatrocinadoresCompacto {
     color: #E79839;
 }
 
-.patroc-compacto-texto {
+.textoPatrocinadoresCompacto {
     text-align: center;
     font-size: 1.5rem;
     color: rgba(252, 248, 245, 0.6);
     margin: 0;
 }
 
-.patroc-compacto-texto strong {
-    color: #FCF8F5;
-    font-weight: 700;
-}
-
 /* ── Botão CTA ───────────────────────────────────────────────── */
 
-.btnPatrocinar {
+.botaoPatrocinarCompacto {
     display: inline-block;
     background: #E79839;
     color: #3D0118;
@@ -75,38 +45,37 @@
     text-transform: uppercase;
     padding: 1rem 2rem;
     border: none;
-    border-radius: 20px;
+    border-radius: 8px;
     cursor: pointer;
     transition: filter 0.2s ease, transform 0.18s ease;
 }
 
-.btnPatrocinar:hover {
+.botaoPatrocinarCompacto:hover {
     filter: brightness(1.08);
     transform: translateY(-2px);
 }
 
 /* ── Área do carrossel: largura total ────────────────────────── */
 
-.patroc-compacto-carrossel {
+.areaCarrosselPatrocinadoresCompacto {
     width: 100%;
     max-width: 1280px;
 }
 
 /* ── Wide monitors ───────────────────────────────────────────── */
 @media (min-width: 1440px) {
-    .patroc-compacto {
+    .secaoPatrocinadoresCompacto {
         padding: 68px 80px 56px;
     }
 }
 
 /* ── Tablet ──────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-    .patroc-compacto {
+    .secaoPatrocinadoresCompacto {
         padding: 16px;
         gap: 32px;
     }
-    .patroc-compacto-texto{
+    .textoPatrocinadoresCompacto{
         font-size: 0.9rem;
     }
 }
-

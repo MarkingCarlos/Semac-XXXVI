@@ -6,14 +6,14 @@ import './logoCardPatrocinador.css'
 
 // iniciais é opcional: se não vier, calcula automaticamente a partir do nome
 export default function LogoCardPatrocinador({ iniciais, nome, src }) {
-    const fallback = iniciais ?? nome.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase()
+    const iniciaisFallback = iniciais ?? nome.split(' ').map(palavra => palavra[0]).join('').slice(0, 2).toUpperCase()
     return (
-        <div class="logo-card-patrocinador">
+        <div class="cartaoLogoPatrocinador">
             {src
-                ? <img src={src} alt={nome} class="logo-card-imagem" />
-                : <span class="logo-card-iniciais">{fallback}</span>
+                ? <img src={src} alt={nome} class="imagemLogoPatrocinador" />
+                : <span class="iniciaisLogoPatrocinador">{iniciaisFallback}</span>
             }
-            <span class="logo-card-nome">{nome}</span>
+            <span class="nomeLogoPatrocinador">{nome}</span>
         </div>
     )
 }

@@ -11,9 +11,9 @@ const DoacaoQRCode = () => {
 
     const handleMouseMove = (e) => {
         if (!wrapperRef.current) return;
-        const rect = wrapperRef.current.getBoundingClientRect();
-        wrapperRef.current.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-        wrapperRef.current.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        const retanguloWrapper = wrapperRef.current.getBoundingClientRect();
+        wrapperRef.current.style.setProperty('--mouse-x', `${e.clientX - retanguloWrapper.left}px`);
+        wrapperRef.current.style.setProperty('--mouse-y', `${e.clientY - retanguloWrapper.top}px`);
     };
 
     const copiarChave = () => {
@@ -24,28 +24,28 @@ const DoacaoQRCode = () => {
     };
 
     return (
-        <div class="qr-wrapper" ref={wrapperRef} onMouseMove={handleMouseMove}>
-            <div class="qr-card">
-                <div class="qr-cabecalho">
-                    <h2 class="qr-titulo">Faça uma Doação</h2>
-                    <p class="qr-subtitulo qr-subtitulo--desktop">Escaneie o QR Code PIX</p>
-                    <p class="qr-subtitulo qr-subtitulo--mobile">Copie a chave PIX abaixo</p>
+        <div class="wrapperQrDoacao" ref={wrapperRef} onMouseMove={handleMouseMove}>
+            <div class="cartaoQrDoacao">
+                <div class="cabecalhoQrDoacao">
+                    <h2 class="tituloQrDoacao">Faça uma Doação</h2>
+                    <p class="subtituloQrDoacao subtituloQrDoacaoDesktop">Escaneie o QR Code PIX</p>
+                    <p class="subtituloQrDoacao subtituloQrDoacaoMobile">Copie a chave PIX abaixo</p>
                 </div>
 
-                <div class={`qr-imagem-container${mostrarQR ? " qr-imagem-container--visivel" : ""}`}>
-                    <img src={qrCode} alt="QR Code PIX" class="qr-imagem" />
+                <div class={`conteinerImagemQrDoacao${mostrarQR ? " conteinerImagemQrDoacaoVisivel" : ""}`}>
+                    <img src={qrCode} alt="QR Code PIX" class="imagemQrDoacao" />
                 </div>
 
-                <div class="qr-chave-area">
-                    <span class="qr-chave-label">Chave PIX</span>
-                    <span class="qr-chave-valor">{CHAVE_PIX}</span>
+                <div class="areaChaveQrDoacao">
+                    <span class="rotuloChaveQrDoacao">Chave PIX</span>
+                    <span class="valorChaveQrDoacao">{CHAVE_PIX}</span>
                 </div>
 
-                <button class="qr-btn-copiar" onClick={copiarChave}>
+                <button class="botaoCopiarQrDoacao" onClick={copiarChave}>
                     {copiado ? "Copiado ✓" : "Copiar Chave PIX"}
                 </button>
 
-                <button class="qr-btn-toggle" onClick={() => setMostrarQR(!mostrarQR)}>
+                <button class="botaoAlternarQrDoacao" onClick={() => setMostrarQR(!mostrarQR)}>
                     {mostrarQR ? "Ocultar QR Code" : "Ver QR Code"}
                 </button>
             </div>

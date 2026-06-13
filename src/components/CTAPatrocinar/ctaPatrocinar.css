@@ -4,7 +4,7 @@
    Mostra o total de empresas apoiadoras e um CTA para novas.
    ================================================================= */
 
-.cta-patrocinar {
+.faixaCtaPatrocinar {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -18,20 +18,20 @@
 }
 
 /* Lado esquerdo: número grande + rótulo + subtítulo */
-.cta-info {
+.infoCtaPatrocinar {
     display: flex;
     align-items: center;
     gap: 18px;
 }
 
-.cta-numero {
+.numeroCtaPatrocinar {
     font-family: 'Bungee', cursive;
     font-size: 1.75rem; /* 28px */
     color: #E79839;
     line-height: 1;
 }
 
-.cta-rotulo {
+.rotuloCtaPatrocinar {
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
     font-size: 0.5625rem; /* 9px */
@@ -41,7 +41,7 @@
     margin-bottom: 2px;
 }
 
-.cta-subtitulo {
+.subtituloCtaPatrocinar {
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     font-size: 0.9375rem; /* 15px */
@@ -49,7 +49,7 @@
 }
 
 /* Botão pill laranja */
-.cta-botao {
+.botaoCtaPatrocinar {
     padding: 13px 28px;
     background: #E79839;
     color: #3D0118;
@@ -65,28 +65,28 @@
     transition: filter 0.18s ease;
 }
 
-.cta-botao:hover {
+.botaoCtaPatrocinar:hover {
     filter: brightness(1.1);
 }
 
 /* ── Mobile: empilha verticalmente ──────────────────────────── */
 @media (max-width: 768px) {
-    .cta-patrocinar {
+    .faixaCtaPatrocinar {
         flex-direction: column;
         text-align: center;
         padding: 18px 16px;
     }
 
-    .cta-info {
+    .infoCtaPatrocinar {
         flex-direction: column;
         gap: 4px;
     }
 
-    .cta-numero {
+    .numeroCtaPatrocinar {
         font-size: 1.375rem;
     }
 
-    .cta-botao {
+    .botaoCtaPatrocinar {
         width: 100%;
         padding: 13px 0;
     }

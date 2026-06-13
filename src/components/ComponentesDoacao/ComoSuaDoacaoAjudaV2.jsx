@@ -1,6 +1,11 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import './ComoSuaDoacaoAjudaV2.css';
 
+const META_TOTAL = 10000;
+const ARRECADADO = 3200;
+const PORCENTAGEM = Math.min(Math.round((ARRECADADO / META_TOTAL) * 100), 100);
+const ULTIMOS_DOADORES = ['Carlos Alberto', 'Maria Clara', 'Ana Clara', 'Leonardo'];
+
 const ITENS = [
   {
     titulo: 'Democratização da Ciência',
@@ -65,13 +70,50 @@ function CarrosselMobile() {
         {ITENS.map((item, i) => (
           <button
             key={item.titulo}
-            className={`indicador ${i === ativo ? 'indicadorAtivo' : ''}`}
+            className={`indicadorCarrosselDoacao ${i === ativo ? 'indicadorCarrosselDoacaoAtivo' : ''}`}
             onClick={() => irPara(i)}
             role="tab"
             aria-selected={i === ativo}
             aria-label={item.titulo}
           />
         ))}
+      </div>
+    </div>
+  );
+}
+
+function MetaDoacao() {
+  const [largura, setLargura] = useState(0);
+  const refTrilho = useRef(null);
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setLargura(PORCENTAGEM);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.5 }
+    );
+    if (refTrilho.current) obs.observe(refTrilho.current);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <div className="metaDoacao">
+      <span className="valorMeta" >R$ 1.000</span>
+      <div className="metaDoacaoTrilho" ref={refTrilho}>
+        <div className="metaDoacaoProgresso" style={{ width: `${largura}%` }} />
+      </div>
+      <div className="metaDoacaoRodape">
+        <div className="metaDoacaoDoadores">
+          <span className="metaDoacaoDoadoresLabel">Últimos doadores:</span>
+          <span className="metaDoacaoDoadoresNomes">
+            {ULTIMOS_DOADORES.join(' · ')}
+          </span>
+        </div>
+        <span className="metaDoacaoPorcentagem">{PORCENTAGEM}%</span>
       </div>
     </div>
   );
@@ -88,6 +130,8 @@ export default function ComoSuaDoacaoAjudaV2() {
           <CardDoacao key={item.titulo} {...item} />
         ))}
       </div>
+
+      <MetaDoacao />
 
       {/* Mobile: carrossel */}
       <CarrosselMobile />

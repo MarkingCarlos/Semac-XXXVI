@@ -61,7 +61,7 @@ const abrirInstagram = () => {
 
 const CronogramaBreve = () => {
   return (
-    <section className="paginaCronograma">
+    <section id="Cronograma" className="paginaCronograma">
 
       <main className="conteudoPrincipal">
         <EmBreveHeroText />

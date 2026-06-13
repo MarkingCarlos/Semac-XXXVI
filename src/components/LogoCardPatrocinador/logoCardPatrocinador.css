@@ -4,7 +4,7 @@
    tracejada, placeholder de iniciais quando não há logo real.
    ================================================================= */
 
-.logo-card-patrocinador {
+.cartaoLogoPatrocinador {
     aspect-ratio: 2 / 1;
     width: 100%;
     border: 1.5px dashed rgba(252, 248, 245, 0.16);
@@ -14,18 +14,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
     transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 
-.logo-card-patrocinador:hover {
+.cartaoLogoPatrocinador:hover {
     transform: translateY(-2px);
     border-color: rgba(231, 152, 57, 0.7);
     background: rgba(252, 248, 245, 0.10);
 }
 
 /* Iniciais exibidas quando não há logo real */
-.logo-card-iniciais {
+.iniciaisLogoPatrocinador {
     font-family: 'Bungee', cursive;
     font-size: 1.875rem; /* 30px */
     color: #FCF8F5;
@@ -35,7 +34,7 @@
 }
 
 /* Nome sempre fixo na base do card */
-.logo-card-nome {
+.nomeLogoPatrocinador {
     position: absolute;
     bottom: 8px;
     font-family: 'Montserrat', sans-serif;
@@ -48,7 +47,7 @@
 }
 
 /* Logo real: contido dentro do card sem distorção */
-.logo-card-imagem {
+.imagemLogoPatrocinador {
     max-width: 70%;
     max-height: 60%;
     object-fit: contain;
@@ -56,15 +55,15 @@
 
 /* ── Mobile ──────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-    .logo-card-iniciais {
+    .iniciaisLogoPatrocinador {
         font-size: 1.375rem; /* 22px */
     }
 
-    .logo-card-nome {
+    .nomeLogoPatrocinador {
         font-size: 0.5rem; /* 8px */
     }
 
-    .logo-card-patrocinador {
+    .cartaoLogoPatrocinador {
         gap: 4px;
     }
 }

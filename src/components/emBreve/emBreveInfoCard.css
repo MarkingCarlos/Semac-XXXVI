@@ -12,8 +12,7 @@
   position: relative;
   border-radius: 15px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
-  z-index: 0; /* Cria um contexto de empilhamento */
+  z-index: 0;
 }
 
 .bordaBrilhante:hover {
@@ -99,10 +98,6 @@
   margin-top: 5px;
 }
 
-/* ── Espaçadores verticais ──────────────────────────────────── */
-.espacadorPequeno { height: 15px; }
-.espacadorMedio   { height: 28px; }
-.espacadorGrande  { height: 40px; }
 
 /* ── Linha divisória horizontal ─────────────────────────────── */
 .linhaDivisoria {

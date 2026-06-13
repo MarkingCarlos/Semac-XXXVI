@@ -57,18 +57,18 @@ export default function Patrocinadores() {
     });
 
     return (
-        <section ref={sectionRef} className={`patrocinadores-section${isVisible ? ' is-visible' : ''}`}>
+        <section ref={sectionRef} className={`secaoPatrocinadores${isVisible ? ' secaoPatrocinadoresVisivel' : ''}`}>
             {tiersWithDelays.map((tier, i) => (
-                <div className={`tier-${tier.tier.toLowerCase()}`} key={i}>
-                    <h2 className="tier-title">{tier.tier}</h2>
-                    <div className="tier-items">
+                <div className={`nivel${tier.tier.charAt(0) + tier.tier.slice(1).toLowerCase()}Patrocinadores`} key={i}>
+                    <h2 className="tituloNivelPatrocinadores">{tier.tier}</h2>
+                    <div className="conteinerItensNivelPatrocinadores">
                         {tier.items.map((item, j) => (
                             <div
-                                className="tier-item"
+                                className="itemNivelPatrocinadores"
                                 key={j}
                                 style={{ '--item-delay': `${item.delay}s` }}
                             >
-                                <img src={item.logo} alt={item.nome} className="tier-logo" />
+                                <img src={item.logo} alt={item.nome} className="logoNivelPatrocinadores" />
                             </div>
                         ))}
                     </div>

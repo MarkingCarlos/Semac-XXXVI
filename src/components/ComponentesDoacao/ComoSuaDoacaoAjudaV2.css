@@ -55,7 +55,7 @@
 }
 
 .cardTitulo {
-  font-family: 'Bungee', cursive;
+  font-family: 'Bungee', sans-serif;
   font-size: clamp(13px, 1.3vw, 18px);
   color: #FCF8F5;
   line-height: 1.1;
@@ -70,6 +70,71 @@
   line-height: 1.4;
 }
 
+/* ── Metômetro ─────────────────────────────────────── */
+
+.metaDoacao {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+
+.metaDoacaoTrilho {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.metaDoacaoProgresso {
+  height: 100%;
+  background: #94499E;
+  border-radius: 0 100px 100px 0;
+  transition: width 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.metaDoacaoRodape {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.metaDoacaoDoadores {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.metaDoacaoDoadoresLabel {
+  font-family: 'Bungee', cursive;
+  font-size: clamp(9px, 0.75vw, 11px);
+  text-align: left;
+  color: var(--Branco);
+  letter-spacing: 1px;
+}
+
+.metaDoacaoDoadoresNomes {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(10px, 0.85vw, 13px);
+  font-weight: 500;
+  color: rgba(252, 248, 245, 0.8);
+  line-height: 1.4;
+}
+
+.metaDoacaoPorcentagem {
+  font-family: 'Bungee', sans-serif;
+  font-size: clamp(20px, 2vw, 28px);
+  color: var(--Branco);
+  line-height: 1;
+  flex-shrink: 0;
+}
+.valorMeta{
+  text-align: right;
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(10px, 0.85vw, 13px);
+}
 /* ── Desktop: grade 2×2 ────────────────────────────── */
 
 .gradeDesktop {
@@ -130,7 +195,7 @@
     justify-content: center;
   }
 
-  .indicador {
+  .indicadorCarrosselDoacao {
     width: 8px;
     height: 8px;
     border-radius: 50%;
@@ -141,7 +206,7 @@
     transition: background 0.3s ease, transform 0.3s ease;
   }
 
-  .indicadorAtivo {
+  .indicadorCarrosselDoacaoAtivo {
     background: #E79839;
     transform: scale(1.3);
   }

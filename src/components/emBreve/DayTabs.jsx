@@ -20,13 +20,13 @@ export default function DayTabs({ variante = 'desktop' }) {
       className={variante === 'mobile' ? 'navAbasDiasMobile' : 'navAbasDiasDesktop'}
       aria-label="Dias do evento"
     >
-      {dias.map((d) => (
+      {dias.map((dia) => (
         <div
-          key={d}
+          key={dia}
           className={`${variante === 'mobile' ? 'abaDiaMobile' : 'abaDiaDesktop'} abaDiaBloqueada`}
           aria-disabled="true"
         >
-          {d}
+          {dia}
         </div>
       ))}
     </nav>

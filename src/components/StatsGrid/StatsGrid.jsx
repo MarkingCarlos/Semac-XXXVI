@@ -12,7 +12,7 @@ import { STATUS, contarStatus } from '../TabelaParticipantes/mockParticipantes.j
 // Monta as classes CSS do card, adicionando liquid glass se alerta for verdadeiro.
 // `tint` é a variação de cor do vidro: 'amarelo' | 'rosa'
 function classeCard(base, alerta, tint) {
-    return alerta ? `${base} liquid-glass liquid-glass-${tint}` : base
+    return alerta ? `${base} vidroLiquidoAdmin vidroLiquido${tint.charAt(0).toUpperCase() + tint.slice(1)}Admin` : base
 }
 
 export default function StatsGrid({ participantes }) {
@@ -25,25 +25,25 @@ export default function StatsGrid({ participantes }) {
     const ausenciasAlerta  = ausencias  > total * 0.25
 
     return (
-        <div class="admin-stats">
-            <div class="stat-card stat-card-total">
-                <span class="stat-numero">{total}</span>
-                <span class="stat-label">Participantes</span>
+        <div class="estatisticasAdmin">
+            <div class="cartaoEstatisticaAdmin cartaoEstatisticaTotalAdmin">
+                <span class="numeroEstatisticaAdmin">{total}</span>
+                <span class="rotuloEstatisticaAdmin">Participantes</span>
             </div>
 
-            <div class="stat-card stat-card-confirmados">
-                <span class="stat-numero">{confirmados}</span>
-                <span class="stat-label">Confirmações</span>
+            <div class="cartaoEstatisticaAdmin cartaoEstatisticaConfirmadosAdmin">
+                <span class="numeroEstatisticaAdmin">{confirmados}</span>
+                <span class="rotuloEstatisticaAdmin">Confirmações</span>
             </div>
 
-            <div class={classeCard('stat-card stat-card-aguardando', aguardandoAlerta, 'amarelo')}>
-                <span class="stat-numero">{aguardando}</span>
-                <span class="stat-label">Aguardando</span>
+            <div class={classeCard('cartaoEstatisticaAdmin cartaoEstatisticaAguardandoAdmin', aguardandoAlerta, 'amarelo')}>
+                <span class="numeroEstatisticaAdmin">{aguardando}</span>
+                <span class="rotuloEstatisticaAdmin">Aguardando</span>
             </div>
 
-            <div class={classeCard('stat-card stat-card-ausencias', ausenciasAlerta, 'rosa')}>
-                <span class="stat-numero">{ausencias}</span>
-                <span class="stat-label">Ausências</span>
+            <div class={classeCard('cartaoEstatisticaAdmin cartaoEstatisticaAusenciasAdmin', ausenciasAlerta, 'rosa')}>
+                <span class="numeroEstatisticaAdmin">{ausencias}</span>
+                <span class="rotuloEstatisticaAdmin">Ausências</span>
             </div>
         </div>
     )

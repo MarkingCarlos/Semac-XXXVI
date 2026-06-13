@@ -19,8 +19,8 @@ export default function Admin() {
     const participantes = MOCK_PARTICIPANTES
 
     return (
-        <div class="admin-page">
-            <div class="admin-body">
+        <div class="paginaAdmin">
+            <div class="corpoAdmin">
                 <StatsGrid participantes={participantes} />
                 <TabelaParticipantes participantes={participantes} />
             </div>

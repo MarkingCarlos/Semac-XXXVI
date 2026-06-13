@@ -1,5 +1,5 @@
 
-.modal-overlay {
+.overlayModalCotas {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.82);
@@ -21,7 +21,7 @@
 
 /* ── Painel principal ────────────────────────────────────────── */
 
-.modal-painel {
+.painelModalCotas {
     background: var(--vermelhoAuxDiretoria);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 20px;
@@ -50,7 +50,7 @@
 
 /* ── Cabeçalho ───────────────────────────────────────────────── */
 
-.modal-header {
+.cabecalhoModalCotas {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -58,7 +58,7 @@
 }
 
 /* Linha decorativa: traço + rótulo de categoria */
-.modal-rotulo-linha {
+.linhaRotuloModalCotas {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -66,7 +66,7 @@
 }
 
 /* Traço decorativo laranja ao lado do rótulo */
-.modal-acento {
+.acentoRotuloModalCotas {
     display: block;
     width: 28px;
     height: 2.5px;
@@ -74,7 +74,7 @@
     flex-shrink: 0;
 }
 
-.modal-rotulo {
+.rotuloModalCotas {
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
     font-size: 0.65rem;
@@ -83,7 +83,7 @@
     text-transform: uppercase;
 }
 
-.modal-titulo {
+.tituloModalCotas {
     font-family: 'Bungee', cursive;
     font-size: clamp(1.75rem, 4vw, 2.5rem);
     color: #FCF8F5;
@@ -93,7 +93,7 @@
     margin: 0;
 }
 
-.modal-fechar {
+.botaoFecharModalCotas {
     background: rgba(252, 248, 245, 0.08);
     border: 1px solid rgba(252, 248, 245, 0.12);
     color: rgba(252, 248, 245, 0.6);
@@ -109,12 +109,12 @@
     transition: background 0.2s, color 0.2s;
 }
 
-.modal-fechar:hover {
+.botaoFecharModalCotas:hover {
     background: rgba(252, 248, 245, 0.15);
     color: #FCF8F5;
 }
 
-.modal-subtitulo {
+.subtituloModalCotas {
     text-align: left;
     font-family: 'Montserrat', sans-serif;
     font-size: 0.9rem;
@@ -125,7 +125,7 @@
 
 /* ── Grid de cotas ───────────────────────────────────────────── */
 
-.modal-cotas-grid {
+.gradeCotasModal {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 14px;
@@ -133,7 +133,7 @@
 
 /* ── Card de cada cota ───────────────────────────────────────── */
 
-.cota-card {
+.cartaoCota {
     background: var(--cota-fundo);
     border: 1.5px solid rgba(255, 255, 255, 0.15);
     border-radius: 14px;
@@ -156,7 +156,7 @@
     to   { opacity: 0.88; transform: translateY(0); }
 }
 
-.cota-card:hover {
+.cartaoCota:hover {
     transform: translateY(-3px);
     opacity: 1;
     filter: brightness(1.08);
@@ -164,7 +164,7 @@
 }
 
 /* Card selecionado pelo usuário */
-.cota-card-selecionada {
+.cartaoCotaSelecionada {
     opacity: 1;
     filter: brightness(1.1);
     border: 2px solid var(--cota-destaque);
@@ -172,7 +172,7 @@
 }
 
 /* ── Shimmer: Platina (navy → navy claro) ────────────────────── */
-.cota-card.platina {
+.cartaoCota.platina {
 
     background-size: 200% auto;
     animation: shimmer-platina 4s linear infinite;
@@ -184,7 +184,7 @@
 }
 
 /* ── Shimmer: Especial (roxo → roxo claro) ───────────────────── */
-.cota-card.especial {
+.cartaoCota.especial {
 
     background-size: 200% auto;
     animation: shimmer-especial 3s linear infinite;
@@ -199,7 +199,7 @@
 /* ── Conteúdo do card ────────────────────────────────────────── */
 
 /* Nome da cota em destaque */
-.cota-nome {
+.nomeCota {
     font-family: 'Bungee', cursive;
     font-size: 1.15rem;
     color: var(--cota-destaque);
@@ -208,7 +208,7 @@
 }
 
 /* Lista de benefícios inclusos na cota */
-.cota-beneficios {
+.beneficiosCota {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -219,7 +219,7 @@
 }
 
 /* Item individual de benefício */
-.cota-beneficio {
+.beneficioCota {
     display: flex;
     align-items: flex-start;
     gap: 6px;
@@ -234,13 +234,13 @@
     word-break: break-word;
 }
 
-.cota-beneficio span:last-child {
+.beneficioCota span:last-child {
     flex: 1;
     min-width: 0;
 }
 
 /* Ícone ✓ à esquerda de cada benefício */
-.cota-check-icone {
+.iconeCheckCota {
     color: var(--cota-destaque);
     font-size: 0.65rem;
     margin-top: 1px;
@@ -249,7 +249,7 @@
 }
 
 /* Badge "SELECIONADA" exibido no card ativo */
-.cota-badge-selecionada {
+.badgeCotaSelecionada {
     display: inline-block;
     background: var(--cota-destaque);
     color: var(--cota-fundo);
@@ -264,7 +264,7 @@
 
 /* ── Formulário de contato ───────────────────────────────────── */
 
-.modal-form {
+.formularioModalCotas {
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -272,13 +272,13 @@
     padding-top: 1rem;
 }
 
-.modal-campo {
+.campoModalCotas {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
-.modal-campo-label {
+.rotuloCampoModalCotas {
     font-family: 'Montserrat', sans-serif;
     font-size: 0.7rem;
     font-weight: 700;
@@ -287,7 +287,7 @@
     color: rgba(252, 248, 245, 0.5);
 }
 
-.modal-campo-input {
+.inputCampoModalCotas {
     background: rgba(252, 248, 245, 0.05);
     border: 1.5px solid rgba(252, 248, 245, 0.12);
     border-radius: 8px;
@@ -300,17 +300,17 @@
     transition: border-color 0.2s;
 }
 
-.modal-campo-input::placeholder {
+.inputCampoModalCotas::placeholder {
     color: rgba(252, 248, 245, 0.25);
 }
 
-.modal-campo-input:focus {
+.inputCampoModalCotas:focus {
     border-color: #E79839;
 }
 
 /* ── Botão de envio ──────────────────────────────────────────── */
 
-.modal-btn-enviar {
+.botaoEnviarModalCotas {
     width: 100%;
     padding: 1rem;
     border: none;
@@ -324,12 +324,12 @@
     transition: filter 0.2s, transform 0.15s;
 }
 
-.modal-btn-enviar:hover:not(:disabled) {
+.botaoEnviarModalCotas:hover:not(:disabled) {
     filter: brightness(1.1);
     transform: scale(1.01);
 }
 
-.modal-btn-enviar:disabled {
+.botaoEnviarModalCotas:disabled {
     background: rgba(252, 248, 245, 0.1);
     color: rgba(252, 248, 245, 0.3);
     cursor: not-allowed;
@@ -339,23 +339,23 @@
 
 /* ── Tablet largo: 3 colunas (2 linhas) ─────────────────────── */
 @media (max-width: 1100px) {
-    .modal-cotas-grid {
+    .gradeCotasModal {
         grid-template-columns: repeat(3, 1fr);
     }
 
-    .modal-painel {
+    .painelModalCotas {
         padding: 2rem;
     }
 }
 
 /* ── Tablet estreito: 2 colunas (3 linhas) ───────────────────── */
 @media (max-width: 720px) {
-    .modal-cotas-grid {
+    .gradeCotasModal {
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
     }
 
-    .modal-painel {
+    .painelModalCotas {
         padding: 1.5rem;
         gap: 1.25rem;
     }
@@ -364,12 +364,12 @@
 /* ── Mobile: sheet + carrossel horizontal com snap ───────────── */
 @media (max-width: 560px) {
     /* modal sobe da base da tela como um bottom sheet */
-    .modal-overlay {
+    .overlayModalCotas {
         padding: 12px;
         align-items: flex-end;
     }
 
-    .modal-painel {
+    .painelModalCotas {
         padding: 1.25rem 1.25rem 1.5rem;
         gap: 1.1rem;
         border-radius: 18px 18px 14px 14px;
@@ -379,7 +379,7 @@
 
     /* cards em fila horizontal deslizável; borda do próximo card
        visível em ~40px para sinalizar que há mais para rolar */
-    .modal-cotas-grid {
+    .gradeCotasModal {
         display: flex;
         overflow-x: auto;
         scroll-snap-type: x mandatory;
@@ -390,11 +390,11 @@
         padding-right: 40px;
     }
 
-    .modal-cotas-grid::-webkit-scrollbar {
+    .gradeCotasModal::-webkit-scrollbar {
         display: none;
     }
 
-    .cota-card {
+    .cartaoCota {
         flex: 0 0 200px;
         scroll-snap-align: start;
         align-self: flex-start;
@@ -402,11 +402,11 @@
         border-radius: 12px;
     }
 
-    .cota-nome {
+    .nomeCota {
         font-size: 1rem;
     }
 
-    .cota-beneficio {
+    .beneficioCota {
         font-size: 0.68rem;
     }
 }

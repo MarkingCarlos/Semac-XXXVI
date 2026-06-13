@@ -1,16 +1,16 @@
 import { useRef } from 'preact/hooks';
 import './sobreFotos.css';
 
-export function sobreFotos({ titulo, texto, imagem }) {
+export function SobreFotos({ titulo, texto, imagem, alt }) {
     const wrapperRef = useRef(null);
 
     const handleMouseMove = (e) => {
         if (!wrapperRef.current) return;
-        const rect = wrapperRef.current.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        wrapperRef.current.style.setProperty('--mouse-x', `${x}px`);
-        wrapperRef.current.style.setProperty('--mouse-y', `${y}px`);
+        const retanguloWrapper = wrapperRef.current.getBoundingClientRect();
+        const posicaoX = e.clientX - retanguloWrapper.left;
+        const posicaoY = e.clientY - retanguloWrapper.top;
+        wrapperRef.current.style.setProperty('--mouse-x', `${posicaoX}px`);
+        wrapperRef.current.style.setProperty('--mouse-y', `${posicaoY}px`);
     };
 
     return (
@@ -19,9 +19,9 @@ export function sobreFotos({ titulo, texto, imagem }) {
             ref={wrapperRef}
             onMouseMove={handleMouseMove}
         >
-            <div className="boxFotos" >
+            <div className="boxFotos">
                 <div className="boxFotoSobreNos">
-                    <img src={imagem} alt="Foto"  />
+                    <img src={imagem} alt={alt ?? titulo} />
                 </div>
                 <div className="boxTextoSobreNos">
                     <h3 className="tituloFotos">{titulo}</h3>
@@ -29,7 +29,7 @@ export function sobreFotos({ titulo, texto, imagem }) {
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default sobreFotos;
+export default SobreFotos;

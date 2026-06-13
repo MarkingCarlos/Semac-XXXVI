@@ -75,7 +75,7 @@ export default function BoxInscricao() {
         setFeedback(null)
 
         try {
-            const res = await fetch(`${API_URL}/api/inscricao`, {
+            const resposta = await fetch(`${API_URL}/api/inscricao`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -89,11 +89,11 @@ export default function BoxInscricao() {
                 }),
             })
 
-            if (res.status === 201) {
+            if (resposta.status === 201) {
                 setFeedback({ tipo: 'sucesso', msg: 'Inscrição realizada com sucesso!' })
                 setForm({ nome: '', cpf: '', ra: '', email: '', senha: '' })
                 setEtapa('dados')
-            } else if (res.status === 409) {
+            } else if (resposta.status === 409) {
                 setFeedback({ tipo: 'erro', msg: 'CPF ou e-mail já cadastrado.' })
             } else {
                 setFeedback({ tipo: 'erro', msg: 'Erro ao realizar inscrição. Tente novamente.' })
@@ -112,18 +112,18 @@ export default function BoxInscricao() {
     }
 
     return (
-        <div class="box-inscricao">
+        <div class="boxInscricao">
 
             {/* ── Abas ───────────────────────────────────────────── */}
-            <div class="box-abas">
+            <div class="abasInscricao">
                 <button
-                    class={`aba ${aba === 'inscricao' ? 'aba-ativa' : ''}`}
+                    class={`abaInscricao ${aba === 'inscricao' ? 'abaInscricaoAtiva' : ''}`}
                     onClick={() => trocarAba('inscricao')}
                 >
                     Inscrever-se
                 </button>
                 <button
-                    class={`aba ${aba === 'entrar' ? 'aba-ativa' : ''}`}
+                    class={`abaInscricao ${aba === 'entrar' ? 'abaInscricaoAtiva' : ''}`}
                     onClick={() => trocarAba('entrar')}
                 >
                     Entrar
@@ -131,29 +131,29 @@ export default function BoxInscricao() {
             </div>
 
             {/* ── Área de conteúdo com fade na troca de aba ────────── */}
-            <div class={`tab-area${abaSaindo ? ' tab-saindo' : ''}`}>
+            <div class={`areaAbasInscricao${abaSaindo ? ' areaAbasInscricaoSaindo' : ''}`}>
 
                 {/* ── Formulário: Inscrever-se ──────────────────────── */}
                 {aba === 'inscricao' && (
                     <>
                         {/* Indicador de progresso — oculto na tela de comemoração */}
                         {etapa !== 'comemoracao' && (
-                            <div class="etapa-indicador">
-                                <div class={`etapa-passo ${etapa === 'dados' ? 'etapa-passo-ativo' : 'etapa-passo-concluido'}`}>
-                                    <span class="etapa-num">{etapa === 'dados' ? '1' : '✓'}</span>
-                                    <span class="etapa-nome">Seus dados</span>
+                            <div class="indicadorEtapasInscricao">
+                                <div class={`passoEtapaInscricao ${etapa === 'dados' ? 'passoEtapaInscricaoAtivo' : 'passoEtapaInscricaoConcluido'}`}>
+                                    <span class="numeroEtapaInscricao">{etapa === 'dados' ? '1' : '✓'}</span>
+                                    <span class="nomeEtapaInscricao">Seus dados</span>
                                 </div>
-                                <span class="etapa-linha" />
-                                <div class={`etapa-passo ${etapa === 'camisa' ? 'etapa-passo-ativo' : ''}`}>
-                                    <span class="etapa-num">2</span>
-                                    <span class="etapa-nome">Camiseta</span>
+                                <span class="linhaEtapaInscricao" />
+                                <div class={`passoEtapaInscricao ${etapa === 'camisa' ? 'passoEtapaInscricaoAtivo' : ''}`}>
+                                    <span class="numeroEtapaInscricao">2</span>
+                                    <span class="nomeEtapaInscricao">Camiseta</span>
                                 </div>
                             </div>
                         )}
 
                         {/* ── Etapa 1: Dados pessoais ───────────────── */}
                         {etapa === 'dados' && (
-                            <form class="box-form" onSubmit={e => { e.preventDefault(); setEtapa('comemoracao') }}>
+                            <form class="formularioInscricao" onSubmit={e => { e.preventDefault(); setEtapa('comemoracao') }}>
                                 <CampoTexto
                                     label="Nome Completo"
                                     value={form.nome}
@@ -190,7 +190,7 @@ export default function BoxInscricao() {
                                 />
                                 <button
                                     type="submit"
-                                    class="btn-confirmar"
+                                    class="botaoConfirmarInscricao"
                                     disabled={!senhaValida}
                                 >
                                     Próxima etapa
@@ -200,15 +200,15 @@ export default function BoxInscricao() {
 
                         {/* ── Tela de comemoração ───────────────────── */}
                         {etapa === 'comemoracao' && (
-                            <div class="comemoracao-container">
-                                <div class="comemoracao-titulo" ref={tituloRef}>
+                            <div class="conteinerComemoracaoInscricao">
+                                <div class="tituloComemoracaoInscricao" ref={tituloRef}>
                                      PARABÉNS!
                                 </div>
-                                <p class="comemoracao-subtitulo" ref={subtituloRef}>
+                                <p class="subtituloComemoracaoInscricao" ref={subtituloRef}>
                                     Você ganhou uma <strong>camiseta exclusiva</strong> da SEMAC XXXVI!
                                 </p>
                                 <button
-                                    class="btn-confirmar"
+                                    class="botaoConfirmarInscricao"
                                     ref={btnCamisaRef}
                                     onClick={() => setEtapa('camisa')}
                                     style={{ opacity: 0 }}
@@ -220,46 +220,46 @@ export default function BoxInscricao() {
 
                         {/* ── Etapa 2: Escolha da camiseta ─────────── */}
                         {etapa === 'camisa' && (
-                            <form class="box-form" onSubmit={handleSubmitInscricao}>
-                                <div class="camisa-secao">
-                                    <span class="campo-label">Tipo de Camiseta</span>
-                                    <div class="camisa-modelos">
-                                        {MODELOS.map(m => (
+                            <form class="formularioInscricao" onSubmit={handleSubmitInscricao}>
+                                <div class="secaoCamisaInscricao">
+                                    <span class="rotuloCampoInscricao">Tipo de Camiseta</span>
+                                    <div class="modelosCamisaInscricao">
+                                        {MODELOS.map(modeloOpcao => (
                                             <button
-                                                key={m}
+                                                key={modeloOpcao}
                                                 type="button"
-                                                class={`btn-modelo ${modelo === m ? 'btn-modelo-ativo' : ''}`}
-                                                onClick={() => setModelo(m)}
+                                                class={`botaoModeloInscricao ${modelo === modeloOpcao ? 'botaoModeloInscricaoAtivo' : ''}`}
+                                                onClick={() => setModelo(modeloOpcao)}
                                             >
-                                                {LABEL_MODELO[m]}
+                                                {LABEL_MODELO[modeloOpcao]}
                                             </button>
                                         ))}
                                     </div>
 
-                                    <span class="campo-label" style={{ marginTop: '0.5rem' }}>Tamanho</span>
-                                    <div class="camisa-tamanhos">
-                                        {TAMANHOS.map(t => (
+                                    <span class="rotuloCampoInscricao" style={{ marginTop: '0.5rem' }}>Tamanho</span>
+                                    <div class="tamanhosCamisaInscricao">
+                                        {TAMANHOS.map(tamanhoOpcao => (
                                             <button
-                                                key={t}
+                                                key={tamanhoOpcao}
                                                 type="button"
-                                                class={`btn-tamanho ${tamanho === t ? 'btn-tamanho-ativo' : ''}`}
-                                                onClick={() => setTamanho(t)}
+                                                class={`botaoTamanhoInscricao ${tamanho === tamanhoOpcao ? 'botaoTamanhoInscricaoAtivo' : ''}`}
+                                                onClick={() => setTamanho(tamanhoOpcao)}
                                             >
-                                                {t}
+                                                {tamanhoOpcao}
                                             </button>
                                         ))}
                                     </div>
 
-                                    <span class="camisa-aviso">
+                                    <span class="avisoCamisaInscricao">
                                         Você receberá a camiseta juntamente com o kit SEMAC no dia do evento.
                                     </span>
                                 </div>
 
                                 {feedback && (
-                                    <p class={`feedback feedback-${feedback.tipo}`}>{feedback.msg}</p>
+                                    <p class={`feedbackInscricao feedbackInscricao${feedback.tipo.charAt(0).toUpperCase() + feedback.tipo.slice(1)}`}>{feedback.msg}</p>
                                 )}
 
-                                <button type="submit" class="btn-confirmar" disabled={enviando}>
+                                <button type="submit" class="botaoConfirmarInscricao" disabled={enviando}>
                                     {enviando ? 'Enviando...' : 'Confirmar Inscrição'}
                                 </button>
                             </form>
@@ -269,7 +269,7 @@ export default function BoxInscricao() {
 
                 {/* ── Formulário: Entrar ────────────────────────────── */}
                 {aba === 'entrar' && (
-                    <form class="box-form" onSubmit={handleSubmitEntrar}>
+                    <form class="formularioInscricao" onSubmit={handleSubmitEntrar}>
                         <CampoTexto
                             label="E-mail"
                             type="email"
@@ -282,7 +282,7 @@ export default function BoxInscricao() {
                             onInput={e => setField('senha', e.target.value)}
                             required
                         />
-                        <button type="submit" class="btn-confirmar">
+                        <button type="submit" class="botaoConfirmarInscricao">
                             Entrar
                         </button>
                     </form>
@@ -298,10 +298,10 @@ export default function BoxInscricao() {
 // Campo de texto genérico com label uppercase e borda inferior
 function CampoTexto({ label, type = 'text', value, onInput, inputMode, required }) {
     return (
-        <div class="campo">
-            <label class="campo-label">{label}</label>
+        <div class="campoInscricao">
+            <label class="rotuloCampoInscricao">{label}</label>
             <input
-                class="campo-input"
+                class="inputCampoInscricao"
                 type={type}
                 value={value}
                 onInput={onInput}
@@ -316,17 +316,17 @@ function CampoTexto({ label, type = 'text', value, onInput, inputMode, required 
 // `senhaOk` é opcional — quando ausente (aba "Entrar"), os indicadores são omitidos.
 function CampoSenha({ value, onInput, senhaOk, required }) {
     return (
-        <div class="campo">
-            <label class="campo-label">Senha</label>
+        <div class="campoInscricao">
+            <label class="rotuloCampoInscricao">Senha</label>
             <input
-                class="campo-input"
+                class="inputCampoInscricao"
                 type="password"
                 value={value}
                 onInput={onInput}
                 required={required}
             />
             {senhaOk && (
-                <div class="senha-validacao">
+                <div class="validacaoSenhaInscricao">
                     <Indicador ok={senhaOk.especial}  texto="1 caractere especial" />
                     <Indicador ok={senhaOk.maiusculo} texto="1 caractere maiúsculo" />
                     <Indicador ok={senhaOk.minimo8}   texto="No mínimo 8 caracteres" />
@@ -339,8 +339,8 @@ function CampoSenha({ value, onInput, senhaOk, required }) {
 // Indicador visual de requisito de senha: caixinha + texto, verde quando ok
 function Indicador({ ok, texto }) {
     return (
-        <span class={`indicadorSenha ${ok ? 'indicador-ok' : ''}`}>
-            <span class="indicador-box" />
+        <span class={`indicadorSenhaInscricao ${ok ? 'indicadorSenhaOkInscricao' : ''}`}>
+            <span class="caixaIndicadorSenhaInscricao" />
             {texto}
         </span>
     )

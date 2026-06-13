@@ -45,6 +45,7 @@ export function BoxEstatistica({
     visitas,
     alcance,
     indice = 0,
+    href,
 }) {
 
     let color = "black";
@@ -73,9 +74,9 @@ export function BoxEstatistica({
 
     const handleMouseMove = (e) => {
         if (!wrapperRef.current) return;
-        const rect = wrapperRef.current.getBoundingClientRect();
-        wrapperRef.current.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
-        wrapperRef.current.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+        const retanguloWrapper = wrapperRef.current.getBoundingClientRect();
+        wrapperRef.current.style.setProperty('--mouse-x', `${e.clientX - retanguloWrapper.left}px`);
+        wrapperRef.current.style.setProperty('--mouse-y', `${e.clientY - retanguloWrapper.top}px`);
     };
 
     const [segCount, refSeg] = useCountUp(seguidores);
@@ -89,36 +90,37 @@ export function BoxEstatistica({
             onMouseMove={handleMouseMove}
             style={{ '--glow-color': glowColor }}
         >
-            <div
-                className="box"
-                style={{ backgroundColor: color, animationDelay: `${indice * 0.15}s` }}
-                ref={refAlc}
-            >
-                <div className="mancha" style={{ backgroundColor: corMancha }} />
+            <a href={href} target="_blank" rel="noopener noreferrer" className="linkBox">
+                <div
+                    className="box"
+                    style={{ backgroundColor: color, animationDelay: `${indice * 0.15}s` }}
+                    ref={refAlc}
+                >
+                    <div className="mancha" style={{ backgroundColor: corMancha }} />
 
-                <div className="header">
-                    <img src={logo} alt={plataforma} className="logoIcon" />
-                    <h3 className="titulo">{plataforma}</h3>
+                    <div className="header">
+                        <img src={logo} alt={plataforma} className="logoIcon" />
+                        <h3 className="titulo">{plataforma}</h3>
+                    </div>
+
+                    <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+                        <div className="linha" ref={refSeg}>
+                            <span>Seguidores:</span>
+                            <span>{segCount}</span>
+                        </div>
+
+                        <div className="linha" ref={refVis}>
+                            <span>Visitas:</span>
+                            <span>{visCount}</span>
+                        </div>
+
+                        <div className="linha">
+                            <span>Alcance:</span>
+                            <span>{alcCount}</span>
+                        </div>
+                    </div>
                 </div>
-
-                <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-                    <div className="linha" ref={refSeg}>
-                        <span>Seguidores:</span>
-                        <span>{segCount}</span>
-                    </div>
-
-                    <div className="linha" ref={refVis}>
-                        <span>Visitas:</span>
-                        <span>{visCount}</span>
-                    </div>
-
-                    <div className="linha">
-                        <span>Alcance:</span>
-                        <span>{alcCount}</span>
-                    </div>
-                </div>
-                    
-            </div>
+            </a>
         </div>
     );
 }

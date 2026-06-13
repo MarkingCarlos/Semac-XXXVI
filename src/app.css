@@ -18,49 +18,12 @@
 }
 
 /* Títulos de seção — aplicar em todos os h1 que encabeçam seções da página */
-.titulo-secao {
+.tituloSecao {
     font-size: var(--titulo-size-desktop-wide);
     font-weight: 700;
     color: var(--Branco);
 }
 
-.section-sticky {
-    position: sticky;
-    max-height: 100vh;
-    background-color: var(--vermelhoAuxDiretoria);
-}
-
-/* Animação das ondas decorativas — desce 24px no meio do ciclo */
-@keyframes floatDown {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(24px); }
-}
-
-/* Animação das ondas decorativas — sobe 24px no meio do ciclo */
-@keyframes floatUp {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-24px); }
-}
-
-.WaveDown {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  z-index: -1;
-  width: clamp(380px, 55vw, 775px);
-
-  animation: floatDown 3s ease-in-out infinite;
-}
-
-.WaveUp {
-  position: fixed;
-  right: 0;
-  top: 0;
-  z-index: -1;
-  width: clamp(380px, 55vw, 775px);
-
-  animation: floatUp 3s ease-in-out infinite;
-}
 
 .logo {
   width: clamp(300px, 75vw, 660px);
@@ -73,25 +36,3 @@
   filter: drop-shadow(0 0 2em #673ab8aa);
 }
 
-.card {
-  padding: 0;
-}
-
-.boxes-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: stretch;
-    gap: 20px;
-    width: calc(100% + 4rem); /* cancela o padding: 2rem de cada lado do #app */
-    margin-left: -2rem;       /* puxa o container para a esquerda */
-    box-sizing: border-box;
-}
- 
-@media (max-width: 884px) {
-    .boxes-container {
-        flex-direction: column;
-        align-items: center;
-        padding: 0 2rem;
-    }
-}

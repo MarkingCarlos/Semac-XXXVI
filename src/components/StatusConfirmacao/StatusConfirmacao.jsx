@@ -5,12 +5,12 @@ import './statusConfirmacao.css'
 
 export default function StatusConfirmacao({ ano = '2026' }) {
     return (
-        <div class="status-confirmacao">
-            <div class="status-pill">
-                <span class="status-dot" />
-                <span class="status-label">{ano} · EM CONFIRMAÇÃO</span>
+        <div class="statusConfirmacao">
+            <div class="pillStatusConfirmacao">
+                <span class="dotStatusConfirmacao" />
+                <span class="rotuloStatusConfirmacao">{ano} · EM CONFIRMAÇÃO</span>
             </div>
-            <p class="status-descricao">
+            <p class="descricaoStatusConfirmacao">
                 Os patrocinadores desta edição ainda estão sendo confirmados.<br />
                 <strong>Conheça quem já apoiou.</strong>
             </p>

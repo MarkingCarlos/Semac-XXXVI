@@ -24,8 +24,8 @@ function TrackBox({ label, cor, ativa = true }) {
 export default function TrilhasConfirmadas() {
   return (
     <div className="containerBoxsTrilhas">
-      {TRILHAS.map((t) => (
-        <TrackBox key={t.label} label={t.label} cor={t.cor} ativa />
+      {TRILHAS.map((trilha) => (
+        <TrackBox key={trilha.label} label={trilha.label} cor={trilha.cor} ativa />
       ))}
     </div>
   );

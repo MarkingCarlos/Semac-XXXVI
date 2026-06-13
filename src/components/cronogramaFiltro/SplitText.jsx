@@ -42,11 +42,11 @@ const SplitText = ({
     () => {
       if (!ref.current || !text || !fontsLoaded) return;
       if (animationCompletedRef.current) return;
-      const el = ref.current;
+      const elemento = ref.current;
 
-      if (el._rbsplitInstance) {
-        try { el._rbsplitInstance.revert(); } catch (_) {}
-        el._rbsplitInstance = null;
+      if (elemento._rbsplitInstance) {
+        try { elemento._rbsplitInstance.revert(); } catch (_) {}
+        elemento._rbsplitInstance = null;
       }
 
       const startPct = (1 - threshold) * 100;
@@ -67,7 +67,7 @@ const SplitText = ({
         if (!targets) targets = self.chars || self.words || self.lines;
       };
 
-      const splitInstance = new GSAPSplitText(el, {
+      const splitInstance = new GSAPSplitText(elemento, {
         type: splitType,
         smartWrap: true,
         autoSplit: splitType === 'lines',
@@ -82,7 +82,7 @@ const SplitText = ({
             duration,
             ease,
             stagger: delay / 1000,
-            scrollTrigger: { trigger: el, start, once: true, fastScrollEnd: true, anticipatePin: 0.4 },
+            scrollTrigger: { trigger: elemento, start, once: true, fastScrollEnd: true, anticipatePin: 0.4 },
             onComplete: () => {
               animationCompletedRef.current = true;
               onCompleteRef.current?.();
@@ -94,12 +94,12 @@ const SplitText = ({
         }
       });
 
-      el._rbsplitInstance = splitInstance;
+      elemento._rbsplitInstance = splitInstance;
 
       return () => {
-        ScrollTrigger.getAll().forEach(st => { if (st.trigger === el) st.kill(); });
+        ScrollTrigger.getAll().forEach(scrollTrigger => { if (scrollTrigger.trigger === elemento) scrollTrigger.kill(); });
         try { splitInstance.revert(); } catch (_) {}
-        el._rbsplitInstance = null;
+        elemento._rbsplitInstance = null;
       };
     },
     {
@@ -112,7 +112,7 @@ const SplitText = ({
   return (
     <Tag
       ref={ref}
-      className={`split-parent ${className}`}
+      className={`paiSplitText ${className}`}
       style={{
         textAlign,
         overflow: 'hidden',
