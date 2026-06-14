@@ -1,5 +1,8 @@
 .nomeComissao{
+    margin-top: 1rem;
+    font-family: 'Montserrat', sans-serif;
     text-align: left;
+    height: auto;
     margin-bottom: 0;
 }
 .conteinerPaginaComissao {
@@ -20,6 +23,7 @@
 }
 
 .conteinerConteudoComissao {
+    font-family: 'bungee', 'sans-serif';
     flex: 1;
     display: flex;
     flex-direction: column;

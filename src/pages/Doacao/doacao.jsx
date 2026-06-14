@@ -1,6 +1,6 @@
 import "./doacao.css";
 import DoacaoQRCode from "../../components/ComponentesDoacao/DoacaoQRCode.jsx";
-import ComoSuaDoacaoAjudaV2 from "../../components/ComponentesDoacao/ComoSuaDoacaoAjudaV2.jsx";
+import ComoSuaDoacaoAjuda from "../../components/ComponentesDoacao/ComoSuaDoacaoAjudaV2.jsx";
 import riscoGiz from "../../assets/riscoGiz.png";
 import paperTexture from "../../assets/PAPER.png";
 
@@ -19,7 +19,7 @@ const doacao = () => {
                     </p>
 
                     <img src={riscoGiz} alt="" className="imagemRiscoDoacao" aria-hidden="true" />
-                    <ComoSuaDoacaoAjudaV2/>
+                    <ComoSuaDoacaoAjuda/>
                 </div>
                 <div className="colunaDireitaDoacao">
                     <DoacaoQRCode/>
