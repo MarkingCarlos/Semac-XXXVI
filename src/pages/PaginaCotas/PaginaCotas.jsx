@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks'
 import { useLocation } from 'wouter'
 import { COTAS } from '../../data/cotas.js'
 import './paginaCotas.css'
+import paperTexture from "../../assets/PAPER.png";
 
 const EMAIL_COMISSAO = 'patrocinio@semac.cc'
 
@@ -33,6 +34,16 @@ export default function PaginaCotas() {
 
     return (
         <section class="paginaCotas">
+            <div style={{
+                position: 'fixed',
+                inset: 0,
+                backgroundImage: `url(${paperTexture})`,
+                backgroundSize: '120%',
+                backgroundAttachment: 'fixed',
+                mixBlendMode: 'overlay',
+                pointerEvents: 'none',
+                zIndex: 50,
+            }} />
             <div class="painelCotas">
 
                 {/* ── Cabeçalho ──────────────────────────────── */}

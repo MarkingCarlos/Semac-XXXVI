@@ -1,13 +1,13 @@
 /* ── Página de cotas: layout full-page ──────────────────────────── */
 
 .paginaCotas {
+    padding: 0 56px 0;
     min-height: 100dvh;
     background: var(--vermelhoAuxDiretoria);
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     animation: pagina-enter 0.3s ease-out both;
-    padding: 23px 56px;
 }
 
 @keyframes pagina-enter {
@@ -17,7 +17,6 @@
 
 .painelCotas {
     width: 100%;
-    /*max-width: 1400px;*/
     display: flex;
     flex-direction: column;
     gap: 1.75rem;
