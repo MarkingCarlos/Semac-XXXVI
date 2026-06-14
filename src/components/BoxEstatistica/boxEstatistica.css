@@ -143,4 +143,15 @@
         height: auto;
         padding: 12px 16px 12px;
     }
+
+    /* Desabilita a borda brilhante e o hover no toque */
+    .boxWrapper::before,
+    .boxWrapper::after {
+        display: none;
+    }
+
+    .boxWrapper:hover {
+        transform: none;
+        box-shadow: none;
+    }
 }

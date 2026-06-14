@@ -18,7 +18,7 @@ export function App() {
             position: 'fixed',
             inset: 0,
             backgroundImage: `url(${paperTexture})`,
-            backgroundSize: '120%',
+            backgroundSize: '110%',
             backgroundAttachment: 'fixed',
             mixBlendMode: 'overlay',
             pointerEvents: 'none',

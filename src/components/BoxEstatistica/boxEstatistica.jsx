@@ -1,42 +1,12 @@
-import { useState, useEffect, useRef } from 'preact/hooks';
+import { useRef } from 'preact/hooks';
 import './boxEstatistica.css';
 import logoYoutube from "../../assets/logo-youtube.svg";
 import logoLinkedin from "../../assets/logo-linkedin.svg";
 import logoInstagram from "../../assets/logo-instagram.svg";
 
-function useCountUp(target, duration = 1400) {
-    const [display, setDisplay] = useState(0);
+function useCountUp(target) {
     const ref = useRef(null);
-
-    useEffect(() => {
-        const num = parseInt(target);
-        if (isNaN(num)) { setDisplay(target); return; }
-
-        const observer = new IntersectionObserver(([entry]) => {
-            if (!entry.isIntersecting) return;
-            observer.disconnect();
-
-            const steps = Math.min(num, 80);
-            const stepValue = num / steps;
-            const stepTime = duration / steps;
-            let current = 0;
-
-            const timer = setInterval(() => {
-                current += stepValue;
-                if (current >= num) {
-                    setDisplay(num);
-                    clearInterval(timer);
-                } else {
-                    setDisplay(Math.floor(current));
-                }
-            }, stepTime);
-        }, { threshold: 0.4 });
-
-        if (ref.current) observer.observe(ref.current);
-        return () => observer.disconnect();
-    }, [target]);
-
-    return [display, ref];
+    return [target, ref];
 }
 
 export function BoxEstatistica({
