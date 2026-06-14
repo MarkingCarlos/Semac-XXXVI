@@ -2,6 +2,7 @@ import EmBreveHeroText from '../../components/emBreve/EmBreveHeroText.jsx';
 import EmBreveInfoCard from '../../components/emBreve/EmBreveInfoCard.jsx';
 import { DATA_ANUNCIO } from '../../components/emBreve/tokens.js';
 import './cronogramaBreve.css';
+import paperTexture from '../../assets/PAPER.png'
 
 const formatarDataICS = (data) =>
   data.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
@@ -61,7 +62,7 @@ const abrirInstagram = () => {
 
 const CronogramaBreve = () => {
   return (
-    <section id="Cronograma" className="paginaCronograma">
+    <section id="Cronograma" className="paginaCronograma" >
 
       <main className="conteudoPrincipal">
         <EmBreveHeroText />

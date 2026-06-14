@@ -21,7 +21,6 @@ const Home = () =>{
             {/*</div>*/}
 
             <img src={fotos} className="imagemFotosHome" alt="fotos home" />
-            {/*<div className="retanguloVidroHome" />*/}
             <img src={logoSemac} className="imagemLogoHome" alt="LOGO SEMAC" />
             <img src={waveUpHome}       className="ondaCimaHome ondaCimaHomeDesktop" alt="WaveHome logo" />
             <img src={waveUpHomeMobile} className="ondaCimaHome ondaCimaHomeMobile"  alt="WaveHome logo" />

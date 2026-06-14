@@ -12,7 +12,6 @@ render(
         <Route path="/admin"><Admin /></Route>
         <Route path="/financeiro"><Financas /></Route>
         <Route path="/inscricao"><Inscricao /></Route>
-
         <Route path="/cotas"><PaginaCotas /></Route>
         <Route><App /></Route>
     </Switch>,

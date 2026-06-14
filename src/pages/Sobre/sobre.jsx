@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import {BoxEstatistica} from "../../components/BoxEstatistica/boxEstatistica.jsx";
 import './sobre.css'
+import paperTexture from '../../assets/PAPER.png'
 import SobreFotos from "../../components/BoxSobreFotos/sobreFotos.jsx";
 import imgQuemSomos from '../../assets/BoxSobre/apresentacaoTrabalhos.png';
 import imgOQueOferecemos from '../../assets/BoxSobre/oQueOferecemos.png';
@@ -21,7 +22,7 @@ const sobre = () =>{
     }, []);
 
     return (
-        <section id="sobre" ref={sectionRef} className={`conteinerSecaoSobre ${isExiting ? 'secaoSaindoSobre' : ''}`}>
+        <section id="sobre" ref={sectionRef} className={`conteinerSecaoSobre ${isExiting ? 'secaoSaindoSobre' : ''}`} >
             <div className="sobreSecao">
                 <div className="colunasSobreNos">
                     <SobreFotos

@@ -3,7 +3,12 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    background-color: var(--vermelhoAuxDiretoria);
+    background-attachment: fixed;
+    background-size: cover;
+    background-blend-mode: overlay;
 }
+
 
 .conteinerInternoDoacao {
     display: flex;

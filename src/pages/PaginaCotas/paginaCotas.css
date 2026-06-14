@@ -6,9 +6,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     animation: pagina-enter 0.3s ease-out both;
-    padding: 10px 23px 56px;
+    padding: 23px 56px;
 }
 
 @keyframes pagina-enter {

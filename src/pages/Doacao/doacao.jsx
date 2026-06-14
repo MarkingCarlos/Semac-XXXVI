@@ -2,10 +2,11 @@ import "./doacao.css";
 import DoacaoQRCode from "../../components/ComponentesDoacao/DoacaoQRCode.jsx";
 import ComoSuaDoacaoAjudaV2 from "../../components/ComponentesDoacao/ComoSuaDoacaoAjudaV2.jsx";
 import riscoGiz from "../../assets/riscoGiz.png";
+import paperTexture from "../../assets/PAPER.png";
 
 const doacao = () => {
     return(
-        <section id="doacao" className="secaoDoacao">
+        <section id="doacao" className="secaoDoacao" >
             <div className="conteinerInternoDoacao">
                 <div className="colunaEsquerdaDoacao">
                     <h1 className="tituloDoacao tituloPrincipal">

@@ -7,12 +7,23 @@ import SobreComissao from "./pages/SobreComissao/sobreComissao.jsx";
 import CronogramaBreve from "./pages/cronogramaBreve/CronogramaBreve.jsx";
 import PatrocinadoresCompacto from "./pages/PatrocinadoresCompacto/PatrocinadoresCompacto.jsx";
 import { NavPontos } from "./components/NavPontos/navPontos.jsx";
+import paperTexture from './assets/PAPER.png';
 
 
 export function App() {
 
   return (
     <>
+        <div style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundImage: `url(${paperTexture})`,
+            backgroundSize: '120%',
+            backgroundAttachment: 'fixed',
+            mixBlendMode: 'overlay',
+            pointerEvents: 'none',
+            zIndex: 50,
+        }} />
         <NavPontos />
         <div style={{position:'sticky'}}>
             <Home/>

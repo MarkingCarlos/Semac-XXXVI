@@ -104,7 +104,14 @@
 .metaDoacaoDoadores {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+.metaDoacaoDoadoresNomesWrapper {
+  position: relative;
+  text-align: left;
+  overflow: hidden;
 }
 
 .metaDoacaoDoadoresLabel {
@@ -116,6 +123,7 @@
 }
 
 .metaDoacaoDoadoresNomes {
+
   font-family: 'Montserrat', sans-serif;
   font-size: clamp(10px, 0.85vw, 13px);
   font-weight: 500;

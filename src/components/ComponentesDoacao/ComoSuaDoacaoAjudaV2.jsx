@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from 'preact/hooks';
+import { useState, useEffect, useRef, useLayoutEffect } from 'preact/hooks';
 import './ComoSuaDoacaoAjudaV2.css';
 
 const META_TOTAL = 10000;
 const ARRECADADO = 3200;
 const PORCENTAGEM = Math.min(Math.round((ARRECADADO / META_TOTAL) * 100), 100);
-const ULTIMOS_DOADORES = ['Carlos Alberto', 'Maria Clara', 'Ana Clara', 'Leonardo'];
+const ULTIMOS_DOADORES = ['Carlos Alberto', 'Maria Clara', 'Ana Clara', 'Leonardo','Carlos Alberto', 'Maria Clara', 'Ana Clara', 'Leonardo','Carlos Alberto', 'Maria Clara', 'Ana Clara', 'Leonardo'];
 
 const ITENS = [
   {
@@ -82,6 +82,48 @@ function CarrosselMobile() {
   );
 }
 
+function NomesDoadores({ nomes }) {
+  const [qtdVisiveis, setQtdVisiveis] = useState(nomes.length);
+  const refWrapper = useRef(null);
+  const refMedidor = useRef(null);
+
+  useLayoutEffect(() => {
+    const wrapper = refWrapper.current;
+    const medidor = refMedidor.current;
+    if (!wrapper || !medidor) return;
+
+    const calcular = () => {
+      const larguraDisponivel = wrapper.clientWidth;
+      let n = nomes.length;
+      while (n > 0) {
+        medidor.textContent = nomes.slice(0, n).join(' · ');
+        if (medidor.offsetWidth <= larguraDisponivel) break;
+        n--;
+      }
+      setQtdVisiveis(n);
+    };
+
+    calcular();
+    const ro = new ResizeObserver(calcular);
+    ro.observe(wrapper);
+    return () => ro.disconnect();
+  }, [nomes]);
+
+  return (
+    <div ref={refWrapper} className="metaDoacaoDoadoresNomesWrapper">
+      <span
+        ref={refMedidor}
+        className="metaDoacaoDoadoresNomes"
+        style={{ position: 'absolute', visibility: 'hidden', whiteSpace: 'nowrap', pointerEvents: 'none', top: 0, left: 0 }}
+        aria-hidden="true"
+      />
+      <span className="metaDoacaoDoadoresNomes">
+        {nomes.slice(0, qtdVisiveis).join(' · ')}
+      </span>
+    </div>
+  );
+}
+
 function MetaDoacao() {
   const [largura, setLargura] = useState(0);
   const refTrilho = useRef(null);
@@ -109,9 +151,7 @@ function MetaDoacao() {
       <div className="metaDoacaoRodape">
         <div className="metaDoacaoDoadores">
           <span className="metaDoacaoDoadoresLabel">Últimos doadores:</span>
-          <span className="metaDoacaoDoadoresNomes">
-            {ULTIMOS_DOADORES.join(' · ')}
-          </span>
+          <NomesDoadores nomes={ULTIMOS_DOADORES} />
         </div>
         <span className="metaDoacaoPorcentagem">{PORCENTAGEM}%</span>
       </div>

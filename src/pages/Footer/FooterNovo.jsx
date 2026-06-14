@@ -1,5 +1,6 @@
 import logoSemac from '/src/assets/logotipo.svg';
 import './footerNovo.css';
+import paperTexture from '/src/assets/PAPER.png'
 
 // ── Ícones ─────────────────────────────────────────────────────────
 
@@ -178,7 +179,7 @@ const LINKS_PARTICIPANTE = [
 
 export default function FooterNovo() {
   return (
-    <footer className="footerNovo">
+    <footer className="footerNovo" >
       <FooterOnda />
       <div className="corpo">
         <div className="anelDecorativo" />

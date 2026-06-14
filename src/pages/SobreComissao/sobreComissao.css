@@ -8,6 +8,10 @@
     min-height: 50vh;
     display: flex;
     flex-direction: column;
+    background-color: var(--vermelhoAuxDiretoria);
+    background-attachment: fixed;
+    background-size: cover;
+    background-blend-mode: overlay;
 }
 
 .conteinerPaginaComissao > h1 {
@@ -78,6 +82,7 @@
     opacity: 0.55;
     cursor: pointer;
     transition: all ease 0.2s;
+    padding: 0.6em 0.8em;
 }
 
 .conteinerBotoesComissao .botaoComissaoInativo:hover {

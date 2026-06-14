@@ -1,5 +1,5 @@
 .secaoPatrocinadoresCompacto {
-    background: var(--vermelhoAuxDiretoria);
+    background-color: var(--vermelhoAuxDiretoria);
     padding: 23px 56px;
     display: flex;
     flex-direction: column;

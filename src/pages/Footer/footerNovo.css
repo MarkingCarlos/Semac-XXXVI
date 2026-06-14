@@ -1,7 +1,10 @@
 
 .footerNovo {
   width: 100%;
-  background: #730835;
+  background-color: #730835;
+  background-attachment: fixed;
+  background-size: cover;
+  background-blend-mode: overlay;
   font-family: 'Montserrat', sans-serif;
 }
 

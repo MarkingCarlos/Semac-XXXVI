@@ -1,5 +1,6 @@
 import { useState } from "preact/hooks";
 import "./sobreComissao.css";
+import paperTexture from '../../assets/PAPER.png'
 import { comissoes } from '../../data/fotos.js';
 
 import SplitText from '../../components/cronogramaFiltro/SplitText';
@@ -36,7 +37,7 @@ const SobreComissao = () => {
 
     return (
         <>
-        <div id="comissao" className="conteinerPaginaComissao">
+        <section id="comissao" className="conteinerPaginaComissao" >
             <h1 className="tituloPrincipal">
                 Quem somos <span className="textoAmarelo">?</span>
             </h1>
@@ -78,7 +79,7 @@ const SobreComissao = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
         </>
     );
 };

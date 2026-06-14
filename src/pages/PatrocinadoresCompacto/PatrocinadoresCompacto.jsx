@@ -2,12 +2,13 @@ import { useLocation } from 'wouter'
 import CarrosselPatrocinadores from '../../components/CarrosselPatrocinadores/CarrosselPatrocinadores.jsx'
 import { EX_PATROCINADORES }  from '../../data/exPatrocinadores.js'
 import './patrocinadoresCompacto.css'
+import paperTexture from '../../assets/PAPER.png'
 
 export default function PatrocinadoresCompacto() {
     const [, navigate] = useLocation()
 
     return (
-        <section id="Patrocinadores" className="secaoPatrocinadoresCompacto">
+        <section id="Patrocinadores" className="secaoPatrocinadoresCompacto" >
 
             {/* ── Topo centralizado: título + pitch + CTA ──────── */}
             <div className="topoPatrocinadoresCompacto">

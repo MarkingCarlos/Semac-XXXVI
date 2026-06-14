@@ -7,6 +7,10 @@
   display: flex;
   font-family: 'Bungee', sans-serif;
   box-sizing: border-box;
+  background-color: var(--vermelhoAuxDiretoria);
+  /*background-attachment: fixed;*/
+  /*background-size: cover;*/
+  /*background-blend-mode: overlay;*/
 }
 
 .conteudoPrincipal {

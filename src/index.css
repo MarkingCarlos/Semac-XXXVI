@@ -33,6 +33,11 @@
   --fonteCorpoMontserrat: 'Montserrat', sans-serif;
 }
 
+*{
+  margin: 0;
+  padding: 0;
+}
+
 .textoAmarelo {
   color: var(--AmareloAuxApoio);
   font-weight: 700;
@@ -86,17 +91,36 @@ a {
 /* [Responsividade] Impede scroll horizontal e vertical em qualquer tela.
    O html precisa de overflow hidden para que o body respeite a limitação. */
 html {
-  overflow-x: hidden;
+
+  scrollbar-width: none;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--vermelhoAuxDiretoria);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(231, 152, 57, 0.45);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(231, 152, 57, 0.7);
 }
 
 body {
-  margin: 0;
   display: flex;
   place-items: center;
   min-height: 100vh;
   width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
+  /*background-image: url('./assets/PAPER.png');*/
+  /*background-attachment: fixed;*/
+  /*background-size: 120%;*/
+  /*background-repeat: no-repeat;*/
+  /*background-blend-mode: overlay;*/
 }
 
 h1 {
