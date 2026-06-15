@@ -34,15 +34,8 @@ export default function PaginaCotas() {
 
     return (
         <section class="paginaCotas">
-            <div style={{
-                position: 'fixed',
-                inset: 0,
+            <div className="paperTexturaCotas"  style={{
                 backgroundImage: `url(${paperTexture})`,
-                backgroundSize: '120%',
-                backgroundAttachment: 'fixed',
-                mixBlendMode: 'overlay',
-                pointerEvents: 'none',
-                zIndex: 50,
             }} />
             <div class="painelCotas">
 

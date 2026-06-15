@@ -246,10 +246,12 @@
 
 .formularioCotas {
     display: flex;
+    justify-content: center;
     flex-direction: column;
     gap: 1rem;
     border-top: 1px solid rgba(252, 248, 245, 0.08);
     padding-top: 1rem;
+    padding-bottom: 1rem;
 }
 
 .campoCotas {
@@ -317,6 +319,17 @@
     letter-spacing: 0.5px;
 }
 
+.paperTexturaCotas{
+    position: fixed;
+    inset: 0;
+    height: 100vh;
+    background-size: 110%;
+    background-attachment: scroll;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    z-index: 50;
+}
+
 /* ── Tablet: 3 colunas ───────────────────────────────────────── */
 @media (max-width: 1100px) {
     .gradeCotas {
@@ -324,22 +337,27 @@
     }
 }
 
-/* ── Tablet estreito: 2 colunas ─────────────────────────────── */
-@media (max-width: 720px) {
-    .gradeCotas {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
+/*!* ── Tablet estreito: 2 colunas ─────────────────────────────── *!*/
+/*@media (max-width: 720px) {*/
+/*    .gradeCotas {*/
+/*        grid-template-columns: repeat(2, 1fr);*/
+/*        gap: 10px;*/
+/*    }*/
 
-    .paginaCotas {
-        padding: 2rem 1rem 3rem;
-    }
-}
+/*    .paginaCotas {*/
+/*        padding: 2rem 1rem 3rem;*/
+/*    }*/
+/*}*/
 
 /* ── Mobile: carrossel horizontal com snap ───────────────────── */
-@media (max-width: 560px) {
+@media (max-width: 768px) {
     .paginaCotas {
-        padding: 1.5rem 1rem 2.5rem;
+        padding: 1rem 0.1rem 0 1rem;
+    }
+
+    .paperTexturaCotas{
+        height: auto;
+        background-size: cover;
     }
 
     .gradeCotas {
@@ -372,4 +390,5 @@
     .beneficioCota {
         font-size: 0.8rem;
     }
+
 }
