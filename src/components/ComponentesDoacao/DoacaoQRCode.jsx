@@ -24,6 +24,9 @@ const DoacaoQRCode = () => {
     };
 
     return (
+        <div style={{zIndex: 60}}>
+
+
         <div class="wrapperQrDoacao" ref={wrapperRef} onMouseMove={handleMouseMove}>
             <div class="cartaoQrDoacao">
                 <div class="cabecalhoQrDoacao">
@@ -49,6 +52,7 @@ const DoacaoQRCode = () => {
                     {mostrarQR ? "Ocultar QR Code" : "Ver QR Code"}
                 </button>
             </div>
+        </div>
         </div>
     );
 };

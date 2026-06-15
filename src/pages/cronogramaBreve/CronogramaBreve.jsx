@@ -64,14 +64,15 @@ const CronogramaBreve = () => {
   return (
     <section id="Cronograma" className="paginaCronograma" >
 
-      <main className="conteudoPrincipal">
+      <div className="conteudoPrincipal" >
         <EmBreveHeroText />
         <EmBreveInfoCard />
+
           <div className="grupoDeAcoes">
               <button className="botao botaoPrimario" onClick={adicionarAoCalendario}>Avise-me ↗</button>
               <button className="botao botaoFantasma" onClick={abrirInstagram}>@semacsjrp</button>
           </div>
-      </main>
+      </div>
 
     </section>
   );

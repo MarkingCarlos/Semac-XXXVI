@@ -5,9 +5,6 @@
     flex-direction: column;
     justify-content: center;
     background-color: var(--vermelhoAuxDiretoria);
-    /*background-attachment: fixed;*/
-    /*background-size: cover;*/
-    /*background-blend-mode: overlay;*/
 }
 
 .sobreSecao {
@@ -31,6 +28,7 @@
     gap: 20px;
     transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1) 0.14s, opacity 0.55s ease 0.14s;
     will-change: transform, opacity;
+    z-index: 60;
 }
 
 .sobreLadoEstatisticas>div {
