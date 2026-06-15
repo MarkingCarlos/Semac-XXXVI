@@ -22,7 +22,16 @@
     color: var(--Branco);
 }
 
-
+.paperTextura{
+    position: fixed;
+    inset: 0;
+    height: 100vh;
+    background-size: 110%;
+    background-attachment: scroll;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    z-index: 50;
+}
 .logo {
   width: clamp(300px, 75vw, 660px);
   padding-bottom: 1.5em;
@@ -34,3 +43,8 @@
   filter: drop-shadow(0 0 2em #673ab8aa);
 }
 
+@media (max-width: 768px) {
+    .paperTextura{
+        background-size: cover;
+    }
+}

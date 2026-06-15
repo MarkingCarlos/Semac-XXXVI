@@ -14,15 +14,9 @@ export function App() {
 
   return (
     <>
-        <div style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundImage: `url(${paperTexture})`,
-            backgroundSize: '110%',
-            backgroundAttachment: 'fixed',
-            mixBlendMode: 'overlay',
-            pointerEvents: 'none',
-            zIndex: 50,
+        <div className="paperTextura"
+            style={{
+            backgroundImage: `url(${paperTexture})`
         }} />
         <NavPontos />
         <div style={{position:'sticky'}}>
