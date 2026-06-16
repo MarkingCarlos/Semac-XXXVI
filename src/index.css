@@ -17,7 +17,7 @@
   --Branco: #edecec;
   --vermelhoDiretoria: #A10535;
   --vermelhoAuxDiretoria: #730835;
-  --vermelhoAux2Diretoria: #850735;
+  --vermelhoEscuro:#590629;
   --azulConteudo: #52ABB1;
   --azulAuxConteudo: #469197;
   --rosaMarketing: #B13571;
@@ -116,16 +116,9 @@ body {
   width: 100%;
   box-sizing: border-box;
   overflow-x: hidden;
-  /*background-image: url('./assets/PAPER.png');*/
-  /*background-attachment: fixed;*/
-  /*background-size: 120%;*/
-  /*background-repeat: no-repeat;*/
-  /*background-blend-mode: overlay;*/
 }
 
 h1 {
-  /* [Responsividade] Tamanho fluido: mínimo 1.5rem, escala com a viewport (4vw),
-     máximo 3.2em — evita texto gigante no desktop e minúsculo no mobile */
   font-size: clamp(1.5rem, 4vw, 3.2em);
   line-height: 1.1;
 }

@@ -61,8 +61,10 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
+    /*z-index: 60;*/
 }
+
 
 /* Mobile */
 @media (max-width: 780px) {

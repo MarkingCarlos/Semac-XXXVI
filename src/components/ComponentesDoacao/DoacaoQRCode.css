@@ -133,7 +133,7 @@
 /* ── Botão copiar ────────────────────────────────────────────── */
 
 .botaoCopiarQrDoacao {
-    width: 80%;
+    width: 90%;
     font-family: 'Bungee', sans-serif;
     font-size: clamp(1rem, 0.5rem + 1vw, 3rem);
     font-weight: 900;

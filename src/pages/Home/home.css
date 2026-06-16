@@ -28,15 +28,12 @@
     }
 }
 
-.logoSEMACHome{
-    isolation: isolate;
-    z-index: 60;
-}
+
 .imagemLogoHome {
     position: absolute;
     top: 55%;
     left: 50%;
-    width: clamp(290px, 50vw, 880px);
+    width: clamp(350px, 70vw, 1000px);
     will-change: transform, opacity;
     animation: logoReveal 1.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }

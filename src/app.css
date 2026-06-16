@@ -28,7 +28,9 @@
     height: 100vh;
     background-size: 110%;
     background-attachment: scroll;
+    /*mix-blend-mode: soft-light;*/
     mix-blend-mode: overlay;
+    opacity: 0.7;
     pointer-events: none;
     z-index: 50;
 }

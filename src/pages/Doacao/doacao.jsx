@@ -21,7 +21,7 @@ const doacao = () => {
                     <img src={riscoGiz} alt="" className="imagemRiscoDoacao" aria-hidden="true" />
                     <ComoSuaDoacaoAjuda/>
                 </div>
-                <div className="colunaDireitaDoacao">
+                <div className="colunaDireitaDoacao" >
                     <DoacaoQRCode/>
                 </div>
 

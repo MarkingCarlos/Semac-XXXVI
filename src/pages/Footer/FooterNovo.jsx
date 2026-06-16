@@ -179,6 +179,7 @@ const LINKS_PARTICIPANTE = [
 
 export default function FooterNovo() {
   return (
+
     <footer className="footerNovo" >
       <FooterOnda />
       <div className="corpo">

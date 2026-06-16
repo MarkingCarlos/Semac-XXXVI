@@ -115,7 +115,6 @@ export const comissoes = [
         },
         membros: [
             { foto: ana, nome: 'Ana Clara', cargo: 'Diretora' },
-            { foto: Daniel, nome: 'Daniel Tozzo', cargo: 'Membro' },
             { foto: MARI, nome: 'Mariana Rosset', cargo: 'Membro' },
             { foto: Guta, nome: 'Maria Augusta', cargo: 'Membro' },
             { foto: Berti, nome: 'João Gabriel Berti ', cargo: 'Membro' },

@@ -126,6 +126,7 @@
     .conteinerLateralComissao {
         grid-template-columns: 1fr;
         gap: 16px;
+        justify-items: center;
     }
 
     /* Remove o teto de altura nos botões de comissão */

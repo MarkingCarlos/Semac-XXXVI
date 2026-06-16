@@ -24,9 +24,7 @@ const DoacaoQRCode = () => {
     };
 
     return (
-        <div style={{zIndex: 60}}>
-
-
+        <div style={{zIndex: 1000}} >
         <div class="wrapperQrDoacao" ref={wrapperRef} onMouseMove={handleMouseMove}>
             <div class="cartaoQrDoacao">
                 <div class="cabecalhoQrDoacao">
@@ -54,6 +52,7 @@ const DoacaoQRCode = () => {
             </div>
         </div>
         </div>
+
     );
 };
 
