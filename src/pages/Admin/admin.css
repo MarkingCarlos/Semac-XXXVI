@@ -273,6 +273,17 @@
     margin-bottom: 10px;
 }
 
+/* Início e término lado a lado no formulário de evento */
+.linhaCamposConteudo {
+    display: flex;
+    gap: 12px;
+}
+
+.linhaCamposConteudo > .campoFormularioFinancas {
+    flex: 1;
+    min-width: 0;
+}
+
 /* Painel de gerenciamento dos tipos de evento */
 .listaTiposEventoConteudo {
     list-style: none;
