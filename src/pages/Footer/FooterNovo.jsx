@@ -97,7 +97,7 @@ function FooterRedes() {
       <a href="https://www.youtube.com/@SEMACsjrp" target={"_blank"} className="botaoRede" title="YouTube">
         <IconeYouTube />
       </a>
-      <a href="mailto:contato@semac.com" target={"_blank"} className="botaoRede" title="E-mail">
+      <a href="mailto:apoio@semac.cc" target={"_blank"} className="botaoRede" title="E-mail">
         <IconeEmailRede />
       </a>
     </div>
@@ -130,8 +130,8 @@ function FooterContato() {
         </div>
         <div className="contatoLinha contatoLinhaEmail">
           <span className="contatoIcone"><IconeEmailContato /></span>
-          <a href="mailto:contato@semac.com" className="textoEmail">
-            contato@semac.com
+          <a href="mailto:apoio@semac.cc" className="textoEmail">
+            apoio@semac.cc
           </a>
         </div>
       </div>

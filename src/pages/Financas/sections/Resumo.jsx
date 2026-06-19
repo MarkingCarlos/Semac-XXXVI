@@ -3,10 +3,11 @@ import { CAIXA_ANTERIOR } from '../data/mockFinancas.js';
 import './resumo.css';
 
 /* Resumo do saldo — extrato em forma de livro-razão.
-   Saldo operacional = patrocínios recebidos + inscrições − compras.
+   Saldo operacional = patrocínios recebidos + inscrições + doações − compras.
    Caixa anterior (FundoUnesp) é exibido em card separado — não entra no saldo.
-   Patrocínios A_RECEBER aparecem à parte e não entram no saldo. */
-export default function Resumo({ patrocinadores, compras, inscricoes }) {
+   Patrocínios A_RECEBER aparecem à parte e não entram no saldo.
+   Doações são cadastradas no /admin e contabilizadas aqui no caixa. */
+export default function Resumo({ patrocinadores, compras, inscricoes, doadores = [] }) {
     const totalPatrociniosRecebidos = patrocinadores
         .filter((patrocinador) => patrocinador.statusPagamento === 'RECEBIDO')
         .reduce((soma, patrocinador) => soma + patrocinador.valorFinal, 0);
@@ -16,13 +17,15 @@ export default function Resumo({ patrocinadores, compras, inscricoes }) {
         .reduce((soma, patrocinador) => soma + patrocinador.valorFinal, 0);
 
     const totalInscricoes = inscricoes.reduce((soma, inscricao) => soma + inscricao.valor, 0);
+    const totalDoacoes = doadores.reduce((soma, doador) => soma + doador.valor, 0);
     const totalCompras = compras.reduce((soma, compra) => soma + compra.valorTotal, 0);
 
-    const saldoAtual = totalPatrociniosRecebidos + totalInscricoes - totalCompras;
+    const saldoAtual = totalPatrociniosRecebidos + totalInscricoes + totalDoacoes - totalCompras;
 
     const lancamentos = [
         { rotulo: 'Patrocínios recebidos', valor: totalPatrociniosRecebidos, tipo: 'entrada' },
         { rotulo: 'Inscrições', valor: totalInscricoes, tipo: 'entrada' },
+        { rotulo: 'Doações', valor: totalDoacoes, tipo: 'entrada' },
         { rotulo: 'Compras', valor: totalCompras, tipo: 'saida' },
     ];
 
@@ -75,7 +78,7 @@ export default function Resumo({ patrocinadores, compras, inscricoes }) {
                         <span className="rotuloBlocoResumo">Saldo em caixa</span>
                         <strong className="valorSaldoResumo">{formatarCentavos(saldoAtual)}</strong>
                         <span className="notaSaldoResumo">
-                            Patrocínios e inscrições recebidos menos compras registradas
+                            Patrocínios, inscrições e doações recebidos menos compras registradas
                         </span>
                     </section>
 

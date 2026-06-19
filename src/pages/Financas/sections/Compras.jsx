@@ -3,6 +3,8 @@ import PainelLateral from '../components/PainelLateral.jsx';
 import CampoMoeda from '../components/CampoMoeda.jsx';
 import { formatarCentavos, formatarData, normalizar } from '../utils/moeda.js';
 import { CATEGORIAS_COMPRA, CORES_CATEGORIA } from '../data/mockFinancas.js';
+import { criarFornecedor } from '../data/apiFornecedores.js';
+import { criarCompra, atualizarCompra, excluirCompra as excluirCompraApi } from '../data/apiCompras.js';
 import './compras.css';
 
 const FORMULARIO_VAZIO = {
@@ -22,7 +24,7 @@ const NOVO_FORNECEDOR_VAZIO = {
 /* Compras — saídas financeiras. O fornecedor é selecionado do cadastro
    central (FK fornecedor_id); também é possível cadastrar um novo
    fornecedor sem sair do formulário da compra. */
-export default function Compras({ compras, setCompras, fornecedores, setFornecedores }) {
+export default function Compras({ compras, setCompras, fornecedores, setFornecedores, carregando, erro }) {
     const [painelAberto, setPainelAberto] = useState(false);
     const [formulario, setFormulario] = useState(FORMULARIO_VAZIO);
     const [novoFornecedor, setNovoFornecedor] = useState(NOVO_FORNECEDOR_VAZIO);
@@ -30,6 +32,8 @@ export default function Compras({ compras, setCompras, fornecedores, setForneced
     const [idConfirmandoExclusao, setIdConfirmandoExclusao] = useState(null);
     const [filtro, setFiltro] = useState('');
     const [filtroCategoria, setFiltroCategoria] = useState('');
+    const [erroAcao, setErroAcao] = useState('');
+    const [salvando, setSalvando] = useState(false);
 
     const cadastrandoFornecedor = formulario.fornecedorId === 'novo';
     const valorTotal = formulario.valorUnitario * (formulario.quantidade || 0);
@@ -56,16 +60,22 @@ export default function Compras({ compras, setCompras, fornecedores, setForneced
         setPainelAberto(true);
     };
 
-    const salvarCompra = (evento) => {
+    const salvarCompra = async (evento) => {
         evento.preventDefault();
+        setErroAcao('');
 
-        /* Se o usuário optou por cadastrar fornecedor na hora,
-           cria o registro primeiro e usa o id recém-gerado */
+        /* Se o usuário optou por cadastrar fornecedor na hora, persiste o
+           fornecedor na API primeiro e usa o id retornado pelo backend */
         let fornecedorId = formulario.fornecedorId;
         if (cadastrandoFornecedor) {
-            const proximoIdFornecedor = Math.max(0, ...fornecedores.map((fornecedor) => fornecedor.id)) + 1;
-            setFornecedores([...fornecedores, { ...novoFornecedor, id: proximoIdFornecedor }]);
-            fornecedorId = proximoIdFornecedor;
+            try {
+                const criado = await criarFornecedor(novoFornecedor);
+                setFornecedores([...fornecedores, criado]);
+                fornecedorId = criado.id;
+            } catch (e) {
+                setErroAcao(e.message);
+                return;
+            }
         } else {
             fornecedorId = parseInt(fornecedorId, 10);
         }
@@ -76,34 +86,39 @@ export default function Compras({ compras, setCompras, fornecedores, setForneced
             fornecedorId,
             valorUnitario: formulario.valorUnitario,
             quantidade: formulario.quantidade,
-            valorTotal,
         };
 
-        if (idEmEdicao !== null) {
-            setCompras(
-                compras.map((compra) =>
-                    compra.id === idEmEdicao
-                        ? { ...registro, id: idEmEdicao, dataCompra: compra.dataCompra }
-                        : compra,
-                ),
-            );
-        } else {
-            const proximoId = Math.max(0, ...compras.map((compra) => compra.id)) + 1;
-            setCompras([
-                ...compras,
-                { ...registro, id: proximoId, dataCompra: new Date().toISOString() },
-            ]);
+        setSalvando(true);
+        try {
+            if (idEmEdicao !== null) {
+                const atualizada = await atualizarCompra(idEmEdicao, registro);
+                setCompras(compras.map((compra) => (compra.id === idEmEdicao ? atualizada : compra)));
+            } else {
+                const criada = await criarCompra(registro);
+                setCompras([criada, ...compras]);
+            }
+            setPainelAberto(false);
+        } catch (e) {
+            setErroAcao(e.message);
+        } finally {
+            setSalvando(false);
         }
-        setPainelAberto(false);
     };
 
-    const excluirCompra = (id) => {
+    const excluirCompra = async (id) => {
         if (idConfirmandoExclusao !== id) {
             setIdConfirmandoExclusao(id);
             return;
         }
-        setCompras(compras.filter((compra) => compra.id !== id));
-        setIdConfirmandoExclusao(null);
+        setErroAcao('');
+        try {
+            await excluirCompraApi(id);
+            setCompras(compras.filter((compra) => compra.id !== id));
+        } catch (e) {
+            setErroAcao(e.message);
+        } finally {
+            setIdConfirmandoExclusao(null);
+        }
     };
 
     return (
@@ -148,6 +163,10 @@ export default function Compras({ compras, setCompras, fornecedores, setForneced
                 </div>
             </header>
 
+            {(erro || erroAcao) && (
+                <p className="avisoErroCompras" role="alert">{erro || erroAcao}</p>
+            )}
+
             <div className="envelopeTabelaFinancas">
                 <table className="tabelaFinancas">
                     <thead>
@@ -162,7 +181,14 @@ export default function Compras({ compras, setCompras, fornecedores, setForneced
                         </tr>
                     </thead>
                     <tbody>
-                        {comprasFiltradas.length === 0 && (
+                        {carregando && (
+                            <tr>
+                                <td colSpan={7} className="celulaVaziaFinancas">
+                                    Carregando compras…
+                                </td>
+                            </tr>
+                        )}
+                        {!carregando && comprasFiltradas.length === 0 && (
                             <tr>
                                 <td colSpan={7} className="celulaVaziaFinancas">
                                     {filtro.trim() || filtroCategoria
@@ -171,7 +197,7 @@ export default function Compras({ compras, setCompras, fornecedores, setForneced
                                 </td>
                             </tr>
                         )}
-                        {comprasFiltradas.map((compra) => {
+                        {!carregando && comprasFiltradas.map((compra) => {
                             const fornecedor = buscarFornecedor(compra.fornecedorId);
                             return (
                                 <tr key={compra.id}>
@@ -431,8 +457,12 @@ export default function Compras({ compras, setCompras, fornecedores, setForneced
                         >
                             Cancelar
                         </button>
-                        <button type="submit" className="botaoPrimarioFinancas">
-                            {idEmEdicao !== null ? 'Salvar alterações' : 'Registrar compra'}
+                        <button type="submit" className="botaoPrimarioFinancas" disabled={salvando}>
+                            {salvando
+                                ? 'Salvando…'
+                                : idEmEdicao !== null
+                                    ? 'Salvar alterações'
+                                    : 'Registrar compra'}
                         </button>
                     </div>
                 </form>

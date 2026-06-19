@@ -1,16 +1,16 @@
-import { useState } from 'preact/hooks';
+import { useState, useEffect } from 'preact/hooks';
 import { Link } from 'wouter';
 import Resumo from './sections/Resumo.jsx';
 import Patrocinios from './sections/Patrocinios.jsx';
 import Compras from './sections/Compras.jsx';
 import Fornecedores from './sections/Fornecedores.jsx';
 import Inscricoes from './sections/Inscricoes.jsx';
-import {
-    MOCK_PATROCINADORES,
-    MOCK_COMPRAS,
-    MOCK_FORNECEDORES,
-    MOCK_INSCRICOES,
-} from './data/mockFinancas.js';
+import Doacoes from './sections/Doacoes.jsx';
+import { listarDoadores } from './data/apiDoacoes.js';
+import { listarPatrocinadores } from './data/apiPatrocinios.js';
+import { listarFornecedores } from './data/apiFornecedores.js';
+import { listarInscricoes } from './data/apiInscricoes.js';
+import { listarCompras } from './data/apiCompras.js';
 import './financas.css';
 
 /* Ícones da navegação — SVGs inline, stroke herda currentColor */
@@ -48,6 +48,11 @@ const ICONES_NAVEGACAO = {
             <path d="M13 5v2M13 17v2M13 11v2" />
         </svg>
     ),
+    doacoes: (
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z" />
+        </svg>
+    ),
 };
 
 const SECOES = [
@@ -56,6 +61,7 @@ const SECOES = [
     { id: 'compras', rotulo: 'Compras' },
     { id: 'fornecedores', rotulo: 'Fornecedores' },
     { id: 'inscricoes', rotulo: 'Inscrições' },
+    { id: 'doacoes', rotulo: 'Doações' },
 ];
 
 /* Módulo financeiro da SEMAC — rota /financeiro.
@@ -63,10 +69,89 @@ const SECOES = [
    Acesso será restrito a diretores e presidente quando o login existir. */
 export default function Financas() {
     const [secaoAtiva, setSecaoAtiva] = useState('resumo');
-    const [patrocinadores, setPatrocinadores] = useState(MOCK_PATROCINADORES);
-    const [compras, setCompras] = useState(MOCK_COMPRAS);
-    const [fornecedores, setFornecedores] = useState(MOCK_FORNECEDORES);
-    const [inscricoes] = useState(MOCK_INSCRICOES);
+
+    // Compras vêm da API; entram no saldo como saídas.
+    const [compras, setCompras] = useState([]);
+    const [carregandoCompras, setCarregandoCompras] = useState(true);
+    const [erroCompras, setErroCompras] = useState('');
+
+    // Inscrições reais: participantes confirmados (role = PARTICIPANTE)
+    // com ingresso e valor vindos do banco. Somente leitura aqui.
+    const [inscricoes, setInscricoes] = useState([]);
+    const [carregandoInscricoes, setCarregandoInscricoes] = useState(true);
+    const [erroInscricoes, setErroInscricoes] = useState('');
+
+    // Patrocínios vêm da API; entram no saldo quando recebidos.
+    const [patrocinadores, setPatrocinadores] = useState([]);
+    const [carregandoPatrocinios, setCarregandoPatrocinios] = useState(true);
+    const [erroPatrocinios, setErroPatrocinios] = useState('');
+
+    // Doações vêm da API (cadastradas no /admin); contabilizadas no caixa.
+    const [doadores, setDoadores] = useState([]);
+    const [carregandoDoacoes, setCarregandoDoacoes] = useState(true);
+    const [erroDoacoes, setErroDoacoes] = useState('');
+
+    // Fornecedores vêm da API; referenciados pelas compras.
+    const [fornecedores, setFornecedores] = useState([]);
+    const [carregandoFornecedores, setCarregandoFornecedores] = useState(true);
+    const [erroFornecedores, setErroFornecedores] = useState('');
+
+    useEffect(() => {
+        let ativo = true;
+        listarPatrocinadores()
+            .then((lista) => {
+                if (ativo) setPatrocinadores(lista);
+            })
+            .catch((e) => {
+                if (ativo) setErroPatrocinios(e.message);
+            })
+            .finally(() => {
+                if (ativo) setCarregandoPatrocinios(false);
+            });
+        listarDoadores()
+            .then((lista) => {
+                if (ativo) setDoadores(lista);
+            })
+            .catch((e) => {
+                if (ativo) setErroDoacoes(e.message);
+            })
+            .finally(() => {
+                if (ativo) setCarregandoDoacoes(false);
+            });
+        listarFornecedores()
+            .then((lista) => {
+                if (ativo) setFornecedores(lista);
+            })
+            .catch((e) => {
+                if (ativo) setErroFornecedores(e.message);
+            })
+            .finally(() => {
+                if (ativo) setCarregandoFornecedores(false);
+            });
+        listarInscricoes()
+            .then((lista) => {
+                if (ativo) setInscricoes(lista);
+            })
+            .catch((e) => {
+                if (ativo) setErroInscricoes(e.message);
+            })
+            .finally(() => {
+                if (ativo) setCarregandoInscricoes(false);
+            });
+        listarCompras()
+            .then((lista) => {
+                if (ativo) setCompras(lista);
+            })
+            .catch((e) => {
+                if (ativo) setErroCompras(e.message);
+            })
+            .finally(() => {
+                if (ativo) setCarregandoCompras(false);
+            });
+        return () => {
+            ativo = false;
+        };
+    }, []);
 
     return (
         <div className="paginaFinancas">
@@ -109,12 +194,15 @@ export default function Financas() {
                             patrocinadores={patrocinadores}
                             compras={compras}
                             inscricoes={inscricoes}
+                            doadores={doadores}
                         />
                     )}
                     {secaoAtiva === 'patrocinios' && (
                         <Patrocinios
                             patrocinadores={patrocinadores}
                             setPatrocinadores={setPatrocinadores}
+                            carregando={carregandoPatrocinios}
+                            erro={erroPatrocinios}
                         />
                     )}
                     {secaoAtiva === 'compras' && (
@@ -123,6 +211,8 @@ export default function Financas() {
                             setCompras={setCompras}
                             fornecedores={fornecedores}
                             setFornecedores={setFornecedores}
+                            carregando={carregandoCompras}
+                            erro={erroCompras}
                         />
                     )}
                     {secaoAtiva === 'fornecedores' && (
@@ -130,9 +220,24 @@ export default function Financas() {
                             fornecedores={fornecedores}
                             setFornecedores={setFornecedores}
                             compras={compras}
+                            carregando={carregandoFornecedores}
+                            erro={erroFornecedores}
                         />
                     )}
-                    {secaoAtiva === 'inscricoes' && <Inscricoes inscricoes={inscricoes} />}
+                    {secaoAtiva === 'inscricoes' && (
+                        <Inscricoes
+                            inscricoes={inscricoes}
+                            carregando={carregandoInscricoes}
+                            erro={erroInscricoes}
+                        />
+                    )}
+                    {secaoAtiva === 'doacoes' && (
+                        <Doacoes
+                            doadores={doadores}
+                            carregando={carregandoDoacoes}
+                            erro={erroDoacoes}
+                        />
+                    )}
                 </section>
             </main>
         </div>

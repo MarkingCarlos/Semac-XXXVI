@@ -1,10 +1,16 @@
 import { useState, useEffect, useRef, useLayoutEffect } from 'preact/hooks';
 import './ComoSuaDoacaoAjudaV2.css';
 
-const META_TOTAL = 10000;
-const ARRECADADO = 3200;
-const PORCENTAGEM = Math.min(Math.round((ARRECADADO / META_TOTAL) * 100), 100);
-const ULTIMOS_DOADORES = ['Carlos Alberto', 'Maria Clara', 'Ana Clara', 'Leonardo','Carlos Alberto', 'Maria Clara', 'Ana Clara', 'Leonardo','Carlos Alberto', 'Maria Clara', 'Ana Clara', 'Leonardo'];
+const META_TOTAL = 1000; // R$ 1.000 — meta de arrecadação desta edição
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
+function formatarReais(valor) {
+  return valor.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    maximumFractionDigits: 0,
+  });
+}
 
 const ITENS = [
   {
@@ -125,14 +131,36 @@ function NomesDoadores({ nomes }) {
 }
 
 function MetaDoacao() {
+  const [arrecadado, setArrecadado] = useState(0);
+  const [doadores, setDoadores] = useState([]);
   const [largura, setLargura] = useState(0);
+  const [visivel, setVisivel] = useState(false);
   const refTrilho = useRef(null);
 
+  const porcentagem = Math.min(Math.round((arrecadado / META_TOTAL) * 100), 100);
+
+  // Busca o resumo público (total + nomes deduplicados). Sem valores individuais.
+  useEffect(() => {
+    let ativo = true;
+    fetch(`${API_URL}/api/doador/resumo-publico`)
+      .then((resposta) => (resposta.ok ? resposta.json() : Promise.reject()))
+      .then((resumo) => {
+        if (!ativo) return;
+        setArrecadado(Number(resumo.totalArrecadado) || 0);
+        setDoadores(Array.isArray(resumo.doadores) ? resumo.doadores : []);
+      })
+      .catch(() => {}); // silencioso: barra permanece em 0% se a API falhar
+    return () => {
+      ativo = false;
+    };
+  }, []);
+
+  // Revela a barra ao entrar na viewport
   useEffect(() => {
     const obs = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setLargura(PORCENTAGEM);
+          setVisivel(true);
           obs.disconnect();
         }
       },
@@ -142,18 +170,25 @@ function MetaDoacao() {
     return () => obs.disconnect();
   }, []);
 
+  // Anima a largura quando visível; reanima se a porcentagem chegar depois dos dados
+  useEffect(() => {
+    if (visivel) setLargura(porcentagem);
+  }, [visivel, porcentagem]);
+
   return (
     <div className="metaDoacao">
-      <span className="valorMeta" >R$ 1.000</span>
+      <span className="valorMeta">{formatarReais(META_TOTAL)}</span>
       <div className="metaDoacaoTrilho" ref={refTrilho}>
         <div className="metaDoacaoProgresso" style={{ width: `${largura}%` }} />
       </div>
       <div className="metaDoacaoRodape">
-        <div className="metaDoacaoDoadores">
-          <span className="metaDoacaoDoadoresLabel">Últimos doadores:</span>
-          <NomesDoadores nomes={ULTIMOS_DOADORES} />
-        </div>
-        <span className="metaDoacaoPorcentagem">{PORCENTAGEM}%</span>
+        {doadores.length > 0 && (
+          <div className="metaDoacaoDoadores">
+            <span className="metaDoacaoDoadoresLabel">Últimos doadores:</span>
+            <NomesDoadores nomes={doadores} />
+          </div>
+        )}
+        <span className="metaDoacaoPorcentagem">{porcentagem}%</span>
       </div>
     </div>
   );

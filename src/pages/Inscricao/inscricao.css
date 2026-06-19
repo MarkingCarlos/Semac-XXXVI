@@ -5,13 +5,15 @@
     min-height: 100vh;
     overflow: hidden;
     position: relative;
+    background-color: var(--vermelhoAuxDiretoria);
+    background-size: cover;
+    background-blend-mode: overlay;
 }
 
 .conteinerInscricao::before {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: url('../../assets/fotosInscricao.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

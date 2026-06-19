@@ -1,6 +1,11 @@
 import { useState } from 'preact/hooks';
 import PainelLateral from '../components/PainelLateral.jsx';
 import { normalizar } from '../utils/moeda.js';
+import {
+    criarFornecedor,
+    atualizarFornecedor,
+    excluirFornecedor as excluirFornecedorApi,
+} from '../data/apiFornecedores.js';
 import './fornecedores.css';
 
 const FORMULARIO_VAZIO = {
@@ -12,12 +17,14 @@ const FORMULARIO_VAZIO = {
 /* Fornecedores — cadastro central. As compras referenciam fornecedores
    por id (FK fornecedor_id no banco); por isso um fornecedor com
    compras vinculadas não pode ser excluído. */
-export default function Fornecedores({ fornecedores, setFornecedores, compras }) {
+export default function Fornecedores({ fornecedores, setFornecedores, compras, carregando, erro }) {
     const [painelAberto, setPainelAberto] = useState(false);
     const [formulario, setFormulario] = useState(FORMULARIO_VAZIO);
     const [idEmEdicao, setIdEmEdicao] = useState(null);
     const [idConfirmandoExclusao, setIdConfirmandoExclusao] = useState(null);
     const [filtro, setFiltro] = useState('');
+    const [salvando, setSalvando] = useState(false);
+    const [erroAcao, setErroAcao] = useState('');
 
     const contarComprasVinculadas = (fornecedorId) =>
         compras.filter((compra) => compra.fornecedorId === fornecedorId).length;
@@ -38,29 +45,45 @@ export default function Fornecedores({ fornecedores, setFornecedores, compras })
         setPainelAberto(true);
     };
 
-    const salvarFornecedor = (evento) => {
+    const salvarFornecedor = async (evento) => {
         evento.preventDefault();
 
-        if (idEmEdicao !== null) {
-            setFornecedores(
-                fornecedores.map((fornecedor) =>
-                    fornecedor.id === idEmEdicao ? { ...formulario, id: idEmEdicao } : fornecedor,
-                ),
-            );
-        } else {
-            const proximoId = Math.max(0, ...fornecedores.map((fornecedor) => fornecedor.id)) + 1;
-            setFornecedores([...fornecedores, { ...formulario, id: proximoId }]);
+        setSalvando(true);
+        setErroAcao('');
+        try {
+            if (idEmEdicao !== null) {
+                const atualizado = await atualizarFornecedor(idEmEdicao, formulario);
+                setFornecedores(
+                    fornecedores.map((fornecedor) =>
+                        fornecedor.id === idEmEdicao ? atualizado : fornecedor,
+                    ),
+                );
+            } else {
+                const criado = await criarFornecedor(formulario);
+                setFornecedores([...fornecedores, criado]);
+            }
+            setPainelAberto(false);
+        } catch (e) {
+            setErroAcao(e.message);
+        } finally {
+            setSalvando(false);
         }
-        setPainelAberto(false);
     };
 
-    const excluirFornecedor = (id) => {
+    const excluirFornecedor = async (id) => {
         if (idConfirmandoExclusao !== id) {
             setIdConfirmandoExclusao(id);
             return;
         }
-        setFornecedores(fornecedores.filter((fornecedor) => fornecedor.id !== id));
-        setIdConfirmandoExclusao(null);
+        setErroAcao('');
+        try {
+            await excluirFornecedorApi(id);
+            setFornecedores(fornecedores.filter((fornecedor) => fornecedor.id !== id));
+        } catch (e) {
+            setErroAcao(e.message);
+        } finally {
+            setIdConfirmandoExclusao(null);
+        }
     };
 
     return (
@@ -94,6 +117,10 @@ export default function Fornecedores({ fornecedores, setFornecedores, compras })
                 </div>
             </header>
 
+            {(erro || erroAcao) && (
+                <p className="avisoErroFornecedores" role="alert">{erro || erroAcao}</p>
+            )}
+
             <div className="envelopeTabelaFinancas">
                 <table className="tabelaFinancas">
                     <thead>
@@ -106,7 +133,14 @@ export default function Fornecedores({ fornecedores, setFornecedores, compras })
                         </tr>
                     </thead>
                     <tbody>
-                        {fornecedoresFiltrados.length === 0 && (
+                        {carregando && (
+                            <tr>
+                                <td colSpan={5} className="celulaVaziaFinancas">
+                                    Carregando fornecedores…
+                                </td>
+                            </tr>
+                        )}
+                        {!carregando && fornecedoresFiltrados.length === 0 && (
                             <tr>
                                 <td colSpan={5} className="celulaVaziaFinancas">
                                     {filtro.trim()
@@ -115,7 +149,7 @@ export default function Fornecedores({ fornecedores, setFornecedores, compras })
                                 </td>
                             </tr>
                         )}
-                        {fornecedoresFiltrados.map((fornecedor) => {
+                        {!carregando && fornecedoresFiltrados.map((fornecedor) => {
                             const comprasVinculadas = contarComprasVinculadas(fornecedor.id);
                             return (
                                 <tr key={fornecedor.id}>
@@ -238,8 +272,12 @@ export default function Fornecedores({ fornecedores, setFornecedores, compras })
                         >
                             Cancelar
                         </button>
-                        <button type="submit" className="botaoPrimarioFinancas">
-                            {idEmEdicao !== null ? 'Salvar alterações' : 'Adicionar fornecedor'}
+                        <button type="submit" className="botaoPrimarioFinancas" disabled={salvando}>
+                            {salvando
+                                ? 'Salvando…'
+                                : idEmEdicao !== null
+                                    ? 'Salvar alterações'
+                                    : 'Adicionar fornecedor'}
                         </button>
                     </div>
                 </form>

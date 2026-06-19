@@ -1,78 +1,329 @@
 /* =================================================================
-   admin.css — estilos da área administrativa (/admin)
-   Usa exclusivamente as variáveis CSS definidas em src/index.css.
-   Cada seção corresponde a um componente JSX desta pasta.
+   admin.css — módulo de administração (/admin)
+   Mesma identidade do módulo financeiro: crimson (#730835 → #3D0118),
+   âmbar (#E79839) como única voz de ação, Bungee + Montserrat.
+   O shell e as seções novas vivem aqui; tabelas, formulários e botões
+   reaproveitam as classes ...Financas de financas.css (importado no
+   Admin.jsx). A aba Participantes mantém o estilo próprio anterior.
    ================================================================= */
 
-/* ── paginaAdmin (Admin.jsx) ─────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+#app {
+    width: 100%;
+}
 
 .paginaAdmin {
+    display: flex;
     min-height: 100vh;
-    background-color: var(--vermelhoAuxDiretoria);
+    width: 100%;
+    background: #730835;
+    color: #edecec;
     font-family: 'Montserrat', sans-serif;
-    color: var(--Branco);
     text-align: left;
 }
 
-.corpoAdmin {
-    padding: 2rem;
-    max-width: 1400px;
-    margin: 0 auto;
+/* ── Sidebar ─────────────────────────────────────────────────── */
+
+.sidebarAdmin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 232px;
+    flex-shrink: 0;
+    background: #3D0118;
+    border-right: 1px solid rgba(252, 248, 245, 0.08);
+    display: flex;
+    flex-direction: column;
+    padding: 28px 18px 22px;
     box-sizing: border-box;
 }
 
-@media (max-width: 480px) {
-    .corpoAdmin { padding: 1rem; }
+.cabecalhoSidebarAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 12px 26px;
 }
 
-/* ── AdminHeader.jsx ─────────────────────────────────────────── */
+.marcaSidebarAdmin {
+    font-family: 'Bungee', cursive;
+    font-size: 1.45rem;
+    line-height: 1;
+    color: #edecec;
+}
 
-.cabecalhoAdmin {
-    background-color: var(--vermelhoAux2Diretoria);
-    padding: 1rem 2rem;
+.moduloSidebarAdmin {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    color: #E79839;
+}
+
+.navegacaoSidebarAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.itemNavegacaoAdmin {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 11px 12px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: rgba(252, 248, 245, 0.6);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease;
+}
+
+.itemNavegacaoAdmin:hover {
+    background: rgba(252, 248, 245, 0.05);
+    color: #edecec;
+    border-color: transparent;
+}
+
+.itemNavegacaoAdmin:focus-visible {
+    outline: 2px solid #E79839;
+    outline-offset: 2px;
+}
+
+.itemNavegacaoAtivoAdmin,
+.itemNavegacaoAtivoAdmin:hover {
+    background: rgba(231, 152, 57, 0.12);
+    color: #E79839;
+}
+
+.linkVoltarSiteAdmin {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(252, 248, 245, 0.5);
+    text-decoration: none;
+    border-radius: 10px;
+    transition: color 0.16s ease, background 0.16s ease;
+}
+
+.linkVoltarSiteAdmin:hover {
+    color: #E79839;
+    background: rgba(252, 248, 245, 0.04);
+}
+
+/* ── Área de conteúdo ────────────────────────────────────────── */
+
+.conteudoAdmin {
+    flex: 1;
+    min-width: 0;
+    padding: clamp(24px, 4vw, 52px);
+    box-sizing: border-box;
+}
+
+.secaoAdmin {
+    max-width: 1080px;
+    margin: 0 auto;
+    animation: entradaSecaoAdmin 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes entradaSecaoAdmin {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ── Faixa de resumo (Doações) ───────────────────────────────── */
+
+.faixaResumoAdmin {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    background: rgba(61, 1, 24, 0.35);
+    border: 1px solid rgba(252, 248, 245, 0.08);
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-bottom: 22px;
+}
+
+.itemResumoAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.rotuloItemResumoAdmin {
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: rgba(252, 248, 245, 0.5);
+}
+
+.valorItemResumoAdmin {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #edecec;
+    font-variant-numeric: tabular-nums;
+}
+
+.valorDestaqueAdmin {
+    font-family: 'Bungee', cursive;
+    font-weight: 400;
+    color: #E79839;
+}
+
+/* ── Doações ─────────────────────────────────────────────────── */
+
+.nomeDoadorDoacoes {
+    font-weight: 600;
+}
+
+.avisoErroAdmin {
+    margin: 0 0 18px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: rgba(176, 32, 56, 0.18);
+    border: 1px solid rgba(231, 96, 120, 0.4);
+    color: #f3b8c2;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.estadoCarregandoParticipantesAdmin {
+    margin: 24px 0;
+    color: rgba(252, 248, 245, 0.55);
+    font-size: 0.9rem;
+}
+
+/* ── Conteúdo (eventos) ──────────────────────────────────────── */
+
+.nomeEventoConteudo {
+    font-weight: 600;
+}
+
+.celulaLocalConteudo,
+.celulaPalestrantesConteudo {
+    color: rgba(252, 248, 245, 0.72);
+    max-width: 230px;
+}
+
+.seloTipoConteudo {
+    display: inline-flex;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #52ABB1;
+    border: 1px solid rgba(82, 171, 177, 0.45);
+    background: rgba(82, 171, 177, 0.08);
+    white-space: nowrap;
+}
+
+.cabecalhoPalestrantesConteudo {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    gap: 12px;
 }
 
-.tituloCabecalhoAdmin {
-    font-family: 'Bungee', sans-serif;
-    font-size: 1.4rem;
-    color: var(--Branco);
-    margin: 0;
+.semMargemInferiorAdmin {
+    margin-bottom: 0 !important;
+    flex: 1;
 }
 
-.linkVoltarAdmin {
-    font-size: 0.85rem;
+.botaoMiniAdmin {
+    padding: 0.4rem 0.8rem !important;
+    font-size: 0.78rem !important;
+    white-space: nowrap;
+}
+
+.avisoVazioPalestrantesConteudo {
+    font-family: 'Montserrat','sans-serif';
+    font-size: 0.8rem;
+    color: rgba(252, 248, 245, 0.45);
+    margin: 0 0 16px;
+}
+
+.cartaoPalestranteConteudo {
+    background: rgba(252, 248, 245, 0.03);
+    border: 1px solid rgba(252, 248, 245, 0.1);
+    border-radius: 12px;
+    padding: 14px 14px 2px;
+    margin-bottom: 14px;
+}
+
+.topoCartaoPalestranteConteudo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+/* Painel de gerenciamento dos tipos de evento */
+.listaTiposEventoConteudo {
+    list-style: none;
+    margin: 0 0 20px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.itemTipoEventoConteudo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: rgba(252, 248, 245, 0.03);
+    border: 1px solid rgba(252, 248, 245, 0.1);
+    border-radius: 12px;
+    padding: 10px 14px;
+}
+
+.infoTipoEventoConteudo {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    min-width: 0;
+}
+
+.nomeTipoEventoConteudo {
+    font-family: 'Montserrat','sans-serif';
+    font-size: 0.9rem;
     font-weight: 600;
-    color: var(--Branco);
-    opacity: 0.75;
-    transition: opacity 0.2s;
-    text-decoration: none;
-}
-.linkVoltarAdmin:hover { opacity: 1; }
-
-.badgeVersaoAdmin {
-    font-size: 0.75rem;
-    font-weight: 700;
-    background-color: rgba(255, 255, 255, 0.12);
-    padding: 0.3rem 0.8rem;
-    border-radius: 999px;
-    color: var(--Branco);
-    letter-spacing: 0.04em;
+    color: rgba(252, 248, 245, 0.92);
 }
 
-/* ── StatsGrid.jsx ───────────────────────────────────────────── */
+.pontosTipoEventoConteudo {
+    font-family: 'Montserrat','sans-serif';
+    font-size: 0.78rem;
+    color: var(--azulConteudo);
+    white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ABA PARTICIPANTES — estilos próprios (StatsGrid + tabela)
+   ══════════════════════════════════════════════════════════════ */
 
 .estatisticasAdmin {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 @media (max-width: 800px) { .estatisticasAdmin { grid-template-columns: repeat(2, 1fr); } }
@@ -102,20 +353,12 @@
     opacity: 0.65;
 }
 
-/* Cor do número varia por tipo de card */
 .cartaoEstatisticaTotalAdmin       .numeroEstatisticaAdmin { color: var(--Branco); }
 .cartaoEstatisticaConfirmadosAdmin .numeroEstatisticaAdmin { color: var(--azulConteudo); }
 .cartaoEstatisticaAguardandoAdmin  .numeroEstatisticaAdmin { color: var(--AmareloAuxApoio); }
 .cartaoEstatisticaAusenciasAdmin   .numeroEstatisticaAdmin { color: var(--rosaMarketing); }
 
-/* ── StatsGrid.jsx — Liquid Glass (alerta) ───────────────────── *
- * Ativado quando o indicador ultrapassa o threshold definido em  *
- * StatsGrid.jsx. Usa três camadas visuais para simular vidro:    *
- *   1. backdrop-filter  → fundo fosco com brilho                 *
- *   2. ::before         → specular highlight estático no topo     *
- *   3. ::after          → faixa de luz deslizando (shimmer)       *
- * ──────────────────────────────────────────────────────────────── */
-
+/* StatsGrid — Liquid Glass (alerta) */
 .vidroLiquidoAdmin {
     position: relative;
     overflow: hidden;
@@ -160,7 +403,6 @@
     100% { transform: translateX(420%); opacity: 0; }
 }
 
-/* Garante que o conteúdo fique acima dos pseudo-elementos do glass */
 .vidroLiquidoAdmin .numeroEstatisticaAdmin,
 .vidroLiquidoAdmin .rotuloEstatisticaAdmin { position: relative; z-index: 2; }
 
@@ -184,8 +426,7 @@
         inset 0 -1px  0 rgba(0, 0, 0, 0.12);
 }
 
-/* ── TabelaParticipantes.jsx ─────────────────────────────────── */
-
+/* TabelaParticipantes */
 .conteinerTabelaAdmin {
     background-color: rgba(0, 0, 0, 0.25);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -258,8 +499,6 @@
     white-space: nowrap;
 }
 
-/* ── TabelaParticipantes.jsx — LinhaParticipante ─────────────── */
-
 .celulaNomeAdmin  { font-weight: 600; }
 .celulaEmailAdmin { opacity: 0.6; font-size: 0.8rem; }
 .celulaRaAdmin    { font-family: monospace; font-size: 0.85rem; opacity: 0.8; }
@@ -309,4 +548,444 @@
     padding: 3rem;
     opacity: 0.45;
     font-style: italic;
+}
+
+/* ── Célula nome + e-mail empilhados ─────────────────────────── */
+.celulaNomeEmailAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.nomeParticipanteAdmin  { font-weight: 600; }
+.emailParticipanteAdmin { opacity: 0.55; font-size: 0.78rem; }
+
+.celulaCamisetaAdmin {
+    font-size: 0.85rem;
+    opacity: 0.85;
+}
+
+/* ── Coluna de ação ──────────────────────────────────────────── */
+.celulaAcaoParticipantesAdmin { white-space: nowrap; }
+
+.grupoAcaoConfirmadoAdmin {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.botaoConfirmarParticipanteAdmin {
+    padding: 0.4rem 0.9rem;
+    border-radius: 8px;
+    border: 1px solid rgba(231, 152, 57, 0.5);
+    background-color: rgba(231, 152, 57, 0.15);
+    color: var(--AmareloAuxApoio);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s;
+}
+.botaoConfirmarParticipanteAdmin:hover {
+    background-color: rgba(231, 152, 57, 0.28);
+    border-color: var(--AmareloAuxApoio);
+}
+
+.badgeConfirmadoParticipantesAdmin {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    background-color: rgba(82, 171, 177, 0.15);
+    color: var(--azulConteudo);
+    border: 1px solid rgba(82, 171, 177, 0.5);
+}
+
+.botaoAlterarRoleAdmin {
+    background: none;
+    border: none;
+    color: rgba(237, 236, 236, 0.55);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.15s;
+}
+.botaoAlterarRoleAdmin:hover { color: var(--Branco); }
+
+/* ── Modal de confirmação de participante ────────────────────── */
+.overlayModalParticipantesAdmin {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    z-index: 1000;
+}
+
+.modalConfirmarParticipantesAdmin {
+    width: 100%;
+    max-width: 420px;
+    background-color: var(--vermelhoAuxDiretoria);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 1.75rem;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
+.tituloModalParticipantesAdmin {
+    font-family: 'Bungee', sans-serif;
+    margin: 0 0 0.35rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--Branco);
+}
+.subtituloModalParticipantesAdmin {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0 0 1.25rem;
+    font-size: 0.85rem;
+    color: rgba(237, 236, 236, 0.6);
+}
+.subtituloModalParticipantesAdmin strong { color: var(--Branco); }
+
+.opcoesRoleModalParticipantesAdmin {
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Dropdown do papel de comissão (quando a categoria é "Membro") */
+.campoPapelComissaoModalAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 1rem;
+}
+.rotuloPapelComissaoModalAdmin {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: rgba(237, 236, 236, 0.7);
+}
+.selectPapelComissaoModalAdmin {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    color: var(--Branco);
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    padding: 0.6rem 0.8rem;
+    cursor: pointer;
+}
+.selectPapelComissaoModalAdmin:focus {
+    outline: none;
+    border-color: var(--AmareloAuxApoio);
+}
+.selectPapelComissaoModalAdmin option {
+    color: #1a1a1a;
+}
+
+/* Badge de função na tabela da comissão */
+.badgeFuncaoComissaoAdmin {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    background-color: rgba(82, 171, 177, 0.15);
+    color: var(--azulConteudo);
+    border: 1px solid rgba(82, 171, 177, 0.5);
+}
+
+/* Ações da tabela da comissão */
+.grupoAcoesComissaoAdmin {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    white-space: nowrap;
+}
+.botaoDesativarComissaoAdmin {
+    background: none;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-decoration: underline;
+    color: rgba(237, 236, 236, 0.55);
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.15s;
+}
+.botaoDesativarComissaoAdmin:hover { color: var(--Branco); }
+.botaoDesativarComissaoAdmin:disabled { cursor: default; opacity: 0.6; }
+.botaoDesativarConfirmandoComissaoAdmin {
+    color: #e9897b;
+    text-decoration: underline;
+}
+
+.opcaoRoleModalParticipantesAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    text-align: left;
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background-color: rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+    transition: border-color 0.15s, background-color 0.15s;
+}
+.opcaoRoleModalParticipantesAdmin:hover { border-color: rgba(255, 255, 255, 0.3); }
+.opcaoRoleModalParticipantesAdmin:disabled { cursor: default; opacity: 0.6; }
+
+.opcaoRoleAtivaModalParticipantesAdmin {
+    border-color: var(--AmareloAuxApoio);
+    background-color: rgba(231, 152, 57, 0.12);
+}
+
+.rotuloOpcaoRoleAdmin {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--Branco);
+}
+.descricaoOpcaoRoleAdmin {
+    font-size: 0.76rem;
+    color: rgba(237, 236, 236, 0.55);
+}
+
+.avisoErroModalParticipantesAdmin {
+    margin: 1rem 0 0;
+    padding: 0.65rem 0.85rem;
+    border-radius: 8px;
+    background: rgba(176, 32, 56, 0.18);
+    border: 1px solid rgba(231, 96, 120, 0.4);
+    color: #f3b8c2;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.rodapeModalParticipantesAdmin {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 1.5rem;
+}
+
+.botaoCancelarModalParticipantesAdmin {
+    padding: 0.55rem 1.1rem;
+    border-radius: 9px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: none;
+    color: rgba(237, 236, 236, 0.75);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+}
+.botaoCancelarModalParticipantesAdmin:hover { color: var(--Branco); border-color: rgba(255, 255, 255, 0.4); }
+.botaoCancelarModalParticipantesAdmin:disabled { opacity: 0.4; cursor: default; }
+
+.botaoSalvarModalParticipantesAdmin {
+    padding: 0.55rem 1.3rem;
+    border-radius: 9px;
+    border: 1px solid var(--AmareloAuxApoio);
+    background-color: var(--AmareloAuxApoio);
+    color: #1a0810;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: filter 0.15s;
+}
+.botaoSalvarModalParticipantesAdmin:hover { filter: brightness(1.08); }
+.botaoSalvarModalParticipantesAdmin:disabled { opacity: 0.55; cursor: default; }
+
+/* Estado de sucesso */
+.sucessoModalParticipantesAdmin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 1.5rem 0;
+}
+.iconeSucessoModalParticipantesAdmin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: rgba(82, 171, 177, 0.18);
+    border: 2px solid var(--azulConteudo);
+    color: var(--azulConteudo);
+    font-size: 1.7rem;
+    font-weight: 700;
+    animation: aparecerSucessoParticipantesAdmin 0.35s ease-out;
+}
+.textoSucessoModalParticipantesAdmin {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--Branco);
+}
+
+@keyframes aparecerSucessoParticipantesAdmin {
+    from { transform: scale(0.4); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+}
+
+.celulaIngressoParticipantesAdmin {
+    font-size: 0.85rem;
+    opacity: 0.85;
+}
+
+.avisoVazioIngressoModalAdmin {
+    margin: 0.5rem 0 0;
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    border: 1px dashed rgba(255, 255, 255, 0.18);
+    color: rgba(237, 236, 236, 0.6);
+    font-size: 0.84rem;
+}
+
+/* ── Seção Informações SEMAC (tipos de ingresso) ─────────────── */
+.vazioInfoSemac {
+    margin-top: 1rem;
+    padding: 2.5rem;
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    text-align: center;
+    color: rgba(237, 236, 236, 0.5);
+    font-style: italic;
+}
+
+.gradeIngressosInfoSemac {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.cartaoIngressoInfoSemac {
+    background-color: rgba(0, 0, 0, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.topoCartaoIngressoInfoSemac {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.nomeIngressoInfoSemac {
+    font-weight: 700;
+    color: var(--Branco);
+}
+
+.valorIngressoInfoSemac {
+    font-family: 'Bungee', sans-serif;
+    font-size: 1.6rem;
+    line-height: 1;
+    color: var(--AmareloAuxApoio);
+}
+
+.acoesCartaoIngressoInfoSemac {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 0.25rem;
+}
+
+.botaoExcluirIngressoInfoSemac {
+    background: none;
+    border: none;
+    color: var(--rosaMarketing);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0;
+    transition: filter 0.15s;
+}
+.botaoExcluirIngressoInfoSemac:hover { filter: brightness(1.2); }
+
+.campoCheckboxInfoSemac {
+    font-family: 'Montserrat', 'sans-serif';
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.7rem;
+    color: rgba(237, 236, 236, 0.8);
+    cursor: pointer;
+    margin-top: 0.25rem;
+}
+.campoCheckboxInfoSemac input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--AmareloAuxApoio); }
+
+/* ── Responsivo — sidebar vira barra superior ────────────────── */
+
+@media (max-width: 820px) {
+    .paginaAdmin {
+        flex-direction: column;
+    }
+
+    .sidebarAdmin {
+        position: static;
+        height: auto;
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid rgba(252, 248, 245, 0.08);
+        padding: 16px 18px;
+        gap: 12px;
+    }
+
+    .cabecalhoSidebarAdmin {
+        flex-direction: row;
+        align-items: baseline;
+        gap: 10px;
+        padding: 0 0 10px;
+    }
+
+    .navegacaoSidebarAdmin {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 6px;
+        padding-bottom: 4px;
+    }
+
+    .itemNavegacaoAdmin {
+        white-space: nowrap;
+        padding: 9px 12px;
+    }
+
+    .linkVoltarSiteAdmin {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .secaoAdmin {
+        animation: none;
+    }
+
+    .itemNavegacaoAdmin,
+    .linkVoltarSiteAdmin {
+        transition: none;
+    }
 }

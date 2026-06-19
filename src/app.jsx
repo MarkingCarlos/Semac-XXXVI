@@ -8,6 +8,7 @@ import CronogramaBreve from "./pages/cronogramaBreve/CronogramaBreve.jsx";
 import PatrocinadoresCompacto from "./pages/PatrocinadoresCompacto/PatrocinadoresCompacto.jsx";
 import { NavPontos } from "./components/NavPontos/navPontos.jsx";
 import paperTexture from './assets/PAPER.png';
+import ContagemRegressiva from "./components/contagemRegressiva/contagemRegressiva.jsx";
 
 
 export function App() {

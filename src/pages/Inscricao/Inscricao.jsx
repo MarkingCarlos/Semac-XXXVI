@@ -3,6 +3,7 @@ import { useLocation } from 'wouter'
 import gsap from 'gsap'
 import './inscricao.css'
 import BoxInscricao from '../../components/BoxInscricao/BoxInscricao.jsx'
+import paperTexture from "../../assets/PAPER.png";
 
 const Inscricao = () => {
     const containerRef = useRef(null)
@@ -25,7 +26,11 @@ const Inscricao = () => {
     }
 
     return (
-        <div className="conteinerInscricao" ref={containerRef}>
+        <div className="conteinerInscricao" ref={containerRef}
+             style={{
+                 backgroundImage: `url(${paperTexture})`
+             }}
+        >
             <button className="botaoVoltarInscricao" onClick={voltar}>&#8592; Voltar</button>
             <div className="ladoDireitoInscricao">
                 <BoxInscricao />

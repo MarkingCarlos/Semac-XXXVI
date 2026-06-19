@@ -1,5 +1,16 @@
 /* ── Seção de patrocínios ────────────────────────────────────── */
 
+.avisoErroPatrocinios {
+    margin: 0 0 18px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: rgba(176, 32, 56, 0.18);
+    border: 1px solid rgba(231, 96, 120, 0.4);
+    color: #f3b8c2;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
 .celulaEmpresaPatrocinios {
     display: flex;
     flex-direction: column;

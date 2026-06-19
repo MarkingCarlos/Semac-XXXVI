@@ -1,8 +1,17 @@
 import { useState, useRef, useEffect } from 'preact/hooks'
+import { useLocation } from 'wouter'
 import gsap from 'gsap'
+import { salvarSessao, temAcessoFinanceiro } from '../../auth/sessao.js'
 import './boxInscricao.css'
 
-const API_URL = import.meta.env.VITE_API_URL
+// Lê parâmetros de navegação da URL: `tab` (aba inicial) e `next`
+// (rota de retorno após login bem-sucedido).
+function lerParametrosNavegacao() {
+    const params = new URLSearchParams(window.location.search)
+    return { tab: params.get('tab'), next: params.get('next') }
+}
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
 const MODELOS  = ['BABY_LOOK', 'NORMAL']
 const TAMANHOS = ['PP', 'P', 'M', 'G', 'GG']
@@ -19,7 +28,10 @@ function mascaraCPF(valor) {
 }
 
 export default function BoxInscricao() {
-    const [aba,       setAba]       = useState('inscricao')
+    const [, navigate] = useLocation()
+    const { tab: tabInicial, next: rotaRetorno } = lerParametrosNavegacao()
+
+    const [aba,       setAba]       = useState(tabInicial === 'entrar' ? 'entrar' : 'inscricao')
     const [abaSaindo, setAbaSaindo] = useState(false)
     const [etapa,     setEtapa]     = useState('dados') // 'dados' | 'comemoracao' | 'camisa'
 
@@ -48,6 +60,7 @@ export default function BoxInscricao() {
     // Troca de aba com fade-out suave (200 ms) antes de trocar o conteúdo
     function trocarAba(novaAba) {
         if (novaAba === aba) return
+        setFeedback(null)
         setAbaSaindo(true)
         setTimeout(() => {
             setAba(novaAba)
@@ -94,7 +107,9 @@ export default function BoxInscricao() {
                 setForm({ nome: '', cpf: '', ra: '', email: '', senha: '' })
                 setEtapa('dados')
             } else if (resposta.status === 409) {
-                setFeedback({ tipo: 'erro', msg: 'CPF ou e-mail já cadastrado.' })
+                // Backend envia { mensagem } distinguindo e-mail x CPF.
+                const corpo = await resposta.json().catch(() => null)
+                setFeedback({ tipo: 'erro', msg: corpo?.mensagem || 'CPF ou e-mail já cadastrado.' })
             } else {
                 setFeedback({ tipo: 'erro', msg: 'Erro ao realizar inscrição. Tente novamente.' })
             }
@@ -105,10 +120,39 @@ export default function BoxInscricao() {
         }
     }
 
-    function handleSubmitEntrar(e) {
+    async function handleSubmitEntrar(e) {
         e.preventDefault()
-        // TODO: POST /api/auth/login
-        console.log({ email: form.email, senha: form.senha })
+        setEnviando(true)
+        setFeedback(null)
+
+        try {
+            const resposta = await fetch(`${API_URL}/api/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: form.email, senha: form.senha }),
+            })
+
+            if (resposta.ok) {
+                // Guarda a sessão (token + dados) para autorizar rotas/requisições.
+                const corpo = await resposta.json().catch(() => null)
+                if (corpo?.token) salvarSessao(corpo)
+                setFeedback({ tipo: 'sucesso', msg: 'Login efetuado com sucesso!' })
+
+                // Veio do /financeiro: volta pra lá se tiver acesso; senão, home.
+                // Sem `next`, mantém na tela (apenas a mensagem de sucesso).
+                if (rotaRetorno === '/financeiro') {
+                    navigate(temAcessoFinanceiro() ? '/financeiro' : '/')
+                }
+            } else if (resposta.status === 401) {
+                setFeedback({ tipo: 'erro', msg: 'E-mail ou senha inválidos.' })
+            } else {
+                setFeedback({ tipo: 'erro', msg: 'Erro ao entrar. Tente novamente.' })
+            }
+        } catch {
+            setFeedback({ tipo: 'erro', msg: 'Não foi possível conectar ao servidor.' })
+        } finally {
+            setEnviando(false)
+        }
     }
 
     return (
@@ -282,8 +326,11 @@ export default function BoxInscricao() {
                             onInput={e => setField('senha', e.target.value)}
                             required
                         />
-                        <button type="submit" class="botaoConfirmarInscricao">
-                            Entrar
+                        {feedback && (
+                            <p class={`feedbackInscricao feedbackInscricao${feedback.tipo.charAt(0).toUpperCase() + feedback.tipo.slice(1)}`}>{feedback.msg}</p>
+                        )}
+                        <button type="submit" class="botaoConfirmarInscricao" disabled={enviando}>
+                            {enviando ? 'Entrando...' : 'Entrar'}
                         </button>
                     </form>
                 )}
