@@ -1,6 +1,9 @@
+/* =========================================================
+   contagemRegressiva.css — Estilos do contador regressivo
+   ========================================================= */
 
 :root {
-
+  /* Espaço reservado para variáveis locais, se necessário */
 }
 
 .tempoDiv {
@@ -18,7 +21,7 @@
 .tempoContador {
   /* [Responsividade] Fonte base fluida: mínimo 28px, escala com a viewport (5vw),
      máximo 50px */
-  font-size: clamp(22px, 4vw, 38px);
+  font-size: clamp(28px, 5vw, 50px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -30,7 +33,7 @@
 .tempoContador span {
   /* [Responsividade] Label (Dias, Horas...): mínimo 14px, escala com viewport (2.5vw),
      máximo 25px */
-  font-size: clamp(12px, 2vw, 18px);
+  font-size: clamp(14px, 2.5vw, 25px);
   letter-spacing: 1px;
   font-weight: 500;
   color: var(--AmareloAuxApoio);
@@ -41,7 +44,7 @@
 .tempoContador p {
   /* [Responsividade] Número principal: mínimo 55px, escala com viewport (13vw),
      máximo 125px — garante legibilidade em qualquer tamanho de tela */
-  font-size: clamp(45px, 10vw, 95px);
+  font-size: clamp(55px, 13vw, 125px);
   margin: 0;
   padding: 0;
   color: var(--Branco);
@@ -53,7 +56,17 @@ h1 {
   color: var(--Branco);
   margin-bottom: 0.5em;
   margin-top: 0;
-  /* [Responsividade] Título fluido: mínimo 1.2rem, escala com viewport (4vw),
-     máximo 3.2rem */
-  font-size: clamp(1.2rem, 3.5vw, 2.2rem);
+  font-size: clamp(1.2rem, 4vw, 3.2rem);
+}
+
+.encrypted-char {
+  opacity: 0.5;
+  color: var(--AmareloAuxApoio);
+  transition: color 0.1s, opacity 0.1s;
+}
+
+.revealed-char {
+  opacity: 1;
+  color: var(--Branco);
+  transition: color 0.15s, opacity 0.15s;
 }

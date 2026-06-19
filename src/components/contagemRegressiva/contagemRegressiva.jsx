@@ -1,9 +1,10 @@
 import React, { useState, useEffect} from 'react';
 import './contagemRegressiva.css';
+import EncryptedText from '../EncryptedText/EncryptedText';
 
 const ContagemRegressiva = () => {
 
-    const [dataEvento, setDataEvento] = useState("2026-05-01T12:00:00");
+    const [dataEvento, setDataEvento] = useState("2026-05-15T12:00:00");
     const [incioContagem, setInicioContagem] = useState(true);
     const [tempoRestante, setTempoRestante] = useState(0);
 
@@ -64,8 +65,13 @@ const ContagemRegressiva = () => {
 
     return (
         <div className="contagemRegressiva">
-            <h1>Cuidado!!! Devs trabalhando</h1>
-            {formatarTempo(tempoRestante)}
+            <h1>
+                <EncryptedText
+                    text="Cuidado!!! Devs trabalhando"
+                    encryptedClass="encrypted-char"
+                    revealedClass="revealed-char"
+                />
+            </h1>
         </div>
     );
 };
