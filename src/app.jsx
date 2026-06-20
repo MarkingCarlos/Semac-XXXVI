@@ -9,36 +9,38 @@ import PatrocinadoresCompacto from "./pages/PatrocinadoresCompacto/Patrocinadore
 import { NavPontos } from "./components/NavPontos/navPontos.jsx";
 import paperTexture from './assets/PAPER.png';
 import ContagemRegressiva from "./components/contagemRegressiva/contagemRegressiva.jsx";
+import {PaginaContagem} from "./pages/page/PaginaContagem.jsx";
 
 
 export function App() {
 
   return (
     <>
-        <div className="paperTextura"
-            style={{
-            backgroundImage: `url(${paperTexture})`
-        }} />
-        <NavPontos />
-        <div style={{position:'sticky'}}>
-            <Home/>
-        </div>
-        <div>
-            <Sobre/>
-        </div>
-        <div>
-            <CronogramaBreve/>
-        </div>
-        <div>
-            <PatrocinadoresCompacto/>
-        </div>
-        <div>
-            <Doacao/>
-        </div>
-        <div>
-            <SobreComissao/>
-        </div>
-            <FooterNovo/>
+        <PaginaContagem/>
+        {/*<div className="paperTextura"*/}
+        {/*    style={{*/}
+        {/*    backgroundImage: `url(${paperTexture})`*/}
+        {/*}} />*/}
+        {/*<NavPontos />*/}
+        {/*<div style={{position:'sticky'}}>*/}
+        {/*    <Home/>*/}
+        {/*</div>*/}
+        {/*<div>*/}
+        {/*    <Sobre/>*/}
+        {/*</div>*/}
+        {/*<div>*/}
+        {/*    <CronogramaBreve/>*/}
+        {/*</div>*/}
+        {/*<div>*/}
+        {/*    <PatrocinadoresCompacto/>*/}
+        {/*</div>*/}
+        {/*<div>*/}
+        {/*    <Doacao/>*/}
+        {/*</div>*/}
+        {/*<div>*/}
+        {/*    <SobreComissao/>*/}
+        {/*</div>*/}
+        {/*    <FooterNovo/>*/}
     </>
   )
 }
