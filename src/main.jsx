@@ -15,7 +15,7 @@ import { temAcessoFinanceiro } from './auth/sessao.js'
 function RotaFinanceiro() {
     return temAcessoFinanceiro()
         ? <Financas />
-        : <Redirect to="/inscricao?tab=entrar&next=/financeiro" />;
+        : <Redirect to="/inscricoes?tab=entrar&next=/financeiro" />;
 }
 
 render(
@@ -23,7 +23,7 @@ render(
         <Route path="/sorteio"><Admin /></Route>
         <Route path="/admin"><Admin /></Route>
         <Route path="/financeiro"><RotaFinanceiro /></Route>
-        <Route path="/inscricao"><Inscricao /></Route>
+        <Route path="/inscricoes"><Inscricao /></Route>
         <Route path="/cotas"><PaginaCotas /></Route>
         <Route><App /></Route>
     </Switch>,
