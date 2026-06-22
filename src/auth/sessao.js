@@ -13,6 +13,28 @@ const CHAVE_SESSAO = 'semacSessao';
 /* Papéis com acesso ao módulo financeiro (/financeiro). */
 const PAPEIS_FINANCEIRO = ['DIRETOR_SITE', 'PRESIDENTE'];
 
+/* Retorna true se o token JWT no localStorage está expirado ou ausente.
+   Decodifica apenas o payload (segunda parte do JWT) sem validar assinatura. */
+function sessaoExpirada() {
+    const sessao = lerSessao();
+    if (!sessao?.token) return true;
+    try {
+        const payload = JSON.parse(atob(sessao.token.split('.')[1]));
+        return payload.exp * 1000 < Date.now();
+    } catch {
+        return true;
+    }
+}
+
+/* Se a resposta for 401 (token expirado/inválido), limpa a sessão e redireciona
+   para o login preservando a rota de retorno. Retorna true se tratou o 401. */
+export function tratarErroAuth(resposta) {
+    if (resposta.status !== 401) return false;
+    limparSessao();
+    window.location.replace('/inscricoes?tab=entrar&next=/financeiro');
+    return true;
+}
+
 export function salvarSessao({ token, id, nome, email, role }) {
     localStorage.setItem(CHAVE_SESSAO, JSON.stringify({ token, id, nome, email, role }));
 }
@@ -36,7 +58,7 @@ export function usuarioLogado() {
 
 export function temAcessoFinanceiro() {
     const sessao = lerSessao();
-    return !!sessao && PAPEIS_FINANCEIRO.includes(sessao.role);
+    return !!sessao && PAPEIS_FINANCEIRO.includes(sessao.role) && !sessaoExpirada();
 }
 
 /* Mescla o cabeçalho Authorization (quando há token) aos cabeçalhos

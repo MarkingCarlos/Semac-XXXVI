@@ -6,7 +6,7 @@
     overflow: hidden;
     position: relative;
     background-color: var(--vermelhoAuxDiretoria);
-    background-size: cover;
+    background-size: 110%;
     background-blend-mode: overlay;
 }
 
@@ -43,7 +43,8 @@
 .botaoVoltarInscricao:hover { background: rgba(255, 255, 255, 0.22); }
 
 /* Box flutua sobre a imagem, centralizado na página */
-.ladoDireitoInscricao {
+.inscricaoBox {
+    display: flex;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -52,25 +53,26 @@
     width: 70vw;
 }
 
-/* ── Wide monitors ───────────────────────────────────────────── */
 @media (min-width: 1440px) {
-    .ladoDireitoInscricao {
+    .inscricaoBox {
         width: auto;
     }
 }
 
-/* ── Tablet ──────────────────────────────────────────────────── */
-@media (max-width: 768px) {
-    .ladoDireitoInscricao {
-        width: auto;
-    }
-}
 
 /* ── Mobile ──────────────────────────────────────────────────── */
-@media (max-width: 480px) {
-    .ladoDireitoInscricao {
-        width: auto;
-        max-height: 90svh;
+@media (max-width: 768px) {
+    .conteinerInscricao {
+        background-size: cover;
+    }
+    .inscricaoBox {
+        width: 90%;
+        /*max-height: 90svh;*/
         overflow-y: auto;
+    }
+    .botaoVoltarInscricao {
+        position: absolute;
+        top: 0.7rem;
+        left: 1rem;
     }
 }

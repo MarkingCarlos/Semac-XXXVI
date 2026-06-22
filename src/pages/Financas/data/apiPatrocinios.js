@@ -1,10 +1,4 @@
-/* Camada de acesso à API de patrocinadores (tabela `patrocinador`).
-   A interface trabalha com valores em CENTAVOS (inteiros); o backend usa
-   reais (DECIMAL). Cada patrocinador é ligado a uma cota (cotaId); o
-   `nivel` e o `valorCota` vêm da cota. O `valorFinal` é calculado pelo
-   backend (cota.valor − desconto + adicao) e não é enviado pelo cliente. */
-
-import { cabecalhosAuth } from '../../../auth/sessao.js';
+import { cabecalhosAuth, tratarErroAuth } from '../../../auth/sessao.js';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const ROTA_PATROCINADORES = `${API_URL}/api/patrocinador`;
@@ -17,7 +11,6 @@ function centavosParaReais(centavos) {
     return Number(((centavos ?? 0) / 100).toFixed(2));
 }
 
-/* Backend → interface: reais viram centavos; a cota vira nivel + valorCota. */
 function deResposta(patrocinador) {
     const cota = patrocinador.cota ?? null;
     return {
@@ -56,6 +49,7 @@ function paraRequisicao(patrocinador) {
 
 async function lerRespostaOuFalhar(resposta, mensagemErro) {
     if (!resposta.ok) {
+        if (tratarErroAuth(resposta)) return;
         throw new Error(mensagemErro);
     }
     return resposta.json();

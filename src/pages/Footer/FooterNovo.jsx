@@ -84,6 +84,14 @@ function FooterLogo() {
   );
 }
 
+function abrirEmail(evento) {
+  const ehDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (ehDesktop) {
+    evento.preventDefault();
+    window.open('https://mail.google.com/mail/?view=cm&fs=1&to=apoio@semac.cc', '_blank', 'noopener,noreferrer');
+  }
+}
+
 function FooterRedes() {
   return (
     <div className="redes">
@@ -97,7 +105,7 @@ function FooterRedes() {
       <a href="https://www.youtube.com/@SEMACsjrp" target={"_blank"} className="botaoRede" title="YouTube">
         <IconeYouTube />
       </a>
-      <a href="mailto:apoio@semac.cc" target={"_blank"} className="botaoRede" title="E-mail">
+      <a href="mailto:apoio@semac.cc" target={"_blank"} onClick={abrirEmail} className="botaoRede" title="E-mail">
         <IconeEmailRede />
       </a>
     </div>
@@ -130,7 +138,7 @@ function FooterContato() {
         </div>
         <div className="contatoLinha contatoLinhaEmail">
           <span className="contatoIcone"><IconeEmailContato /></span>
-          <a href="mailto:apoio@semac.cc" className="textoEmail">
+          <a href="mailto:apoio@semac.cc" onClick={abrirEmail} className="textoEmail">
             apoio@semac.cc
           </a>
         </div>
@@ -146,11 +154,11 @@ function FooterBarraInferior() {
         <span className="copyright">
           © 2026 SEMAC — XXXVI Semana da Computação · IBILCE/UNESP
         </span>
-        <div className="linksLegais">
-          <a href="#" className="linkLegal">Política de Privacidade</a>
-          <a href="#" className="linkLegal">Cookies</a>
-          <a href="#" className="linkLegal">Termos</a>
-        </div>
+        {/*<div className="linksLegais">*/}
+        {/*  <a href="#" className="linkLegal">Política de Privacidade</a>*/}
+        {/*  <a href="#" className="linkLegal">Cookies</a>*/}
+        {/*  <a href="#" className="linkLegal">Termos</a>*/}
+        {/*</div>*/}
       </div>
     </>
   );

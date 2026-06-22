@@ -16,31 +16,31 @@ export function App() {
 
   return (
     <>
-        <PaginaContagem/>
-        {/*<div className="paperTextura"*/}
-        {/*    style={{*/}
-        {/*    backgroundImage: `url(${paperTexture})`*/}
-        {/*}} />*/}
-        {/*<NavPontos />*/}
-        {/*<div style={{position:'sticky'}}>*/}
-        {/*    <Home/>*/}
-        {/*</div>*/}
-        {/*<div>*/}
-        {/*    <Sobre/>*/}
-        {/*</div>*/}
-        {/*<div>*/}
-        {/*    <CronogramaBreve/>*/}
-        {/*</div>*/}
-        {/*<div>*/}
-        {/*    <PatrocinadoresCompacto/>*/}
-        {/*</div>*/}
-        {/*<div>*/}
-        {/*    <Doacao/>*/}
-        {/*</div>*/}
-        {/*<div>*/}
-        {/*    <SobreComissao/>*/}
-        {/*</div>*/}
-        {/*    <FooterNovo/>*/}
+        {/*<PaginaContagem/>*/}
+        <div className="paperTextura"
+            style={{
+            backgroundImage: `url(${paperTexture})`
+        }} />
+        <NavPontos />
+        <div style={{position:'sticky'}}>
+            <Home/>
+        </div>
+        <div>
+            <Sobre/>
+        </div>
+        <div>
+            <CronogramaBreve/>
+        </div>
+        <div>
+            <PatrocinadoresCompacto/>
+        </div>
+        <div>
+            <Doacao/>
+        </div>
+        <div>
+            <SobreComissao/>
+        </div>
+            <FooterNovo/>
     </>
   )
 }

@@ -6,12 +6,10 @@ import Admin from './pages/Admin/Admin.jsx'
 import Inscricao from "./pages/Inscricao/Inscricao.jsx";
 import PaginaCotas from "./pages/PaginaCotas/PaginaCotas.jsx";
 import Financas from "./pages/Financas/Financas.jsx";
+// import Ranking from "./pages/Ranking/paginaRanking.jsx";
 import { temAcessoFinanceiro } from './auth/sessao.js'
 
-/* Guard de rota do /financeiro: só DIRETOR_SITE ou PRESIDENTE entram;
-   os demais (ou não logados) vão para o login (aba Entrar), com next
-   apontando de volta ao /financeiro. Camada de UX — a proteção real
-   dos dados é feita pelo backend (Bearer token). */
+
 function RotaFinanceiro() {
     return temAcessoFinanceiro()
         ? <Financas />
@@ -25,6 +23,7 @@ render(
         <Route path="/financeiro"><RotaFinanceiro /></Route>
         <Route path="/inscricoes"><Inscricao /></Route>
         <Route path="/cotas"><PaginaCotas /></Route>
+        {/*<Route path="/ranking"><Ranking /></Route>*/}
         <Route><App /></Route>
     </Switch>,
     document.getElementById('app')

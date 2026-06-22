@@ -1,11 +1,4 @@
-/* Camada de acesso à API de compras (tabela `compra` do backend java_api).
-   Saídas financeiras vinculadas a um fornecedor (fornecedor_id).
-
-   A interface trabalha com valores em CENTAVOS (inteiros) para reaproveitar
-   o CampoMoeda; o backend usa reais (DECIMAL). valor_total e data_compra são
-   definidos pelo backend — não são enviados na requisição. */
-
-import { cabecalhosAuth } from '../../../auth/sessao.js';
+import { cabecalhosAuth, tratarErroAuth } from '../../../auth/sessao.js';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const ROTA = `${API_URL}/api/compra`;
@@ -40,6 +33,7 @@ function paraRequisicao(compra) {
 
 async function lerOuFalhar(resposta, mensagemPadrao) {
     if (!resposta.ok) {
+        if (tratarErroAuth(resposta)) return;
         const corpo = await resposta.json().catch(() => null);
         throw new Error(corpo?.mensagem || mensagemPadrao);
     }

@@ -1,7 +1,4 @@
-/* Camada de acesso à API de fornecedores (tabela `fornecedor`).
-   Sem campos monetários — o mapeamento é direto. */
-
-import { cabecalhosAuth } from '../../../auth/sessao.js';
+import { cabecalhosAuth, tratarErroAuth } from '../../../auth/sessao.js';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const ROTA_FORNECEDORES = `${API_URL}/api/fornecedor`;
@@ -16,6 +13,7 @@ function paraRequisicao(fornecedor) {
 
 async function lerRespostaOuFalhar(resposta, mensagemErro) {
     if (!resposta.ok) {
+        if (tratarErroAuth(resposta)) return;
         throw new Error(mensagemErro);
     }
     return resposta.json();

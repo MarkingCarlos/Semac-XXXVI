@@ -3,6 +3,7 @@ import { useLocation } from 'wouter'
 import gsap from 'gsap'
 import { salvarSessao, temAcessoFinanceiro } from '../../auth/sessao.js'
 import './boxInscricao.css'
+import logoRaios from '../../assets/logoSemacRaios.png'
 
 // Lê parâmetros de navegação da URL: `tab` (aba inicial) e `next`
 // (rota de retorno após login bem-sucedido).
@@ -52,6 +53,24 @@ export default function BoxInscricao() {
         minimo8:   form.senha.length >= 8,
     }
     const senhaValida = senhaOk.especial && senhaOk.maiusculo && senhaOk.minimo8
+
+    // E-mail institucional da UNESP sem RA preenchido — aviso para garantir o certificado
+    const avisoRaUnesp = form.email.toLowerCase().includes('@unesp') && !form.ra.trim()
+
+    // Mantém o aviso montado durante o fade-out: `avisoMontado` controla a presença no
+    // DOM; `avisoVisivel` dispara a transição de opacidade (fade-in/out).
+    const [avisoMontado, setAvisoMontado] = useState(false)
+    const [avisoVisivel, setAvisoVisivel] = useState(false)
+    useEffect(() => {
+        if (avisoRaUnesp) {
+            setAvisoMontado(true)
+            const id = requestAnimationFrame(() => setAvisoVisivel(true))
+            return () => cancelAnimationFrame(id)
+        }
+        setAvisoVisivel(false)
+        const id = setTimeout(() => setAvisoMontado(false), 300)
+        return () => clearTimeout(id)
+    }, [avisoRaUnesp])
 
     function setField(campo, valor) {
         setForm(prev => ({ ...prev, [campo]: valor }))
@@ -176,7 +195,9 @@ export default function BoxInscricao() {
 
             {/* ── Área de conteúdo com fade na troca de aba ────────── */}
             <div class={`areaAbasInscricao${abaSaindo ? ' areaAbasInscricaoSaindo' : ''}`}>
-
+                <div className="logoSemacEntrar">
+                    <img  src={logoRaios} alt="logo semac"/>
+                </div>
                 {/* ── Formulário: Inscrever-se ──────────────────────── */}
                 {aba === 'inscricao' && (
                     <>
@@ -226,6 +247,11 @@ export default function BoxInscricao() {
                                     onInput={e => setField('email', e.target.value)}
                                     required
                                 />
+                                {avisoMontado && (
+                                    <p class={`avisoRaUnespInscricao ${avisoVisivel ? 'avisoRaUnespInscricaoVisivel' : ''}`}>
+                                        É muito importante que preencha o campo de RA, para que possamos gerar o seu certificado.
+                                    </p>
+                                )}
                                 <CampoSenha
                                     value={form.senha}
                                     onInput={e => setField('senha', e.target.value)}

@@ -32,7 +32,7 @@ const Inscricao = () => {
              }}
         >
             <button className="botaoVoltarInscricao" onClick={voltar}>&#8592; Voltar</button>
-            <div className="ladoDireitoInscricao">
+            <div className="inscricaoBox">
                 <BoxInscricao />
             </div>
         </div>

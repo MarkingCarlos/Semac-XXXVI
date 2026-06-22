@@ -39,6 +39,9 @@
     transition: color 0.2s, border-color 0.2s;
 }
 
+
+
+
 .abaInscricaoAtiva {
     color: var(--Branco);
     border-bottom-color: var(--AmareloAuxApoio);
@@ -46,9 +49,6 @@
 
 /* ── Transição suave na troca de aba ────────────────────────── */
 
-.areaAbasInscricao {
-    /* sem transition aqui — o fade-out é feito pela classe .areaAbasInscricaoSaindo */
-}
 
 .areaAbasInscricaoSaindo {
     opacity: 0;
@@ -263,6 +263,31 @@
     color: rgba(255, 255, 255, 0.55);
 }
 
+/* ── Aviso de RA para e-mail institucional UNESP ─────────────── */
+
+.avisoRaUnespInscricao {
+    box-sizing: border-box;
+    width: 0;
+    min-width: 100%;
+    text-align: left;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: #ffe08a;
+    background: rgba(255, 196, 0, 0.12);
+    border: 1px solid rgba(255, 196, 0, 0.35);
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem;
+    margin: 0;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.avisoRaUnespInscricaoVisivel {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 /* ── Tela de comemoração ─────────────────────────────────────── */
 
 .conteinerComemoracaoInscricao {
@@ -348,7 +373,18 @@
 }
 .botaoConfirmarInscricao:hover    { filter: brightness(1.1); }
 .botaoConfirmarInscricao:disabled { opacity: 0.45; cursor: not-allowed; filter: none; }
+/* ── Logo da aba "Entrar" ────────────────────────────────────── */
 
+.logoSemacEntrar {
+    width: fit-content;
+    margin: 0.5rem auto;
+}
+
+.logoSemacEntrar img {
+    display: block;
+    width: 420px;
+    height: auto;
+}
 /* ── monitor largo ───────────────────────────────────────────── */
 @media (min-width: 1440px) {
     .boxInscricao {
@@ -372,11 +408,17 @@
 
 /* ── Mobile ──────────────────────────────────────────────────── */
 @media (max-width: 768px) {
+    .avisoRaUnespInscricao{
+        font-size: 0.7rem;
+    }
+    .logoSemacEntrar img {
+        width: 320px;
+    }
     .indicadorSenhaInscricao {
         display: flex;
         align-items: center;
         gap: 0.3rem;
-        font-size: 1rem;
+        font-size: 0.7rem;
         font-weight: 600;
         color: rgba(255, 255, 255, 0.4);
         transition: color 0.25s;
@@ -384,14 +426,14 @@
 
     .validacaoSenhaInscricao{
         display: flex;
-        flex-direction: column;
-        gap: 0;
+        flex-direction: row;
+        gap: 10px;
     }
 
     .boxInscricao {
         padding: 1rem;
         border-radius: 12px;
-        min-width: 90vw;
+        max-width: 100%;
     }
 
     .abasInscricao {
@@ -439,3 +481,5 @@
     .tituloComemoracaoInscricao    { font-size: 1.7rem; }
     .subtituloComemoracaoInscricao { font-size: 1rem; }
 }
+
+
