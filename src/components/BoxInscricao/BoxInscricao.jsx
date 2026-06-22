@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'preact/hooks'
 import { useLocation } from 'wouter'
 import gsap from 'gsap'
-import { salvarSessao, temAcessoFinanceiro } from '../../auth/sessao.js'
+import { salvarSessao, temAcessoFinanceiro, temAcessoAdmin } from '../../auth/sessao.js'
 import './boxInscricao.css'
 import logoRaios from '../../assets/logoSemacRaios.png'
 
@@ -157,10 +157,12 @@ export default function BoxInscricao() {
                 if (corpo?.token) salvarSessao(corpo)
                 setFeedback({ tipo: 'sucesso', msg: 'Login efetuado com sucesso!' })
 
-                // Veio do /financeiro: volta pra lá se tiver acesso; senão, home.
+                // Redireciona para a rota de retorno se o usuário tiver acesso.
                 // Sem `next`, mantém na tela (apenas a mensagem de sucesso).
                 if (rotaRetorno === '/financeiro') {
                     navigate(temAcessoFinanceiro() ? '/financeiro' : '/')
+                } else if (rotaRetorno === '/admin') {
+                    navigate(temAcessoAdmin() ? '/admin' : '/')
                 }
             } else if (resposta.status === 401) {
                 setFeedback({ tipo: 'erro', msg: 'E-mail ou senha inválidos.' })

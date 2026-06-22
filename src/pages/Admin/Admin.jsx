@@ -15,6 +15,7 @@
 
 import { useState, useEffect } from 'preact/hooks';
 import { Link } from 'wouter';
+import { lerSessao } from '../../auth/sessao.js';
 import '../Financas/financas.css';
 import './admin.css';
 
@@ -63,15 +64,19 @@ const ICONES_NAVEGACAO = {
     ),
 };
 
+/* `papeis` opcional: quando presente, a seção só aparece para os roles listados. */
 const SECOES = [
     { id: 'doacoes', rotulo: 'Doações' },
     { id: 'conteudo', rotulo: 'Conteúdo' },
     { id: 'participantes', rotulo: 'Participantes' },
     { id: 'comissao', rotulo: 'Comissão' },
-    { id: 'informacoes', rotulo: 'Informações SEMAC' },
+    { id: 'informacoes', rotulo: 'Informações SEMAC', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
 ];
 
 export default function Admin() {
+    const roleAtual = lerSessao()?.role;
+    const secoesVisiveis = SECOES.filter(s => !s.papeis || s.papeis.includes(roleAtual));
+
     const [secaoAtiva, setSecaoAtiva] = useState('doacoes');
 
     const [eventos, setEventos] = useState([]);
@@ -147,7 +152,7 @@ export default function Admin() {
                 </div>
 
                 <nav className="navegacaoSidebarAdmin" aria-label="Seções do módulo de administração">
-                    {SECOES.map((secao) => (
+                    {secoesVisiveis.map((secao) => (
                         <button
                             key={secao.id}
                             type="button"

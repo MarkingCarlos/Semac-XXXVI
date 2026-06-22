@@ -13,6 +13,9 @@ const CHAVE_SESSAO = 'semacSessao';
 /* Papéis com acesso ao módulo financeiro (/financeiro). */
 const PAPEIS_FINANCEIRO = ['DIRETOR_SITE', 'PRESIDENTE'];
 
+/* Papéis com acesso ao módulo de administração (/admin). */
+const PAPEIS_ADMIN = ['MEMBRO', 'DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_SITE', 'PRESIDENTE'];
+
 /* Retorna true se o token JWT no localStorage está expirado ou ausente.
    Decodifica apenas o payload (segunda parte do JWT) sem validar assinatura. */
 function sessaoExpirada() {
@@ -59,6 +62,11 @@ export function usuarioLogado() {
 export function temAcessoFinanceiro() {
     const sessao = lerSessao();
     return !!sessao && PAPEIS_FINANCEIRO.includes(sessao.role) && !sessaoExpirada();
+}
+
+export function temAcessoAdmin() {
+    const sessao = lerSessao();
+    return !!sessao && PAPEIS_ADMIN.includes(sessao.role) && !sessaoExpirada();
 }
 
 /* Mescla o cabeçalho Authorization (quando há token) aos cabeçalhos
