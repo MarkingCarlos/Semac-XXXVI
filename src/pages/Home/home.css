@@ -51,7 +51,7 @@
 
 @keyframes panPhotos {
     from { transform: translateX(0); }
-    to   { transform: translateX(calc(100vw - 72%)); }
+    to   { transform: translateX(calc(100vw - 99%)); }
 }
 
 /* Pan para mobile: centraliza a imagem e oscila ±10% em torno do centro,
