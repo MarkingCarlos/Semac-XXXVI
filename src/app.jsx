@@ -40,7 +40,7 @@ export function App() {
         <div>
             <SobreComissao/>
         </div>
-        <FooterNovo/>
+            <FooterNovo/>
     </>
   )
 }

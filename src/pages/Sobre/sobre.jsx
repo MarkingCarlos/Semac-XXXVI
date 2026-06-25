@@ -8,9 +8,9 @@ import imgOQueOferecemos from '../../assets/BoxSobre/oQueOferecemos.png';
 import imgOQueBuscamos from '../../assets/BoxSobre/o_que_buscamos.png';
 
 const ESTATISTICAS = [
-    { plataforma: 'YouTube', alcance: '100', seguidores: '631', visitas: '100', href: 'https://www.youtube.com/@SEMACsjrp', cor: 'var(--vermelhoDiretoria)' },
-    { plataforma: 'LinkedIn', alcance: '100', seguidores: '100', visitas: '100', href: 'https://www.linkedin.com/company/semacsjrp', cor: 'var(--azulConteudo)' },
-    { plataforma: 'Instagram', alcance: '100', seguidores: '631', visitas: '100', href: 'https://www.instagram.com/semacsjrp/', cor: 'var(--rosaMarketing)' },
+    { plataforma: 'YouTube', alcance: '100', seguidores: '631', visitas: '3396', href: 'https://www.youtube.com/@SEMACsjrp', cor: 'var(--vermelhoDiretoria)' },
+    { plataforma: 'LinkedIn', alcance: '100', seguidores: '2703', visitas: '3396', href: 'https://www.linkedin.com/company/semacsjrp', cor: 'var(--azulConteudo)' },
+    { plataforma: 'Instagram', alcance: '1189', seguidores: '0', visitas: '3696', href: 'https://www.instagram.com/semacsjrp/', cor: 'var(--rosaMarketing)' },
 ];
 
 function CarrosselEstatisticasMobile() {

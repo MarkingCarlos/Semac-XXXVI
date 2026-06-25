@@ -2,7 +2,7 @@ import { useState, useRef } from "preact/hooks";
 import qrCode from "/src/assets/qr.png";
 import "./DoacaoQRCode.css";
 
-const CHAVE_PIX = "patrocinio@semac.cc";
+const CHAVE_PIX = "apoio@semac.cc";
 
 const DoacaoQRCode = () => {
     const [copiado, setCopiado] = useState(false);
