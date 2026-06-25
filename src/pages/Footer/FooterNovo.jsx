@@ -191,7 +191,7 @@ export default function FooterNovo() {
     <footer className="footerNovo" >
       <FooterOnda />
       <div className="corpo">
-        <div className="anelDecorativo" />
+        {/*<div className="anelDecorativo" />*/}
 
         <div className="grade">
           <div className="marca">
