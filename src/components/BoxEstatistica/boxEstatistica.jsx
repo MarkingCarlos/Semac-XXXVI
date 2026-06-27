@@ -4,16 +4,10 @@ import logoYoutube from "../../assets/logo-youtube.svg";
 import logoLinkedin from "../../assets/logo-linkedin.svg";
 import logoInstagram from "../../assets/logo-instagram.svg";
 
-function useCountUp(target) {
-    const ref = useRef(null);
-    return [target, ref];
-}
 
 export function BoxEstatistica({
     plataforma,
-    seguidores,
-    visitas,
-    alcance,
+    stats = [],
     indice = 0,
     href,
 }) {
@@ -49,10 +43,6 @@ export function BoxEstatistica({
         wrapperRef.current.style.setProperty('--mouse-y', `${e.clientY - retanguloWrapper.top}px`);
     };
 
-    const [segCount, refSeg] = useCountUp(seguidores);
-    const [visCount, refVis] = useCountUp(visitas);
-    const [alcCount, refAlc] = useCountUp(alcance);
-
     return (
         <div
             className="boxWrapper"
@@ -64,7 +54,6 @@ export function BoxEstatistica({
                 <div
                     className="box"
                     style={{ backgroundColor: color, animationDelay: `${indice * 0.15}s` }}
-                    ref={refAlc}
                 >
                     <div className="mancha" style={{ backgroundColor: corMancha }} />
 
@@ -74,20 +63,12 @@ export function BoxEstatistica({
                     </div>
 
                     <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-                        <div className="linha" ref={refSeg}>
-                            <span>Seguidores:</span>
-                            <span>{segCount}</span>
-                        </div>
-
-                        <div className="linha" ref={refVis}>
-                            <span>Visitas:</span>
-                            <span>{visCount}</span>
-                        </div>
-
-                        <div className="linha">
-                            <span>Alcance:</span>
-                            <span>{alcCount}</span>
-                        </div>
+                        {stats.map(({ label, valor }) => (
+                            <div key={label} className="linha">
+                                <span>{label}:</span>
+                                <span>{valor}</span>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </a>

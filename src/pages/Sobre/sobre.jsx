@@ -8,9 +8,9 @@ import imgOQueOferecemos from '../../assets/BoxSobre/oQueOferecemos.png';
 import imgOQueBuscamos from '../../assets/BoxSobre/o_que_buscamos.png';
 
 const ESTATISTICAS = [
-    { plataforma: 'YouTube', alcance: '100', seguidores: '631', visitas: '3396', href: 'https://www.youtube.com/@SEMACsjrp', cor: 'var(--vermelhoDiretoria)' },
-    { plataforma: 'LinkedIn', alcance: '100', seguidores: '2703', visitas: '3396', href: 'https://www.linkedin.com/company/semacsjrp', cor: 'var(--azulConteudo)' },
-    { plataforma: 'Instagram', alcance: '1189', seguidores: '0', visitas: '3696', href: 'https://www.instagram.com/semacsjrp/', cor: 'var(--rosaMarketing)' },
+    { plataforma: 'YouTube', href: 'https://www.youtube.com/@SEMACsjrp', cor: 'var(--vermelhoDiretoria)', stats: [{ label: 'Visualizações', valor: '3396' }, { label: 'Alcance', valor: '100' }] },
+    { plataforma: 'LinkedIn', href: 'https://www.linkedin.com/company/semacsjrp', cor: 'var(--azulConteudo)', stats: [{ label: 'Seguidores', valor: '2703' }, { label: 'Impressões', valor: '3396' }] },
+    { plataforma: 'Instagram', href: 'https://www.instagram.com/semacsjrp/', cor: 'var(--rosaMarketing)', stats: [{ label: 'Visualizações', valor: '3696' }, { label: 'Alcance', valor: '1189' }] },
 ];
 
 function CarrosselEstatisticasMobile() {

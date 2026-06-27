@@ -1,6 +1,7 @@
 import { useLocation } from 'wouter'
 import waveUpHome from '/src/assets/waveCima.svg'
 import waveUpHomeMobile from '/src/assets/waveCimaMobile.svg'
+import waveDownHomeMobile from '/src/assets/waveBaixoMobile.svg'
 import waveDownHome from '/src/assets/waveBaixo.svg'
 import logoSemac from '/src/assets/semacPolaridLongo.png'
 import fotos from '/src/assets/fotosHome.png'
@@ -25,7 +26,8 @@ const Home = () =>{
                 <img src={logoSemac} className="imagemLogoHome" alt="LOGO SEMAC" />
             <img src={waveUpHome}       className="ondaCimaHome ondaCimaHomeDesktop" alt="WaveHome logo" />
             <img src={waveUpHomeMobile} className="ondaCimaHome ondaCimaHomeMobile"  alt="WaveHome logo" />
-            <img src={waveDownHome} className="ondaBaixoHome" alt="WaveHome logo" />
+            <img src={waveDownHome}       className="ondaBaixoHome ondaBaixoHomeDesktop" alt="WaveHome logo" />
+            <img src={waveDownHomeMobile} className="ondaBaixoHome ondaBaixoHomeMobile"  alt="WaveHome logo" />
         </div>
     )
 

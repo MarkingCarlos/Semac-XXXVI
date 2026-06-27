@@ -49,8 +49,7 @@
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: 1.4fr 2fr 1.2fr;
-  gap: 44px;
+  grid-template-columns: 1fr 1fr;
   padding-bottom: 30px;
 }
 
@@ -59,6 +58,7 @@
 .marca {
   display: flex;
   flex-direction: column;
+  width: 200px;
 }
 
 .logo {
@@ -126,8 +126,8 @@
 
 .colunasNav {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 44px;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 40px;
 }
 
 /* ── Coluna genérica de links ───────────────────────────────── */

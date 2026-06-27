@@ -131,6 +131,7 @@
 
     /* Remove o teto de altura nos botões de comissão */
     .conteinerBotoesComissao {
+        justify-content: center;
         max-height: unset;
     }
 

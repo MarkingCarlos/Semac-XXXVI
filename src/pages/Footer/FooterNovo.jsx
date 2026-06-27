@@ -154,11 +154,6 @@ function FooterBarraInferior() {
         <span className="copyright">
           © 2026 SEMAC — XXXVI Semana da Computação · IBILCE/UNESP
         </span>
-        {/*<div className="linksLegais">*/}
-        {/*  <a href="#" className="linkLegal">Política de Privacidade</a>*/}
-        {/*  <a href="#" className="linkLegal">Cookies</a>*/}
-        {/*  <a href="#" className="linkLegal">Termos</a>*/}
-        {/*</div>*/}
       </div>
     </>
   );
@@ -191,8 +186,6 @@ export default function FooterNovo() {
     <footer className="footerNovo" >
       <FooterOnda />
       <div className="corpo">
-        {/*<div className="anelDecorativo" />*/}
-
         <div className="grade">
           <div className="marca">
             <FooterLogo />
@@ -202,9 +195,10 @@ export default function FooterNovo() {
           <div className="colunasNav">
             <FooterColunaLinks titulo="Navegação" links={LINKS_NAVEGACAO} />
             <FooterColunaLinks titulo="Participante" links={LINKS_PARTICIPANTE} />
+              <FooterContato />
           </div>
 
-          <FooterContato />
+
         </div>
 
         <FooterBarraInferior />
