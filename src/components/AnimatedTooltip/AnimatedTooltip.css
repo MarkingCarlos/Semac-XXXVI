@@ -77,11 +77,6 @@
 }
 
 
-.conteinerTooltipDuplo {
-    display: flex;
-    flex-direction: row;
-}
-
 @media (max-width: 768px) {
     .conteinerTooltip {
         justify-content: flex-start;
@@ -93,9 +88,15 @@
         transition: transform 0.2s ease, opacity 0.4s ease;
     }
 
-    .conteinerTooltipDuplo {
-        flex-direction: column;
-        gap: 10px;
-        align-items: center;
+    /* 4 itens × 50px com -10px overlap = 170px; força quebra após o 4º */
+    .conteinerTooltipQuebravel {
+        flex-wrap: wrap;
+        max-width: 220px;
+        row-gap: 10px;
+        justify-content: center;
+    }
+
+    .conteinerTooltipQuebravel .itemTooltip:nth-child(n+5) {
+        margin-left: 0;
     }
 }
