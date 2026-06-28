@@ -343,6 +343,9 @@
 
 /* ── Mobile: carrossel horizontal com snap ───────────────────── */
 @media (max-width: 768px) {
+    .botaoVoltarCotas {
+        margin-left: 10px;
+    }
     .campoCotas{
         width: 90%;
     }
