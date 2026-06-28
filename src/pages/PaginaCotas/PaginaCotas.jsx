@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks'
+import { useState, useEffect } from 'preact/hooks'
 import { useLocation } from 'wouter'
 import { COTAS } from '../../data/cotas.js'
 import './paginaCotas.css'
@@ -13,6 +13,17 @@ export default function PaginaCotas() {
 
     const cota       = COTAS.find(cotaItem => cotaItem.id === cotaSelecionada)
     const podeEnviar = cotaSelecionada && nomeEmpresa.trim()
+
+    useEffect(() => {
+        window.scrollTo(0, 0)
+    }, [])
+
+    function handleVoltar() {
+        navigate('~/')
+        setTimeout(() => {
+            document.getElementById('Patrocinadores')?.scrollIntoView({ behavior: 'smooth' })
+        }, 100)
+    }
 
     function handleSubmit(e) {
         e.preventDefault()
@@ -41,7 +52,7 @@ export default function PaginaCotas() {
 
                 {/* ── Cabeçalho ──────────────────────────────── */}
                 <div class="cabecalhoPaginaCotas">
-                    <button class="botaoVoltarCotas" onClick={() => navigate('~/')} aria-label="Voltar">
+                    <button class="botaoVoltarCotas" onClick={handleVoltar} aria-label="Voltar">
                         ← Voltar
                     </button>
                     <div>
