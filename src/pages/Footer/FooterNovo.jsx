@@ -74,7 +74,7 @@ function FooterOnda() {
 
 function FooterLogo() {
   return (
-    <div className="logo">
+    <div className="logoFooter">
       <img src={logoSemac} alt="SEMAC" className="logoImagem" />
       <div>
         <div className="logoNome">SEMAC</div>

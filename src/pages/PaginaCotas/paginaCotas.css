@@ -1,8 +1,7 @@
 /* ── Página de cotas: layout full-page ──────────────────────────── */
 
 .paginaCotas {
-    padding: 0 56px 0;
-    min-height: 100dvh;
+    padding: 1rem 56px 0;
     background: var(--vermelhoAuxDiretoria);
     display: flex;
     flex-direction: row;
@@ -19,7 +18,7 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 1.75rem;
+    gap: 1rem;
 }
 
 /* ── Cabeçalho ───────────────────────────────────────────────── */
@@ -55,6 +54,7 @@
     align-items: center;
     gap: 10px;
     margin-bottom: 8px;
+    margin-left: 10px;
 }
 
 .acentoRotuloCotas {
@@ -81,7 +81,7 @@
     color: #FCF8F5;
     letter-spacing: -0.5px;
     line-height: 1;
-    margin: 0;
+    margin-left: 10px;
 }
 
 .subtituloCotas {
@@ -89,7 +89,7 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 0.9rem;
     color: rgba(252, 248, 245, 0.5);
-    margin: -1rem 0 0 0;
+    margin-left: 10px;
     line-height: 1.5;
 }
 
@@ -245,8 +245,9 @@
 /* ── Formulário ──────────────────────────────────────────────── */
 
 .formularioCotas {
+    width: 100%;
     display: flex;
-    justify-content: center;
+    align-items: center;
     flex-direction: column;
     gap: 1rem;
     border-top: 1px solid rgba(252, 248, 245, 0.08);
@@ -255,6 +256,7 @@
 }
 
 .campoCotas {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -337,24 +339,19 @@
     }
 }
 
-/*!* ── Tablet estreito: 2 colunas ─────────────────────────────── *!*/
-/*@media (max-width: 720px) {*/
-/*    .gradeCotas {*/
-/*        grid-template-columns: repeat(2, 1fr);*/
-/*        gap: 10px;*/
-/*    }*/
 
-/*    .paginaCotas {*/
-/*        padding: 2rem 1rem 3rem;*/
-/*    }*/
-/*}*/
 
 /* ── Mobile: carrossel horizontal com snap ───────────────────── */
 @media (max-width: 768px) {
-    .paginaCotas {
-        padding: 1rem 0.1rem 0 1rem;
+    .campoCotas{
+        width: 90%;
     }
-
+    .paginaCotas {
+        padding: 1rem 0 0;
+    }
+    .botaoEnviarCotas{
+        width: 90%;
+    }
     .paperTexturaCotas{
         height: auto;
         background-size: cover;
@@ -364,11 +361,9 @@
         display: flex;
         overflow-x: auto;
         scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
         gap: 10px;
         padding-bottom: 4px;
-        padding-right: 40px;
+        margin-left: 10px;
     }
 
     .gradeCotas::-webkit-scrollbar {

@@ -75,7 +75,11 @@ const SobreComissao = () => {
                     </div>
 
                     <div className="membrosBox">
-                        <AnimatedTooltip key={ativa.id} membros={ativa.membros} />
+                        <AnimatedTooltip
+                            key={ativa.id}
+                            membros={ativa.membros}
+                            quebraApos={ativa.membros.length >= 7 ? 4 : undefined}
+                        />
                     </div>
                 </div>
             </div>

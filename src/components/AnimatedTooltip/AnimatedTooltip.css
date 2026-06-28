@@ -77,6 +77,11 @@
 }
 
 
+.conteinerTooltipDuplo {
+    display: flex;
+    flex-direction: row;
+}
+
 @media (max-width: 768px) {
     .conteinerTooltip {
         justify-content: flex-start;
@@ -86,5 +91,11 @@
         width: 50px;
         height: 50px;
         transition: transform 0.2s ease, opacity 0.4s ease;
+    }
+
+    .conteinerTooltipDuplo {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
     }
 }

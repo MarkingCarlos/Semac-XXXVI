@@ -53,7 +53,6 @@
     max-width: 320px;
     height: auto;
     display: block;
-    margin-top: -0.5rem;
 }
 
 /* Coluna direita */
@@ -65,9 +64,7 @@
     /*z-index: 60;*/
 }
 
-
-/* Mobile */
-@media (max-width: 780px) {
+@media (max-width: 768px) {
     .tituloDoacao {
         text-align: center;
     }
@@ -77,6 +74,10 @@
     .conteinerInternoDoacao {
         flex-direction: column;
         padding: 16px;
+    }
+
+    .imagemRiscoDoacao {
+        margin: 0 auto;
     }
 
     .colunaDireitaDoacao {

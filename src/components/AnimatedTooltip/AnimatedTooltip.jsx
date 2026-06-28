@@ -75,7 +75,27 @@ function TooltipItem({ membro, index }) {
     );
 }
 
-export default function AnimatedTooltip({ membros }) {
+export default function AnimatedTooltip({ membros, quebraApos }) {
+    if (quebraApos != null) {
+        const primeiraLinha = membros.slice(0, quebraApos);
+        const segundaLinha = membros.slice(quebraApos);
+        return (
+            <div className="conteinerTooltipDuplo">
+                <div className="conteinerTooltip">
+                    {primeiraLinha.map((membro, i) => (
+                        <TooltipItem key={i} membro={membro} index={i} />
+                    ))}
+                </div>
+                {segundaLinha.length > 0 && (
+                    <div className="conteinerTooltip">
+                        {segundaLinha.map((membro, i) => (
+                            <TooltipItem key={i} membro={membro} index={i + quebraApos} />
+                        ))}
+                    </div>
+                )}
+            </div>
+        );
+    }
     return (
         <div className="conteinerTooltip">
             {membros.map((membro, i) => (

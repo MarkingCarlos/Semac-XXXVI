@@ -61,7 +61,7 @@
   width: 200px;
 }
 
-.logo {
+.logologoFooter {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -257,12 +257,15 @@
    ══════════════════════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
+  .barraInferior {
+    margin:0;
+  }
   .ondaSvg {
     height: 36px;
   }
 
   .corpo {
-    padding: 14px 22px 26px;
+    padding: 14px 22px 16px;
   }
 
   .anelDecorativo {
@@ -276,7 +279,8 @@
   }
 
 
-  .logo {
+  .logoFooter {
+    padding: 0;
     margin: 0;
   }
 
@@ -304,8 +308,9 @@
 
   /* Nav columns mantém 2 colunas no mobile */
   .colunasNav {
-    gap: 24px;
-    margin-bottom: 24px;
+    gap: 10px;
+    margin-bottom: 0;
+    grid-template-columns: 1.5fr 1fr ;
   }
 
   .colunaTitulo {
@@ -326,9 +331,9 @@
   }
 
   .copyright {
-    font-size: 11.5px;
+    font-size: 10px;
     line-height: 1.5;
-    margin-bottom: 14px;
+    margin-bottom: 0;
   }
 
   .linksLegais {
