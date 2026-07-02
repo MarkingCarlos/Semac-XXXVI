@@ -118,7 +118,7 @@ export const comissoes = [
             { foto: MARI, nome: 'Mariana Rosset', cargo: 'Membro' },
             { foto: Guta, nome: 'Maria Augusta', cargo: 'Membro' },
             { foto: MATEUS, nome: 'Mateus Tavares', cargo: 'Membro' },
-            { foto: Galocha, nome: 'Artur Hernandes', cargo: 'Membro' },
+            { foto: Galocha, nome: 'Galocha', cargo: 'Membro' },
             { foto: casanova, nome: 'Júlio Telles Casanova', cargo: 'Membro' },
         ],
     },
