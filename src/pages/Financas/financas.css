@@ -104,19 +104,56 @@
     color: #E79839;
 }
 
-.linkVoltarSiteFinancas {
+
+
+/* Rodapé da sidebar: separado da navegação por uma linha — abaixo dela,
+   os controles que fazem você deixar o painel. */
+.rodapeSidebarFinancas {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(252, 248, 245, 0.08);
+}
+
+/* "Sair" encerra a sessão: tom rosa de saída, distinto do âmbar de ação. */
+.botaoSairFinancas {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     padding: 10px 12px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: rgba(252, 248, 245, 0.5);
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.8rem;
     font-weight: 600;
-    color: rgba(252, 248, 245, 0.5);
-    text-decoration: none;
-    border-radius: 10px;
+    letter-spacing: 0.2px;
+    text-align: left;
+    cursor: pointer;
     transition: color 0.16s ease, background 0.16s ease;
 }
 
-.linkVoltarSiteFinancas:hover {
-    color: #E79839;
-    background: rgba(252, 248, 245, 0.04);
+.botaoSairFinancas svg {
+    flex-shrink: 0;
+    transition: transform 0.18s ease;
+}
+
+.botaoSairFinancas:hover {
+    color: #e9897b;
+    background: rgba(177, 53, 113, 0.1);
+}
+
+/* O ícone desliza para fora no hover — encena o "sair". */
+.botaoSairFinancas:hover svg {
+    transform: translateX(2px);
+}
+
+.botaoSairFinancas:focus-visible {
+    outline: 2px solid #E79839;
+    outline-offset: 2px;
 }
 
 /* ── Área de conteúdo ────────────────────────────────────────── */
@@ -478,6 +515,11 @@
     color: rgba(252, 248, 245, 0.35);
 }
 
+.entradaFormularioFinancas::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
 select.entradaFormularioFinancas option {
     background: #3D0118;
     color: #edecec;
@@ -564,9 +606,6 @@ select.entradaFormularioFinancas option {
         padding: 9px 12px;
     }
 
-    .linkVoltarSiteFinancas {
-        display: none;
-    }
 
     .linhaDuplaFormularioFinancas {
         flex-direction: column;
@@ -586,7 +625,8 @@ select.entradaFormularioFinancas option {
     .botaoFantasmaFinancas,
     .botaoAcaoLinhaFinancas,
     .botaoStatusLinhaFinancas,
-    .linkVoltarSiteFinancas,
+    .botaoSairFinancas,
+    .botaoSairFinancas svg,
     .entradaFormularioFinancas {
         transition: none;
     }

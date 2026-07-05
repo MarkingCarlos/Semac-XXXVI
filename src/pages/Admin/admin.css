@@ -103,19 +103,56 @@
     color: #E79839;
 }
 
-.linkVoltarSiteAdmin {
+
+
+/* Rodapé da sidebar: separado da navegação por uma linha — abaixo dela,
+   os controles que fazem você deixar o painel. */
+.rodapeSidebarAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(252, 248, 245, 0.08);
+}
+
+/* "Sair" encerra a sessão: tom rosa de saída, distinto do âmbar de ação. */
+.botaoSairAdmin {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     padding: 10px 12px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: rgba(252, 248, 245, 0.5);
+    font-family: 'Montserrat', sans-serif;
     font-size: 0.8rem;
     font-weight: 600;
-    color: rgba(252, 248, 245, 0.5);
-    text-decoration: none;
-    border-radius: 10px;
+    letter-spacing: 0.2px;
+    text-align: left;
+    cursor: pointer;
     transition: color 0.16s ease, background 0.16s ease;
 }
 
-.linkVoltarSiteAdmin:hover {
-    color: #E79839;
-    background: rgba(252, 248, 245, 0.04);
+.botaoSairAdmin svg {
+    flex-shrink: 0;
+    transition: transform 0.18s ease;
+}
+
+.botaoSairAdmin:hover {
+    color: #e9897b;
+    background: rgba(177, 53, 113, 0.1);
+}
+
+/* O ícone desliza para fora no hover — encena o "sair". */
+.botaoSairAdmin:hover svg {
+    transform: translateX(2px);
+}
+
+.botaoSairAdmin:focus-visible {
+    outline: 2px solid #E79839;
+    outline-offset: 2px;
 }
 
 /* ── Área de conteúdo ────────────────────────────────────────── */
@@ -534,9 +571,9 @@
 }
 
 .badgeContaAtivoAdmin {
-    background-color: rgba(82, 171, 177, 0.15);
-    color: var(--azulConteudo);
-    border: 1px solid rgba(82, 171, 177, 0.5);
+    background-color: rgba(29, 36, 37, 0.15);
+    color: var(--Branco);
+    border: 1px solid rgba(29, 36, 37, 0.15);
 }
 
 .badgeContaInativoAdmin {
@@ -882,7 +919,7 @@
 
 .gradeIngressosInfoSemac {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 1rem;
     margin-top: 1rem;
 }
@@ -985,9 +1022,6 @@
         padding: 9px 12px;
     }
 
-    .linkVoltarSiteAdmin {
-        display: none;
-    }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -996,7 +1030,8 @@
     }
 
     .itemNavegacaoAdmin,
-    .linkVoltarSiteAdmin {
+    .botaoSairAdmin,
+    .botaoSairAdmin svg {
         transition: none;
     }
 }

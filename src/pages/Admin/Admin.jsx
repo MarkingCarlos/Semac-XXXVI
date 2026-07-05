@@ -14,11 +14,12 @@
 // Estado local apenas (mock); a integração com a API virá depois.
 
 import { useState, useEffect } from 'preact/hooks';
-import { Link } from 'wouter';
-import { lerSessao } from '../../auth/sessao.js';
+import { Link, useLocation } from 'wouter';
+import { lerSessao, limparSessao } from '../../auth/sessao.js';
 import '../Financas/financas.css';
 import './admin.css';
 
+import Inicio from './sections/Inicio.jsx';
 import Doacoes from './sections/Doacoes.jsx';
 import Conteudo from './sections/Conteudo.jsx';
 import InformacoesSemac from './sections/InformacoesSemac.jsx';
@@ -31,6 +32,13 @@ import { listarEventos } from './data/apiEventos.js';
 
 /* Ícones da navegação — SVGs inline, stroke herda currentColor */
 const ICONES_NAVEGACAO = {
+    inicio: (
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9.5 12 3l9 6.5" />
+            <path d="M5 9v11h14V9" />
+            <path d="M9 20v-6h6v6" />
+        </svg>
+    ),
     doacoes: (
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z" />
@@ -66,18 +74,26 @@ const ICONES_NAVEGACAO = {
 
 /* `papeis` opcional: quando presente, a seção só aparece para os roles listados. */
 const SECOES = [
-    { id: 'doacoes', rotulo: 'Doações' },
-    { id: 'conteudo', rotulo: 'Conteúdo' },
-    { id: 'participantes', rotulo: 'Participantes' },
-    { id: 'comissao', rotulo: 'Comissão' },
+    { id: 'inicio', rotulo: 'Início' },
+    { id: 'doacoes', rotulo: 'Doações',papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
+    { id: 'conteudo', rotulo: 'Conteúdo', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO']  },
+    { id: 'participantes', rotulo: 'Participantes', papeis: ['DIRETOR_SITE', 'PRESIDENTE']  },
+    { id: 'comissao', rotulo: 'Comissão',papeis: ['DIRETOR_SITE', 'PRESIDENTE']  },
     { id: 'informacoes', rotulo: 'Informações SEMAC', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
 ];
 
 export default function Admin() {
+    const [, navegar] = useLocation();
     const roleAtual = lerSessao()?.role;
     const secoesVisiveis = SECOES.filter(s => !s.papeis || s.papeis.includes(roleAtual));
 
-    const [secaoAtiva, setSecaoAtiva] = useState('doacoes');
+    // Encerra a sessão e volta para o site público.
+    function sair() {
+        limparSessao();
+        navegar('/');
+    }
+
+    const [secaoAtiva, setSecaoAtiva] = useState('inicio');
 
     const [eventos, setEventos] = useState([]);
     const [carregandoEventos, setCarregandoEventos] = useState(true);
@@ -170,14 +186,22 @@ export default function Admin() {
                     ))}
                 </nav>
 
-                <Link href="/" className="linkVoltarSiteAdmin">
-                    ← Voltar ao site
-                </Link>
+                <div className="rodapeSidebarAdmin">
+                    <button type="button" className="botaoSairAdmin" onClick={sair}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                            <path d="M16 17l5-5-5-5" />
+                            <path d="M21 12H9" />
+                        </svg>
+                        <span>Sair</span>
+                    </button>
+                </div>
             </aside>
 
             {/* ── Conteúdo ────────────────────────────────── */}
             <main className="conteudoAdmin">
                 <section key={secaoAtiva} className="secaoAdmin">
+                    {secaoAtiva === 'inicio' && <Inicio />}
                     {secaoAtiva === 'doacoes' && <Doacoes />}
                     {secaoAtiva === 'conteudo' && (
                         <Conteudo

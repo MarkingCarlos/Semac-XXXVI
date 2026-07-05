@@ -1,0 +1,284 @@
+/* =================================================================
+   inicio.css — seção "Início" do /admin (perfil do próprio usuário)
+   Herda a identidade do módulo: crimson de fundo, âmbar (#E79839) como
+   única voz de ação, Bungee + Montserrat. O elemento-assinatura é a
+   prévia da camiseta SEMAC, que reflete modelo e tamanho ao vivo.
+   Campos e botão de salvar reaproveitam classes ...Financas.
+   ================================================================= */
+
+.conteudoInicio {
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* ── Boas-vindas ─────────────────────────────────────────────── */
+
+.cabecalhoBoasVindasInicio {
+    margin-bottom: 34px;
+}
+
+.eyebrowPerfilInicio {
+    display: inline-block;
+    font-family: 'Bungee', cursive;
+    font-size: 0.66rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #E79839;
+    margin-bottom: 14px;
+}
+
+.separadorEyebrowInicio {
+    margin: 0 8px;
+    color: rgba(231, 152, 57, 0.5);
+}
+
+.saudacaoInicio {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: rgba(252, 248, 245, 0.6);
+}
+
+.nomeBoasVindasInicio {
+    font-family: 'Bungee', cursive;
+    font-weight: 400;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    line-height: 1.02;
+    color: #edecec;
+    margin: 2px 0 10px;
+    word-break: break-word;
+}
+
+.emailUsuarioInicio {
+    margin: 0;
+    font-size: 0.86rem;
+    color: rgba(252, 248, 245, 0.5);
+}
+
+/* ── Painel: formulário + prévia ─────────────────────────────── */
+
+.painelPerfilInicio {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 28px;
+    align-items: start;
+}
+
+.formularioPerfilInicio {
+    display: flex;
+    flex-direction: column;
+    background: rgba(61, 1, 24, 0.35);
+    border: 1px solid rgba(252, 248, 245, 0.08);
+    border-radius: 16px;
+    padding: 26px 26px 24px;
+}
+
+/* Grupos de seleção da camiseta */
+.grupoCamisetaInicio {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.opcoesModeloInicio {
+    display: flex;
+    gap: 10px;
+}
+
+.botaoModeloInicio {
+    flex: 1;
+    padding: 0.7rem 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(252, 248, 245, 0.18);
+    background: rgba(252, 248, 245, 0.04);
+    color: rgba(252, 248, 245, 0.75);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+}
+
+.botaoModeloInicio:hover {
+    border-color: rgba(231, 152, 57, 0.5);
+    color: #edecec;
+}
+
+.botaoModeloAtivoInicio,
+.botaoModeloAtivoInicio:hover {
+    border-color: #E79839;
+    background: rgba(231, 152, 57, 0.14);
+    color: #E79839;
+}
+
+.opcoesTamanhoInicio {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.botaoTamanhoInicio {
+    min-width: 46px;
+    padding: 0.6rem 0.4rem;
+    border-radius: 10px;
+    border: 1px solid rgba(252, 248, 245, 0.18);
+    background: rgba(252, 248, 245, 0.04);
+    color: rgba(252, 248, 245, 0.75);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    cursor: pointer;
+    transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+}
+
+.botaoTamanhoInicio:hover {
+    border-color: rgba(231, 152, 57, 0.5);
+    color: #edecec;
+}
+
+.botaoTamanhoAtivoInicio,
+.botaoTamanhoAtivoInicio:hover {
+    border-color: #E79839;
+    background: rgba(231, 152, 57, 0.14);
+    color: #E79839;
+}
+
+.botaoModeloInicio:focus-visible,
+.botaoTamanhoInicio:focus-visible {
+    outline: 2px solid #E79839;
+    outline-offset: 2px;
+}
+
+/* Rodapé do formulário: salvar + confirmação */
+.rodapePerfilInicio {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 6px;
+}
+
+.avisoErroInicio {
+    margin: 2px 0 16px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(176, 32, 56, 0.18);
+    border: 1px solid rgba(231, 96, 120, 0.4);
+    color: #f3b8c2;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.avisoSucessoInicio {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--Branco);
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.avisoSucessoInicio::before {
+    content: '✓ ';
+}
+
+.avisoSucessoVisivelInicio {
+    opacity: 1;
+    transform: none;
+}
+
+/* ── Prévia da camiseta (elemento-assinatura) ────────────────── */
+
+.previaCamisetaInicio {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 30px 20px 24px;
+    background: rgba(61, 1, 24, 0.35);
+    border: 1px solid rgba(252, 248, 245, 0.08);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+/* Halo de destaque atrás da camiseta */
+.previaCamisetaInicio::before {
+    content: '';
+    position: absolute;
+    top: 34%;
+    left: 50%;
+    width: 240px;
+    height: 240px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(231, 152, 57, 0.22) 0%, transparent 68%);
+    pointer-events: none;
+}
+
+.svgCamisetaInicio {
+    position: relative;
+    width: 100%;
+    max-width: 210px;
+    height: auto;
+    filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.4));
+}
+
+.corpoCamisetaInicio {
+    fill: rgba(231, 152, 57, 0.08);
+    stroke: #edecec;
+    stroke-width: 3;
+    stroke-linejoin: round;
+    transition: fill 0.2s ease;
+}
+
+.golaCamisetaInicio {
+    fill: none;
+    stroke: rgba(237, 236, 236, 0.55);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+}
+
+.letraTamanhoCamisetaInicio {
+    font-family: 'Bungee', cursive;
+    font-size: 52px;
+    fill: #E79839;
+    dominant-baseline: middle;
+}
+
+.legendaCamisetaInicio {
+    position: relative;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: rgba(252, 248, 245, 0.7);
+    text-align: center;
+}
+
+/* ── Estados ─────────────────────────────────────────────────── */
+
+.estadoCarregandoInicio {
+    margin: 24px 0;
+    color: rgba(252, 248, 245, 0.55);
+    font-size: 0.9rem;
+}
+
+/* ── Responsivo ──────────────────────────────────────────────── */
+
+@media (max-width: 720px) {
+    .painelPerfilInicio {
+        grid-template-columns: 1fr;
+    }
+
+    .previaCamisetaInicio {
+        order: -1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .botaoModeloInicio,
+    .botaoTamanhoInicio,
+    .avisoSucessoInicio,
+    .corpoCamisetaInicio {
+        transition: none;
+    }
+}
