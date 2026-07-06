@@ -10,6 +10,7 @@ import { NavPontos } from "./components/NavPontos/navPontos.jsx";
 import paperTexture from './assets/PAPER.png';
 import ContagemRegressiva from "./components/contagemRegressiva/contagemRegressiva.jsx";
 import {PaginaContagem} from "./pages/page/PaginaContagem.jsx";
+import Sorteio from "./pages/Sorteio/sorteio.jsx"
 
 
 export function App() {

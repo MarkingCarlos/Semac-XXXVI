@@ -1,0 +1,184 @@
+.sorteio-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    position: relative;
+    z-index: 51;
+}
+
+.sorteio-card {
+    border-radius: 16px;
+    padding: 2.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    position: relative;
+}
+
+.sorteio-titulo {
+    font-family: 'Bungee', sans-serif;
+    font-size: 97px;
+    color: var(--Branco);
+    text-transform: uppercase;
+    text-align: center;
+    margin: 0;
+}
+
+.sorteio-corpo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2.5rem;
+}
+
+.sorteio-confete-tela {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    pointer-events: none;
+    z-index: 999;
+}
+
+.sorteio-esquerda {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.sorteio-cortina-wrapper {
+    position: relative;
+    width: 684px;
+    height: 179px;
+    border-radius: 20px;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.sorteio-nome {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bungee', sans-serif;
+    font-size: 45px;
+    color: var(--Branco);
+    text-transform: uppercase;
+    text-align: center;
+    padding: 0.5rem;
+    background-color: var(--vermelhoDiretoria);
+    border-radius: 10px;
+}
+
+.sorteio-cortina {
+    position: absolute;
+    inset: 0;
+    background-color: var(--AmareloAuxApoio);
+    border-radius: 10px;
+    transform: translateY(0%);
+    transition: transform 0.8s cubic-bezier(0.77, 0, 0.18, 1);
+}
+
+.cortina-idle    { transform: translateY(0%); }
+.cortina-abrindo { transform: translateY(-100%); }
+.cortina-aberto  { transform: translateY(-100%); }
+.cortina-fechando { transform: translateY(0%); }
+
+.sorteio-botoes {
+    justify-content: center;
+    display: flex;
+    gap: 1rem;
+}
+
+.sorteio-btn {
+    font-family: 'Bungee', sans-serif;
+    font-size: 45px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 20px;
+    padding: 0.8rem 2rem;
+    width: 334px;
+    height: 95px;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.15s, filter 0.15s;
+}
+
+.sorteio-btn:hover {
+    transform: scale(1.03);
+    filter: brightness(1.1);
+}
+
+.btn-iniciar {
+    background-color: var(--AmareloAuxApoio);
+    color: var(--Branco);
+}
+
+.btn-reiniciar {
+    background-color: var(--vermelhoDiretoria);
+    color: var(--Branco);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.sorteio-direita {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.sorteio-item-img {
+    width: 455px;
+    height: 359px;
+    object-fit: contain;
+    border-radius: 20px;
+    background-color: var(--Branco);
+    padding: 0.5rem;
+}
+
+.sorteio-item-seletor {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.seletor-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    color: var(--Branco);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s, background 0.2s;
+}
+
+.seletor-btn:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+.seletor-nome {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    flex: 1;
+    height: 70px;
+    font-family: 'Bungee', sans-serif;
+    font-size: 38px;
+    color: var(--Branco);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
