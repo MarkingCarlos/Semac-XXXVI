@@ -6,7 +6,7 @@ import Admin from './pages/Admin/Admin.jsx'
 import Inscricao from "./pages/Inscricao/Inscricao.jsx";
 import PaginaCotas from "./pages/PaginaCotas/PaginaCotas.jsx";
 import Financas from "./pages/Financas/Financas.jsx";
-// import Ranking from "./pages/Ranking/paginaRanking.jsx";
+import Ranking from "./pages/Ranking/paginaRanking.jsx";
 import { temAcessoFinanceiro, temAcessoAdmin } from './auth/sessao.js'
 
 
@@ -29,7 +29,7 @@ render(
         <Route path="/financeiro"><RotaFinanceiro /></Route>
         <Route path="/inscricoes"><Inscricao /></Route>
         <Route path="/cotas"><PaginaCotas /></Route>
-        {/*<Route path="/ranking"><Ranking /></Route>*/}
+        <Route path="/ranking"><Ranking /></Route>
         <Route><App /></Route>
     </Switch>,
     document.getElementById('app')
