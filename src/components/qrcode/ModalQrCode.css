@@ -1,0 +1,69 @@
+@import '../../index.css';
+
+.main{
+    margin: 0;
+    padding: 0;
+    gap:0;
+    width: 100vw;
+    height:100vh;
+    display:flex;
+    flex-direction:row;
+    background-image: linear-gradient(to bottom, var(--vermelhoAuxDiretoria), color-mix(in oklab, var(--vermelhoDiretoria) 65%, black));
+}
+.left{
+    width:50%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+}
+
+.title{
+    width: 100%;
+    height:30%;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 15px solid var(--Branco);
+    background-color: var(--vermelhoAuxDiretoria);
+}
+
+.title h1{
+    color: var(--vermelhoDiretoria);
+text-shadow: 3px 0 var(--Branco), -3px 0 var(--Branco), 0 3px var(--Branco), 0 -3px var(--Branco), 3px 3px var(--Branco), -3px -3px var(--Branco), 3px -3px var(--Branco), -3px 3px var(--Branco);
+}
+
+.content-left{
+    width:100%;
+    height: 70%;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.right{
+    width:50%;
+    height:100%;
+    background-color: var(--vermelhoDiretoria);
+    border-radius:  50px 0 0 50px;
+    border: 15px solid var(--Branco);
+    border-right:none;
+}
+
+.picker{
+  height: 8vh;
+  width: 32vw;  
+  font-family: 'Bungee', sans-serif;
+  font-size:large;
+  color: var(--vermelhoDiretoria);
+  background-color: var(--Branco);
+  border:none;
+  border-radius: 5px;
+}
+
+.generate{
+    background-color: var(--Branco);
+    margin-top: 10vh;
+    color: var(--vermelhoDiretoria);
+    font-size: larger;
+}

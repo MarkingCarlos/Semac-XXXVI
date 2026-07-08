@@ -6,6 +6,7 @@ import ContagemRegressiva from "./components/contagemRegressiva/contagemRegressi
 import BtnContato from "./components/BtnContato/btnContato.jsx";
 import ModalPix from './components/ModalPix/ModalPix';
 import ModalPatrocinadores from './components/ModalPatrocinadores/ModalPatrocinadores';
+import ModalQrCode from './components/qrcode/ModalQrCode.jsx';
 import './app.css'
 
 export function App() {
@@ -26,7 +27,7 @@ export function App() {
         <div style={{marginTop: "3em"}}>
           <BtnContato/>
       </div> */} 
-      <ModalPatrocinadores/>
+      < ModalQrCode />
 
     </>
   )
