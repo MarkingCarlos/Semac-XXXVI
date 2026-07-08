@@ -67,3 +67,37 @@ text-shadow: 3px 0 var(--Branco), -3px 0 var(--Branco), 0 3px var(--Branco), 0 -
     color: var(--vermelhoDiretoria);
     font-size: larger;
 }
+
+/* REPONSIVIDADE*/
+
+@media (max-width: 700px) {
+    .main{ 
+        height: 200vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: baseline;
+        padding: 0;
+        overflow: auto;
+    }
+
+    .title{
+        width:100vw;
+        height:20vh;
+        border-radius:15px;
+        border-bottom: 10px solid var(--Branco);
+    }
+
+    .content-left{
+        width:100vw;
+        display:block;
+    }
+
+    .picker{
+        width:50vw;
+    }
+
+    .right{
+        display:none;
+    }
+}

@@ -96,8 +96,9 @@ const ModalQrCode = () => { // Removida a prop vazia para usar o JSON importado
           <button id="GenerateQrCode" className="generate"> Gerar QrCode</button>
         </div>
       </div>
+
       <div className='right'>
-        <div className='content'>
+        <div className='content-right'>
           <p>ID do Evento Selecionado: {selectedEventId}</p>
         </div>
       </div>
