@@ -26,7 +26,7 @@ export const TRILHAS = [
 ];
 
 /* Data e hora do anúncio oficial dos palestrantes (America/Sao_Paulo) */
-export const DATA_ANUNCIO = new Date('2026-07-15T09:00:00-03:00');
+export const DATA_ANUNCIO = new Date('2026-08-15T09:00:00-03:00');
 
 /* Estatísticas exibidas no card lateral */
 export const STATS = [
