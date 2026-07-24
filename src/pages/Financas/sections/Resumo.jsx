@@ -1,13 +1,24 @@
-import { formatarCentavos } from '../utils/moeda.js';
-import { CAIXA_ANTERIOR } from '../data/mockFinancas.js';
+import { useState } from 'preact/hooks';
+import { formatarCentavos, formatarData } from '../utils/moeda.js';
+import { atualizarCaixaFundunesp } from '../data/apiCaixaFundunesp.js';
+import CampoMoeda from '../components/CampoMoeda.jsx';
 import './resumo.css';
 
 /* Resumo do saldo — extrato em forma de livro-razão.
    Saldo operacional = patrocínios recebidos + inscrições + doações − compras.
-   Caixa anterior (FundoUnesp) é exibido em card separado — não entra no saldo.
+   Caixa anterior (FundoUnesp) vem da tabela `caixa_fundunesp` e é exibido em
+   card separado, editável no próprio card — não entra no saldo.
    Patrocínios A_RECEBER aparecem à parte e não entram no saldo.
    Doações são cadastradas no /admin e contabilizadas aqui no caixa. */
-export default function Resumo({ patrocinadores, compras, inscricoes, doadores = [] }) {
+export default function Resumo({
+    patrocinadores,
+    compras,
+    inscricoes,
+    doadores = [],
+    caixaFundunesp,
+    setCaixaFundunesp,
+    erroCaixaFundunesp = '',
+}) {
     const totalPatrociniosRecebidos = patrocinadores
         .filter((patrocinador) => patrocinador.statusPagamento === 'RECEBIDO')
         .reduce((soma, patrocinador) => soma + patrocinador.valorFinal, 0);
@@ -28,6 +39,57 @@ export default function Resumo({ patrocinadores, compras, inscricoes, doadores =
         { rotulo: 'Doações', valor: totalDoacoes, tipo: 'entrada' },
         { rotulo: 'Compras', valor: totalCompras, tipo: 'saida' },
     ];
+
+    /* ── Edição inline do caixa da FundoUnesp ────────────────── */
+    const [editandoCaixa, setEditandoCaixa] = useState(false);
+    const [valorEditadoCaixa, setValorEditadoCaixa] = useState(0);
+    const [salvandoCaixa, setSalvandoCaixa] = useState(false);
+    const [erroSalvarCaixa, setErroSalvarCaixa] = useState('');
+
+    function abrirEdicaoCaixa() {
+        setValorEditadoCaixa(caixaFundunesp?.valor ?? 0);
+        setErroSalvarCaixa('');
+        setEditandoCaixa(true);
+    }
+
+    // Esc descarta a alteração e volta ao valor que veio do banco.
+    function cancelarEdicaoCaixa() {
+        setEditandoCaixa(false);
+        setErroSalvarCaixa('');
+    }
+
+    // Em caso de falha permanece em edição, preservando o que foi digitado.
+    async function salvarCaixa() {
+        setSalvandoCaixa(true);
+        setErroSalvarCaixa('');
+        try {
+            const atualizado = await atualizarCaixaFundunesp(valorEditadoCaixa);
+            setCaixaFundunesp(atualizado);
+            setEditandoCaixa(false);
+        } catch (e) {
+            setErroSalvarCaixa(e.message);
+        } finally {
+            setSalvandoCaixa(false);
+        }
+    }
+
+    function aoTeclarCaixa(evento) {
+        if (evento.key === 'Enter') {
+            evento.preventDefault();
+            salvarCaixa();
+        } else if (evento.key === 'Escape') {
+            evento.preventDefault();
+            cancelarEdicaoCaixa();
+        }
+    }
+
+    /* Sem registro carregado (falha ou ainda carregando) não se afirma nada
+       sobre a data — só depois de ter o dado em mãos. */
+    const notaCaixaFundunesp = !caixaFundunesp
+        ? 'Saldo FundoUnesp'
+        : caixaFundunesp.dataAtualizacao
+          ? `Saldo FundoUnesp — atualizado em ${formatarData(caixaFundunesp.dataAtualizacao)}`
+          : 'Saldo FundoUnesp — nunca atualizado';
 
     return (
         <div className="conteudoResumoFinancas">
@@ -84,10 +146,59 @@ export default function Resumo({ patrocinadores, compras, inscricoes, doadores =
 
                     <section className="blocoCaixaAnteriorResumo" aria-label="Caixa anterior FundoUnesp">
                         <span className="rotuloBlocoResumo">Caixa anterior</span>
-                        <strong className="valorCaixaAnteriorResumo">
-                            {formatarCentavos(CAIXA_ANTERIOR.valor)}
-                        </strong>
-                        <span className="notaSaldoResumo">{CAIXA_ANTERIOR.observacao}</span>
+
+                        <div className="linhaValorCaixaAnteriorResumo">
+                            {editandoCaixa ? (
+                                <CampoMoeda
+                                    valorCentavos={valorEditadoCaixa}
+                                    aoMudar={setValorEditadoCaixa}
+                                    desabilitado={salvandoCaixa}
+                                    classeExtra="entradaCaixaAnteriorResumo"
+                                    aoTeclar={aoTeclarCaixa}
+                                    rotuloAcessivel="Valor do caixa da FundoUnesp"
+                                    autoFoco
+                                />
+                            ) : (
+                                <strong className="valorCaixaAnteriorResumo">
+                                    {caixaFundunesp ? formatarCentavos(caixaFundunesp.valor) : '—'}
+                                </strong>
+                            )}
+
+                            <button
+                                type="button"
+                                className={
+                                    editandoCaixa
+                                        ? 'botaoAcaoLinhaFinancas botaoEditarCaixaAnteriorResumo botaoSalvarCaixaAnteriorResumo'
+                                        : 'botaoAcaoLinhaFinancas botaoEditarCaixaAnteriorResumo'
+                                }
+                                aria-label={
+                                    editandoCaixa
+                                        ? 'Salvar caixa da FundoUnesp'
+                                        : 'Editar caixa da FundoUnesp'
+                                }
+                                title={editandoCaixa ? 'Salvar' : 'Editar'}
+                                disabled={!caixaFundunesp || salvandoCaixa}
+                                onClick={editandoCaixa ? salvarCaixa : abrirEdicaoCaixa}
+                            >
+                                {editandoCaixa ? (
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                ) : (
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                    </svg>
+                                )}
+                            </button>
+                        </div>
+
+                        <span className="notaSaldoResumo">{notaCaixaFundunesp}</span>
+
+                        {(erroCaixaFundunesp || erroSalvarCaixa) && (
+                            <p className="avisoErroCaixaAnteriorResumo" role="alert">
+                                {erroSalvarCaixa || erroCaixaFundunesp}
+                            </p>
+                        )}
                     </section>
 
                     <section className="blocoAReceberResumo" aria-label="Valores a receber">

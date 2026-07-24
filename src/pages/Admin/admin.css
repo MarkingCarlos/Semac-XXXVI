@@ -917,6 +917,44 @@
     font-style: italic;
 }
 
+/* A aba tem dois blocos (ingressos e cotas), cada um com seu cabeçalho */
+.blocoInfoSemac {
+    margin-top: 2rem;
+}
+
+.cabecalhoBlocoInfoSemac {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tituloBlocoInfoSemac {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--Branco);
+    margin: 0;
+}
+
+.notaBlocoInfoSemac {
+    margin: 0.35rem 0 0;
+    max-width: 46ch;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: rgba(237, 236, 236, 0.5);
+}
+
+.ajudaCampoInfoSemac {
+    margin-top: 0.4rem;
+    font-size: 0.72rem;
+    line-height: 1.4;
+    color: rgba(237, 236, 236, 0.5);
+}
+
 .gradeIngressosInfoSemac {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));

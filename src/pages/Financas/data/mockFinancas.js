@@ -10,12 +10,9 @@
    - inscrições confirmadas → GET /api/pessoa/inscricoes (ver data/apiInscricoes.js)
    por isso não há mais mock deles aqui. */
 
-/* Registro único por edição — saldo repassado pela FundoUnesp. */
-export const CAIXA_ANTERIOR = {
-    valor: 824550,
-    observacao: 'Saldo FundoUnesp — SEMAC XXXV',
-    atualizadoEm: '2026-05-02T10:00:00',
-};
+/* O caixa da FundoUnesp agora vem da API real (tabela `caixa_fundunesp`,
+   ver data/apiCaixaFundunesp.js) — registro único, editável no card do
+   Resumo. Por isso não há mais mock dele aqui. */
 
 /* Patrocinadores agora vêm da API real (ver data/apiPatrocinios.js) —
    por isso não há mais mock deles aqui. As COTAS acima seguem servindo

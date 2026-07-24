@@ -141,12 +141,67 @@
     text-align: left;
 }
 
+/* O valor divide a linha com o botão de edição — o card em si é coluna */
+.linhaValorCaixaAnteriorResumo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
 .valorCaixaAnteriorResumo {
     font-family: 'Montserrat', sans-serif;
     font-weight: 700;
     font-size: 1.35rem;
     color: #52ABB1;
     font-variant-numeric: tabular-nums;
+    text-align: left;
+}
+
+/* Variante compacta do CampoMoeda para caber no card, no lugar do valor */
+.entradaCaixaAnteriorResumo {
+    flex: 1;
+    min-width: 0;
+    padding: 6px 10px;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #52ABB1;
+}
+
+.entradaCaixaAnteriorResumo:focus {
+    border-color: #52ABB1;
+}
+
+/* Herda .botaoAcaoLinhaFinancas; só troca o hover para o teal do card */
+.botaoEditarCaixaAnteriorResumo:hover:not(:disabled) {
+    color: #52ABB1;
+    border-color: rgba(82, 171, 177, 0.5);
+}
+
+.botaoEditarCaixaAnteriorResumo:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+/* Em edição o botão vira o "salvar" — mesmo tratamento do confirmar exclusão */
+.botaoSalvarCaixaAnteriorResumo,
+.botaoSalvarCaixaAnteriorResumo:hover:not(:disabled) {
+    color: #edecec;
+    background: #52ABB1;
+    border-color: #52ABB1;
+}
+
+/* Mesmo tratamento dos avisos das outras seções, em versão compacta */
+.avisoErroCaixaAnteriorResumo {
+    margin: 4px 0 0;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: rgba(176, 32, 56, 0.18);
+    border: 1px solid rgba(231, 96, 120, 0.4);
+    color: #f3b8c2;
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1.45;
     text-align: left;
 }
 

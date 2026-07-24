@@ -1,4 +1,11 @@
 // ── Dados das cotas de patrocínio ─────────────────────────────────
+// Define o conteúdo e a ORDEM dos cards da página /cotas.
+//
+// preco      : FALLBACK. O valor exibido vem da tabela `cota` (gerenciada
+//              no /admin, seção "Informações SEMAC") quando há registro do
+//              nível correspondente; este texto só aparece se a cota ainda
+//              não estiver cadastrada ou se a API não responder.
+//              O `id` casa com o enum NivelPatrocinio em maiúsculas.
 // corFundo   : cor sólida de fundo do card
 // corDestaque: cor usada no nome, ícone ✓ e badge — deve contrastar com corFundo
 // corTexto   : cor dos benefícios — use escuro apenas quando corFundo for claro (ex: Ouro)

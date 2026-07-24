@@ -12,6 +12,7 @@ import { listarPatrocinadores } from './data/apiPatrocinios.js';
 import { listarFornecedores } from './data/apiFornecedores.js';
 import { listarInscricoes } from './data/apiInscricoes.js';
 import { listarCompras } from './data/apiCompras.js';
+import { lerCaixaFundunesp } from './data/apiCaixaFundunesp.js';
 import './financas.css';
 
 /* Ícones da navegação — SVGs inline, stroke herda currentColor */
@@ -104,6 +105,13 @@ export default function Financas() {
     const [carregandoFornecedores, setCarregandoFornecedores] = useState(true);
     const [erroFornecedores, setErroFornecedores] = useState('');
 
+    // Caixa da FundoUnesp: registro único, editável no card do Resumo.
+    // Exibido à parte — não entra no saldo operacional. Diferente das
+    // demais seções não há flag de carregando: o card usa o próprio
+    // registro (null enquanto não chega) como estado de espera.
+    const [caixaFundunesp, setCaixaFundunesp] = useState(null);
+    const [erroCaixaFundunesp, setErroCaixaFundunesp] = useState('');
+
     useEffect(() => {
         let ativo = true;
         listarPatrocinadores()
@@ -155,6 +163,13 @@ export default function Financas() {
             })
             .finally(() => {
                 if (ativo) setCarregandoCompras(false);
+            });
+        lerCaixaFundunesp()
+            .then((caixa) => {
+                if (ativo) setCaixaFundunesp(caixa);
+            })
+            .catch((e) => {
+                if (ativo) setErroCaixaFundunesp(e.message);
             });
         return () => {
             ativo = false;
@@ -210,6 +225,9 @@ export default function Financas() {
                             compras={compras}
                             inscricoes={inscricoes}
                             doadores={doadores}
+                            caixaFundunesp={caixaFundunesp}
+                            setCaixaFundunesp={setCaixaFundunesp}
+                            erroCaixaFundunesp={erroCaixaFundunesp}
                         />
                     )}
                     {secaoAtiva === 'patrocinios' && (
