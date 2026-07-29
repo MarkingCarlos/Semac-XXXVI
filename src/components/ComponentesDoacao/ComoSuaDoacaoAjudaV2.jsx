@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useLayoutEffect } from 'preact/hooks';
 import './ComoSuaDoacaoAjudaV2.css';
 
-const META_TOTAL = 1000; // R$ 1.000 — meta de arrecadação desta edição
+const META_TOTAL = 2500; // R$ 2.500 — meta de arrecadação desta edição
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 function formatarReais(valor) {
