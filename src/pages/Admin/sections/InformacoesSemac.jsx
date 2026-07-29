@@ -251,10 +251,27 @@ export default function InformacoesSemac() {
                                     </button>
                                     <button
                                         type="button"
-                                        className="botaoExcluirIngressoInfoSemac"
+                                        className={
+                                            idConfirmandoExclusao === tipo.id
+                                                ? 'botaoAcaoLinhaFinancas botaoConfirmarExclusaoFinancas'
+                                                : 'botaoAcaoLinhaFinancas'
+                                        }
+                                        aria-label={
+                                            idConfirmandoExclusao === tipo.id
+                                                ? `Confirmar exclusão de ${tipo.nome}`
+                                                : `Excluir ${tipo.nome}`
+                                        }
+                                        title={
+                                            idConfirmandoExclusao === tipo.id
+                                                ? 'Clique novamente para confirmar'
+                                                : 'Excluir'
+                                        }
                                         onClick={() => excluir(tipo.id)}
                                     >
-                                        {idConfirmandoExclusao === tipo.id ? 'Confirmar exclusão' : 'Excluir'}
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="18" y1="6" x2="6" y2="18" />
+                                            <line x1="6" y1="6" x2="18" y2="18" />
+                                        </svg>
                                     </button>
                                 </div>
                             </div>
@@ -320,10 +337,27 @@ export default function InformacoesSemac() {
                                     </button>
                                     <button
                                         type="button"
-                                        className="botaoExcluirIngressoInfoSemac"
+                                        className={
+                                            idCotaConfirmandoExclusao === cota.id
+                                                ? 'botaoAcaoLinhaFinancas botaoConfirmarExclusaoFinancas'
+                                                : 'botaoAcaoLinhaFinancas'
+                                        }
+                                        aria-label={
+                                            idCotaConfirmandoExclusao === cota.id
+                                                ? `Confirmar exclusão da cota ${rotuloDoNivel(cota.nivel)}`
+                                                : `Excluir cota ${rotuloDoNivel(cota.nivel)}`
+                                        }
+                                        title={
+                                            idCotaConfirmandoExclusao === cota.id
+                                                ? 'Clique novamente para confirmar'
+                                                : 'Excluir'
+                                        }
                                         onClick={() => removerCota(cota.id)}
                                     >
-                                        {idCotaConfirmandoExclusao === cota.id ? 'Confirmar exclusão' : 'Excluir'}
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="18" y1="6" x2="6" y2="18" />
+                                            <line x1="6" y1="6" x2="18" y2="18" />
+                                        </svg>
                                     </button>
                                 </div>
                             </div>

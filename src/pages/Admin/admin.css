@@ -994,23 +994,10 @@
 .acoesCartaoIngressoInfoSemac {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+    justify-content: flex-end;
+    gap: 6px;
     margin-top: 0.25rem;
 }
-
-.botaoExcluirIngressoInfoSemac {
-    background: none;
-    border: none;
-    color: var(--rosaMarketing);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.78rem;
-    font-weight: 700;
-    cursor: pointer;
-    padding: 0;
-    transition: filter 0.15s;
-}
-.botaoExcluirIngressoInfoSemac:hover { filter: brightness(1.2); }
 
 .campoCheckboxInfoSemac {
     font-family: 'Montserrat', 'sans-serif';
