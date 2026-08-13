@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'preact/hooks'
 import { useLocation } from 'wouter'
 import gsap from 'gsap'
 import { salvarSessao, temAcessoFinanceiro, temAcessoAdmin } from '../../auth/sessao.js'
+import { apiFetch } from '../../lib/apiFetch.js'
 import './boxInscricao.css'
 import logoRaios from '../../assets/logoSemacRaios.png'
 import qrCodePix from '../../assets/qr.png'
@@ -88,7 +89,7 @@ export default function BoxInscricao() {
     useEffect(() => {
         if (etapa !== 'ingresso') return
         setCarregandoIngressos(true)
-        fetch(`${API_URL}/api/tipo-inscricao?ano=2026`)
+        apiFetch(`${API_URL}/api/tipo-inscricao?ano=2026`)
             .then(r => r.ok ? r.json() : Promise.reject())
             .then(data => setTiposIngresso(data.filter(t => t.ativo)))
             .catch(() => setFeedback({ tipo: 'erro', msg: 'Não foi possível carregar os tipos de ingresso.' }))
@@ -142,7 +143,7 @@ export default function BoxInscricao() {
         setEnviando(true)
         setFeedback(null)
         try {
-            const resposta = await fetch(`${API_URL}/api/auth/login`, {
+            const resposta = await apiFetch(`${API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: form.email, senha: form.senha }),
@@ -175,7 +176,7 @@ export default function BoxInscricao() {
         setFeedback(null)
 
         try {
-            const respostaInscricao = await fetch(`${API_URL}/api/inscricao`, {
+            const respostaInscricao = await apiFetch(`${API_URL}/api/inscricao`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -203,9 +204,10 @@ export default function BoxInscricao() {
 
             const formData = new FormData()
             formData.append('arquivo', arquivoComprovante)
-            await fetch(`${API_URL}/api/inscricao/${uuid}/comprovante`, {
+            await apiFetch(`${API_URL}/api/inscricao/${uuid}/comprovante`, {
                 method: 'POST',
                 body: formData,
+                timeout: 60000, // upload de arquivo: janela maior que o padrão
             })
 
             setEtapa('sucesso')

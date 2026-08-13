@@ -1,4 +1,5 @@
 import { cabecalhosAuth, tratarErroAuth } from '../../../auth/sessao.js';
+import { apiFetch } from '../../../lib/apiFetch.js';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const ROTA_FORNECEDORES = `${API_URL}/api/fornecedor`;
@@ -20,12 +21,12 @@ async function lerRespostaOuFalhar(resposta, mensagemErro) {
 }
 
 export async function listarFornecedores() {
-    const resposta = await fetch(ROTA_FORNECEDORES, { headers: cabecalhosAuth() });
+    const resposta = await apiFetch(ROTA_FORNECEDORES, { headers: cabecalhosAuth() });
     return lerRespostaOuFalhar(resposta, 'Falha ao carregar fornecedores.');
 }
 
 export async function criarFornecedor(fornecedor) {
-    const resposta = await fetch(ROTA_FORNECEDORES, {
+    const resposta = await apiFetch(ROTA_FORNECEDORES, {
         method: 'POST',
         headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(paraRequisicao(fornecedor)),
@@ -34,7 +35,7 @@ export async function criarFornecedor(fornecedor) {
 }
 
 export async function atualizarFornecedor(id, fornecedor) {
-    const resposta = await fetch(`${ROTA_FORNECEDORES}/${id}`, {
+    const resposta = await apiFetch(`${ROTA_FORNECEDORES}/${id}`, {
         method: 'PUT',
         headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(paraRequisicao(fornecedor)),
@@ -43,7 +44,7 @@ export async function atualizarFornecedor(id, fornecedor) {
 }
 
 export async function excluirFornecedor(id) {
-    const resposta = await fetch(`${ROTA_FORNECEDORES}/${id}`, { method: 'DELETE', headers: cabecalhosAuth() });
+    const resposta = await apiFetch(`${ROTA_FORNECEDORES}/${id}`, { method: 'DELETE', headers: cabecalhosAuth() });
     if (!resposta.ok) {
         throw new Error('Falha ao excluir fornecedor.');
     }

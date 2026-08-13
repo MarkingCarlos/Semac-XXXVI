@@ -1,4 +1,5 @@
 import { cabecalhosAuth, tratarErroAuth } from '../../../auth/sessao.js';
+import { apiFetch } from '../../../lib/apiFetch.js';
 
 /* Camada de acesso à API de cotas (tabela `cota`): nível + valor.
    A interface trabalha em CENTAVOS; o backend usa reais (DECIMAL).
@@ -39,7 +40,7 @@ async function lerOuFalhar(resposta, mensagemPadrao) {
 }
 
 export async function listarCotas() {
-    const resposta = await fetch(ROTA);
+    const resposta = await apiFetch(ROTA);
     if (!resposta.ok) {
         throw new Error('Falha ao carregar cotas.');
     }
@@ -48,7 +49,7 @@ export async function listarCotas() {
 }
 
 export async function criarCota(cota) {
-    const resposta = await fetch(ROTA, {
+    const resposta = await apiFetch(ROTA, {
         method: 'POST',
         headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(paraRequisicao(cota)),
@@ -58,7 +59,7 @@ export async function criarCota(cota) {
 }
 
 export async function atualizarCota(id, cota) {
-    const resposta = await fetch(`${ROTA}/${id}`, {
+    const resposta = await apiFetch(`${ROTA}/${id}`, {
         method: 'PUT',
         headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(paraRequisicao(cota)),
@@ -68,7 +69,7 @@ export async function atualizarCota(id, cota) {
 }
 
 export async function excluirCota(id) {
-    const resposta = await fetch(`${ROTA}/${id}`, {
+    const resposta = await apiFetch(`${ROTA}/${id}`, {
         method: 'DELETE',
         headers: cabecalhosAuth(),
     });

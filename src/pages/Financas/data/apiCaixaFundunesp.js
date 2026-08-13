@@ -1,4 +1,5 @@
 import { cabecalhosAuth, tratarErroAuth } from '../../../auth/sessao.js';
+import { apiFetch } from '../../../lib/apiFetch.js';
 
 /* Camada de acesso à API do caixa da FundoUnesp (tabela `caixa_fundunesp`).
    Registro único — por isso a rota não tem /{id}. A interface trabalha em
@@ -37,14 +38,14 @@ async function lerOuFalhar(resposta, mensagemPadrao) {
 }
 
 export async function lerCaixaFundunesp() {
-    const resposta = await fetch(ROTA, { headers: cabecalhosAuth() });
+    const resposta = await apiFetch(ROTA, { headers: cabecalhosAuth() });
     const caixa = await lerOuFalhar(resposta, 'Falha ao carregar o caixa da FundoUnesp.');
     return deResposta(caixa);
 }
 
 /* A data e o autor da alteração são definidos pelo backend. */
 export async function atualizarCaixaFundunesp(valorCentavos) {
-    const resposta = await fetch(ROTA, {
+    const resposta = await apiFetch(ROTA, {
         method: 'PUT',
         headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ valor: centavosParaReais(valorCentavos) }),

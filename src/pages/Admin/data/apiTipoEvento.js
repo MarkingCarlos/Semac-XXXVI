@@ -2,6 +2,8 @@
    Alimenta o seletor de tipo no formulário de Conteúdo e o painel de
    gerenciamento de tipos na mesma seção. */
 
+import { apiFetch } from '../../../lib/apiFetch.js';
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const ROTA = `${API_URL}/api/tipo-evento`;
 
@@ -14,12 +16,12 @@ async function lerOuFalhar(resposta, mensagemPadrao) {
 }
 
 export async function listarTiposEvento() {
-    const resposta = await fetch(ROTA);
+    const resposta = await apiFetch(ROTA);
     return lerOuFalhar(resposta, 'Falha ao carregar tipos de evento.');
 }
 
 export async function criarTipoEvento(tipo) {
-    const resposta = await fetch(ROTA, {
+    const resposta = await apiFetch(ROTA, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nome: tipo.nome, pontos: Number(tipo.pontos) }),
@@ -28,7 +30,7 @@ export async function criarTipoEvento(tipo) {
 }
 
 export async function atualizarTipoEvento(id, tipo) {
-    const resposta = await fetch(`${ROTA}/${id}`, {
+    const resposta = await apiFetch(`${ROTA}/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nome: tipo.nome, pontos: Number(tipo.pontos) }),
@@ -37,7 +39,7 @@ export async function atualizarTipoEvento(id, tipo) {
 }
 
 export async function excluirTipoEvento(id) {
-    const resposta = await fetch(`${ROTA}/${id}`, { method: 'DELETE' });
+    const resposta = await apiFetch(`${ROTA}/${id}`, { method: 'DELETE' });
     if (!resposta.ok) {
         const corpo = await resposta.json().catch(() => null);
         throw new Error(corpo?.mensagem || 'Falha ao excluir tipo de evento.');
