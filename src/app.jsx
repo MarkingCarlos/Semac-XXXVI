@@ -10,6 +10,7 @@ import { NavPontos } from "./components/NavPontos/navPontos.jsx";
 import paperTexture from './assets/PAPER.png';
 import ContagemRegressiva from "./components/contagemRegressiva/contagemRegressiva.jsx";
 import {PaginaContagem} from "./pages/page/PaginaContagem.jsx";
+import Termo from "./pages/Termo/Termo.jsx";
 
 
 export function App() {
@@ -21,7 +22,7 @@ export function App() {
              style={{
                  backgroundImage: `url(${paperTexture})`
              }}/>
-        <NavPontos/>
+        {/* <NavPontos/>
         <div style={{position: 'sticky'}}>
             <Home/>
         </div>
@@ -40,7 +41,10 @@ export function App() {
         <div>
             <SobreComissao/>
         </div>
-            <FooterNovo/>
+            <FooterNovo/> */}
+        <div>
+            <Termo/>
+        </div>
     </>
   )
 }
