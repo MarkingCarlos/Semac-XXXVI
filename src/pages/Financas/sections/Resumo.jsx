@@ -1,4 +1,5 @@
 import { useState } from 'preact/hooks';
+import { Link } from 'wouter';
 import { formatarCentavos, formatarData } from '../utils/moeda.js';
 import { atualizarCaixaFundunesp } from '../data/apiCaixaFundunesp.js';
 import CampoMoeda from '../components/CampoMoeda.jsx';
@@ -98,6 +99,10 @@ export default function Resumo({
                     <h1 className="tituloSecaoFinancas">Resumo</h1>
                     <p className="subtituloSecaoFinancas">Extrato consolidado da SEMAC XXXVI</p>
                 </div>
+                <Link href="/admin" className="cartaoMudarVisaoResumo">
+                    <span className="tituloCartaoMudarVisaoResumo">Mudar para visão administrativa</span>
+                    <span className="subtituloCartaoMudarVisaoResumo">Acessar o painel administrativo geral da SEMAC</span>
+                </Link>
             </header>
 
             <div className="gradeResumoFinancas">

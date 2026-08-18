@@ -1,5 +1,46 @@
 /* ── Resumo do saldo — livro-razão da comissão ───────────────── */
 
+/* Atalho no cabeçalho para trocar para a visão administrativa —
+   substitui o antigo link "Painel Admin" da navbar flutuante. */
+.cartaoMudarVisaoResumo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 0;
+    padding: 14px 22px;
+    border: 1.5px dashed rgba(231, 152, 57, 0.6);
+    border-radius: 12px;
+    background: transparent;
+    text-decoration: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.16s ease, border-color 0.16s ease;
+}
+
+.cartaoMudarVisaoResumo:hover {
+    background: rgba(231, 152, 57, 0.08);
+    border-color: #E79839;
+}
+
+.cartaoMudarVisaoResumo:focus-visible {
+    outline: 2px solid #E79839;
+    outline-offset: 2px;
+}
+
+.tituloCartaoMudarVisaoResumo {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #E79839;
+}
+
+.subtituloCartaoMudarVisaoResumo {
+    font-size: 0.76rem;
+    color: rgba(252, 248, 245, 0.5);
+}
+
 .gradeResumoFinancas {
     display: grid;
     grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);

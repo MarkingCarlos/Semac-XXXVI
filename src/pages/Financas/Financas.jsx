@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'preact/hooks';
-import { Link, useLocation } from 'wouter';
+import { useState, useEffect, useRef } from 'preact/hooks';
+import { useLocation } from 'wouter';
 import { limparSessao } from '../../auth/sessao.js';
 import Resumo from './sections/Resumo.jsx';
 import Patrocinios from './sections/Patrocinios.jsx';
 import Compras from './sections/Compras.jsx';
+import Cotacoes from './sections/Cotacoes.jsx';
 import Fornecedores from './sections/Fornecedores.jsx';
 import Inscricoes from './sections/Inscricoes.jsx';
 import Doacoes from './sections/Doacoes.jsx';
@@ -12,55 +13,15 @@ import { listarPatrocinadores } from './data/apiPatrocinios.js';
 import { listarFornecedores } from './data/apiFornecedores.js';
 import { listarInscricoes } from './data/apiInscricoes.js';
 import { listarCompras } from './data/apiCompras.js';
+import { listarCotacoes } from './data/apiCotacoes.js';
 import { lerCaixaFundunesp } from './data/apiCaixaFundunesp.js';
 import './financas.css';
-
-/* Ícones da navegação — SVGs inline, stroke herda currentColor */
-const ICONES_NAVEGACAO = {
-    resumo: (
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 3v18h18" />
-            <path d="M7 13l3-3 4 4 5-6" />
-        </svg>
-    ),
-    patrocinios: (
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="8" r="6" />
-            <path d="M15.5 13.5L17 22l-5-3-5 3 1.5-8.5" />
-        </svg>
-    ),
-    compras: (
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="9" cy="21" r="1" />
-            <circle cx="20" cy="21" r="1" />
-            <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" />
-        </svg>
-    ),
-    fornecedores: (
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M1 3h15v13H1z" />
-            <path d="M16 8h4l3 3v5h-7V8z" />
-            <circle cx="5.5" cy="18.5" r="2.5" />
-            <circle cx="18.5" cy="18.5" r="2.5" />
-        </svg>
-    ),
-    inscricoes: (
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
-            <path d="M13 5v2M13 17v2M13 11v2" />
-        </svg>
-    ),
-    doacoes: (
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z" />
-        </svg>
-    ),
-};
 
 const SECOES = [
     { id: 'resumo', rotulo: 'Resumo' },
     { id: 'patrocinios', rotulo: 'Patrocínios' },
     { id: 'compras', rotulo: 'Compras' },
+    { id: 'cotacoes', rotulo: 'Cotação' },
     { id: 'fornecedores', rotulo: 'Fornecedores' },
     { id: 'inscricoes', rotulo: 'Inscrições' },
     { id: 'doacoes', rotulo: 'Doações' },
@@ -78,6 +39,28 @@ export default function Financas() {
         limparSessao();
         navegar('/');
     }
+
+    // Indicador deslizante da navbar flutuante: mede a posição/largura do
+    // botão ativo e anima o retângulo amarelo até ele (trilho sem padding
+    // própria, para o cálculo de left/width não precisar descontar o
+    // padding do <nav>).
+    const trilhoNavRef = useRef(null);
+    const botoesNavRef = useRef({});
+    const [indicadorNav, setIndicadorNav] = useState({ left: 0, width: 0 });
+
+    useEffect(() => {
+        function medirIndicador() {
+            const trilho = trilhoNavRef.current;
+            const botaoAtivo = botoesNavRef.current[secaoAtiva];
+            if (!trilho || !botaoAtivo) return;
+            const trilhoRect = trilho.getBoundingClientRect();
+            const botaoRect = botaoAtivo.getBoundingClientRect();
+            setIndicadorNav({ left: botaoRect.left - trilhoRect.left, width: botaoRect.width });
+        }
+        medirIndicador();
+        window.addEventListener('resize', medirIndicador);
+        return () => window.removeEventListener('resize', medirIndicador);
+    }, [secaoAtiva]);
 
     // Compras vêm da API; entram no saldo como saídas.
     const [compras, setCompras] = useState([]);
@@ -100,10 +83,15 @@ export default function Financas() {
     const [carregandoDoacoes, setCarregandoDoacoes] = useState(true);
     const [erroDoacoes, setErroDoacoes] = useState('');
 
-    // Fornecedores vêm da API; referenciados pelas compras.
+    // Fornecedores vêm da API; referenciados pelas compras e cotações.
     const [fornecedores, setFornecedores] = useState([]);
     const [carregandoFornecedores, setCarregandoFornecedores] = useState(true);
     const [erroFornecedores, setErroFornecedores] = useState('');
+
+    // Cotações vêm da API; itens ainda não comprados, com preços por fornecedor.
+    const [cotacoes, setCotacoes] = useState([]);
+    const [carregandoCotacoes, setCarregandoCotacoes] = useState(true);
+    const [erroCotacoes, setErroCotacoes] = useState('');
 
     // Caixa da FundoUnesp: registro único, editável no card do Resumo.
     // Exibido à parte — não entra no saldo operacional. Diferente das
@@ -164,6 +152,16 @@ export default function Financas() {
             .finally(() => {
                 if (ativo) setCarregandoCompras(false);
             });
+        listarCotacoes()
+            .then((lista) => {
+                if (ativo) setCotacoes(lista);
+            })
+            .catch((e) => {
+                if (ativo) setErroCotacoes(e.message);
+            })
+            .finally(() => {
+                if (ativo) setCarregandoCotacoes(false);
+            });
         lerCaixaFundunesp()
             .then((caixa) => {
                 if (ativo) setCaixaFundunesp(caixa);
@@ -178,50 +176,10 @@ export default function Financas() {
 
     return (
         <div className="paginaFinancas">
-            {/* ── Sidebar ─────────────────────────────────── */}
-            <aside className="sidebarFinancas">
-                <div className="cabecalhoSidebarFinancas">
-                    <span className="marcaSidebarFinancas">SEMAC</span>
-                    <span className="moduloSidebarFinancas">Financeiro</span>
-                </div>
-
-                <nav className="navegacaoSidebarFinancas" aria-label="Seções do módulo financeiro">
-                    {SECOES.map((secao) => (
-                        <button
-                            key={secao.id}
-                            type="button"
-                            className={
-                                secaoAtiva === secao.id
-                                    ? 'itemNavegacaoFinancas itemNavegacaoAtivoFinancas'
-                                    : 'itemNavegacaoFinancas'
-                            }
-                            aria-current={secaoAtiva === secao.id ? 'page' : undefined}
-                            onClick={() => setSecaoAtiva(secao.id)}
-                        >
-                            {ICONES_NAVEGACAO[secao.id]}
-                            <span>{secao.rotulo}</span>
-                        </button>
-                    ))}
-                </nav>
-
-                <div className="rodapeSidebarFinancas">
-                    <Link href="/admin" className="botaoAdminFinancas">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="3" />
-                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                        </svg>
-                        <span>Painel Admin</span>
-                    </Link>
-                    <button type="button" className="botaoSairFinancas" onClick={sair}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                            <path d="M16 17l5-5-5-5" />
-                            <path d="M21 12H9" />
-                        </svg>
-                        <span>Sair</span>
-                    </button>
-                </div>
-            </aside>
+            <header className="cabecalhoFinancas">
+                <span className="marcaCabecalhoFinancas">SEMAC</span>
+                <span className="moduloCabecalhoFinancas">Financeiro</span>
+            </header>
 
             {/* ── Conteúdo ────────────────────────────────── */}
             <main className="conteudoFinancas">
@@ -255,11 +213,22 @@ export default function Financas() {
                             erro={erroCompras}
                         />
                     )}
+                    {secaoAtiva === 'cotacoes' && (
+                        <Cotacoes
+                            cotacoes={cotacoes}
+                            setCotacoes={setCotacoes}
+                            fornecedores={fornecedores}
+                            setFornecedores={setFornecedores}
+                            carregando={carregandoCotacoes}
+                            erro={erroCotacoes}
+                        />
+                    )}
                     {secaoAtiva === 'fornecedores' && (
                         <Fornecedores
                             fornecedores={fornecedores}
                             setFornecedores={setFornecedores}
                             compras={compras}
+                            cotacoes={cotacoes}
                             carregando={carregandoFornecedores}
                             erro={erroFornecedores}
                         />
@@ -280,6 +249,36 @@ export default function Financas() {
                     )}
                 </section>
             </main>
+
+            {/* ── Navbar flutuante ─────────────────────────── */}
+            <nav className="navFlutuanteFinancas" aria-label="Seções do módulo financeiro">
+                <div className="trilhoNavFlutuanteFinancas" ref={trilhoNavRef}>
+                    <div
+                        className="indicadorNavFlutuanteFinancas"
+                        style={{ left: `${indicadorNav.left}px`, width: `${indicadorNav.width}px` }}
+                        aria-hidden="true"
+                    />
+                    {SECOES.map((secao) => (
+                        <button
+                            key={secao.id}
+                            type="button"
+                            ref={(el) => { botoesNavRef.current[secao.id] = el; }}
+                            className={
+                                secaoAtiva === secao.id
+                                    ? 'itemNavFlutuanteFinancas itemNavFlutuanteAtivoFinancas'
+                                    : 'itemNavFlutuanteFinancas'
+                            }
+                            aria-current={secaoAtiva === secao.id ? 'page' : undefined}
+                            onClick={() => setSecaoAtiva(secao.id)}
+                        >
+                            {secao.rotulo}
+                        </button>
+                    ))}
+                    <button type="button" className="itemNavFlutuanteFinancas itemNavFlutuanteSairFinancas" onClick={sair}>
+                        Sair
+                    </button>
+                </div>
+            </nav>
         </div>
     );
 }

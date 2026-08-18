@@ -6,6 +6,8 @@ import Admin from './pages/Admin/Admin.jsx'
 import Inscricao from "./pages/Inscricao/Inscricao.jsx";
 import PaginaCotas from "./pages/PaginaCotas/PaginaCotas.jsx";
 import Financas from "./pages/Financas/Financas.jsx";
+import ConjuntosCotacao from "./pages/Financas/conjuntos/ConjuntosCotacao.jsx";
+import ConjuntoDetalhe from "./pages/Financas/conjuntos/ConjuntoDetalhe.jsx";
 // import Ranking from "./pages/Ranking/paginaRanking.jsx";
 import { temAcessoFinanceiro, temAcessoAdmin } from './auth/sessao.js'
 
@@ -14,6 +16,18 @@ function RotaFinanceiro() {
     return temAcessoFinanceiro()
         ? <Financas />
         : <Redirect to="/inscricoes?tab=entrar&next=/financeiro" />;
+}
+
+function RotaConjuntosCotacao() {
+    return temAcessoFinanceiro()
+        ? <ConjuntosCotacao />
+        : <Redirect to="/inscricoes?tab=entrar&next=/financeiro/conjuntos" />;
+}
+
+function RotaConjuntoDetalhe() {
+    return temAcessoFinanceiro()
+        ? <ConjuntoDetalhe />
+        : <Redirect to="/inscricoes?tab=entrar&next=/financeiro/conjuntos" />;
 }
 
 function RotaAdmin() {
@@ -27,6 +41,8 @@ render(
         {/*<Route path="/sorteio"><Admin /></Route>*/}
         <Route path="/admin"><RotaAdmin /></Route>
         <Route path="/financeiro"><RotaFinanceiro /></Route>
+        <Route path="/financeiro/conjuntos"><RotaConjuntosCotacao /></Route>
+        <Route path="/financeiro/conjuntos/:id"><RotaConjuntoDetalhe /></Route>
         <Route path="/inscricoes"><Inscricao /></Route>
         <Route path="/cotas"><PaginaCotas /></Route>
         {/*<Route path="/ranking"><Ranking /></Route>*/}

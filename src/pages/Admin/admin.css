@@ -16,6 +16,7 @@
 
 .paginaAdmin {
     display: flex;
+    flex-direction: column;
     min-height: 100vh;
     width: 100%;
     background: #730835;
@@ -24,135 +25,46 @@
     text-align: left;
 }
 
-/* ── Sidebar ─────────────────────────────────────────────────── */
+/* ── Cabeçalho ───────────────────────────────────────────────── */
+/* Faixa fina de marca — a navegação em si vive na navbar flutuante,
+   então aqui só sobra identidade + retorno ao site público. */
 
-.sidebarAdmin {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    width: 232px;
-    flex-shrink: 0;
-    background: #3D0118;
-    border-right: 1px solid rgba(252, 248, 245, 0.08);
+.cabecalhoAdmin {
     display: flex;
-    flex-direction: column;
-    padding: 28px 18px 22px;
-    box-sizing: border-box;
+    align-items: center;
+    gap: 16px;
+    padding: 18px clamp(24px, 4vw, 52px);
+    border-bottom: 1px solid rgba(252, 248, 245, 0.08);
+    flex-wrap: wrap;
 }
 
-.cabecalhoSidebarAdmin {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: 0 12px 26px;
+.linkVoltarAdmin {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(252, 248, 245, 0.6);
+    text-decoration: none;
+    transition: color 0.16s ease;
 }
 
-.marcaSidebarAdmin {
-    font-family: 'Bungee', cursive;
-    font-size: 1.45rem;
-    line-height: 1;
+.linkVoltarAdmin:hover {
     color: #edecec;
 }
 
-.moduloSidebarAdmin {
+.tituloCabecalhoAdmin {
+    font-family: 'Bungee', cursive;
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: #edecec;
+    margin: 0 auto 0 0;
+}
+
+.badgeVersaoAdmin {
     font-size: 0.68rem;
     font-weight: 700;
-    letter-spacing: 2.2px;
+    letter-spacing: 1.6px;
     text-transform: uppercase;
     color: #E79839;
-}
-
-.navegacaoSidebarAdmin {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
-}
-
-.itemNavegacaoAdmin {
-    display: flex;
-    align-items: center;
-    gap: 11px;
-    padding: 11px 12px;
-    border: none;
-    border-radius: 10px;
-    background: transparent;
-    color: rgba(252, 248, 245, 0.6);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.88rem;
-    font-weight: 600;
-    text-align: left;
-    cursor: pointer;
-    transition: background 0.18s ease, color 0.18s ease;
-}
-
-.itemNavegacaoAdmin:hover {
-    background: rgba(252, 248, 245, 0.05);
-    color: #edecec;
-    border-color: transparent;
-}
-
-.itemNavegacaoAdmin:focus-visible {
-    outline: 2px solid #E79839;
-    outline-offset: 2px;
-}
-
-.itemNavegacaoAtivoAdmin,
-.itemNavegacaoAtivoAdmin:hover {
-    background: rgba(231, 152, 57, 0.12);
-    color: #E79839;
-}
-
-
-
-/* Rodapé da sidebar: separado da navegação por uma linha — abaixo dela,
-   os controles que fazem você deixar o painel. */
-.rodapeSidebarAdmin {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    margin-top: 8px;
-    padding-top: 10px;
-    border-top: 1px solid rgba(252, 248, 245, 0.08);
-}
-
-/* "Sair" encerra a sessão: tom rosa de saída, distinto do âmbar de ação. */
-.botaoSairAdmin {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border: none;
-    border-radius: 10px;
-    background: transparent;
-    color: rgba(252, 248, 245, 0.5);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.2px;
-    text-align: left;
-    cursor: pointer;
-    transition: color 0.16s ease, background 0.16s ease;
-}
-
-.botaoSairAdmin svg {
-    flex-shrink: 0;
-    transition: transform 0.18s ease;
-}
-
-.botaoSairAdmin:hover {
-    color: #e9897b;
-    background: rgba(177, 53, 113, 0.1);
-}
-
-/* O ícone desliza para fora no hover — encena o "sair". */
-.botaoSairAdmin:hover svg {
-    transform: translateX(2px);
-}
-
-.botaoSairAdmin:focus-visible {
-    outline: 2px solid #E79839;
-    outline-offset: 2px;
 }
 
 /* ── Área de conteúdo ────────────────────────────────────────── */
@@ -160,8 +72,86 @@
 .conteudoAdmin {
     flex: 1;
     min-width: 0;
-    padding: clamp(24px, 4vw, 52px);
+    padding: clamp(24px, 4vw, 52px) clamp(24px, 4vw, 52px) 140px;
     box-sizing: border-box;
+}
+
+/* ── Navbar flutuante ────────────────────────────────────────── */
+/* Fixa no rodapé, centrada; o indicador amarelo desliza atrás do item
+   ativo (medido em JS) em vez de trocar de estilo abruptamente. */
+
+.navFlutuanteAdmin {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    z-index: 50;
+    max-width: calc(100vw - 32px);
+    background: #850735;
+    border-radius: 9999px;
+    padding: 10px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+}
+
+.trilhoNavFlutuanteAdmin {
+    position: relative;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+}
+
+.indicadorNavFlutuanteAdmin {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-radius: 9999px;
+    background: #E79839;
+    transition: left 0.35s cubic-bezier(0.16, 1, 0.3, 1), width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 0;
+}
+
+.itemNavFlutuanteAdmin {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    border: none;
+    background: transparent;
+    padding: 13px 22px;
+    border-radius: 9999px;
+    color: rgba(252, 248, 245, 0.75);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.itemNavFlutuanteAdmin:hover {
+    color: #edecec;
+}
+
+.itemNavFlutuanteAdmin:focus-visible {
+    outline: 2px solid #E79839;
+    outline-offset: 2px;
+}
+
+.itemNavFlutuanteAtivoAdmin,
+.itemNavFlutuanteAtivoAdmin:hover {
+    color: #730835;
+}
+
+/* "Sair" fica na própria pill, mas com uma pequena separação visual do
+   grupo de seções — evita que pareça só mais uma aba de conteúdo. */
+.itemNavFlutuanteSairAdmin {
+    margin-left: 6px;
+    padding-left: 18px;
+    border-left: 1px solid rgba(252, 248, 245, 0.15);
+    color: rgba(252, 248, 245, 0.55);
+}
+
+.itemNavFlutuanteSairAdmin:hover {
+    color: #e9897b;
 }
 
 .secaoAdmin {
@@ -650,20 +640,6 @@
     border: 1px solid rgba(82, 171, 177, 0.5);
 }
 
-.botaoAlterarRoleAdmin {
-    background: none;
-    border: none;
-    color: rgba(237, 236, 236, 0.55);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-decoration: underline;
-    cursor: pointer;
-    padding: 0;
-    transition: color 0.15s;
-}
-.botaoAlterarRoleAdmin:hover { color: var(--Branco); }
-
 /* ── Modal de confirmação de participante ────────────────────── */
 .overlayModalParticipantesAdmin {
     position: fixed;
@@ -1011,42 +987,31 @@
 }
 .campoCheckboxInfoSemac input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--AmareloAuxApoio); }
 
-/* ── Responsivo — sidebar vira barra superior ────────────────── */
+/* ── Responsivo — navbar flutuante encolhe e ganha scroll ────── */
 
 @media (max-width: 820px) {
-    .paginaAdmin {
-        flex-direction: column;
+    .cabecalhoAdmin {
+        padding: 14px 18px;
     }
 
-    .sidebarAdmin {
-        position: static;
-        height: auto;
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid rgba(252, 248, 245, 0.08);
-        padding: 16px 18px;
-        gap: 12px;
+    .conteudoAdmin {
+        padding: 20px 18px 132px;
     }
 
-    .cabecalhoSidebarAdmin {
-        flex-direction: row;
-        align-items: baseline;
-        gap: 10px;
-        padding: 0 0 10px;
+    .navFlutuanteAdmin {
+        bottom: 16px;
+        padding: 8px;
     }
 
-    .navegacaoSidebarAdmin {
-        flex-direction: row;
-        overflow-x: auto;
-        gap: 6px;
-        padding-bottom: 4px;
+    .itemNavFlutuanteAdmin {
+        padding: 11px 16px;
+        font-size: 0.8rem;
     }
 
-    .itemNavegacaoAdmin {
-        white-space: nowrap;
-        padding: 9px 12px;
+    .itemNavFlutuanteSairAdmin {
+        margin-left: 4px;
+        padding-left: 14px;
     }
-
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1054,9 +1019,9 @@
         animation: none;
     }
 
-    .itemNavegacaoAdmin,
-    .botaoSairAdmin,
-    .botaoSairAdmin svg {
+    .itemNavFlutuanteAdmin,
+    .indicadorNavFlutuanteAdmin,
+    .linkVoltarAdmin {
         transition: none;
     }
 }

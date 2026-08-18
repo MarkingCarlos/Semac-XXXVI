@@ -9,6 +9,7 @@
 // (o usuário é identificado pelo token — ver data/apiPerfil.js).
 
 import { useState, useEffect } from 'preact/hooks';
+import { Link } from 'wouter';
 import { buscarPerfil, atualizarPerfil } from '../data/apiPerfil.js';
 import './inicio.css';
 
@@ -57,7 +58,7 @@ function PreviaCamiseta({ modelo, tamanho }) {
     );
 }
 
-export default function Inicio() {
+export default function Inicio({ podeAcessarFinanceiro = false }) {
     const [perfil, setPerfil] = useState(null);
     const [carregando, setCarregando] = useState(true);
     const [erroCarregar, setErroCarregar] = useState('');
@@ -130,7 +131,15 @@ export default function Inicio() {
                     Perfil<span className="separadorEyebrowInicio">/</span>{funcao}
                 </span>
                 <p className="saudacaoInicio">Bem-vindo,</p>
-                <h1 className="nomeBoasVindasInicio">{primeiroNome}</h1>
+                <div className="linhaNomeCardInicio">
+                    <h1 className="nomeBoasVindasInicio">{primeiroNome}</h1>
+                    {podeAcessarFinanceiro && (
+                        <Link href="/financeiro" className="cartaoIrFinanceiroInicio">
+                            <span className="tituloCartaoIrFinanceiroInicio">Ir para o financeiro</span>
+                            <span className="subtituloCartaoIrFinanceiroInicio">Acessar o painel financeiro da SEMAC</span>
+                        </Link>
+                    )}
+                </div>
                 <p className="emailUsuarioInicio">{perfil.email}</p>
             </header>
 

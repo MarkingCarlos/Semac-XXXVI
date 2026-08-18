@@ -38,6 +38,14 @@
     color: rgba(252, 248, 245, 0.6);
 }
 
+.linhaNomeCardInicio {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
 .nomeBoasVindasInicio {
     font-family: 'Bungee', cursive;
     font-weight: 400;
@@ -51,6 +59,47 @@
 .emailUsuarioInicio {
     margin: 0;
     font-size: 0.86rem;
+    color: rgba(252, 248, 245, 0.5);
+}
+
+/* Atalho ao lado do nome para trocar para a visão financeira —
+   espelha o cartaoMudarVisaoResumo do módulo financeiro. */
+.cartaoIrFinanceiroInicio {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-shrink: 0;
+    padding: 14px 22px;
+    border: 1.5px dashed rgba(231, 152, 57, 0.6);
+    border-radius: 12px;
+    background: transparent;
+    text-decoration: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.16s ease, border-color 0.16s ease;
+}
+
+.cartaoIrFinanceiroInicio:hover {
+    background: rgba(231, 152, 57, 0.08);
+    border-color: #E79839;
+}
+
+.cartaoIrFinanceiroInicio:focus-visible {
+    outline: 2px solid #E79839;
+    outline-offset: 2px;
+}
+
+.tituloCartaoIrFinanceiroInicio {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #E79839;
+}
+
+.subtituloCartaoIrFinanceiroInicio {
+    font-size: 0.76rem;
     color: rgba(252, 248, 245, 0.5);
 }
 
