@@ -60,6 +60,9 @@ function LinhaParticipante({ participante, aoAbrirConfirmacao }) {
             </td>
             <td class="celulaCamisetaAdmin">{textoCamiseta(participante.camiseta)}</td>
             <td class="celulaIngressoParticipantesAdmin">{participante.tipoInscricao?.nome ?? '—'}</td>
+            <td class="celulaNivelParticipantesAdmin">
+                {participante.nivel ? `${participante.nivel.nome} (${participante.xp ?? 0} xp)` : '—'}
+            </td>
             <td class="celulaAcaoParticipantesAdmin">
                 {confirmado ? (
                     <div class="grupoAcaoConfirmadoAdmin">
@@ -124,13 +127,14 @@ export default function TabelaParticipantes({ participantes, aoConfirmar }) {
                             <th>Conta</th>
                             <th>Camiseta</th>
                             <th>Ingresso</th>
+                            <th>Nível</th>
                             <th>Ação</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filtrados.length === 0 ? (
                             <tr>
-                                <td colSpan={6} class="tabelaVaziaAdmin">
+                                <td colSpan={7} class="tabelaVaziaAdmin">
                                     Nenhum participante encontrado.
                                 </td>
                             </tr>

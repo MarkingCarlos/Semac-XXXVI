@@ -14,11 +14,19 @@ import {
     atualizarCota,
     excluirCota,
 } from '../../Financas/data/apiCotas.js';
+import {
+    listarNiveis,
+    criarNivel,
+    atualizarNivel,
+    excluirNivel,
+} from '../data/apiNivel.js';
 
-/* Informações SEMAC — dois blocos:
+/* Informações SEMAC — três blocos:
    1. Tipos de ingresso (tabela `tipo_inscricao`) da edição atual;
-   2. Cotas de patrocínio (tabela `cota`), nível + valor.
-   Valores em centavos na interface, convertidos na borda da API.
+   2. Níveis de participante (tabela `nivel`), nome + xp mínimo;
+   3. Cotas de patrocínio (tabela `cota`), nível + valor.
+   Valores de ingresso/cota em centavos na interface, convertidos na
+   borda da API. Xp mínimo do nível é inteiro puro, sem conversão.
 
    Os benefícios e as cores de cada cota seguem no código
    (src/data/cotas.js) — aqui só se gerencia o valor. */
@@ -74,6 +82,19 @@ export default function InformacoesSemac() {
         (nivel) => !cotas.some((cota) => cota.nivel === nivel.valor)
     );
 
+    /* ── Níveis de participante ───────────────────────────────── */
+    const [niveisParticipante, setNiveisParticipante] = useState([]);
+    const [carregandoNiveisParticipante, setCarregandoNiveisParticipante] = useState(true);
+    const [erroNiveisParticipante, setErroNiveisParticipante] = useState('');
+    const [salvandoNivelParticipante, setSalvandoNivelParticipante] = useState(false);
+
+    const [painelNivelParticipanteAberto, setPainelNivelParticipanteAberto] = useState(false);
+    const [formularioNivelParticipante, setFormularioNivelParticipante] = useState({ nome: '', xpMinimo: 0 });
+    const [idNivelParticipanteEmEdicao, setIdNivelParticipanteEmEdicao] = useState(null);
+    const [idNivelParticipanteConfirmandoExclusao, setIdNivelParticipanteConfirmandoExclusao] = useState(null);
+
+    const porXpMinimoCrescente = (a, b) => a.xpMinimo - b.xpMinimo;
+
     useEffect(() => {
         let ativo = true;
         listarTiposInscricao(ANO_ATUAL)
@@ -84,8 +105,66 @@ export default function InformacoesSemac() {
             .then((lista) => { if (ativo) setCotas([...lista].sort(porValorCrescente)); })
             .catch((e) => { if (ativo) setErroCotas(e.message); })
             .finally(() => { if (ativo) setCarregandoCotas(false); });
+        listarNiveis()
+            .then((lista) => { if (ativo) setNiveisParticipante([...lista].sort(porXpMinimoCrescente)); })
+            .catch((e) => { if (ativo) setErroNiveisParticipante(e.message); })
+            .finally(() => { if (ativo) setCarregandoNiveisParticipante(false); });
         return () => { ativo = false; };
     }, []);
+
+    const abrirNovoNivelParticipante = () => {
+        setFormularioNivelParticipante({ nome: '', xpMinimo: 0 });
+        setIdNivelParticipanteEmEdicao(null);
+        setErroNiveisParticipante('');
+        setPainelNivelParticipanteAberto(true);
+    };
+
+    const abrirEdicaoNivelParticipante = (nivel) => {
+        setFormularioNivelParticipante({ nome: nivel.nome, xpMinimo: nivel.xpMinimo });
+        setIdNivelParticipanteEmEdicao(nivel.id);
+        setErroNiveisParticipante('');
+        setPainelNivelParticipanteAberto(true);
+    };
+
+    const salvarNivelParticipante = async (evento) => {
+        evento.preventDefault();
+        setSalvandoNivelParticipante(true);
+        setErroNiveisParticipante('');
+        try {
+            if (idNivelParticipanteEmEdicao !== null) {
+                const atualizado = await atualizarNivel(idNivelParticipanteEmEdicao, formularioNivelParticipante);
+                setNiveisParticipante(
+                    niveisParticipante
+                        .map((n) => (n.id === idNivelParticipanteEmEdicao ? atualizado : n))
+                        .sort(porXpMinimoCrescente)
+                );
+            } else {
+                const criado = await criarNivel(formularioNivelParticipante);
+                setNiveisParticipante([...niveisParticipante, criado].sort(porXpMinimoCrescente));
+            }
+            setPainelNivelParticipanteAberto(false);
+        } catch (e) {
+            setErroNiveisParticipante(e.message);
+        } finally {
+            setSalvandoNivelParticipante(false);
+        }
+    };
+
+    const removerNivelParticipante = async (id) => {
+        if (idNivelParticipanteConfirmandoExclusao !== id) {
+            setIdNivelParticipanteConfirmandoExclusao(id);
+            return;
+        }
+        setErroNiveisParticipante('');
+        try {
+            await excluirNivel(id);
+            setNiveisParticipante(niveisParticipante.filter((n) => n.id !== id));
+        } catch (e) {
+            setErroNiveisParticipante(e.message);
+        } finally {
+            setIdNivelParticipanteConfirmandoExclusao(null);
+        }
+    };
 
     const abrirNovo = () => {
         setFormulario(FORMULARIO_VAZIO);
@@ -267,6 +346,74 @@ export default function InformacoesSemac() {
                                                 : 'Excluir'
                                         }
                                         onClick={() => excluir(tipo.id)}
+                                    >
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="18" y1="6" x2="6" y2="18" />
+                                            <line x1="6" y1="6" x2="18" y2="18" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </section>
+
+            {/* ── Níveis de participante ──────────────────────── */}
+            <section className="blocoInfoSemac" aria-label="Níveis de participante">
+                <div className="cabecalhoBlocoInfoSemac">
+                    <h2 className="tituloBlocoInfoSemac">Níveis de participante</h2>
+                    <button type="button" className="botaoPrimarioFinancas" onClick={abrirNovoNivelParticipante}>
+                        + Novo nível
+                    </button>
+                </div>
+
+                {erroNiveisParticipante && <p className="avisoErroAdmin" role="alert">{erroNiveisParticipante}</p>}
+
+                {carregandoNiveisParticipante ? (
+                    <p className="estadoCarregandoParticipantesAdmin">Carregando níveis…</p>
+                ) : niveisParticipante.length === 0 ? (
+                    <div className="vazioInfoSemac">
+                        Nenhum nível cadastrado. Crie o primeiro para que participantes confirmados possam ser associados a ele.
+                    </div>
+                ) : (
+                    <div className="gradeIngressosInfoSemac">
+                        {niveisParticipante.map((nivel) => (
+                            <div className="cartaoIngressoInfoSemac" key={nivel.id}>
+                                <div className="topoCartaoIngressoInfoSemac">
+                                    <span className="nomeIngressoInfoSemac">{nivel.nome}</span>
+                                </div>
+                                <span className="valorIngressoInfoSemac">{nivel.xpMinimo} xp</span>
+                                <div className="acoesCartaoIngressoInfoSemac">
+                                    <button
+                                        type="button"
+                                        className="botaoAcaoLinhaFinancas"
+                                        aria-label={`Editar ${nivel.nome}`}
+                                        title="Editar"
+                                        onClick={() => abrirEdicaoNivelParticipante(nivel)}
+                                    >
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={
+                                            idNivelParticipanteConfirmandoExclusao === nivel.id
+                                                ? 'botaoAcaoLinhaFinancas botaoConfirmarExclusaoFinancas'
+                                                : 'botaoAcaoLinhaFinancas'
+                                        }
+                                        aria-label={
+                                            idNivelParticipanteConfirmandoExclusao === nivel.id
+                                                ? `Confirmar exclusão de ${nivel.nome}`
+                                                : `Excluir ${nivel.nome}`
+                                        }
+                                        title={
+                                            idNivelParticipanteConfirmandoExclusao === nivel.id
+                                                ? 'Clique novamente para confirmar'
+                                                : 'Excluir'
+                                        }
+                                        onClick={() => removerNivelParticipante(nivel.id)}
                                     >
                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <line x1="18" y1="6" x2="6" y2="18" />
@@ -489,6 +636,68 @@ export default function InformacoesSemac() {
                                 : idCotaEmEdicao !== null
                                     ? 'Salvar alterações'
                                     : 'Adicionar cota'}
+                        </button>
+                    </div>
+                </form>
+            </PainelLateral>
+
+            <PainelLateral
+                aberto={painelNivelParticipanteAberto}
+                titulo={idNivelParticipanteEmEdicao !== null ? 'Editar nível' : 'Novo nível'}
+                aoFechar={() => setPainelNivelParticipanteAberto(false)}
+            >
+                <form className="formularioFinancas" onSubmit={salvarNivelParticipante}>
+                    <div className="campoFormularioFinancas">
+                        <label className="rotuloCampoFinancas" htmlFor="campoNomeNivelParticipante">
+                            Nome do nível *
+                        </label>
+                        <input
+                            id="campoNomeNivelParticipante"
+                            className="entradaFormularioFinancas"
+                            required
+                            placeholder="ex.: Bronze"
+                            value={formularioNivelParticipante.nome}
+                            onInput={(e) =>
+                                setFormularioNivelParticipante({ ...formularioNivelParticipante, nome: e.currentTarget.value })
+                            }
+                        />
+                    </div>
+
+                    <div className="campoFormularioFinancas">
+                        <label className="rotuloCampoFinancas" htmlFor="campoXpMinimoNivelParticipante">
+                            Xp mínimo *
+                        </label>
+                        <input
+                            id="campoXpMinimoNivelParticipante"
+                            type="number"
+                            min="0"
+                            step="1"
+                            className="entradaFormularioFinancas"
+                            required
+                            value={formularioNivelParticipante.xpMinimo}
+                            onInput={(e) =>
+                                setFormularioNivelParticipante({
+                                    ...formularioNivelParticipante,
+                                    xpMinimo: e.currentTarget.value,
+                                })
+                            }
+                        />
+                    </div>
+
+                    <div className="rodapeFormularioFinancas">
+                        <button
+                            type="button"
+                            className="botaoFantasmaFinancas"
+                            onClick={() => setPainelNivelParticipanteAberto(false)}
+                        >
+                            Cancelar
+                        </button>
+                        <button type="submit" className="botaoPrimarioFinancas" disabled={salvandoNivelParticipante}>
+                            {salvandoNivelParticipante
+                                ? 'Salvando…'
+                                : idNivelParticipanteEmEdicao !== null
+                                    ? 'Salvar alterações'
+                                    : 'Adicionar nível'}
                         </button>
                     </div>
                 </form>
