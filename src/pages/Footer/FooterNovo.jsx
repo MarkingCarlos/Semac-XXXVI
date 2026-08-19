@@ -166,7 +166,7 @@ const LINKS_NAVEGACAO = [
   { texto: 'Programação', href: '#Cronograma' },
   { texto: 'Patrocinadores', href: '#Patrocinadores' },
   { texto: 'Doação', href: '#doacao' },
-  { texto: 'Comissao', href: '#comissao' },
+  { texto: 'Comissão', href: '#comissao' },
   // { texto: 'Inscrição', href: '#' },
 
 

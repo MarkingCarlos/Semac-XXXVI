@@ -1,0 +1,955 @@
+/* ============================================================
+   Área do Participante — /participantes
+   Reaproveita a paleta global (index.css) e completa com os tons
+   que o design usa e ainda não existem como token global.
+   ============================================================ */
+
+.paginaParticipantes {
+  --brancoQuenteParticipantes: #FCF8F5;
+  --vermelhoAux2Participantes: #850735;
+  --pretoParticipantes: #0A0A0A;
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--vermelhoAuxDiretoria);
+  color: var(--brancoQuenteParticipantes);
+  font-family: var(--fonteCorpoMontserrat);
+  padding-bottom: 76px; /* espaço pra nav inferior fixa no mobile */
+}
+
+.paginaParticipantes .soDesktopParticipantes { display: none; }
+
+@media (min-width: 860px) {
+  .paginaParticipantes { padding-bottom: 0; }
+  .paginaParticipantes .soMobileParticipantes { display: none; }
+  .paginaParticipantes .soDesktopParticipantes { display: flex; }
+}
+
+/* ── Cabeçalho ────────────────────────────────────────────── */
+.cabecalhoParticipantes {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px 12px;
+  background: var(--vermelhoAux2Participantes);
+}
+
+.logoCabecalhoParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 15px;
+  color: var(--brancoQuenteParticipantes);
+  white-space: nowrap;
+}
+
+.destaqueLogoCabecalhoParticipantes { color: var(--AmareloAuxApoio); }
+
+.navDesktopParticipantes { display: none; }
+
+.acoesCabecalhoParticipantes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.botaoQrCabecalhoParticipantes {
+  display: none;
+  font-family: var(--fonteTituloBungee);
+  font-size: 12px;
+  background: var(--AmareloAuxApoio);
+  color: var(--vermelhoAuxDiretoria);
+  border: none;
+  padding: 9px 14px;
+  border-radius: var(--radius-sm, 8px);
+  cursor: pointer;
+}
+
+.nomeCabecalhoParticipantes {
+  font-size: 11px;
+  color: rgba(252, 248, 245, 0.65);
+}
+
+.avatarCabecalhoParticipantes {
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  background: var(--rosaMarketing);
+  display: grid;
+  place-items: center;
+  font-family: var(--fonteTituloBungee);
+  font-size: 13px;
+  color: var(--brancoQuenteParticipantes);
+  flex: none;
+}
+
+@media (min-width: 860px) {
+  .cabecalhoParticipantes { padding: 20px 40px; }
+  .navDesktopParticipantes { display: flex; gap: 24px; margin-right: auto; margin-left: 32px; }
+  .itemNavDesktopParticipantes {
+    font-family: var(--fonteTituloBungee);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: rgba(252, 248, 245, 0.7);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  .itemNavDesktopAtivoParticipantes { color: var(--AmareloAuxApoio); }
+  .botaoQrCabecalhoParticipantes { display: block; }
+  .nomeCabecalhoParticipantes { display: none; }
+  .avatarCabecalhoParticipantes { width: 36px; height: 36px; font-size: 13px; }
+}
+
+/* ── Conteúdo ─────────────────────────────────────────────── */
+.conteudoParticipantes {
+  flex: 1;
+  padding: 20px 20px 32px;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+@media (min-width: 860px) {
+  .conteudoParticipantes { padding: 32px 40px 44px; }
+}
+
+.rotuloBlocoInicioParticipantes,
+.rotuloBlocoAgendaParticipantes,
+.rotuloBlocoSecaoPerfilParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 15px;
+  color: var(--brancoQuenteParticipantes);
+  letter-spacing: 0.06em;
+}
+
+.cabecalhoBlocoInicioParticipantes,
+.cabecalhoBlocoAgendaParticipantes,
+.cabecalhoBlocoSecaoPerfilParticipantes {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.acaoBlocoInicioParticipantes {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--AmareloAuxApoio);
+  cursor: pointer;
+}
+
+.contadorBlocoInicioParticipantes,
+.contadorBlocoAgendaParticipantes,
+.contadorBlocoSecaoPerfilParticipantes {
+  font-size: 11px;
+  color: rgba(252, 248, 245, 0.6);
+}
+
+/* ── Nav inferior (mobile) ───────────────────────────────── */
+.navInferiorParticipantes {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  display: flex;
+  background: var(--vermelhoAux2Participantes);
+  border-top: 1px solid rgba(252, 248, 245, 0.15);
+  padding: 10px 12px 14px;
+}
+
+@media (min-width: 860px) {
+  .navInferiorParticipantes { display: none; }
+}
+
+.itemNavInferiorParticipantes {
+  flex: 1;
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.marcadorNavInferiorParticipantes,
+.marcadorNavInferiorAtivoParticipantes {
+  width: 20px;
+  height: 4px;
+  border-radius: 9999px;
+  background: rgba(252, 248, 245, 0.25);
+}
+
+.marcadorNavInferiorAtivoParticipantes { background: var(--AmareloAuxApoio); }
+
+.rotuloNavInferiorParticipantes,
+.rotuloNavInferiorAtivoParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: rgba(252, 248, 245, 0.6);
+}
+
+.rotuloNavInferiorAtivoParticipantes { color: var(--brancoQuenteParticipantes); }
+
+/* ── Modal do crachá / QR ───────────────────────────────── */
+.sobreposicaoQrParticipantes {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.72);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 16px;
+  z-index: 10;
+}
+
+@media (min-width: 860px) {
+  .sobreposicaoQrParticipantes { align-items: center; }
+}
+
+.modalQrParticipantes {
+  width: 100%;
+  max-width: 400px;
+  background: var(--brancoQuenteParticipantes);
+  border-radius: var(--radius-lg, 25px);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  animation: qrInParticipantes 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes qrInParticipantes {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cabecalhoModalQrParticipantes {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.textoCabecalhoModalQrParticipantes { display: flex; flex-direction: column; gap: 2px; }
+
+.tituloModalQrParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 16px;
+  color: var(--vermelhoAuxDiretoria);
+}
+
+.subtituloModalQrParticipantes { font-size: 11px; color: rgba(115, 8, 53, 0.75); }
+
+.botaoFecharModalQrParticipantes {
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  background: var(--vermelhoAuxDiretoria);
+  color: var(--brancoQuenteParticipantes);
+  font-size: 16px;
+  line-height: 1;
+  border: none;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex: none;
+}
+
+.molduraQrCrachaParticipantes {
+  background: #fff;
+  padding: 14px;
+  border-radius: var(--radius-md, 16px);
+  box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.15));
+}
+
+.espacoReservadoQrCrachaParticipantes {
+  background: #f2f2f2;
+  border-radius: var(--radius-sm, 8px);
+}
+
+.identidadeModalQrParticipantes { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+
+.nomeModalQrParticipantes { font-family: var(--fonteTituloBungee); font-size: 14px; color: var(--vermelhoAuxDiretoria); }
+.inscricaoModalQrParticipantes { font-family: var(--fonteTituloBungee); font-size: 12px; color: var(--rosaMarketing); }
+
+.avisoAgoraModalQrParticipantes {
+  width: 100%;
+  background: var(--azulConteudo);
+  border-radius: var(--radius-md, 16px);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.tagAgoraModalQrParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 11px;
+  color: var(--brancoQuenteParticipantes);
+  flex: none;
+}
+
+.textoAgoraModalQrParticipantes { font-size: 11px; color: var(--brancoQuenteParticipantes); line-height: 1.35; }
+
+.rodapeModalQrParticipantes {
+  font-size: 10px;
+  color: rgba(115, 8, 53, 0.6);
+  text-align: center;
+  line-height: 1.45;
+}
+
+/* ── Cores compartilhadas (minicursos / conquistas) ─────── */
+.corMinicursoAzulParticipantes { background: var(--azulConteudo); }
+.corMinicursoRosaParticipantes { background: var(--rosaMarketing); }
+.corMinicursoVermelhoParticipantes { background: var(--vermelhoDiretoria); }
+
+.corConquistaAmareloParticipantes { background: var(--AmareloAuxApoio); color: var(--vermelhoAuxDiretoria); }
+.corConquistaAzulParticipantes { background: var(--azulConteudo); color: var(--brancoQuenteParticipantes); }
+.corConquistaRosaParticipantes { background: var(--rosaMarketing); color: var(--brancoQuenteParticipantes); }
+
+/* ============================================================
+   Aba Início
+   ============================================================ */
+.grelhaInicioParticipantes { display: flex; flex-direction: column; gap: 24px; }
+
+.colunaPrincipalInicioParticipantes { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+
+.barraLateralInicioParticipantes { flex-direction: column; gap: 24px; }
+
+@media (min-width: 860px) {
+  .grelhaInicioParticipantes { flex-direction: row; align-items: flex-start; gap: 28px; }
+  .colunaPrincipalInicioParticipantes { flex: 1; gap: 26px; }
+  .barraLateralInicioParticipantes { width: 340px; flex: none; }
+}
+
+.cardBarraLateralInicioParticipantes {
+  background: var(--vermelhoAux2Participantes);
+  border-radius: var(--radius-lg, 25px);
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* nível */
+.cardNivelInicioParticipantes {
+  background: var(--vermelhoDiretoria);
+  border-radius: var(--radius-lg, 25px);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.linhaTopoCardNivelInicioParticipantes { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+.blocoNivelCardNivelInicioParticipantes,
+.blocoXpCardNivelInicioParticipantes { display: flex; flex-direction: column; gap: 2px; }
+
+.blocoXpCardNivelInicioParticipantes { align-items: flex-end; text-align: right; }
+
+.rotuloNivelCardNivelInicioParticipantes { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; color: rgba(252, 248, 245, 0.7); }
+.nomeNivelCardNivelInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 28px; color: var(--brancoQuenteParticipantes); line-height: 1; }
+.valorXpCardNivelInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 24px; color: var(--AmareloAuxApoio); line-height: 1; }
+.posicaoCardNivelInicioParticipantes { font-size: 11px; color: rgba(252, 248, 245, 0.8); }
+
+.progressoCardNivelInicioParticipantes { display: flex; flex-direction: column; gap: 8px; }
+
+.trilhoProgressoCardNivelInicioParticipantes {
+  height: 10px;
+  border-radius: 9999px;
+  background: rgba(252, 248, 245, 0.22);
+  overflow: hidden;
+}
+
+.preenchimentoProgressoCardNivelInicioParticipantes { height: 100%; background: var(--AmareloAuxApoio); border-radius: 9999px; }
+
+.textoProgressoCardNivelInicioParticipantes { font-size: 12px; color: rgba(252, 248, 245, 0.85); }
+
+.botoesCardNivelInicioParticipantes { display: flex; gap: 8px; }
+
+.botaoQrCardNivelInicioParticipantes,
+.botaoRankingCardNivelInicioParticipantes {
+  flex: 1;
+  font-family: var(--fonteTituloBungee);
+  font-size: 13px;
+  min-height: 46px;
+  border-radius: var(--radius-sm, 8px);
+  cursor: pointer;
+  border: none;
+}
+
+.botaoQrCardNivelInicioParticipantes { background: var(--AmareloAuxApoio); color: var(--vermelhoAuxDiretoria); }
+.botaoRankingCardNivelInicioParticipantes { background: transparent; border: 2px solid rgba(252, 248, 245, 0.55); color: var(--brancoQuenteParticipantes); }
+
+@media (min-width: 860px) {
+  .botoesCardNivelInicioParticipantes { display: none; }
+}
+
+/* acontece agora */
+.blocoAconteceAgoraInicioParticipantes { display: flex; flex-direction: column; gap: 10px; }
+
+.cardAconteceAgoraInicioParticipantes {
+  background: var(--brancoQuenteParticipantes);
+  border-radius: var(--radius-lg, 25px);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: var(--vermelhoAuxDiretoria);
+}
+
+.categoriaCardAconteceAgoraInicioParticipantes { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: var(--rosaMarketing); }
+.tituloCardAconteceAgoraInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 17px; line-height: 1.15; }
+
+.tagsCardAconteceAgoraInicioParticipantes { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.tagLocalAconteceAgoraInicioParticipantes,
+.tagHorarioAconteceAgoraInicioParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 11px;
+  background: var(--vermelhoAuxDiretoria);
+  color: var(--brancoQuenteParticipantes);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm, 8px);
+}
+
+.tagCheckinAconteceAgoraInicioParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 11px;
+  background: var(--azulConteudo);
+  color: var(--brancoQuenteParticipantes);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm, 8px);
+}
+
+.avisoASeguirInicioParticipantes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(252, 248, 245, 0.08);
+  border-radius: var(--radius-md, 16px);
+  padding: 12px 14px;
+  flex-wrap: wrap;
+}
+
+.rotuloASeguirInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 11px; color: var(--AmareloAuxApoio); letter-spacing: 0.06em; }
+.textoASeguirInicioParticipantes { font-size: 12px; color: var(--brancoQuenteParticipantes); line-height: 1.35; }
+
+@media (min-width: 860px) {
+  .avisoASeguirInicioParticipantes { display: none; }
+}
+
+/* minicursos */
+.blocoMinicursosInicioParticipantes,
+.blocoMinicursosAgendaParticipantes { display: flex; flex-direction: column; gap: 12px; }
+
+.grelhaMinicursosInicioParticipantes { display: grid; grid-template-columns: 1fr; gap: 12px; }
+
+@media (min-width: 860px) {
+  .grelhaMinicursosInicioParticipantes { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+}
+
+.cardMinicursoInicioParticipantes {
+  border-radius: var(--radius-lg, 25px);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--brancoQuenteParticipantes);
+}
+
+.professorCardMinicursoInicioParticipantes { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: rgba(252, 248, 245, 0.85); }
+.tituloCardMinicursoInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 16px; line-height: 1.15; }
+
+.rodapeCardMinicursoInicioParticipantes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: auto;
+  font-size: 11px;
+}
+
+.situacaoCardMinicursoInicioParticipantes {
+  font-weight: 700;
+  background: rgba(11, 11, 11, 0.18);
+  padding: 6px 12px;
+  border-radius: 9999px;
+}
+
+/* meu dia / palestras da semana */
+.blocoMeuDiaInicioParticipantes,
+.blocoPalestrasSemanaInicioParticipantes { display: flex; flex-direction: column; gap: 10px; }
+
+.itemMeuDiaInicioParticipantes {
+  background: var(--vermelhoDiretoria);
+  border-radius: var(--radius-lg, 25px);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.statusMeuDiaConcluidoParticipantes { opacity: 0.75; }
+
+.statusMeuDiaAtualParticipantes {
+  background: var(--brancoQuenteParticipantes);
+  color: var(--vermelhoAuxDiretoria);
+  border: 2px solid var(--AmareloAuxApoio);
+}
+
+.statusMeuDiaProximoParticipantes { background: var(--azulConteudo); }
+
+.horarioItemMeuDiaInicioParticipantes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 52px;
+  flex: none;
+}
+
+.valorHorarioItemMeuDiaInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 14px; }
+.localItemMeuDiaInicioParticipantes { font-size: 9px; font-weight: 700; opacity: 0.7; }
+
+.textoItemMeuDiaInicioParticipantes { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.tituloItemMeuDiaInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 13px; line-height: 1.2; }
+.detalheItemMeuDiaInicioParticipantes { font-size: 11px; opacity: 0.75; }
+
+.statusMeuDiaAtualParticipantes .detalheItemMeuDiaInicioParticipantes { color: var(--rosaMarketing); font-weight: 700; opacity: 1; }
+
+.marcaConcluidaItemMeuDiaInicioParticipantes {
+  width: 26px;
+  height: 26px;
+  border-radius: 9999px;
+  background: var(--azulConteudo);
+  display: grid;
+  place-items: center;
+  font-family: var(--fonteTituloBungee);
+  font-size: 11px;
+  flex: none;
+}
+
+.grelhaPalestrasSemanaInicioParticipantes { display: grid; grid-template-columns: 1fr; gap: 12px; }
+
+@media (min-width: 860px) {
+  .grelhaPalestrasSemanaInicioParticipantes { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+}
+
+.cardPalestraSemanaInicioParticipantes {
+  background: var(--vermelhoDiretoria);
+  border-radius: var(--radius-lg, 25px);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cardPalestraSemanaInicioParticipantes.statusMeuDiaAtualParticipantes { background: var(--brancoQuenteParticipantes); }
+
+.horarioCardPalestraSemanaInicioParticipantes { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: var(--AmareloAuxApoio); }
+.cardPalestraSemanaInicioParticipantes.statusMeuDiaAtualParticipantes .horarioCardPalestraSemanaInicioParticipantes { color: var(--rosaMarketing); }
+
+.tituloCardPalestraSemanaInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 16px; line-height: 1.15; }
+.detalheCardPalestraSemanaInicioParticipantes { font-size: 11px; opacity: 0.75; margin-top: auto; }
+
+/* conquistas */
+.grelhaConquistasInicioParticipantes,
+.grelhaConquistasSecaoPerfilParticipantes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+
+.grelhaConquistasBarraLateralInicioParticipantes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+.itemConquistaInicioParticipantes,
+.itemConquistaSecaoPerfilParticipantes {
+  aspect-ratio: 1;
+  border-radius: var(--radius-md, 16px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 4px;
+  text-align: center;
+}
+
+.itemConquistaBloqueadaInicioParticipantes,
+.itemConquistaBloqueadaSecaoPerfilParticipantes {
+  background: rgba(252, 248, 245, 0.08);
+  border: 1px dashed rgba(252, 248, 245, 0.28);
+  color: rgba(252, 248, 245, 0.45);
+}
+
+.valorItemConquistaInicioParticipantes,
+.valorItemConquistaSecaoPerfilParticipantes { font-family: var(--fonteTituloBungee); font-size: 16px; }
+.rotuloItemConquistaInicioParticipantes,
+.rotuloItemConquistaSecaoPerfilParticipantes { font-size: 8px; font-weight: 800; }
+
+/* ranking na barra lateral */
+.listaRankingBarraLateralInicioParticipantes { display: flex; flex-direction: column; gap: 6px; }
+
+.itemRankingBarraLateralInicioParticipantes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: rgba(252, 248, 245, 0.08);
+}
+
+.itemRankingVoceInicioParticipantes { background: var(--brancoQuenteParticipantes); color: var(--vermelhoAuxDiretoria); }
+
+.posicaoItemRankingBarraLateralInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 12px; color: var(--AmareloAuxApoio); min-width: 24px; }
+.itemRankingVoceInicioParticipantes .posicaoItemRankingBarraLateralInicioParticipantes { color: var(--rosaMarketing); }
+.nomeItemRankingBarraLateralInicioParticipantes { flex: 1; font-size: 12px; font-weight: 600; }
+.xpItemRankingBarraLateralInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 12px; }
+
+/* ============================================================
+   Aba Agenda
+   ============================================================ */
+.secaoAgendaParticipantes { display: flex; flex-direction: column; gap: 18px; max-width: 640px; }
+
+@media (min-width: 860px) { .secaoAgendaParticipantes { max-width: 760px; margin: 0 auto; } }
+
+.cabecalhoSecaoAgendaParticipantes { display: flex; flex-direction: column; gap: 4px; }
+.tituloSecaoAgendaParticipantes { font-family: var(--fonteTituloBungee); font-size: 20px; }
+.subtituloSecaoAgendaParticipantes { font-size: 12px; color: rgba(252, 248, 245, 0.7); line-height: 1.4; }
+
+.seletorDiasAgendaParticipantes { display: flex; gap: 8px; }
+
+.itemDiaAgendaParticipantes {
+  flex: 1;
+  min-height: 52px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(252, 248, 245, 0.1);
+  cursor: pointer;
+}
+
+.itemDiaHojeAgendaParticipantes { background: var(--brancoQuenteParticipantes); color: var(--vermelhoAuxDiretoria); }
+
+.rotuloItemDiaAgendaParticipantes { font-family: var(--fonteTituloBungee); font-size: 12px; }
+.dataItemDiaAgendaParticipantes { font-size: 9px; opacity: 0.7; }
+.itemDiaHojeAgendaParticipantes .dataItemDiaAgendaParticipantes { font-weight: 700; color: var(--rosaMarketing); opacity: 1; }
+
+.filtrosAgendaParticipantes { display: flex; gap: 8px; }
+
+.filtroAtivoAgendaParticipantes,
+.filtroInativoAgendaParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 10px;
+  padding: 8px 14px;
+  border-radius: 9999px;
+  cursor: pointer;
+}
+
+.filtroAtivoAgendaParticipantes { background: var(--AmareloAuxApoio); color: var(--vermelhoAuxDiretoria); }
+.filtroInativoAgendaParticipantes { background: rgba(252, 248, 245, 0.1); }
+
+.listaMinicursosAgendaParticipantes { display: flex; flex-direction: column; gap: 8px; }
+
+.cardMinicursoAgendaParticipantes {
+  border-radius: var(--radius-lg, 25px);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.professorCardMinicursoAgendaParticipantes { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: rgba(252, 248, 245, 0.85); }
+.tituloCardMinicursoAgendaParticipantes { font-family: var(--fonteTituloBungee); font-size: 15px; line-height: 1.15; }
+
+.tagsCardMinicursoAgendaParticipantes { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.tagCardMinicursoAgendaParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 10px;
+  background: rgba(11, 11, 11, 0.12);
+  color: rgba(252, 248, 245, 0.8);
+  padding: 6px 9px;
+  border-radius: 8px;
+}
+
+.tagAtualCardMinicursoAgendaParticipantes { background: var(--brancoQuenteParticipantes); color: inherit; }
+
+.situacaoCardMinicursoAgendaParticipantes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11px;
+}
+
+.etiquetaSituacaoCardMinicursoAgendaParticipantes {
+  font-weight: 700;
+  background: rgba(11, 11, 11, 0.18);
+  padding: 5px 10px;
+  border-radius: 9999px;
+}
+
+.rodapeCardMinicursoAgendaParticipantes { font-size: 11px; opacity: 0.9; }
+
+.vagaLivreAgendaParticipantes {
+  border: 1px dashed rgba(252, 248, 245, 0.35);
+  border-radius: var(--radius-lg, 25px);
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.textoVagaLivreAgendaParticipantes { display: flex; flex-direction: column; gap: 3px; }
+.tituloVagaLivreAgendaParticipantes { font-family: var(--fonteTituloBungee); font-size: 13px; color: rgba(252, 248, 245, 0.85); }
+.descricaoVagaLivreAgendaParticipantes { font-size: 11px; color: rgba(252, 248, 245, 0.6); }
+
+.botaoVagaLivreAgendaParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 11px;
+  background: var(--AmareloAuxApoio);
+  color: var(--vermelhoAuxDiretoria);
+  padding: 11px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  flex: none;
+}
+
+.blocoPalestrasAgendaParticipantes { display: flex; flex-direction: column; gap: 8px; }
+
+.cardPalestraAgendaParticipantes {
+  background: var(--vermelhoDiretoria);
+  border-radius: var(--radius-lg, 25px);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.statusPalestraConcluidoAgendaParticipantes { opacity: 0.75; }
+.statusPalestraAtualAgendaParticipantes { background: var(--brancoQuenteParticipantes); color: var(--vermelhoAuxDiretoria); border: 2px solid var(--AmareloAuxApoio); }
+
+.horarioCardPalestraAgendaParticipantes { display: flex; flex-direction: column; align-items: center; min-width: 52px; flex: none; }
+.valorHorarioCardPalestraAgendaParticipantes { font-family: var(--fonteTituloBungee); font-size: 14px; }
+.localCardPalestraAgendaParticipantes { font-size: 9px; font-weight: 700; opacity: 0.7; }
+
+.textoCardPalestraAgendaParticipantes { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.tituloCardPalestraAgendaParticipantes { font-family: var(--fonteTituloBungee); font-size: 13px; line-height: 1.2; }
+.detalheCardPalestraAgendaParticipantes { font-size: 11px; opacity: 0.75; }
+.statusPalestraAtualAgendaParticipantes .detalheCardPalestraAgendaParticipantes { color: var(--rosaMarketing); font-weight: 700; opacity: 1; }
+
+.avisoPresencaAgendaParticipantes {
+  border: 1px dashed rgba(252, 248, 245, 0.3);
+  border-radius: var(--radius-md, 16px);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tituloAvisoPresencaAgendaParticipantes { font-family: var(--fonteTituloBungee); font-size: 12px; color: rgba(252, 248, 245, 0.85); }
+.textoAvisoPresencaAgendaParticipantes { font-size: 11px; color: rgba(252, 248, 245, 0.65); line-height: 1.5; }
+
+/* ============================================================
+   Aba Ranking
+   ============================================================ */
+.secaoRankingParticipantes { display: flex; flex-direction: column; gap: 18px; max-width: 640px; }
+
+@media (min-width: 860px) { .secaoRankingParticipantes { max-width: 760px; margin: 0 auto; } }
+
+.cabecalhoSecaoRankingParticipantes { display: flex; flex-direction: column; gap: 4px; }
+.tituloSecaoRankingParticipantes { font-family: var(--fonteTituloBungee); font-size: 20px; }
+.subtituloSecaoRankingParticipantes { font-size: 12px; color: rgba(252, 248, 245, 0.7); }
+
+.podioRankingParticipantes { display: flex; align-items: flex-end; gap: 10px; }
+
+.colunaPodioRankingParticipantes { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.nomePodioRankingParticipantes { font-size: 11px; font-weight: 700; text-align: center; }
+
+.barraPodioRankingParticipantes {
+  width: 100%;
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.barraPodioPosicao1RankingParticipantes { height: 104px; background: var(--AmareloAuxApoio); color: var(--vermelhoAuxDiretoria); }
+.barraPodioPosicao2RankingParticipantes { height: 74px; background: var(--rosaMarketing); }
+.barraPodioPosicao3RankingParticipantes { height: 58px; background: var(--azulConteudo); }
+
+.posicaoPodioRankingParticipantes { font-family: var(--fonteTituloBungee); font-size: 18px; }
+.barraPodioPosicao1RankingParticipantes .posicaoPodioRankingParticipantes { font-size: 22px; }
+.xpPodioRankingParticipantes { font-size: 10px; font-weight: 700; }
+
+.listaRankingParticipantes { display: flex; flex-direction: column; gap: 6px; }
+
+.separadorListaRankingParticipantes {
+  display: block;
+  font-family: var(--fonteTituloBungee);
+  font-size: 11px;
+  color: rgba(252, 248, 245, 0.4);
+  padding: 2px 14px;
+}
+
+.itemListaRankingParticipantes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: rgba(252, 248, 245, 0.08);
+}
+
+.itemListaVoceRankingParticipantes { background: var(--brancoQuenteParticipantes); color: var(--vermelhoAuxDiretoria); padding: 13px 14px; }
+
+.posicaoItemListaRankingParticipantes { font-family: var(--fonteTituloBungee); font-size: 12px; color: var(--AmareloAuxApoio); min-width: 26px; }
+.itemListaVoceRankingParticipantes .posicaoItemListaRankingParticipantes { color: var(--rosaMarketing); }
+.nomeItemListaRankingParticipantes { flex: 1; font-size: 12px; font-weight: 600; }
+.xpItemListaRankingParticipantes { font-family: var(--fonteTituloBungee); font-size: 12px; }
+
+.blocoComoGanharXpRankingParticipantes {
+  background: var(--vermelhoAux2Participantes);
+  border-radius: var(--radius-md, 16px);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tituloBlocoComoGanharXpRankingParticipantes { font-family: var(--fonteTituloBungee); font-size: 12px; letter-spacing: 0.06em; }
+
+.linhaComoGanharXpRankingParticipantes {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: rgba(252, 248, 245, 0.85);
+}
+
+.valorComoGanharXpRankingParticipantes { color: var(--AmareloAuxApoio); }
+
+/* ============================================================
+   Aba Perfil
+   ============================================================ */
+.secaoPerfilParticipantes { display: flex; flex-direction: column; gap: 20px; max-width: 640px; }
+
+@media (min-width: 860px) { .secaoPerfilParticipantes { max-width: 760px; margin: 0 auto; } }
+
+.cabecalhoSecaoPerfilParticipantes { display: flex; align-items: center; gap: 14px; }
+
+.avatarSecaoPerfilParticipantes {
+  width: 64px;
+  height: 64px;
+  border-radius: 9999px;
+  background: var(--rosaMarketing);
+  display: grid;
+  place-items: center;
+  font-family: var(--fonteTituloBungee);
+  font-size: 22px;
+  flex: none;
+}
+
+.identidadeSecaoPerfilParticipantes { display: flex; flex-direction: column; gap: 3px; }
+.nomeSecaoPerfilParticipantes { font-family: var(--fonteTituloBungee); font-size: 18px; line-height: 1.1; }
+.cursoSecaoPerfilParticipantes { font-size: 11px; color: rgba(252, 248, 245, 0.7); }
+
+.seloNivelSecaoPerfilParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 10px;
+  background: var(--AmareloAuxApoio);
+  color: var(--vermelhoAuxDiretoria);
+  padding: 4px 8px;
+  border-radius: 9999px;
+  align-self: flex-start;
+}
+
+.botoesSecaoPerfilParticipantes { display: flex; gap: 8px; }
+
+.botaoQrSecaoPerfilParticipantes,
+.botaoEditarSecaoPerfilParticipantes {
+  flex: 1;
+  font-family: var(--fonteTituloBungee);
+  font-size: 12px;
+  min-height: 46px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+}
+
+.botaoQrSecaoPerfilParticipantes { background: var(--AmareloAuxApoio); color: var(--vermelhoAuxDiretoria); }
+.botaoEditarSecaoPerfilParticipantes { background: transparent; border: 2px solid rgba(252, 248, 245, 0.55); color: var(--brancoQuenteParticipantes); }
+
+.cardDadosInscricaoSecaoPerfilParticipantes {
+  background: var(--vermelhoAux2Participantes);
+  border-radius: var(--radius-lg, 25px);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tituloCardDadosInscricaoSecaoPerfilParticipantes { font-family: var(--fonteTituloBungee); font-size: 12px; letter-spacing: 0.06em; }
+
+.linhaCardDadosInscricaoSecaoPerfilParticipantes {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11px;
+  color: rgba(252, 248, 245, 0.85);
+}
+
+.rotuloLinhaCardDadosInscricaoSecaoPerfilParticipantes { color: rgba(252, 248, 245, 0.6); }
+
+.blocoConquistasSecaoPerfilParticipantes,
+.blocoCertificadosSecaoPerfilParticipantes { display: flex; flex-direction: column; gap: 10px; }
+
+.blocoCertificadosSecaoPerfilParticipantes .rotuloBlocoSecaoPerfilParticipantes { font-size: 15px; }
+
+.cardCertificadoSecaoPerfilParticipantes {
+  background: var(--AmareloAuxApoio);
+  color: var(--vermelhoAuxDiretoria);
+  border-radius: var(--radius-lg, 25px);
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.textoCardCertificadoSecaoPerfilParticipantes { display: flex; flex-direction: column; gap: 2px; }
+.tituloCardCertificadoSecaoPerfilParticipantes { font-family: var(--fonteTituloBungee); font-size: 14px; }
+.detalheCardCertificadoSecaoPerfilParticipantes { font-size: 11px; font-weight: 600; color: rgba(115, 8, 53, 0.8); }
+
+.botaoPdfCardCertificadoSecaoPerfilParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 11px;
+  background: var(--vermelhoAuxDiretoria);
+  color: var(--brancoQuenteParticipantes);
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  flex: none;
+}
+
+.botaoSairSecaoPerfilParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 11px;
+  color: rgba(252, 248, 245, 0.55);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
