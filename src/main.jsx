@@ -5,6 +5,7 @@ import { Switch, Route, Redirect } from 'wouter'
 import Admin from './pages/Admin/Admin.jsx'
 import Inscricao from "./pages/Inscricao/Inscricao.jsx";
 import PaginaCotas from "./pages/PaginaCotas/PaginaCotas.jsx";
+import Checkin from "./components/qrcode/ModalQrCode.jsx";
 import Financas from "./pages/Financas/Financas.jsx";
 import ConjuntosCotacao from "./pages/Financas/conjuntos/ConjuntosCotacao.jsx";
 import ConjuntoDetalhe from "./pages/Financas/conjuntos/ConjuntoDetalhe.jsx";
@@ -43,6 +44,12 @@ function RotaParticipantes() {
         : <Redirect to="/inscricoes?tab=entrar&next=/participantes" />;
 }
 
+function RotaCheckin() {
+    return temAcessoAdmin()
+        ? <Checkin />
+        : <Redirect to="/inscricoes?tab=entrar&next=/participantes" />;
+}
+
 render(
     <Switch>
         {/*<Route path="/sorteio"><Admin /></Route>*/}
@@ -53,6 +60,7 @@ render(
         <Route path="/inscricoes"><Inscricao /></Route>
         <Route path="/cotas"><PaginaCotas /></Route>
         <Route path="/participantes"><RotaParticipantes /></Route>
+        <Route path="/checkin"><RotaCheckin /></Route>
         {/*<Route path="/ranking"><Ranking /></Route>*/}
         <Route><App /></Route>
     </Switch>,
