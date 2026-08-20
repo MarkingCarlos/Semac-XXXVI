@@ -30,7 +30,7 @@ export const DATA_ANUNCIO = new Date('2026-08-28T09:00:00-03:00');
 
 /* Estatísticas exibidas no card lateral */
 export const STATS = [
-  { valor: '80+', label: 'HORAS DE CONTEÚDO'  },
+  { valor: '40+', label: 'HORAS DE CONTEÚDO'  },
   { valor: '4',   label: 'DIAS'       },
-  { valor: '9',   label: 'MINICURSOS' },
+  { valor: '6',   label: 'MINICURSOS' },
 ];
