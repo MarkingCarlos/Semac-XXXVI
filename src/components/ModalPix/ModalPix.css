@@ -1,0 +1,50 @@
+@import '../../index.css';
+
+/* TODO: add responsivity */
+.main{
+    width: 80vw;
+    height: 80vh;
+    color:var(--branco);
+    background-color: var(--vermelhoDiretoria);
+    border: solid 1px var(--Branco) ;
+    border-radius: 1rem;
+    display:flex;
+    justify-content: top;
+    align-items: center;
+    flex-direction: column;
+    justify-self: center;
+
+}
+
+.modal-div{
+    width: 96%;
+    height: 20vh;
+    max-height:40vh;
+    color:var(--vermelhoDiretoria);
+    background-color: var(--Branco);
+    padding: 2%;
+    justify-content: center;
+    align-items: center;
+}
+
+/* TODO responsivity né gata */
+.title{
+    font-size: 24px;
+    margin:none;
+}
+.text{
+    font-size:15px;
+    color: var(--vermelhoAuxDiretoria);
+    margin-left:20px;
+}
+
+.white{
+        color: var(--Branco);
+}
+
+.qrcode{
+    margin-top: 4vh;
+    width: 40vh;
+    height: 40vh;
+    background-color: var(--Branco);
+}
