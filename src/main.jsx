@@ -7,7 +7,7 @@ import Inscricao from "./pages/Inscricao/Inscricao.jsx";
 import PaginaCotas from "./pages/PaginaCotas/PaginaCotas.jsx";
 import Checkin from "./components/qrcode/ModalQrCode.jsx";
 import Termo from "./pages/Termo/Termo.jsx";
-import Sorteio from "./pages/Sorteio/Sorteio.jsx";
+import Sorteio from "./pages/Sorteio/sorteio.jsx";
 import Financas from "./pages/Financas/Financas.jsx";
 import ConjuntosCotacao from "./pages/Financas/conjuntos/ConjuntosCotacao.jsx";
 import ConjuntoDetalhe from "./pages/Financas/conjuntos/ConjuntoDetalhe.jsx";
