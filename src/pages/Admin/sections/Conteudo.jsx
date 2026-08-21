@@ -26,7 +26,7 @@ const EVENTO_VAZIO = {
     palestrantes: [],
 };
 
-const TIPO_VAZIO = { nome: '', pontos: '' };
+const TIPO_VAZIO = { nome: '', pontos: '', exigeInscricao: false };
 
 /* 'YYYY-MM-DD' → 'DD/MM/YYYY' (sem Date para não sofrer com fuso) */
 function formatarDataEvento(data) {
@@ -155,7 +155,7 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
     };
 
     const editarTipo = (tipo) => {
-        setFormularioTipo({ nome: tipo.nome, pontos: tipo.pontos });
+        setFormularioTipo({ nome: tipo.nome, pontos: tipo.pontos, exigeInscricao: Boolean(tipo.exigeInscricao) });
         setIdTipoEmEdicao(tipo.id);
         setErroTipo('');
     };
@@ -525,6 +525,9 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                             <div className="infoTipoEventoConteudo">
                                 <span className="nomeTipoEventoConteudo">{tipo.nome}</span>
                                 <span className="pontosTipoEventoConteudo">{tipo.pontos} pts</span>
+                                {tipo.exigeInscricao && (
+                                    <span className="seloInscricaoTipoEventoConteudo">vaga limitada</span>
+                                )}
                             </div>
                             <div className="grupoAcoesLinhaFinancas">
                                 <button
@@ -591,6 +594,23 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                             value={formularioTipo.pontos}
                             onInput={(e) => setFormularioTipo({ ...formularioTipo, pontos: e.currentTarget.value })}
                         />
+                    </div>
+                    <div className="campoFormularioFinancas">
+                        <label className="rotuloCheckboxTipoEventoConteudo" htmlFor="campoExigeInscricaoTipo">
+                            <input
+                                id="campoExigeInscricaoTipo"
+                                type="checkbox"
+                                checked={formularioTipo.exigeInscricao}
+                                onChange={(e) => setFormularioTipo({ ...formularioTipo, exigeInscricao: e.currentTarget.checked })}
+                            />
+                            <span>
+                                Participante escolhe (vagas limitadas)
+                                <small className="ajudaCheckboxTipoEventoConteudo">
+                                    Marque para minicursos. Desmarcado, todo participante confirmado
+                                    é inscrito automaticamente nos eventos desse tipo.
+                                </small>
+                            </span>
+                        </label>
                     </div>
                     <div className="rodapeFormularioFinancas">
                         {idTipoEmEdicao !== null && (

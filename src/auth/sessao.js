@@ -34,11 +34,13 @@ function sessaoExpirada() {
 }
 
 /* Se a resposta for 401 (token expirado/inválido), limpa a sessão e redireciona
-   para o login preservando a rota de retorno. Retorna true se tratou o 401. */
-export function tratarErroAuth(resposta) {
+   para o login preservando a rota de retorno. Retorna true se tratou o 401.
+   `rotaRetorno` é para onde o login devolve o usuário — o padrão atende o
+   módulo financeiro, e a área do participante passa a própria rota. */
+export function tratarErroAuth(resposta, rotaRetorno = '/financeiro') {
     if (resposta.status !== 401) return false;
     limparSessao();
-    window.location.replace('/inscricoes?tab=entrar&next=/financeiro');
+    window.location.replace(`/inscricoes?tab=entrar&next=${encodeURIComponent(rotaRetorno)}`);
     return true;
 }
 

@@ -1,10 +1,16 @@
 /* Área do participante — acessível em /participantes, restrita a quem tem
-   role PARTICIPANTE (ver auth/sessao.js e main.jsx). Nível, XP, ranking,
-   agenda, conquistas e certificados ainda não têm endpoint na API: os
-   dados vêm de mockParticipante.js até o backend expor essas rotas. Nome
-   e e-mail exibidos são os reais, tirados da sessão. */
+   role PARTICIPANTE (ver auth/sessao.js e main.jsx).
 
-import { useState } from 'preact/hooks';
+   Programação e agenda são reais: vêm de /api/evento e /api/evento/meus.
+   O participante já entra nas palestras ao ter a inscrição confirmada no
+   /admin; minicursos ele escolhe aqui, respeitando lotação e um por
+   faixa de horário (ver data/apiEventosParticipantes.js).
+
+   Nível/XP, ranking, conquistas, perfil e certificados seguem em
+   mockParticipante.js — nenhum endpoint expõe esses dados ainda. Nome e
+   e-mail exibidos são os reais, tirados da sessão. */
+
+import { useEffect, useMemo, useState } from 'preact/hooks';
 import { useLocation } from 'wouter';
 import { lerSessao, limparSessao } from '../../auth/sessao.js';
 import './participantes.css';
@@ -16,14 +22,25 @@ import SecaoRankingParticipantes from './sections/SecaoRankingParticipantes.jsx'
 import SecaoPerfilParticipantes from './sections/SecaoPerfilParticipantes.jsx';
 
 import {
+    listarEventosParticipantes,
+    listarMeusEventosParticipantes,
+    inscreverEmMinicurso,
+    cancelarMinicurso,
+} from './data/apiEventosParticipantes.js';
+import {
+    montarDiasDaSemana,
+    diaInicialAgenda,
+    palestrasDoDia,
+    montarMeuDia,
+    montarMinicursos,
+    atividadeAgora,
+    proximaAtividade,
+    ehMinicurso,
+} from './data/agendaParticipantes.js';
+
+import {
     nivelMockParticipante,
-    aulaAgoraMockParticipante,
-    aSeguirMockParticipante,
-    meuDiaMockParticipante,
     conquistasMockParticipante,
-    diasSemanaMockParticipante,
-    minicursosMockParticipante,
-    palestrasDoDiaMockParticipante,
     rankingMockParticipante,
     comoGanharXpMockParticipante,
     perfilMockParticipante,
@@ -37,8 +54,11 @@ const ABAS_PARTICIPANTES = [
     { id: 'perfil', rotulo: 'Perfil' },
 ];
 
-const TEM_MINICURSO_PARTICIPANTES = true;
 const CERTIFICADOS_LIBERADOS_PARTICIPANTES = false;
+
+/* De quanto em quanto tempo o relógio da página avança — é ele que move
+   um item de "a seguir" para "acontece agora". */
+const INTERVALO_RELOGIO_PARTICIPANTES = 60000;
 
 function iniciaisNomeParticipante(nome) {
     if (!nome) return '';
@@ -58,6 +78,91 @@ export default function Participantes() {
     const [abaAtiva, setAbaAtiva] = useState('inicio');
     const [qrAberto, setQrAberto] = useState(false);
 
+    const [eventos, setEventos] = useState([]);
+    const [meusEventos, setMeusEventos] = useState([]);
+    const [carregandoAgenda, setCarregandoAgenda] = useState(true);
+    const [erroAgenda, setErroAgenda] = useState('');
+    const [diaSelecionado, setDiaSelecionado] = useState('');
+    const [erroMinicurso, setErroMinicurso] = useState('');
+    const [minicursoEmEspera, setMinicursoEmEspera] = useState(null);
+
+    const [agora, setAgora] = useState(() => new Date());
+
+    useEffect(() => {
+        const relogio = setInterval(() => setAgora(new Date()), INTERVALO_RELOGIO_PARTICIPANTES);
+        return () => clearInterval(relogio);
+    }, []);
+
+    useEffect(() => {
+        let ativo = true;
+        carregarAgenda()
+            .catch((erro) => { if (ativo) setErroAgenda(erro.message); })
+            .finally(() => { if (ativo) setCarregandoAgenda(false); });
+        return () => { ativo = false; };
+    }, []);
+
+    /* Programação da semana + em que o participante está. As duas são
+       buscadas juntas porque as vagas restantes de um minicurso mudam
+       sempre que alguém entra ou sai, mas falham separado: a programação
+       é pública e deve aparecer mesmo se a agenda pessoal der erro. */
+    async function carregarAgenda() {
+        const [programacao, meus] = await Promise.allSettled([
+            listarEventosParticipantes(),
+            listarMeusEventosParticipantes(),
+        ]);
+
+        if (programacao.status === 'fulfilled') {
+            setEventos(programacao.value);
+        }
+        if (meus.status === 'fulfilled') {
+            setMeusEventos(meus.value ?? []);
+        }
+
+        const falha = programacao.status === 'rejected' ? programacao.reason : meus.reason;
+        if (falha) {
+            throw falha;
+        }
+    }
+
+    const diasSemana = useMemo(() => montarDiasDaSemana(eventos, agora), [eventos, agora]);
+
+    /* Abre no dia de hoje quando há programação hoje; fora da semana do
+       evento, no próximo dia com atividade. */
+    useEffect(() => {
+        if (diasSemana.length === 0) return;
+        if (diasSemana.some((dia) => dia.id === diaSelecionado)) return;
+        setDiaSelecionado(diaInicialAgenda(diasSemana, agora));
+    }, [diasSemana]);
+
+    const palestrasDoDiaSelecionado = useMemo(
+        () => palestrasDoDia(eventos, diaSelecionado, agora),
+        [eventos, diaSelecionado, agora],
+    );
+
+    const meuDia = useMemo(
+        () => montarMeuDia(eventos, meusEventos, diaSelecionado, agora),
+        [eventos, meusEventos, diaSelecionado, agora],
+    );
+
+    const minicursos = useMemo(
+        () => montarMinicursos(eventos, meusEventos, agora),
+        [eventos, meusEventos, agora],
+    );
+
+    const meusMinicursos = useMemo(() => minicursos.filter((curso) => curso.escolhido), [minicursos]);
+
+    const atividadeAtual = useMemo(
+        () => atividadeAgora(eventos, meusEventos, agora),
+        [eventos, meusEventos, agora],
+    );
+
+    const atividadeSeguinte = useMemo(
+        () => proximaAtividade(eventos, meusEventos, agora),
+        [eventos, meusEventos, agora],
+    );
+
+    const totalMinicursos = useMemo(() => eventos.filter(ehMinicurso).length, [eventos]);
+
     function irPara(aba) {
         setAbaAtiva(aba);
         setQrAberto(false);
@@ -67,6 +172,28 @@ export default function Participantes() {
         limparSessao();
         navegar('/');
     }
+
+    /* Entrar/sair de minicurso recarrega a agenda em seguida: a vaga que
+       acabou de ser tomada (ou liberada) precisa aparecer para todos. */
+    async function alterarMinicurso(eventoId, acao) {
+        setErroMinicurso('');
+        setMinicursoEmEspera(eventoId);
+        try {
+            await acao(eventoId);
+        } catch (erro) {
+            setErroMinicurso(erro.message);
+        } finally {
+            try {
+                await carregarAgenda();
+            } catch (erro) {
+                setErroAgenda(erro.message);
+            }
+            setMinicursoEmEspera(null);
+        }
+    }
+
+    const escolherMinicurso = (eventoId) => alterarMinicurso(eventoId, inscreverEmMinicurso);
+    const sairDoMinicurso = (eventoId) => alterarMinicurso(eventoId, cancelarMinicurso);
 
     return (
         <div className="paginaParticipantes">
@@ -102,17 +229,22 @@ export default function Participantes() {
             </header>
 
             <main className="conteudoParticipantes">
+                {erroAgenda && (
+                    <p className="avisoErroAgendaParticipantes" role="alert">{erroAgenda}</p>
+                )}
+
                 {abaAtiva === 'inicio' && (
                     <SecaoInicioParticipantes
                         nivel={nivelMockParticipante}
-                        aulaAgora={aulaAgoraMockParticipante}
-                        aSeguir={aSeguirMockParticipante}
-                        meuDia={meuDiaMockParticipante}
-                        palestrasDoDia={palestrasDoDiaMockParticipante}
+                        atividadeAtual={atividadeAtual}
+                        atividadeSeguinte={atividadeSeguinte}
+                        meuDia={meuDia}
+                        palestrasDoDia={palestrasDoDiaSelecionado}
                         conquistas={conquistasMockParticipante}
-                        minicursos={minicursosMockParticipante}
+                        meusMinicursos={meusMinicursos}
+                        totalMinicursos={totalMinicursos}
                         ranking={rankingMockParticipante}
-                        temMinicurso={TEM_MINICURSO_PARTICIPANTES}
+                        carregando={carregandoAgenda}
                         onAbrirQr={() => setQrAberto(true)}
                         onVerRanking={() => irPara('ranking')}
                         onVerAgenda={() => irPara('agenda')}
@@ -120,10 +252,17 @@ export default function Participantes() {
                 )}
                 {abaAtiva === 'agenda' && (
                     <SecaoAgendaParticipantes
-                        diasSemana={diasSemanaMockParticipante}
-                        temMinicurso={TEM_MINICURSO_PARTICIPANTES}
-                        minicursos={minicursosMockParticipante}
-                        palestrasDoDia={palestrasDoDiaMockParticipante}
+                        diasSemana={diasSemana}
+                        diaSelecionado={diaSelecionado}
+                        onSelecionarDia={setDiaSelecionado}
+                        minicursos={minicursos}
+                        meusMinicursos={meusMinicursos}
+                        palestrasDoDia={palestrasDoDiaSelecionado}
+                        carregando={carregandoAgenda}
+                        erroMinicurso={erroMinicurso}
+                        minicursoEmEspera={minicursoEmEspera}
+                        onEscolherMinicurso={escolherMinicurso}
+                        onSairDoMinicurso={sairDoMinicurso}
                     />
                 )}
                 {abaAtiva === 'ranking' && (
@@ -165,32 +304,40 @@ export default function Participantes() {
             {qrAberto && (
                 <div className="sobreposicaoQrParticipantes" onClick={() => setQrAberto(false)}>
                     <div className="modalQrParticipantes" onClick={(evento) => evento.stopPropagation()}>
+                        <button
+                            type="button"
+                            className="botaoFecharModalQrParticipantes"
+                            onClick={() => setQrAberto(false)}
+                            aria-label="Fechar"
+                        >
+                            ×
+                        </button>
                         <div className="cabecalhoModalQrParticipantes">
                             <div className="textoCabecalhoModalQrParticipantes">
                                 <span className="tituloModalQrParticipantes">MEU CRACHÁ</span>
                                 <span className="subtituloModalQrParticipantes">Mostre na entrada da atividade</span>
                             </div>
-                            <button
-                                type="button"
-                                className="botaoFecharModalQrParticipantes"
-                                onClick={() => setQrAberto(false)}
-                                aria-label="Fechar"
-                            >
-                                ×
-                            </button>
+
                         </div>
+
                         <QrCrachaParticipantes tamanho={200} uuidParticipante={sessao?.uuid} />
                         <div className="identidadeModalQrParticipantes">
                             <span className="nomeModalQrParticipantes">{nomeParticipante.toUpperCase()}</span>
                             <span className="inscricaoModalQrParticipantes">{perfilMockParticipante.numeroInscricao}</span>
                         </div>
-                        <div className="avisoAgoraModalQrParticipantes">
-                            <span className="tagAgoraModalQrParticipantes">AGORA</span>
-                            <span className="textoAgoraModalQrParticipantes">
-                                {aulaAgoraMockParticipante.horario} · {aulaAgoraMockParticipante.local} —{' '}
-                                {aulaAgoraMockParticipante.checkinFeito ? 'check-in já registrado' : 'check-in pendente'}
-                            </span>
-                        </div>
+                        {(atividadeAtual || atividadeSeguinte) && (
+                            <div className="avisoAgoraModalQrParticipantes">
+                                <span className="tagAgoraModalQrParticipantes">
+                                    {atividadeAtual ? 'AGORA' : 'A SEGUIR'}
+                                </span>
+                                <span className="textoAgoraModalQrParticipantes">
+                                    {(atividadeAtual ?? atividadeSeguinte).dia} ·{' '}
+                                    {(atividadeAtual ?? atividadeSeguinte).horario} ·{' '}
+                                    {(atividadeAtual ?? atividadeSeguinte).local} —{' '}
+                                    {(atividadeAtual ?? atividadeSeguinte).titulo}
+                                </span>
+                            </div>
+                        )}
                         <span className="rodapeModalQrParticipantes">
                             Funciona sem internet. O código é pessoal e não deve ser compartilhado.
                         </span>

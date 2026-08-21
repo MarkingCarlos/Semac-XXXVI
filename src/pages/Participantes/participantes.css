@@ -253,17 +253,16 @@
 
 .botaoFecharModalQrParticipantes {
   width: 34px;
-  height: 34px;
-  border-radius: 9999px;
+  border-radius: 50px;
   background: var(--vermelhoAuxDiretoria);
   color: var(--brancoQuenteParticipantes);
-  font-size: 16px;
-  line-height: 1;
+  font-size: 15px;
   border: none;
   display: grid;
   place-items: center;
   cursor: pointer;
   flex: none;
+  justify-content: center;
 }
 
 .molduraQrCrachaParticipantes {
@@ -356,7 +355,12 @@
 .linhaTopoCardNivelInicioParticipantes { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 
 .blocoNivelCardNivelInicioParticipantes,
-.blocoXpCardNivelInicioParticipantes { display: flex; flex-direction: column; gap: 2px; }
+.blocoXpCardNivelInicioParticipantes {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+}
 
 .blocoXpCardNivelInicioParticipantes { align-items: flex-end; text-align: right; }
 
@@ -426,14 +430,6 @@
   border-radius: var(--radius-sm, 8px);
 }
 
-.tagCheckinAconteceAgoraInicioParticipantes {
-  font-family: var(--fonteTituloBungee);
-  font-size: 11px;
-  background: var(--azulConteudo);
-  color: var(--brancoQuenteParticipantes);
-  padding: 6px 10px;
-  border-radius: var(--radius-sm, 8px);
-}
 
 .avisoASeguirInicioParticipantes {
   display: flex;
@@ -483,12 +479,6 @@
   font-size: 11px;
 }
 
-.situacaoCardMinicursoInicioParticipantes {
-  font-weight: 700;
-  background: rgba(11, 11, 11, 0.18);
-  padding: 6px 12px;
-  border-radius: 9999px;
-}
 
 /* meu dia / palestras da semana */
 .blocoMeuDiaInicioParticipantes,
@@ -635,30 +625,38 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2px;
+  border: none;
   border-radius: 8px;
   background: rgba(252, 248, 245, 0.1);
+  color: inherit;
+  font: inherit;
   cursor: pointer;
 }
 
-.itemDiaHojeAgendaParticipantes { background: var(--brancoQuenteParticipantes); color: var(--vermelhoAuxDiretoria); }
+.itemDiaSelecionadoAgendaParticipantes { background: var(--brancoQuenteParticipantes); color: var(--vermelhoAuxDiretoria); }
 
 .rotuloItemDiaAgendaParticipantes { font-family: var(--fonteTituloBungee); font-size: 12px; }
 .dataItemDiaAgendaParticipantes { font-size: 9px; opacity: 0.7; }
-.itemDiaHojeAgendaParticipantes .dataItemDiaAgendaParticipantes { font-weight: 700; color: var(--rosaMarketing); opacity: 1; }
+.itemDiaSelecionadoAgendaParticipantes .dataItemDiaAgendaParticipantes { font-weight: 700; color: var(--rosaMarketing); opacity: 1; }
 
-.filtrosAgendaParticipantes { display: flex; gap: 8px; }
-
-.filtroAtivoAgendaParticipantes,
-.filtroInativoAgendaParticipantes {
-  font-family: var(--fonteTituloBungee);
-  font-size: 10px;
-  padding: 8px 14px;
-  border-radius: 9999px;
-  cursor: pointer;
+.avisoCarregandoAgendaParticipantes,
+.avisoVazioAgendaParticipantes {
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgba(252, 248, 245, 0.65);
 }
 
-.filtroAtivoAgendaParticipantes { background: var(--AmareloAuxApoio); color: var(--vermelhoAuxDiretoria); }
-.filtroInativoAgendaParticipantes { background: rgba(252, 248, 245, 0.1); }
+.avisoErroAgendaParticipantes,
+.avisoErroMinicursoAgendaParticipantes {
+  font-size: 12px;
+  line-height: 1.45;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: var(--brancoQuenteParticipantes);
+  background: rgba(214, 69, 65, 0.18);
+  border: 1px solid rgba(214, 69, 65, 0.5);
+}
 
 .listaMinicursosAgendaParticipantes { display: flex; flex-direction: column; gap: 8px; }
 
@@ -673,18 +671,6 @@
 .professorCardMinicursoAgendaParticipantes { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: rgba(252, 248, 245, 0.85); }
 .tituloCardMinicursoAgendaParticipantes { font-family: var(--fonteTituloBungee); font-size: 15px; line-height: 1.15; }
 
-.tagsCardMinicursoAgendaParticipantes { display: flex; gap: 6px; flex-wrap: wrap; }
-
-.tagCardMinicursoAgendaParticipantes {
-  font-family: var(--fonteTituloBungee);
-  font-size: 10px;
-  background: rgba(11, 11, 11, 0.12);
-  color: rgba(252, 248, 245, 0.8);
-  padding: 6px 9px;
-  border-radius: 8px;
-}
-
-.tagAtualCardMinicursoAgendaParticipantes { background: var(--brancoQuenteParticipantes); color: inherit; }
 
 .situacaoCardMinicursoAgendaParticipantes {
   display: flex;
@@ -703,30 +689,60 @@
 
 .rodapeCardMinicursoAgendaParticipantes { font-size: 11px; opacity: 0.9; }
 
-.vagaLivreAgendaParticipantes {
-  border: 1px dashed rgba(252, 248, 245, 0.35);
-  border-radius: var(--radius-lg, 25px);
-  padding: 16px 18px;
+/* Linha de ação do minicurso: o botão que cabe (escolher/sair) ou a
+   etiqueta explicando por que não dá (esgotado, choque de horário). */
+.linhaAcaoCardMinicursoAgendaParticipantes {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-.textoVagaLivreAgendaParticipantes { display: flex; flex-direction: column; gap: 3px; }
-.tituloVagaLivreAgendaParticipantes { font-family: var(--fonteTituloBungee); font-size: 13px; color: rgba(252, 248, 245, 0.85); }
-.descricaoVagaLivreAgendaParticipantes { font-size: 11px; color: rgba(252, 248, 245, 0.6); }
-
-.botaoVagaLivreAgendaParticipantes {
+.botaoEscolherMinicursoAgendaParticipantes,
+.botaoSairMinicursoAgendaParticipantes {
   font-family: var(--fonteTituloBungee);
   font-size: 11px;
-  background: var(--AmareloAuxApoio);
-  color: var(--vermelhoAuxDiretoria);
-  padding: 11px 12px;
+  padding: 10px 16px;
+  border: none;
   border-radius: 8px;
   cursor: pointer;
-  flex: none;
 }
+
+.botaoEscolherMinicursoAgendaParticipantes {
+  background: var(--AmareloAuxApoio);
+  color: var(--vermelhoAuxDiretoria);
+}
+
+.botaoSairMinicursoAgendaParticipantes {
+  background: rgba(11, 11, 11, 0.18);
+  color: var(--brancoQuenteParticipantes);
+}
+
+.botaoEscolherMinicursoAgendaParticipantes:disabled,
+.botaoSairMinicursoAgendaParticipantes:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.etiquetaEscolhidoMinicursoAgendaParticipantes,
+.etiquetaBloqueioMinicursoAgendaParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 10px;
+  padding: 7px 11px;
+  border-radius: 9999px;
+}
+
+.etiquetaEscolhidoMinicursoAgendaParticipantes {
+  background: var(--brancoQuenteParticipantes);
+  color: var(--vermelhoAuxDiretoria);
+}
+
+.etiquetaBloqueioMinicursoAgendaParticipantes {
+  background: rgba(11, 11, 11, 0.22);
+  color: rgba(252, 248, 245, 0.75);
+}
+
 
 .blocoPalestrasAgendaParticipantes { display: flex; flex-direction: column; gap: 8px; }
 

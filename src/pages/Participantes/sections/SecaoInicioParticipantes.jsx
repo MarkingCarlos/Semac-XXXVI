@@ -1,18 +1,23 @@
-/* Aba "Início": nível/XP, aula acontecendo agora, minicursos do participante,
-   agenda do dia (mobile) / palestras da semana (desktop) e conquistas.
-   Mobile x desktop é resolvido por CSS (ver participantes.css) — o mesmo
-   JSX é reorganizado em coluna única ou coluna principal + barra lateral. */
+/* Aba "Início": nível/XP, atividade acontecendo agora, os minicursos que
+   o participante escolheu, agenda do dia (mobile) / palestras do dia
+   (desktop) e conquistas. Mobile x desktop é resolvido por CSS (ver
+   participantes.css) — o mesmo JSX é reorganizado em coluna única ou
+   coluna principal + barra lateral.
+
+   Nível, ranking e conquistas ainda vêm de mockParticipante.js; o resto
+   é a programação real da API. */
 
 export default function SecaoInicioParticipantes({
     nivel,
-    aulaAgora,
-    aSeguir,
+    atividadeAtual,
+    atividadeSeguinte,
     meuDia,
     palestrasDoDia,
     conquistas,
-    minicursos,
+    meusMinicursos,
+    totalMinicursos,
     ranking,
-    temMinicurso,
+    carregando,
     onAbrirQr,
     onVerRanking,
     onVerAgenda,
@@ -56,46 +61,80 @@ export default function SecaoInicioParticipantes({
 
                 <div className="blocoAconteceAgoraInicioParticipantes">
                     <div className="cabecalhoBlocoInicioParticipantes">
-                        <span className="rotuloBlocoInicioParticipantes">ACONTECE AGORA</span>
-                    </div>
-                    <div className="cardAconteceAgoraInicioParticipantes">
-                        <span className="categoriaCardAconteceAgoraInicioParticipantes">
-                            {aulaAgora.tipo} · {aulaAgora.palestrante}
+                        <span className="rotuloBlocoInicioParticipantes">
+                            {atividadeAtual ? 'ACONTECE AGORA' : 'PRÓXIMA ATIVIDADE'}
                         </span>
-                        <span className="tituloCardAconteceAgoraInicioParticipantes">{aulaAgora.titulo}</span>
-                        <div className="tagsCardAconteceAgoraInicioParticipantes">
-                            <span className="tagLocalAconteceAgoraInicioParticipantes">{aulaAgora.local}</span>
-                            <span className="tagHorarioAconteceAgoraInicioParticipantes">{aulaAgora.horario}</span>
-                            {aulaAgora.checkinFeito && (
-                                <span className="tagCheckinAconteceAgoraInicioParticipantes">CHECK-IN FEITO</span>
-                            )}
+                    </div>
+
+                    {carregando && (
+                        <p className="avisoCarregandoAgendaParticipantes">Carregando a programação…</p>
+                    )}
+
+                    {/* Fora do horário de qualquer atividade (antes da semana do
+                        evento, por exemplo) o destaque passa a ser a próxima. */}
+                    {!carregando && (atividadeAtual ?? atividadeSeguinte) && (
+                        <div className="cardAconteceAgoraInicioParticipantes">
+                            <span className="categoriaCardAconteceAgoraInicioParticipantes">
+                                {(atividadeAtual ?? atividadeSeguinte).tipo}
+                                {(atividadeAtual ?? atividadeSeguinte).palestrante
+                                    ? ` · ${(atividadeAtual ?? atividadeSeguinte).palestrante}`
+                                    : ''}
+                            </span>
+                            <span className="tituloCardAconteceAgoraInicioParticipantes">
+                                {(atividadeAtual ?? atividadeSeguinte).titulo}
+                            </span>
+                            <div className="tagsCardAconteceAgoraInicioParticipantes">
+                                <span className="tagLocalAconteceAgoraInicioParticipantes">
+                                    {(atividadeAtual ?? atividadeSeguinte).local}
+                                </span>
+                                <span className="tagHorarioAconteceAgoraInicioParticipantes">
+                                    {(atividadeAtual ?? atividadeSeguinte).dia} · {(atividadeAtual ?? atividadeSeguinte).horario}
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                    <div className="avisoASeguirInicioParticipantes">
-                        <span className="rotuloASeguirInicioParticipantes">A SEGUIR</span>
-                        <span className="textoASeguirInicioParticipantes">
-                            {aSeguir.horario} · {aSeguir.tipo} <strong>{aSeguir.titulo}</strong> · {aSeguir.local}
-                        </span>
-                    </div>
+                    )}
+
+                    {!carregando && !atividadeAtual && !atividadeSeguinte && (
+                        <p className="avisoVazioAgendaParticipantes">
+                            Nenhuma atividade programada daqui pra frente.
+                        </p>
+                    )}
+
+                    {!carregando && atividadeAtual && atividadeSeguinte && (
+                        <div className="avisoASeguirInicioParticipantes">
+                            <span className="rotuloASeguirInicioParticipantes">A SEGUIR</span>
+                            <span className="textoASeguirInicioParticipantes">
+                                {atividadeSeguinte.dia} · {atividadeSeguinte.horario} · <strong>{atividadeSeguinte.titulo}</strong> · {atividadeSeguinte.local}
+                            </span>
+                        </div>
+                    )}
                 </div>
 
-                {temMinicurso && (
+                {totalMinicursos > 0 && (
                     <div className="blocoMinicursosInicioParticipantes soDesktopParticipantes">
-                        <span className="rotuloBlocoInicioParticipantes">MEUS MINICURSOS</span>
-                        <div className="grelhaMinicursosInicioParticipantes">
-                            {minicursos.map((curso) => (
-                                <div key={curso.id} className={`cardMinicursoInicioParticipantes corMinicurso${capitalizar(curso.cor)}Participantes`}>
-                                    <span className="professorCardMinicursoInicioParticipantes">{curso.professor}</span>
-                                    <span className="tituloCardMinicursoInicioParticipantes">{curso.titulo}</span>
-                                    <div className="rodapeCardMinicursoInicioParticipantes">
-                                        <span className="horarioCardMinicursoInicioParticipantes">{curso.horarioLocal}</span>
-                                        <span className="situacaoCardMinicursoInicioParticipantes">
-                                            {curso.encontro ?? curso.situacaoLabel}
-                                        </span>
-                                    </div>
-                                </div>
-                            ))}
+                        <div className="cabecalhoBlocoInicioParticipantes">
+                            <span className="rotuloBlocoInicioParticipantes">MEUS MINICURSOS</span>
+                            <span className="acaoBlocoInicioParticipantes" onClick={onVerAgenda}>
+                                {meusMinicursos.length > 0 ? 'Ver agenda' : 'Escolher'}
+                            </span>
                         </div>
+                        {meusMinicursos.length === 0 ? (
+                            <p className="avisoVazioAgendaParticipantes">
+                                Você ainda não escolheu nenhum minicurso — são {totalMinicursos} na semana, com vagas limitadas.
+                            </p>
+                        ) : (
+                            <div className="grelhaMinicursosInicioParticipantes">
+                                {meusMinicursos.map((curso) => (
+                                    <div key={curso.id} className={`cardMinicursoInicioParticipantes corMinicurso${capitalizar(curso.cor)}Participantes`}>
+                                        <span className="professorCardMinicursoInicioParticipantes">{curso.professor}</span>
+                                        <span className="tituloCardMinicursoInicioParticipantes">{curso.titulo}</span>
+                                        <div className="rodapeCardMinicursoInicioParticipantes">
+                                            <span className="horarioCardMinicursoInicioParticipantes">{curso.horarioLocal}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
 
@@ -104,6 +143,9 @@ export default function SecaoInicioParticipantes({
                         <span className="rotuloBlocoInicioParticipantes">MEU DIA</span>
                         <span className="acaoBlocoInicioParticipantes" onClick={onVerAgenda}>Ver agenda</span>
                     </div>
+                    {!carregando && meuDia.length === 0 && (
+                        <p className="avisoVazioAgendaParticipantes">Nada programado para esse dia.</p>
+                    )}
                     {meuDia.map((item) => (
                         <div key={item.id} className={`itemMeuDiaInicioParticipantes statusMeuDia${capitalizar(item.status)}Participantes`}>
                             <div className="horarioItemMeuDiaInicioParticipantes">
@@ -120,7 +162,13 @@ export default function SecaoInicioParticipantes({
                 </div>
 
                 <div className="blocoPalestrasSemanaInicioParticipantes soDesktopParticipantes">
-                    <span className="rotuloBlocoInicioParticipantes">PALESTRAS DA SEMANA</span>
+                    <div className="cabecalhoBlocoInicioParticipantes">
+                        <span className="rotuloBlocoInicioParticipantes">PALESTRAS DO DIA</span>
+                        <span className="acaoBlocoInicioParticipantes" onClick={onVerAgenda}>Ver agenda</span>
+                    </div>
+                    {!carregando && palestrasDoDia.length === 0 && (
+                        <p className="avisoVazioAgendaParticipantes">Nenhuma palestra nesse dia.</p>
+                    )}
                     <div className="grelhaPalestrasSemanaInicioParticipantes">
                         {palestrasDoDia.map((item) => (
                             <div key={item.id} className={`cardPalestraSemanaInicioParticipantes statusMeuDia${capitalizar(item.status)}Participantes`}>
