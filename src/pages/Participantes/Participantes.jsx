@@ -16,6 +16,7 @@ import { lerSessao, limparSessao } from '../../auth/sessao.js';
 import './participantes.css';
 
 import QrCrachaParticipantes from './QrCrachaParticipantes.jsx';
+import ModalEscolhaMinicursos from './ModalEscolhaMinicursos.jsx';
 import SecaoInicioParticipantes from './sections/SecaoInicioParticipantes.jsx';
 import SecaoAgendaParticipantes from './sections/SecaoAgendaParticipantes.jsx';
 import SecaoRankingParticipantes from './sections/SecaoRankingParticipantes.jsx';
@@ -77,6 +78,7 @@ export default function Participantes() {
 
     const [abaAtiva, setAbaAtiva] = useState('inicio');
     const [qrAberto, setQrAberto] = useState(false);
+    const [escolhaMinicursosAberta, setEscolhaMinicursosAberta] = useState(false);
 
     const [eventos, setEventos] = useState([]);
     const [meusEventos, setMeusEventos] = useState([]);
@@ -173,14 +175,23 @@ export default function Participantes() {
         navegar('/');
     }
 
+    function abrirEscolhaMinicursos() {
+        setErroMinicurso('');
+        setEscolhaMinicursosAberta(true);
+    }
+
     /* Entrar/sair de minicurso recarrega a agenda em seguida: a vaga que
-       acabou de ser tomada (ou liberada) precisa aparecer para todos. */
+       acabou de ser tomada (ou liberada) precisa aparecer para todos.
+       Devolve se a operação deu certo — o modal de escolha só avança
+       para o próximo dia quando a inscrição realmente entrou. */
     async function alterarMinicurso(eventoId, acao) {
         setErroMinicurso('');
         setMinicursoEmEspera(eventoId);
+        let deuCerto = true;
         try {
             await acao(eventoId);
         } catch (erro) {
+            deuCerto = false;
             setErroMinicurso(erro.message);
         } finally {
             try {
@@ -190,6 +201,7 @@ export default function Participantes() {
             }
             setMinicursoEmEspera(null);
         }
+        return deuCerto;
     }
 
     const escolherMinicurso = (eventoId) => alterarMinicurso(eventoId, inscreverEmMinicurso);
@@ -248,6 +260,7 @@ export default function Participantes() {
                         onAbrirQr={() => setQrAberto(true)}
                         onVerRanking={() => irPara('ranking')}
                         onVerAgenda={() => irPara('agenda')}
+                        onEscolherMinicursos={abrirEscolhaMinicursos}
                     />
                 )}
                 {abaAtiva === 'agenda' && (
@@ -255,14 +268,8 @@ export default function Participantes() {
                         diasSemana={diasSemana}
                         diaSelecionado={diaSelecionado}
                         onSelecionarDia={setDiaSelecionado}
-                        minicursos={minicursos}
-                        meusMinicursos={meusMinicursos}
-                        palestrasDoDia={palestrasDoDiaSelecionado}
+                        meuDia={meuDia}
                         carregando={carregandoAgenda}
-                        erroMinicurso={erroMinicurso}
-                        minicursoEmEspera={minicursoEmEspera}
-                        onEscolherMinicurso={escolherMinicurso}
-                        onSairDoMinicurso={sairDoMinicurso}
                     />
                 )}
                 {abaAtiva === 'ranking' && (
@@ -300,6 +307,17 @@ export default function Participantes() {
                     </button>
                 ))}
             </nav>
+
+            {escolhaMinicursosAberta && (
+                <ModalEscolhaMinicursos
+                    minicursos={minicursos}
+                    minicursoEmEspera={minicursoEmEspera}
+                    erroMinicurso={erroMinicurso}
+                    onEscolher={escolherMinicurso}
+                    onSair={sairDoMinicurso}
+                    onFechar={() => setEscolhaMinicursosAberta(false)}
+                />
+            )}
 
             {qrAberto && (
                 <div className="sobreposicaoQrParticipantes" onClick={() => setQrAberto(false)}>

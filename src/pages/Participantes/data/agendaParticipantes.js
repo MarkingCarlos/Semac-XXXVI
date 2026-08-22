@@ -9,6 +9,12 @@
 
 const ROTULOS_DIA_SEMANA = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
 
+/* Nomes por extenso — o modal de escolha de minicursos identifica o dia
+   pelo nome inteiro, não pela abreviação dos cards. */
+const NOMES_DIA_SEMANA = ['DOMINGO', 'SEGUNDA-FEIRA', 'TERÇA-FEIRA', 'QUARTA-FEIRA', 'QUINTA-FEIRA', 'SEXTA-FEIRA', 'SÁBADO'];
+
+const NOMES_MES = ['JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO', 'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'];
+
 /* Paleta dos cards de minicurso (ver corMinicurso*Participantes no CSS).
    Rotaciona pela ordem de exibição — a API não guarda cor. */
 const CORES_MINICURSO_PARTICIPANTES = ['azul', 'rosa', 'vermelho'];
@@ -218,6 +224,33 @@ export function montarMinicursos(eventos, meusEventos, agora) {
                 status: statusPorHorario(evento, agora),
                 dataHoraInicio: evento.dataHoraInicio,
                 dataHoraFim: evento.dataHoraFim,
+            };
+        });
+}
+
+/* Minicursos agrupados por dia, na ordem — é o que o modal de escolha
+   percorre, um passo por dia. Cada grupo é uma decisão: das opções do
+   dia o participante leva uma (um minicurso por faixa de horário). */
+export function agruparMinicursosPorDia(minicursos) {
+    const grupos = new Map();
+
+    for (const curso of minicursos) {
+        const dia = (curso.dataHoraInicio || '').slice(0, 10);
+        if (!dia) continue;
+        if (!grupos.has(dia)) grupos.set(dia, []);
+        grupos.get(dia).push(curso);
+    }
+
+    return [...grupos.entries()]
+        .sort(([diaA], [diaB]) => diaA.localeCompare(diaB))
+        .map(([dia, cursos]) => {
+            const data = new Date(`${dia}T00:00:00`);
+            return {
+                id: dia,
+                rotuloDiaCompleto: NOMES_DIA_SEMANA[data.getDay()],
+                dataExtenso: `${data.getDate()} DE ${NOMES_MES[data.getMonth()]}`,
+                cursos: cursos.sort((a, b) => a.dataHoraInicio.localeCompare(b.dataHoraInicio)),
+                escolhido: cursos.some((curso) => curso.escolhido),
             };
         });
 }

@@ -21,6 +21,7 @@ export default function SecaoInicioParticipantes({
     onAbrirQr,
     onVerRanking,
     onVerAgenda,
+    onEscolherMinicursos,
 }) {
     return (
         <div className="grelhaInicioParticipantes">
@@ -110,18 +111,30 @@ export default function SecaoInicioParticipantes({
                     )}
                 </div>
 
+                {/* Único ponto de entrada da escolha de minicursos — a aba
+                    Agenda é só leitura, então este bloco aparece também no
+                    mobile. */}
                 {totalMinicursos > 0 && (
-                    <div className="blocoMinicursosInicioParticipantes soDesktopParticipantes">
+                    <div className="blocoMinicursosInicioParticipantes">
                         <div className="cabecalhoBlocoInicioParticipantes">
                             <span className="rotuloBlocoInicioParticipantes">MEUS MINICURSOS</span>
-                            <span className="acaoBlocoInicioParticipantes" onClick={onVerAgenda}>
-                                {meusMinicursos.length > 0 ? 'Ver agenda' : 'Escolher'}
+                            <span className="acaoBlocoInicioParticipantes" onClick={onEscolherMinicursos}>
+                                {meusMinicursos.length > 0 ? 'Trocar' : 'Escolher'}
                             </span>
                         </div>
                         {meusMinicursos.length === 0 ? (
-                            <p className="avisoVazioAgendaParticipantes">
-                                Você ainda não escolheu nenhum minicurso — são {totalMinicursos} na semana, com vagas limitadas.
-                            </p>
+                            <>
+                                <p className="avisoVazioAgendaParticipantes">
+                                    Você ainda não escolheu nenhum minicurso — são {totalMinicursos} na semana, com vagas limitadas.
+                                </p>
+                                <button
+                                    type="button"
+                                    className="botaoEscolherMinicursosInicioParticipantes"
+                                    onClick={onEscolherMinicursos}
+                                >
+                                    ESCOLHER MEUS MINICURSOS
+                                </button>
+                            </>
                         ) : (
                             <div className="grelhaMinicursosInicioParticipantes">
                                 {meusMinicursos.map((curso) => (

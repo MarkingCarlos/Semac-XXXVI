@@ -1,32 +1,23 @@
-/* Aba "Agenda": dia da semana, escolha de minicursos e palestras do dia.
+/* Aba "Agenda": só o que o participante já tem, dia a dia — as palestras
+   (abertas a todos os inscritos, ele entra ao ter a inscrição confirmada)
+   e os minicursos que escolheu.
 
-   Palestras são abertas — o participante já entra nelas ao ter a
-   inscrição confirmada, então não têm ação nenhuma aqui. Minicursos têm
-   vagas limitadas: o card mostra quantas sobraram, fica marcado como
-   ESGOTADO quando acabam e é bloqueado quando bate de frente com outro
-   minicurso já escolhido (um por faixa de horário). */
+   Nenhuma ação aqui: escolher, trocar ou desistir de minicurso acontece
+   exclusivamente no modal de escolha, aberto pela aba Início. */
 
 export default function SecaoAgendaParticipantes({
     diasSemana,
     diaSelecionado,
     onSelecionarDia,
-    minicursos,
-    meusMinicursos,
-    palestrasDoDia,
+    meuDia,
     carregando,
-    erroMinicurso,
-    minicursoEmEspera,
-    onEscolherMinicurso,
-    onSairDoMinicurso,
 }) {
-    const minicursosDisponiveis = minicursos.filter((curso) => !curso.escolhido);
-
     return (
         <div className="secaoAgendaParticipantes">
             <div className="cabecalhoSecaoAgendaParticipantes">
                 <span className="tituloSecaoAgendaParticipantes">AGENDA</span>
                 <span className="subtituloSecaoAgendaParticipantes">
-                    Palestras são abertas a todos os inscritos. Minicursos têm vagas limitadas — você escolhe um por horário.
+                    Suas atividades da semana: as palestras abertas a todos os inscritos e os minicursos que você escolheu.
                 </span>
             </div>
 
@@ -53,76 +44,24 @@ export default function SecaoAgendaParticipantes({
                 <p className="avisoCarregandoAgendaParticipantes">Carregando a programação…</p>
             )}
 
-            {erroMinicurso && (
-                <p className="avisoErroMinicursoAgendaParticipantes" role="alert">{erroMinicurso}</p>
-            )}
-
-            {meusMinicursos.length > 0 && (
-                <div className="blocoMinicursosAgendaParticipantes">
-                    <div className="cabecalhoBlocoAgendaParticipantes">
-                        <span className="rotuloBlocoAgendaParticipantes">MEUS MINICURSOS</span>
-                        <span className="contadorBlocoAgendaParticipantes">
-                            {meusMinicursos.length} de {minicursos.length}
-                        </span>
-                    </div>
-                    <div className="listaMinicursosAgendaParticipantes">
-                        {meusMinicursos.map((curso) => (
-                            <CardMinicursoAgendaParticipantes
-                                key={curso.id}
-                                curso={curso}
-                                emEspera={minicursoEmEspera === curso.id}
-                                onEscolher={onEscolherMinicurso}
-                                onSair={onSairDoMinicurso}
-                            />
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {minicursos.length > 0 && (
-                <div className="blocoMinicursosAgendaParticipantes">
-                    <div className="cabecalhoBlocoAgendaParticipantes">
-                        <span className="rotuloBlocoAgendaParticipantes">
-                            {meusMinicursos.length > 0 ? 'OUTROS MINICURSOS' : 'MINICURSOS DA SEMANA'}
-                        </span>
-                        <span className="contadorBlocoAgendaParticipantes">
-                            {minicursosDisponiveis.length} disponíveis
-                        </span>
-                    </div>
-                    <div className="listaMinicursosAgendaParticipantes">
-                        {minicursosDisponiveis.length === 0 && (
-                            <p className="avisoVazioAgendaParticipantes">
-                                Você já está em todos os minicursos oferecidos.
-                            </p>
-                        )}
-                        {minicursosDisponiveis.map((curso) => (
-                            <CardMinicursoAgendaParticipantes
-                                key={curso.id}
-                                curso={curso}
-                                emEspera={minicursoEmEspera === curso.id}
-                                onEscolher={onEscolherMinicurso}
-                                onSair={onSairDoMinicurso}
-                            />
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            <div className="blocoPalestrasAgendaParticipantes">
-                <span className="rotuloBlocoAgendaParticipantes">PALESTRAS DO DIA</span>
-                {!carregando && palestrasDoDia.length === 0 && (
-                    <p className="avisoVazioAgendaParticipantes">Nenhuma palestra nesse dia.</p>
+            <div className="blocoAtividadesAgendaParticipantes">
+                <span className="rotuloBlocoAgendaParticipantes">MINHAS ATIVIDADES DO DIA</span>
+                {!carregando && meuDia.length === 0 && (
+                    <p className="avisoVazioAgendaParticipantes">Nada programado para você nesse dia.</p>
                 )}
-                {palestrasDoDia.map((item) => (
-                    <div key={item.id} className={`cardPalestraAgendaParticipantes statusPalestra${capitalizar(item.status)}AgendaParticipantes`}>
-                        <div className="horarioCardPalestraAgendaParticipantes">
-                            <span className="valorHorarioCardPalestraAgendaParticipantes">{item.horario}</span>
-                            <span className="localCardPalestraAgendaParticipantes">{item.local}</span>
+                {meuDia.map((item) => (
+                    <div key={item.id} className={`cardAtividadeAgendaParticipantes statusAtividade${capitalizar(item.status)}AgendaParticipantes`}>
+                        <div className="horarioCardAtividadeAgendaParticipantes">
+                            <span className="valorHorarioCardAtividadeAgendaParticipantes">{item.horario}</span>
+                            <span className="localCardAtividadeAgendaParticipantes">{item.local}</span>
                         </div>
-                        <div className="textoCardPalestraAgendaParticipantes">
-                            <span className="tituloCardPalestraAgendaParticipantes">{item.titulo}</span>
-                            <span className="detalheCardPalestraAgendaParticipantes">{item.detalhe}</span>
+                        <div className="textoCardAtividadeAgendaParticipantes">
+                            <span className="tituloCardAtividadeAgendaParticipantes">{item.titulo}</span>
+                            <span className="detalheCardAtividadeAgendaParticipantes">{item.detalhe}</span>
                         </div>
+                        {item.status === 'concluido' && (
+                            <span className="marcaConcluidaCardAtividadeAgendaParticipantes">OK</span>
+                        )}
                     </div>
                 ))}
             </div>
@@ -132,61 +71,6 @@ export default function SecaoAgendaParticipantes({
                 <span className="textoAvisoPresencaAgendaParticipantes">
                     O crachá é lido na entrada de cada atividade. A confirmação aparece aqui em até 1 minuto.
                 </span>
-            </div>
-        </div>
-    );
-}
-
-/* Card de minicurso com a ação que couber: sair (se é meu), escolher, ou
-   o motivo de não dar — esgotado, choque de horário, já começou. */
-function CardMinicursoAgendaParticipantes({ curso, emEspera, onEscolher, onSair }) {
-    return (
-        <div className={`cardMinicursoAgendaParticipantes corMinicurso${capitalizar(curso.cor)}Participantes`}>
-            <span className="professorCardMinicursoAgendaParticipantes">{curso.professor}</span>
-            <span className="tituloCardMinicursoAgendaParticipantes">{curso.titulo}</span>
-
-            <div className="situacaoCardMinicursoAgendaParticipantes">
-                <span>{curso.horarioLocal}</span>
-                {curso.vagasRestantes !== null && !curso.escolhido && (
-                    <span className="etiquetaSituacaoCardMinicursoAgendaParticipantes">
-                        {curso.vagasRestantes > 0
-                            ? `${curso.vagasRestantes} de ${curso.capacidadeMaxima} vagas`
-                            : 'sem vagas'}
-                    </span>
-                )}
-            </div>
-
-            <div className="linhaAcaoCardMinicursoAgendaParticipantes">
-                {curso.escolhido ? (
-                    <>
-                        <span className="etiquetaEscolhidoMinicursoAgendaParticipantes">VOCÊ ESTÁ NESTE</span>
-                        {!curso.jaComecou && (
-                            <button
-                                type="button"
-                                className="botaoSairMinicursoAgendaParticipantes"
-                                disabled={emEspera}
-                                onClick={() => onSair(curso.id)}
-                            >
-                                {emEspera ? 'SAINDO…' : 'SAIR'}
-                            </button>
-                        )}
-                    </>
-                ) : curso.jaComecou ? (
-                    <span className="etiquetaBloqueioMinicursoAgendaParticipantes">JÁ COMEÇOU</span>
-                ) : curso.esgotado ? (
-                    <span className="etiquetaBloqueioMinicursoAgendaParticipantes">ESGOTADO</span>
-                ) : curso.conflita ? (
-                    <span className="etiquetaBloqueioMinicursoAgendaParticipantes">CHOQUE DE HORÁRIO</span>
-                ) : (
-                    <button
-                        type="button"
-                        className="botaoEscolherMinicursoAgendaParticipantes"
-                        disabled={emEspera}
-                        onClick={() => onEscolher(curso.id)}
-                    >
-                        {emEspera ? 'ENTRANDO…' : 'ESCOLHER'}
-                    </button>
-                )}
             </div>
         </div>
     );
