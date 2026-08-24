@@ -1,30 +1,25 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { useLocation, useParams } from 'wouter';
-import { formatarCentavos, normalizar } from '../utils/moeda.js';
-import { CATEGORIAS_COMPRA } from '../data/mockFinancas.js';
+import { formatarCentavos } from '../utils/moeda.js';
 import { listarCotacoes } from '../data/apiCotacoes.js';
 import { listarFornecedores } from '../data/apiFornecedores.js';
 import { buscarConjunto, renomearConjunto, excluirConjunto as excluirConjuntoApi } from '../data/apiConjuntos.js';
 import { criarVariacao, atualizarVariacao, excluirVariacao as excluirVariacaoApi } from '../data/apiVariacoes.js';
+import BuscaItensConjunto from './BuscaItensConjunto.jsx';
+import { menorFornecedor } from './melhorPreco.js';
 import '../financas.css';
 import './conjuntosCotacao.css';
 import './conjuntoDetalhe.css';
-
-/* Melhor preço (menor valorUnitario) entre os fornecedores cotados pra um
-   produto — usado como fornecedor padrão de uma linha até o usuário
-   escolher outro no dropdown. Ignora o frete de propósito: ele é cobrado
-   uma vez por fornecedor na variação inteira, então não dá pra atribuir a
-   um produto isolado (ainda mais com quantidade zero, onde só o frete
-   decidiria a escolha). */
-const menorFornecedor = (cotacao) =>
-    cotacao.fornecedores.reduce((menor, linha) => (!menor || linha.valorUnitario < menor.valorUnitario ? linha : menor), null);
 
 /* Grade de comparação de um conjunto (ex.: "Coffee"): cada variação (ex.:
    "Coffee Cheio") tem sua PRÓPRIA tabela — uma linha por produto (não por
    produto+fornecedor), com um dropdown pra escolher o fornecedor daquela
    variação e a quantidade. As escolhas ficam em estado local (`edicoes`)
    pra recalcular totais em tempo real e só são persistidas (por variação)
-   ao sair do campo. */
+   ao sair do campo.
+
+   As tabelas não listam o catálogo inteiro de cotações: só os itens
+   escolhidos na busca (BuscaItensConjunto) entram na grade. */
 export default function ConjuntoDetalhe() {
     const { id } = useParams();
     const [, navegar] = useLocation();
@@ -34,8 +29,11 @@ export default function ConjuntoDetalhe() {
     const [fornecedores, setFornecedores] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState('');
-    const [filtro, setFiltro] = useState('');
-    const [filtroCategoria, setFiltroCategoria] = useState('');
+
+    /* Ids das cotações que compõem este conjunto — a seleção não é
+       persistida: ao recarregar, ela é remontada a partir dos itens que
+       já têm quantidade em alguma variação. */
+    const [itensSelecionados, setItensSelecionados] = useState([]);
 
     // edicoes[variacaoId][cotacaoId] = { fornecedorId, quantidade }
     const [edicoes, setEdicoes] = useState({});
@@ -66,6 +64,15 @@ export default function ConjuntoDetalhe() {
                         ]),
                     ),
                 );
+                setItensSelecionados(
+                    Array.from(
+                        new Set(
+                            conjuntoCarregado.variacoes.flatMap((variacao) =>
+                                variacao.itens.filter((item) => item.quantidade > 0).map((item) => item.cotacaoId),
+                            ),
+                        ),
+                    ),
+                );
                 setCotacoes(listaCotacoes);
                 setFornecedores(listaFornecedores);
             })
@@ -84,20 +91,20 @@ export default function ConjuntoDetalhe() {
     const buscarFornecedor = (fornecedorId) => fornecedores.find((f) => f.id === fornecedorId);
 
     /* Produtos (não linhas de fornecedor) agrupados por categoria — a
-       mesma lista de linhas aparece em todas as tabelas de variação. */
+       mesma lista de linhas aparece em todas as tabelas de variação.
+       Só entram os itens escolhidos na busca. */
     const produtosPorCategoria = useMemo(() => {
-        const filtroNormalizado = normalizar(filtro);
+        const escolhidos = new Set(itensSelecionados);
         const porCategoria = new Map();
         for (const cotacao of cotacoes) {
             if (cotacao.fornecedores.length === 0) continue;
-            if (filtroCategoria && cotacao.categoria !== filtroCategoria) continue;
-            if (filtroNormalizado && !normalizar(cotacao.descricao).includes(filtroNormalizado)) continue;
+            if (!escolhidos.has(cotacao.id)) continue;
             const lista = porCategoria.get(cotacao.categoria) ?? [];
             lista.push(cotacao);
             porCategoria.set(cotacao.categoria, lista);
         }
         return Array.from(porCategoria.entries());
-    }, [cotacoes, filtro, filtroCategoria]);
+    }, [cotacoes, itensSelecionados]);
 
     const fornecedorEscolhidoEm = (variacaoId, cotacao) =>
         edicoes[variacaoId]?.[cotacao.id]?.fornecedorId ?? menorFornecedor(cotacao)?.fornecedorId ?? '';
@@ -205,6 +212,47 @@ export default function ConjuntoDetalhe() {
     /* Persiste as escolhas atuais de uma variação (lê de `edicoes`) — usado
        pelo onBlur da quantidade, onde o estado já está atualizado. */
     const persistirVariacao = (variacao) => persistirMapa(variacao, edicoes[variacao.id] ?? {});
+
+    /* ── Itens que compõem o conjunto ───────────────────────────────
+       Adicionar só amplia a grade. Remover precisa zerar a quantidade
+       do item em cada variação: senão ele continuaria somando no total
+       sem aparecer em tabela nenhuma. */
+
+    const adicionarItem = (cotacao) =>
+        setItensSelecionados((atual) => (atual.includes(cotacao.id) ? atual : [...atual, cotacao.id]));
+
+    const variacoesComItem = (cotacaoId) =>
+        conjunto.variacoes.filter((variacao) => (edicoes[variacao.id]?.[cotacaoId]?.quantidade ?? 0) > 0);
+
+    const removerItem = (cotacao) => {
+        const afetadas = variacoesComItem(cotacao.id);
+        if (afetadas.length > 0) {
+            const aviso =
+                afetadas.length === 1
+                    ? `"${cotacao.descricao}" tem quantidade em 1 variação. Remover zera essa quantidade.`
+                    : `"${cotacao.descricao}" tem quantidade em ${afetadas.length} variações. Remover zera essas quantidades.`;
+            if (!window.confirm(aviso)) return;
+        }
+        const edicoesSemItem = Object.fromEntries(
+            Object.entries(edicoes).map(([variacaoId, escolhas]) => {
+                const { [cotacao.id]: _removida, ...resto } = escolhas;
+                return [variacaoId, resto];
+            }),
+        );
+        setEdicoes(edicoesSemItem);
+        setItensSelecionados((atual) => atual.filter((id) => id !== cotacao.id));
+        afetadas.forEach((variacao) => persistirMapa(variacao, edicoesSemItem[variacao.id] ?? {}));
+    };
+
+    const limparItens = () => {
+        const temQuantidade = itensSelecionados.some((cotacaoId) => variacoesComItem(cotacaoId).length > 0);
+        if (temQuantidade) {
+            if (!window.confirm('Remover todos os itens do conjunto? As quantidades lançadas nas variações serão zeradas.')) return;
+            setEdicoes(Object.fromEntries(conjunto.variacoes.map((variacao) => [variacao.id, {}])));
+            conjunto.variacoes.forEach((variacao) => persistirMapa(variacao, {}));
+        }
+        setItensSelecionados([]);
+    };
 
     const salvarNomeConjunto = async () => {
         setRenomeando(false);
@@ -429,36 +477,19 @@ export default function ConjuntoDetalhe() {
                                 <button type="button" className="botaoFantasmaFinancas" onClick={zerarTodasQuantidades}>
                                     ↺ Zerar todas as quantidades
                                 </button>
-                                <div className="filtroTabelaFinancas">
-                                    <span className="iconeFiltroFinancas">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
-                                        </svg>
-                                    </span>
-                                    <input
-                                        className="entradaFiltroFinancas"
-                                        type="search"
-                                        placeholder="Filtrar por produto…"
-                                        value={filtro}
-                                        onInput={(e) => setFiltro(e.currentTarget.value)}
-                                        aria-label="Filtrar itens por produto"
-                                    />
-                                </div>
-                                <select
-                                    className="selectFiltroFinancas"
-                                    value={filtroCategoria}
-                                    onChange={(e) => setFiltroCategoria(e.currentTarget.value)}
-                                    aria-label="Filtrar por categoria"
-                                >
-                                    <option value="">Todas as categorias</option>
-                                    {CATEGORIAS_COMPRA.map((categoria) => (
-                                        <option key={categoria} value={categoria}>{categoria}</option>
-                                    ))}
-                                </select>
                                 <button type="button" className="botaoFantasmaFinancas" onClick={excluirConjunto}>
                                     Excluir conjunto
                                 </button>
                             </div>
+
+                            <BuscaItensConjunto
+                                cotacoes={cotacoes}
+                                fornecedores={fornecedores}
+                                selecionados={itensSelecionados}
+                                aoAdicionar={adicionarItem}
+                                aoRemover={removerItem}
+                                aoLimpar={limparItens}
+                            />
 
                             {conjunto.variacoes.length === 0 && (
                                 <p className="celulaVaziaFinancas">
@@ -473,9 +504,9 @@ export default function ConjuntoDetalhe() {
 
                                     {produtosPorCategoria.length === 0 && (
                                         <p className="celulaVaziaFinancas">
-                                            {filtro.trim() || filtroCategoria
-                                                ? 'Nenhum item encontrado para esse filtro.'
-                                                : 'Nenhum item cotado ainda — cadastre em Cotação primeiro.'}
+                                            {cotacoes.length === 0
+                                                ? 'Nenhum item cotado ainda — cadastre em Cotação primeiro.'
+                                                : 'Nenhum item no conjunto ainda — busque acima para adicionar.'}
                                         </p>
                                     )}
 

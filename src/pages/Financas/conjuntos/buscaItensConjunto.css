@@ -1,0 +1,336 @@
+/* ── Busca e seleção dos itens que entram no conjunto ──────────────
+   Fica logo acima das tabelas das variações: a barra de busca alimenta
+   a trilha de fichas, e são as fichas que definem quais linhas as
+   tabelas renderizam. As fichas usam a cor da categoria (CORES_CATEGORIA)
+   — mesmo vocabulário dos selos da tela de Cotação. */
+
+.painelItensConjuntoDetalhe {
+    background: rgba(61, 1, 24, 0.35);
+    border: 1px solid rgba(252, 248, 245, 0.08);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 20px;
+}
+
+.cabecalhoPainelItensConjuntoDetalhe {
+    margin-bottom: 14px;
+}
+
+.tituloPainelItensConjuntoDetalhe {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--AmareloAuxApoio);
+    margin: 0;
+}
+
+.descricaoPainelItensConjuntoDetalhe {
+    font-size: 0.8rem;
+    color: rgba(252, 248, 245, 0.5);
+    margin: 5px 0 0;
+}
+
+/* ── Linha da busca ───────────────────────────────────────────── */
+
+.linhaBuscaItensConjuntoDetalhe {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.comboboxBuscaItensConjuntoDetalhe {
+    position: relative;
+    flex: 1 1 300px;
+    min-width: 0;
+}
+
+.campoBuscaItensConjuntoDetalhe {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(252, 248, 245, 0.05);
+    border: 1px solid rgba(252, 248, 245, 0.12);
+    border-radius: 8px;
+    padding: 0 12px;
+    transition: border-color 0.15s ease;
+}
+
+.campoBuscaItensConjuntoDetalhe:focus-within {
+    border-color: var(--AmareloAuxApoio);
+}
+
+.iconeBuscaItensConjuntoDetalhe {
+    color: rgba(252, 248, 245, 0.32);
+    flex-shrink: 0;
+    display: flex;
+}
+
+.entradaBuscaItensConjuntoDetalhe {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: rgba(252, 248, 245, 0.9);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.88rem;
+    padding: 10px 0;
+    width: 100%;
+    min-width: 0;
+}
+
+.entradaBuscaItensConjuntoDetalhe::placeholder {
+    color: rgba(252, 248, 245, 0.3);
+}
+
+.seletorCategoriaBuscaItensConjuntoDetalhe {
+    background-color: rgba(252, 248, 245, 0.05);
+    border: 1px solid rgba(252, 248, 245, 0.12);
+    border-radius: 8px;
+    color: rgba(252, 248, 245, 0.75);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.82rem;
+    padding: 11px 30px 11px 12px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' viewBox='0 0 10 6'%3E%3Cpath stroke='rgba(252,248,245,0.4)' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m1 1 4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 11px center;
+}
+
+.seletorCategoriaBuscaItensConjuntoDetalhe:focus-visible {
+    border-color: var(--AmareloAuxApoio);
+}
+
+.seletorCategoriaBuscaItensConjuntoDetalhe option {
+    background: #3D0118;
+    color: rgba(252, 248, 245, 0.85);
+}
+
+/* ── Resultados ───────────────────────────────────────────────── */
+/* Flutua sobre a grade das variações — fundo opaco de propósito, pra
+   não deixar a tabela de baixo vazar por trás dos resultados. */
+
+.listaResultadosBuscaItensConjuntoDetalhe {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 30;
+    max-height: 336px;
+    overflow-y: auto;
+    background: #430220;
+    border: 1px solid rgba(252, 248, 245, 0.16);
+    border-radius: 12px;
+    padding: 6px;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.45);
+}
+
+.vazioResultadosBuscaItensConjuntoDetalhe {
+    margin: 0;
+    padding: 18px 12px;
+    text-align: center;
+    font-size: 0.82rem;
+    color: rgba(252, 248, 245, 0.45);
+}
+
+.grupoResultadosBuscaItensConjuntoDetalhe + .grupoResultadosBuscaItensConjuntoDetalhe {
+    margin-top: 8px;
+}
+
+.tituloGrupoResultadosBuscaItensConjuntoDetalhe {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 10px 5px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.pontoGrupoResultadosBuscaItensConjuntoDetalhe {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.opcaoResultadoBuscaItensConjuntoDetalhe {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: rgba(252, 248, 245, 0.85);
+}
+
+.opcaoAtivaResultadoBuscaItensConjuntoDetalhe {
+    background: rgba(231, 152, 57, 0.14);
+    color: #edecec;
+}
+
+.descricaoOpcaoBuscaItensConjuntoDetalhe {
+    font-weight: 600;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.metaOpcaoBuscaItensConjuntoDetalhe {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.fornecedorOpcaoBuscaItensConjuntoDetalhe {
+    font-size: 0.72rem;
+    color: rgba(252, 248, 245, 0.45);
+}
+
+.precoOpcaoBuscaItensConjuntoDetalhe {
+    font-variant-numeric: tabular-nums;
+    color: rgba(252, 248, 245, 0.75);
+}
+
+.opcaoAtivaResultadoBuscaItensConjuntoDetalhe .precoOpcaoBuscaItensConjuntoDetalhe {
+    color: var(--AmareloAuxApoio);
+}
+
+/* ── Fichas dos itens escolhidos ──────────────────────────────── */
+
+.vazioFichasItensConjuntoDetalhe {
+    margin: 16px 0 0;
+    padding: 16px;
+    border: 1px dashed rgba(252, 248, 245, 0.16);
+    border-radius: 10px;
+    text-align: center;
+    font-size: 0.82rem;
+    color: rgba(252, 248, 245, 0.45);
+}
+
+.resumoFichasItensConjuntoDetalhe {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 16px 0 8px;
+}
+
+.contagemFichasItensConjuntoDetalhe {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(252, 248, 245, 0.45);
+}
+
+.botaoLimparItensConjuntoDetalhe {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: rgba(252, 248, 245, 0.5);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.16s ease;
+}
+
+.botaoLimparItensConjuntoDetalhe:hover {
+    color: #e9897b;
+}
+
+.trilhaFichasItensConjuntoDetalhe {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.fichaItemSelecionadoConjuntoDetalhe {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    column-gap: 10px;
+    padding: 7px 8px 7px 12px;
+    border: 1px solid rgba(252, 248, 245, 0.12);
+    border-radius: 10px;
+    max-width: 100%;
+}
+
+.categoriaFichaItemConjuntoDetalhe {
+    grid-column: 1;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.nomeFichaItemConjuntoDetalhe {
+    grid-column: 1;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #edecec;
+    overflow-wrap: anywhere;
+}
+
+.botaoRemoverFichaItemConjuntoDetalhe {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 8px;
+    background: rgba(252, 248, 245, 0.08);
+    color: rgba(252, 248, 245, 0.6);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.16s ease, color 0.16s ease;
+}
+
+.botaoRemoverFichaItemConjuntoDetalhe:hover {
+    background: rgba(176, 32, 56, 0.35);
+    color: #f3b8c2;
+}
+
+.botaoRemoverFichaItemConjuntoDetalhe:focus-visible,
+.botaoLimparItensConjuntoDetalhe:focus-visible,
+.opcaoResultadoBuscaItensConjuntoDetalhe:focus-visible {
+    outline: 2px solid var(--AmareloAuxApoio);
+    outline-offset: 2px;
+}
+
+@media (max-width: 820px) {
+    .comboboxBuscaItensConjuntoDetalhe {
+        flex: 1 1 100%;
+    }
+
+    .seletorCategoriaBuscaItensConjuntoDetalhe {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .campoBuscaItensConjuntoDetalhe,
+    .seletorCategoriaBuscaItensConjuntoDetalhe,
+    .botaoLimparItensConjuntoDetalhe,
+    .botaoRemoverFichaItemConjuntoDetalhe {
+        transition: none;
+    }
+}
