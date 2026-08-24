@@ -15,7 +15,7 @@
 .painelLateralFinancas {
     position: relative;
     z-index: 300;
-    width: min(440px, 100vw);
+    width: 550px;
     height: 100dvh;
     background: var(--vermelhoEscuro);
     border-left: 1px solid rgba(252, 248, 245, 0.12);

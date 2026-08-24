@@ -455,6 +455,7 @@ export default function Cotacoes({ cotacoes, setCotacoes, fornecedores, setForne
                         return (
                             <div className="linhaFornecedorFormCotacao" key={indice}>
                                 <div className="camposLinhaFornecedorFormCotacao">
+                                    <div>
                                     <div className="campoFormularioFinancas">
                                         <label
                                             className="rotuloCampoFinancas"
@@ -494,6 +495,7 @@ export default function Cotacoes({ cotacoes, setCotacoes, fornecedores, setForne
                                             valorCentavos={linha.valorUnitario}
                                             aoMudar={(centavos) => atualizarLinha(indice, { valorUnitario: centavos })}
                                         />
+                                    </div>
                                     </div>
                                     <div className="campoFormularioFinancas">
                                         <label
