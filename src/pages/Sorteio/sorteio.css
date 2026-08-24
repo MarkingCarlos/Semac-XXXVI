@@ -1,38 +1,462 @@
-.sorteio-page {
+.divPaginaSorteio {
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
+    width: 100%;
+    padding: 2.5rem 1.5rem;
+    background-color: var(--vermelhoEscuro);
     position: relative;
     z-index: 51;
+    box-sizing: border-box;
 }
 
-.sorteio-card {
-    border-radius: 16px;
-    padding: 2.5rem 3rem;
+.divPainelSorteio {
+    width: min(1100px, 94vw);
+    min-height: min(680px, 88vh);
+    background-color: var(--vermelhoAuxDiretoria);
+    border-radius: 24px;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
 }
 
-.sorteio-titulo {
-    font-family: 'Bungee', sans-serif;
-    font-size: 97px;
+.headerPainelSorteio {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.75rem 2.25rem 0.5rem;
+}
+
+.divTituloPainelSorteio {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.h1TituloPainelSorteio {
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(1.6rem, 3.4vw, 2.6rem);
     color: var(--Branco);
     text-transform: uppercase;
-    text-align: center;
     margin: 0;
 }
 
-.sorteio-corpo {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 2.5rem;
+.spanSubtituloPainelSorteio {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.85rem;
+    color: rgba(237, 236, 236, 0.65);
 }
 
-.sorteio-confete-tela {
+.botaoVoltarPainelSorteio {
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--Branco);
+    background: rgba(237, 236, 236, 0.12);
+    border: 1px solid rgba(237, 236, 236, 0.3);
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.botaoVoltarPainelSorteio:hover {
+    background: rgba(237, 236, 236, 0.2);
+    border-color: var(--AmareloAuxApoio);
+}
+
+.divCorpoPainelSorteio {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    padding: 1rem 2.25rem 2.25rem;
+    gap: 1rem;
+}
+
+.pAvisoErroSorteio {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.9rem;
+    color: var(--AmareloAuxApoio);
+    background: rgba(161, 5, 53, 0.4);
+    border: 1px solid rgba(231, 152, 57, 0.4);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin: 0;
+}
+
+.pAvisoVazioSorteio {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.95rem;
+    color: rgba(237, 236, 236, 0.65);
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.divRodapeMarcaSorteio {
+    height: 44px;
+    background-color: var(--vermelhoDiretoria);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    color: rgba(237, 236, 236, 0.7);
+}
+
+/* ── Passo 1: escolher evento ─────────────────────────────────── */
+
+.divListaEventosSorteio {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.botaoCartaoEventoSorteio {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: rgba(237, 236, 236, 0.06);
+    border: 2px solid rgba(237, 236, 236, 0.15);
+    border-radius: 14px;
+    padding: 1rem 1.4rem;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.botaoCartaoEventoSorteio:hover {
+    background: rgba(237, 236, 236, 0.12);
+    border-color: var(--AmareloAuxApoio);
+    transform: translateY(-1px);
+}
+
+.spanNomeCartaoEventoSorteio {
+    font-family: var(--fonteTituloBungee);
+    font-size: 1rem;
+    color: var(--Branco);
+}
+
+.spanHorarioCartaoEventoSorteio {
+    font-family: var(--fonteCorpoMontserrat);
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--AmareloAuxApoio);
+    white-space: nowrap;
+}
+
+/* ── Passo 2: escolher brinde ─────────────────────────────────── */
+
+.ulFilaBrindesSorteio {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0;
+}
+
+.liItemFilaBrindesSorteio {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    min-height: 52px;
+    border-radius: 14px;
+    padding: 0.8rem 1.1rem;
+    background: rgba(237, 236, 236, 0.06);
+    border: 2px solid rgba(237, 236, 236, 0.15);
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.liItemFilaBrindesSorteio:hover {
+    background: rgba(237, 236, 236, 0.1);
+}
+
+.itemFilaSelecionadoSorteio {
+    background: var(--Branco);
+    border-color: var(--AmareloAuxApoio);
+}
+
+.itemFilaEsgotadoSorteio {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.spanIndiceItemFilaSorteio {
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.75rem;
+    color: rgba(237, 236, 236, 0.45);
+    min-width: 22px;
+}
+
+.itemFilaSelecionadoSorteio .spanIndiceItemFilaSorteio {
+    color: var(--rosaMarketing);
+}
+
+.divInfoItemFilaSorteio {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.spanNomeItemFilaSorteio {
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.95rem;
+    color: var(--Branco);
+}
+
+.itemFilaSelecionadoSorteio .spanNomeItemFilaSorteio {
+    color: var(--vermelhoAuxDiretoria);
+}
+
+.spanLegendaItemFilaSorteio {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.75rem;
+    color: rgba(237, 236, 236, 0.55);
+}
+
+.itemFilaSelecionadoSorteio .spanLegendaItemFilaSorteio {
+    color: rgba(115, 8, 53, 0.7);
+}
+
+.spanEstadoItemFilaSorteio {
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.65rem;
+    color: rgba(237, 236, 236, 0.4);
+    white-space: nowrap;
+}
+
+.itemFilaSelecionadoSorteio .spanEstadoItemFilaSorteio {
+    color: var(--rosaMarketing);
+}
+
+.divRodapeEscolherBrindeSorteio {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    padding-top: 0.5rem;
+}
+
+.divResumoBrindeSelecionadoSorteio {
+    background: var(--vermelhoDiretoria);
+    border-radius: 14px;
+    padding: 0.8rem 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.spanRotuloBrindeSelecionadoSorteio {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.75rem;
+    color: rgba(237, 236, 236, 0.75);
+}
+
+.spanNomeBrindeSelecionadoSorteio {
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.95rem;
+    color: var(--AmareloAuxApoio);
+}
+
+.botaoSortearSorteio {
+    min-height: 56px;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--AmareloAuxApoio);
+    color: var(--vermelhoAuxDiretoria);
+    font-family: var(--fonteTituloBungee);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.15s, filter 0.15s;
+}
+
+.botaoSortearSorteio:hover:not(:disabled) {
+    transform: scale(1.02);
+    filter: brightness(1.08);
+}
+
+.botaoSortearSorteio:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ── Passo 3: sorteio (girando / revelado) ────────────────────── */
+
+.divConteudoGirandoSorteio {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.6rem;
+    padding: 1rem 0.5rem;
+}
+
+.spanRotuloSorteandoSorteio {
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    color: var(--AmareloAuxApoio);
+}
+
+.spanBrindeSorteandoSorteio {
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(1.3rem, 3vw, 1.8rem);
+    color: var(--Branco);
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.divJanelaRoloSorteio {
+    width: 100%;
+    position: relative;
+    height: 150px;
+    border-radius: 20px;
+    overflow: hidden;
+    background-color: var(--vermelhoDiretoria);
+    border: 4px solid rgba(237, 236, 236, 0.25);
+}
+
+.divJanelaRoloSorteio::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(10, 10, 10, 0.45), transparent 38%, transparent 62%, rgba(10, 10, 10, 0.45));
+    z-index: 2;
+    pointer-events: none;
+}
+
+.divFaixaRoloSorteio {
+    transition-property: transform;
+}
+
+.divItemRoloSorteio {
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1.5rem;
+}
+
+.spanNomeItemRoloSorteio {
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    line-height: 1.1;
+    color: var(--Branco);
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.divConteudoRevelacaoSorteio {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.1rem;
+    padding: 1rem 0.5rem;
+    text-align: center;
+}
+
+.spanRotuloGanhouSorteio {
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.85rem;
+    letter-spacing: 0.14em;
+    color: var(--AmareloAuxApoio);
+    animation: riseInSorteio 0.4s ease-out both;
+}
+
+.divCartaoGanhadorSorteio {
+    background-color: var(--vermelhoDiretoria);
+    border-radius: 25px;
+    padding: 1.5rem 2.5rem;
+    animation: popInSorteio 0.6s ease-out 0.1s both;
+}
+
+.spanNomeGanhadorSorteio {
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+    line-height: 1.08;
+    color: var(--Branco);
+    text-align: center;
+    display: block;
+    text-transform: uppercase;
+}
+
+.spanDicaRetiradaSorteio {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.9rem;
+    color: rgba(237, 236, 236, 0.8);
+    animation: riseInSorteio 0.4s ease-out 0.3s both;
+}
+
+.divBotoesRevelacaoSorteio {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.85rem;
+    margin-top: 0.4rem;
+    animation: riseInSorteio 0.4s ease-out 0.4s both;
+}
+
+.botaoEntregueSorteio {
+    min-height: 52px;
+    padding: 0 1.5rem;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--azulConteudo);
+    color: var(--Branco);
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: filter 0.15s;
+}
+
+.botaoEntregueSorteio:hover:not(:disabled) {
+    filter: brightness(1.1);
+}
+
+.botaoEntregueSorteio:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.botaoAusenteSorteio {
+    min-height: 52px;
+    padding: 0 1.5rem;
+    border-radius: 10px;
+    border: 2px solid rgba(237, 236, 236, 0.6);
+    background: transparent;
+    color: var(--Branco);
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.botaoAusenteSorteio:hover:not(:disabled) {
+    border-color: var(--AmareloAuxApoio);
+    color: var(--AmareloAuxApoio);
+}
+
+.botaoAusenteSorteio:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.imgConfeteTelaSorteio {
     position: fixed;
     inset: 0;
     width: 100vw;
@@ -42,143 +466,13 @@
     z-index: 999;
 }
 
-.sorteio-esquerda {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
+@keyframes riseInSorteio {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.sorteio-cortina-wrapper {
-    position: relative;
-    width: 684px;
-    height: 179px;
-    border-radius: 20px;
-    overflow: hidden;
-    background-color: rgba(255, 255, 255, 0.08);
-}
-
-.sorteio-nome {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Bungee', sans-serif;
-    font-size: 45px;
-    color: var(--Branco);
-    text-transform: uppercase;
-    text-align: center;
-    padding: 0.5rem;
-    background-color: var(--vermelhoDiretoria);
-    border-radius: 10px;
-}
-
-.sorteio-cortina {
-    position: absolute;
-    inset: 0;
-    background-color: var(--AmareloAuxApoio);
-    border-radius: 10px;
-    transform: translateY(0%);
-    transition: transform 0.8s cubic-bezier(0.77, 0, 0.18, 1);
-}
-
-.cortina-idle    { transform: translateY(0%); }
-.cortina-abrindo { transform: translateY(-100%); }
-.cortina-aberto  { transform: translateY(-100%); }
-.cortina-fechando { transform: translateY(0%); }
-
-.sorteio-botoes {
-    justify-content: center;
-    display: flex;
-    gap: 1rem;
-}
-
-.sorteio-btn {
-    font-family: 'Bungee', sans-serif;
-    font-size: 45px;
-    text-transform: uppercase;
-    border: none;
-    border-radius: 20px;
-    padding: 0.8rem 2rem;
-    width: 334px;
-    height: 95px;
-    cursor: pointer;
-    position: relative;
-    transition: transform 0.15s, filter 0.15s;
-}
-
-.sorteio-btn:hover {
-    transform: scale(1.03);
-    filter: brightness(1.1);
-}
-
-.btn-iniciar {
-    background-color: var(--AmareloAuxApoio);
-    color: var(--Branco);
-}
-
-.btn-reiniciar {
-    background-color: var(--vermelhoDiretoria);
-    color: var(--Branco);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.sorteio-direita {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-}
-
-.sorteio-item-img {
-    width: 455px;
-    height: 359px;
-    object-fit: contain;
-    border-radius: 20px;
-    background-color: var(--Branco);
-    padding: 0.5rem;
-}
-
-.sorteio-item-seletor {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
-    width: 100%;
-}
-
-.seletor-btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    width: 56px;
-    height: 56px;
-    flex-shrink: 0;
-    color: var(--Branco);
-    font-size: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.2s, background 0.2s;
-}
-
-.seletor-btn:hover {
-    background: rgba(255, 255, 255, 0.35);
-}
-
-.seletor-nome {
-    background: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 10px;
-    flex: 1;
-    height: 70px;
-    font-family: 'Bungee', sans-serif;
-    font-size: 38px;
-    color: var(--Branco);
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+@keyframes popInSorteio {
+    0% { opacity: 0; transform: scale(0.78); }
+    60% { opacity: 1; transform: scale(1.04); }
+    100% { opacity: 1; transform: scale(1); }
 }

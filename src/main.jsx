@@ -52,6 +52,12 @@ function RotaCheckin() {
         : <Redirect to="/inscricoes?tab=entrar&next=/participantes" />;
 }
 
+function RotaSorteio() {
+    return temAcessoAdmin()
+        ? <Sorteio />
+        : <Redirect to="/inscricoes?tab=entrar&next=/sorteio" />;
+}
+
 render(
     <Switch>
         {/*<Route path="/sorteio"><Admin /></Route>*/}
@@ -64,7 +70,7 @@ render(
         <Route path="/participantes"><RotaParticipantes /></Route>
         <Route path="/checkin"><RotaCheckin /></Route>
         <Route path="/termo"><Termo/></Route>
-        <Route path="/sorteio"><Sorteio/></Route>
+        <Route path="/sorteio"><RotaSorteio/></Route>
         {/*<Route path="/ranking"><Ranking /></Route>*/}
         <Route><App /></Route>
     </Switch>,
