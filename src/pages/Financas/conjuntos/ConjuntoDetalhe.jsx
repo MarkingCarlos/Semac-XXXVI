@@ -12,7 +12,10 @@ import './conjuntoDetalhe.css';
 
 /* Melhor preço (menor valorUnitario) entre os fornecedores cotados pra um
    produto — usado como fornecedor padrão de uma linha até o usuário
-   escolher outro no dropdown. */
+   escolher outro no dropdown. Ignora o frete de propósito: ele é cobrado
+   uma vez por fornecedor na variação inteira, então não dá pra atribuir a
+   um produto isolado (ainda mais com quantidade zero, onde só o frete
+   decidiria a escolha). */
 const menorFornecedor = (cotacao) =>
     cotacao.fornecedores.reduce((menor, linha) => (!menor || linha.valorUnitario < menor.valorUnitario ? linha : menor), null);
 
@@ -151,7 +154,8 @@ export default function ConjuntoDetalhe() {
         persistirMapa(variacao, mapa);
     };
 
-    const totalVariacao = (variacaoId) => {
+    /* Só a mercadoria — o frete entra separado, em freteVariacao(). */
+    const totalMercadoriaVariacao = (variacaoId) => {
         let soma = 0;
         for (const [cotacaoId, escolha] of Object.entries(edicoes[variacaoId] ?? {})) {
             if (!escolha.quantidade) continue;
@@ -162,12 +166,36 @@ export default function ConjuntoDetalhe() {
         return soma;
     };
 
+    /* Frete é cobrado UMA VEZ por fornecedor na variação — assume entrega
+       única, então dois produtos do mesmo fornecedor não pagam frete
+       dobrado. Quando os fretes cotados divergem entre os produtos desse
+       fornecedor, vale o maior (cenário mais caro). */
+    const fretesPorFornecedorVariacao = (variacaoId) => {
+        const porFornecedor = new Map();
+        for (const [cotacaoId, escolha] of Object.entries(edicoes[variacaoId] ?? {})) {
+            if (!escolha.quantidade) continue;
+            const cotacao = cotacaoPorId[cotacaoId];
+            const linha = cotacao?.fornecedores.find((l) => l.fornecedorId === escolha.fornecedorId);
+            const frete = linha?.frete ?? 0;
+            if (frete <= 0) continue;
+            porFornecedor.set(escolha.fornecedorId, Math.max(porFornecedor.get(escolha.fornecedorId) ?? 0, frete));
+        }
+        return porFornecedor;
+    };
+
+    const freteVariacao = (variacaoId) =>
+        Array.from(fretesPorFornecedorVariacao(variacaoId).values()).reduce((soma, frete) => soma + frete, 0);
+
+    const totalVariacao = (variacaoId) => totalMercadoriaVariacao(variacaoId) + freteVariacao(variacaoId);
+
     const itensComQuantidade = (variacaoId) =>
         Object.values(edicoes[variacaoId] ?? {}).filter((escolha) => escolha.quantidade > 0).length;
 
     const quantidadeTotalVariacao = (variacaoId) =>
         Object.values(edicoes[variacaoId] ?? {}).reduce((soma, escolha) => soma + (escolha.quantidade > 0 ? escolha.quantidade : 0), 0);
 
+    /* Subtotal por categoria é só mercadoria: o frete é por fornecedor e
+       pode atravessar categorias, então aparece só no total da variação. */
     const totalCategoriaVariacao = (produtosCategoria, variacaoId) =>
         produtosCategoria.reduce(
             (soma, cotacao) => soma + valorUnitarioEm(variacaoId, cotacao) * quantidadeEm(variacaoId, cotacao.id),
@@ -331,6 +359,22 @@ export default function ConjuntoDetalhe() {
                                                 </dd>
                                             </div>
                                             <div className="metricaVariacaoConjuntoDetalhe">
+                                                <dt>Mercadoria</dt>
+                                                <dd>{formatarCentavos(totalMercadoriaVariacao(variacao.id))}</dd>
+                                            </div>
+                                            <div className="metricaVariacaoConjuntoDetalhe">
+                                                <dt>
+                                                    Frete
+                                                    {fretesPorFornecedorVariacao(variacao.id).size > 0 && (
+                                                        <span className="detalheFreteVariacaoConjuntoDetalhe">
+                                                            {' '}· {fretesPorFornecedorVariacao(variacao.id).size} fornecedor
+                                                            {fretesPorFornecedorVariacao(variacao.id).size === 1 ? '' : 'es'}
+                                                        </span>
+                                                    )}
+                                                </dt>
+                                                <dd>{formatarCentavos(freteVariacao(variacao.id))}</dd>
+                                            </div>
+                                            <div className="metricaVariacaoConjuntoDetalhe">
                                                 <dt>Itens com quantidade</dt>
                                                 <dd>{itensComQuantidade(variacao.id)}</dd>
                                             </div>
@@ -454,6 +498,8 @@ export default function ConjuntoDetalhe() {
                                                 const valorUnitario = valorUnitarioEm(variacao.id, cotacao);
                                                 const quantidade = quantidadeEm(variacao.id, cotacao.id);
                                                 const fornecedorAtual = buscarFornecedor(fornecedorId);
+                                                const freteFornecedorItem =
+                                                    cotacao.fornecedores.find((linha) => linha.fornecedorId === fornecedorId)?.frete ?? 0;
                                                 return (
                                                     <div className="itemVariacaoConjuntoDetalhe" key={cotacao.id}>
                                                         <div className="linhaProdutoItemVariacaoConjuntoDetalhe">
@@ -505,6 +551,12 @@ export default function ConjuntoDetalhe() {
                                                             <span>Subtotal</span>
                                                             <strong>{formatarCentavos(valorUnitario * quantidade)}</strong>
                                                         </div>
+                                                        {freteFornecedorItem > 0 && (
+                                                            <span className="avisoFreteItemVariacaoConjuntoDetalhe">
+                                                                Frete de {formatarCentavos(freteFornecedorItem)} — cobrado
+                                                                uma vez por fornecedor, somado no total da variação
+                                                            </span>
+                                                        )}
                                                     </div>
                                                 );
                                             })}

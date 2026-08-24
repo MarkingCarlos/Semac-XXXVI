@@ -13,18 +13,20 @@ function centavosParaReais(centavos) {
 }
 
 /* Backend → interface: valores em reais viram centavos, em cada linha
-   de fornecedor. */
+   de fornecedor (valor unitário e frete). */
 function deResposta(cotacao) {
     return {
         ...cotacao,
         fornecedores: cotacao.fornecedores.map((linha) => ({
             ...linha,
             valorUnitario: reaisParaCentavos(linha.valorUnitario),
+            frete: reaisParaCentavos(linha.frete ?? 0),
         })),
     };
 }
 
-/* Interface → backend: centavos viram reais em cada linha de fornecedor. */
+/* Interface → backend: centavos viram reais em cada linha de fornecedor
+   (valor unitário e frete). */
 function paraRequisicao(cotacao) {
     return {
         descricao: cotacao.descricao,
@@ -33,6 +35,7 @@ function paraRequisicao(cotacao) {
         fornecedores: cotacao.fornecedores.map((linha) => ({
             fornecedorId: linha.fornecedorId,
             valorUnitario: centavosParaReais(linha.valorUnitario),
+            frete: centavosParaReais(linha.frete ?? 0),
         })),
     };
 }

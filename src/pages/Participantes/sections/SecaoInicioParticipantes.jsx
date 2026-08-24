@@ -124,9 +124,6 @@ export default function SecaoInicioParticipantes({
                         </div>
                         {meusMinicursos.length === 0 ? (
                             <>
-                                <p className="avisoVazioAgendaParticipantes">
-                                    Você ainda não escolheu nenhum minicurso — são {totalMinicursos} na semana, com vagas limitadas.
-                                </p>
                                 <button
                                     type="button"
                                     className="botaoEscolherMinicursosInicioParticipantes"

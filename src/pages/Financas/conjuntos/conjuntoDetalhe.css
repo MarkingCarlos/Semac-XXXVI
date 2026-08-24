@@ -125,6 +125,14 @@
     font-weight: 600;
 }
 
+/* Quantos fornecedores estão cobrando frete nesta variação */
+.detalheFreteVariacaoConjuntoDetalhe {
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    color: rgba(252, 248, 245, 0.35);
+}
+
 .valorTotalVariacaoConjuntoDetalhe {
     font-size: 1.25rem;
     color: var(--AmareloAuxApoio) !important;
@@ -305,6 +313,14 @@
     border-top: 1px dashed rgba(252, 248, 245, 0.1);
     font-size: 0.8rem;
     color: rgba(252, 248, 245, 0.55);
+}
+
+/* Lembrete de que o frete deste fornecedor não está no subtotal do item
+   — ele entra uma vez só, no total da variação. */
+.avisoFreteItemVariacaoConjuntoDetalhe {
+    font-size: 0.68rem;
+    line-height: 1.35;
+    color: rgba(252, 248, 245, 0.4);
 }
 
 .linhaSubtotalItemVariacaoConjuntoDetalhe strong {

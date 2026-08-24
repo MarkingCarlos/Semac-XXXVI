@@ -62,7 +62,12 @@
     color: rgba(252, 248, 245, 0.5);
 }
 
-/* Fornecedor com o menor preço do item — destacado */
+.freteFornecedorPrecoCotacoes {
+    font-size: 0.76rem;
+    color: rgba(252, 248, 245, 0.4);
+}
+
+/* Fornecedor com o menor custo total do item — destacado */
 .itemMelhorPrecoCotacoes .nomeFornecedorPrecoCotacoes,
 .itemMelhorPrecoCotacoes .valorFornecedorPrecoCotacoes {
     color: var(--AmareloAuxApoio);
@@ -76,6 +81,16 @@
 
 .celulaValorMelhorPrecoCotacoes {
     color: var(--AmareloAuxApoio);
+}
+
+/* Composição do melhor custo total: unitário e frete, abaixo do valor */
+.detalheMelhorPrecoCotacoes {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.72rem;
+    font-weight: 400;
+    white-space: nowrap;
+    color: rgba(252, 248, 245, 0.45);
 }
 
 /* ── Formulário: uma linha por fornecedor cotado ─────────────── */
@@ -96,6 +111,20 @@
 
 .camposLinhaFornecedorFormCotacao .campoFormularioFinancas {
     margin-bottom: 14px;
+    flex: 1;
+    min-width: 0;
+}
+
+/* O select de fornecedor cabe nomes longos; valor e frete são estreitos */
+.camposLinhaFornecedorFormCotacao .campoFormularioFinancas:first-child {
+    flex: 1.7;
+}
+
+.dicaRotuloCampoFinancas {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: rgba(252, 248, 245, 0.4);
 }
 
 .botaoRemoverLinhaFornecedorCotacao {

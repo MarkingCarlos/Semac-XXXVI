@@ -13,8 +13,15 @@ const criarNovoFornecedorVazio = () => ({ nome: '', contato: '', observacao: '' 
 const criarLinhaFornecedorVazia = () => ({
     fornecedorId: '',
     valorUnitario: 0,
+    frete: 0,
     novoFornecedor: criarNovoFornecedorVazio(),
 });
+
+/* Custo total de uma linha de fornecedor para a quantidade cotada: nem
+   todo fornecedor cobra frete, mas quando cobra ele entra uma vez no
+   fechamento do item. */
+const custoTotalLinha = (linha, quantidade) =>
+    linha.valorUnitario * quantidade + (linha.frete ?? 0);
 
 const criarFormularioVazio = () => ({
     descricao: '',
@@ -47,9 +54,15 @@ export default function Cotacoes({ cotacoes, setCotacoes, fornecedores, setForne
 
     const buscarFornecedor = (id) => fornecedores.find((fornecedor) => fornecedor.id === id);
 
+    /* Melhor fornecedor é o de menor custo TOTAL (unitário × quantidade
+       cotada + frete) — um unitário baixo com frete alto pode sair mais
+       caro que o contrário. */
     const melhorLinha = (cotacao) =>
         cotacao.fornecedores.reduce(
-            (menor, linha) => (!menor || linha.valorUnitario < menor.valorUnitario ? linha : menor),
+            (menor, linha) =>
+                !menor || custoTotalLinha(linha, cotacao.quantidade) < custoTotalLinha(menor, cotacao.quantidade)
+                    ? linha
+                    : menor,
             null,
         );
 
@@ -67,6 +80,7 @@ export default function Cotacoes({ cotacoes, setCotacoes, fornecedores, setForne
             fornecedores: cotacao.fornecedores.map((linha) => ({
                 fornecedorId: String(linha.fornecedorId),
                 valorUnitario: linha.valorUnitario,
+                frete: linha.frete ?? 0,
                 novoFornecedor: criarNovoFornecedorVazio(),
             })),
         });
@@ -118,7 +132,11 @@ export default function Cotacoes({ cotacoes, setCotacoes, fornecedores, setForne
                 try {
                     const criado = await criarFornecedor(linha.novoFornecedor);
                     fornecedoresCriados.push(criado);
-                    linhasResolvidas.push({ fornecedorId: criado.id, valorUnitario: linha.valorUnitario });
+                    linhasResolvidas.push({
+                        fornecedorId: criado.id,
+                        valorUnitario: linha.valorUnitario,
+                        frete: linha.frete,
+                    });
                 } catch (e) {
                     setErroAcao(e.message);
                     return;
@@ -127,6 +145,7 @@ export default function Cotacoes({ cotacoes, setCotacoes, fornecedores, setForne
                 linhasResolvidas.push({
                     fornecedorId: parseInt(linha.fornecedorId, 10),
                     valorUnitario: linha.valorUnitario,
+                    frete: linha.frete,
                 });
             }
         }
@@ -234,7 +253,7 @@ export default function Cotacoes({ cotacoes, setCotacoes, fornecedores, setForne
                             <th>Produto</th>
                             <th>Fornecedores e preços</th>
                             <th>Qtd cotada</th>
-                            <th>Melhor preço</th>
+                            <th>Melhor custo total</th>
                             <th aria-label="Ações" />
                         </tr>
                     </thead>
@@ -294,6 +313,11 @@ export default function Cotacoes({ cotacoes, setCotacoes, fornecedores, setForne
                                                         </span>
                                                         <span className="valorFornecedorPrecoCotacoes">
                                                             {formatarCentavos(linha.valorUnitario)}
+                                                            {linha.frete > 0 && (
+                                                                <span className="freteFornecedorPrecoCotacoes">
+                                                                    {' '}+ frete {formatarCentavos(linha.frete)}
+                                                                </span>
+                                                            )}
                                                         </span>
                                                     </li>
                                                 );
@@ -302,7 +326,17 @@ export default function Cotacoes({ cotacoes, setCotacoes, fornecedores, setForne
                                     </td>
                                     <td className="celulaQuantidadeCotacoes">{cotacao.quantidade}</td>
                                     <td className="celulaValorFinancas celulaValorMelhorPrecoCotacoes">
-                                        {linhaMelhorPreco ? formatarCentavos(linhaMelhorPreco.valorUnitario) : '—'}
+                                        {linhaMelhorPreco ? (
+                                            <>
+                                                {formatarCentavos(custoTotalLinha(linhaMelhorPreco, cotacao.quantidade))}
+                                                <span className="detalheMelhorPrecoCotacoes">
+                                                    {formatarCentavos(linhaMelhorPreco.valorUnitario)} / un
+                                                    {linhaMelhorPreco.frete > 0
+                                                        ? ` + frete ${formatarCentavos(linhaMelhorPreco.frete)}`
+                                                        : ' · sem frete'}
+                                                </span>
+                                            </>
+                                        ) : '—'}
                                     </td>
                                     <td>
                                         <div className="grupoAcoesLinhaFinancas">
@@ -459,6 +493,20 @@ export default function Cotacoes({ cotacoes, setCotacoes, fornecedores, setForne
                                             id={`campoValorUnitarioCotacao-${indice}`}
                                             valorCentavos={linha.valorUnitario}
                                             aoMudar={(centavos) => atualizarLinha(indice, { valorUnitario: centavos })}
+                                        />
+                                    </div>
+                                    <div className="campoFormularioFinancas">
+                                        <label
+                                            className="rotuloCampoFinancas"
+                                            htmlFor={`campoFreteCotacao-${indice}`}
+                                        >
+                                            Frete
+                                            <span className="dicaRotuloCampoFinancas"> (deixe zerado se não cobra)</span>
+                                        </label>
+                                        <CampoMoeda
+                                            id={`campoFreteCotacao-${indice}`}
+                                            valorCentavos={linha.frete}
+                                            aoMudar={(centavos) => atualizarLinha(indice, { frete: centavos })}
                                         />
                                     </div>
                                     {formulario.fornecedores.length > 1 && (
