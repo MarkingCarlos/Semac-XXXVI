@@ -1,103 +1,52 @@
 @import '../../index.css';
 
-.main{
-    margin: 0;
-    padding: 0;
-    gap:0;
+.containerPrincipalCheckin {
     width: 100vw;
-    height:100vh;
-    display:flex;
-    flex-direction:row;
-    background-image: linear-gradient(to bottom, var(--vermelhoAuxDiretoria), color-mix(in oklab, var(--vermelhoDiretoria) 65%, black));
-}
-.left{
-    width:50%;
-    height:100%;
-    display:flex;
-    flex-direction:column;
-}
-
-.title{
-    width: 100%;
-    height:30%;
-    display:flex;
-    align-items: center;
+    height: 100dvh;
+    min-height: 100vh;
+    display: flex;
     justify-content: center;
-    border-bottom: 15px solid var(--Branco);
-    background-color: var(--vermelhoAuxDiretoria);
+    background-color: var(--vermelhoEscuro);
 }
 
-.title h1{
-    color: var(--vermelhoDiretoria);
-text-shadow: 3px 0 var(--Branco), -3px 0 var(--Branco), 0 3px var(--Branco), 0 -3px var(--Branco), 3px 3px var(--Branco), -3px -3px var(--Branco), 3px -3px var(--Branco), -3px 3px var(--Branco);
-}
-
-.content-left{
-    width:100%;
-    height: 70%;
-    display:flex;
+.telaAppCheckin {
+    position: relative;
+    display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    width: 100%;
+    max-width: 460px;
+    height: 100%;
+    background-color: var(--vermelhoAuxDiretoria);
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.5);
 }
 
-.right{
-    width:50%;
-    height:100%;
-    background-color: var(--vermelhoDiretoria);
-    border-radius:  50px 0 0 50px;
-    border: 15px solid var(--Branco);
-    border-right:none;
+.cabecalhoAppCheckin {
+    padding: max(28px, env(safe-area-inset-top)) 20px 14px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex: 0 0 auto;
 }
 
-.picker{
-  height: 8vh;
-  width: 32vw;  
-  font-family: 'Bungee', sans-serif;
-  font-size:large;
-  color: var(--vermelhoDiretoria);
-  background-color: var(--Branco);
-  border:none;
-  border-radius: 5px;
+.tituloAppCheckin {
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    color: var(--Branco);
 }
 
-.generate{
-    background-color: var(--Branco);
-    margin-top: 10vh;
-    color: var(--vermelhoDiretoria);
-    font-size: larger;
+.subtituloAppCheckin {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(252, 248, 245, 0.6);
 }
 
-/* REPONSIVIDADE*/
-
-@media (max-width: 700px) {
-    .main{ 
-        height: 200vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: baseline;
-        padding: 0;
-        overflow: auto;
-    }
-
-    .title{
-        width:100vw;
-        height:20vh;
-        border-radius:15px;
-        border-bottom: 10px solid var(--Branco);
-    }
-
-    .content-left{
-        width:100vw;
-        display:block;
-    }
-
-    .picker{
-        width:50vw;
-    }
-
-    .right{
-        display:none;
-    }
+.corpoAppCheckin {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
 }

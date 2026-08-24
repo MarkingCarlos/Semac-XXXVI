@@ -1,256 +1,370 @@
-.termo-page {
+@keyframes girarCelulaTermo {
+    0%   { transform: rotateX(0deg); }
+    50%  { transform: rotateX(90deg); }
+    100% { transform: rotateX(0deg); }
+}
+
+@keyframes saltarCelulaTermo {
+    0%, 100% { transform: translateY(0); }
+    30%      { transform: translateY(-14px); }
+    50%      { transform: translateY(0); }
+}
+
+@keyframes balancarLinhaTermo {
+    0%, 100% { transform: translateX(0); }
+    20%      { transform: translateX(-9px); }
+    40%      { transform: translateX(9px); }
+    60%      { transform: translateX(-6px); }
+    80%      { transform: translateX(6px); }
+}
+
+@keyframes aparecerCelulaTermo {
+    0%   { transform: scale(0.85); }
+    60%  { transform: scale(1.06); }
+    100% { transform: scale(1); }
+}
+
+@keyframes entrarToastTermo {
+    from { transform: translate(-50%, -12px); opacity: 0; }
+    to   { transform: translate(-50%, 0);     opacity: 1; }
+}
+
+.divPaginaTermo {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    padding: 0;
-    gap: clamp(11px, 1.2vw, 20px);
-    position: relative;
-    z-index: 51;
+    background: var(--vermelhoAuxDiretoria);
+    font-family: var(--fonteCorpoMontserrat);
     overflow: hidden;
 }
 
-.termo-header {
+.divToastErroTermo {
+    position: absolute;
+    top: 64px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--Branco);
+    color: var(--vermelhoAuxDiretoria);
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(0.75rem, 2vw, 0.9375rem);
+    letter-spacing: 0.08em;
+    padding: 10px 20px;
+    border-radius: 9999px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    z-index: 50;
+    white-space: nowrap;
+    animation: entrarToastTermo 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.divCabecalhoTermo {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
-    padding: 1rem 1.5rem;
-    box-sizing: border-box;
+    padding: 14px 16px 6px;
     position: relative;
+    z-index: 2;
 }
 
-.termo-header-lado {
-    flex: 0 0 160px;
-    display: flex;
-}
-
-.termo-header-lado.direita {
-    justify-content: flex-end;
-}
-
-.termo-voltar {
-    font-family: 'Bungee', sans-serif;
-    font-size: clamp(20px, 2vw, 28px);
-    font-weight: 900;
-    line-height: 1;
+.botaoVoltarTermo,
+.botaoAjudaTermo {
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
     background: var(--vermelhoDiretoria);
     border: none;
-    border-radius: 20px;
-    width: clamp(42px, 5vw, 52px);
-    height: clamp(42px, 5vw, 52px);
     color: var(--Branco);
-    cursor: pointer;
+    font-family: var(--fonteTituloBungee);
+    font-size: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s;
 }
 
-.termo-titulo {
-    font-family: 'Bungee', sans-serif;
-    font-size: clamp(24px, 5vw, 50px);
+.botaoVoltarTermo:active,
+.botaoAjudaTermo:active {
+    transform: scale(0.92);
+}
+
+.tituloTermo {
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(1.25rem, 6vw, 1.6rem);
+    letter-spacing: 0.02em;
     color: var(--Branco);
-    text-transform: uppercase;
     margin: 0;
-    flex: 1;
-    text-align: center;
 }
 
-.termo-como-jogar {
-    font-family: 'Bungee', sans-serif;
-    font-size: clamp(12px, 1.4vw, 22px);
+.divConteudoJogoTermo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(18px, 4vh, 30px);
+    padding: 10px 16px 24px;
+    position: relative;
+    z-index: 2;
+}
+
+.spanRotuloTentativaTermo {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+    letter-spacing: 0.08em;
+    color: rgba(237, 236, 236, 0.65);
+    text-align: center;
     text-transform: uppercase;
-    background-color: var(--vermelhoDiretoria);
-    color: var(--Branco);
-    border: none;
-    border-radius: 12px;
-    padding: 0.6rem 1.2rem;
-    cursor: pointer;
+}
+
+.divGradeTermo {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.divLinhaGradeTermo {
+    display: flex;
+    gap: 7px;
+}
+
+.linhaTremendoTermo {
+    animation: balancarLinhaTermo 0.4s ease;
+}
+
+.divCelulaTermo {
+    width: clamp(48px, 13.5vw, 58px);
+    height: clamp(48px, 13.5vw, 58px);
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    white-space: nowrap;
-}
-
-.termo-raio {
-    position: fixed;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 55vh;
-    width: auto;
-    pointer-events: none;
-    z-index: 0;
-}
-.termo-raio-esquerda { left: 100px; }
-.termo-raio-direita  { right: 100px; }
-
-.termo-erro {
-    font-family: 'Bungee', sans-serif;
-    font-size: 1rem;
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(1.1rem, 5vw, 1.4rem);
     color: var(--Branco);
-    background: rgba(0,0,0,0.5);
+    background: rgba(237, 236, 236, 0.06);
+    border: 2px solid rgba(237, 236, 236, 0.18);
+    user-select: none;
+}
+
+.celulaClicavelTermo {
+    cursor: pointer;
+}
+
+.celulaPreenchidaTermo {
+    background: rgba(237, 236, 236, 0.14);
+    border: 2px solid rgba(237, 236, 236, 0.4);
+    animation: aparecerCelulaTermo 0.12s ease;
+}
+
+.celulaSelecionadaTermo {
+    border: 2px solid var(--AmareloAuxApoio);
+}
+
+.celulaGirandoTermo {
+    animation: girarCelulaTermo 0.4s ease;
+    animation-fill-mode: both;
+}
+
+.celulaSaltandoTermo {
+    animation: girarCelulaTermo 0.4s ease, saltarCelulaTermo 0.5s ease;
+    animation-fill-mode: both;
+}
+
+.celulaCertoTermo {
+    background: var(--azulConteudo);
+    border-color: transparent;
+}
+
+.celulaPresenteTermo {
+    background: var(--AmareloAuxApoio);
+    border-color: transparent;
+}
+
+.celulaAusenteTermo {
+    background: var(--vermelhoAux2Diretoria);
+    border-color: transparent;
+}
+
+.divTecladoTermo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.divLinhaTecladoTermo {
+    display: flex;
+    gap: 5px;
+    width: 100%;
+    justify-content: center;
+}
+
+.botaoTeclaTermo {
+    flex: 1;
+    min-height: 46px;
     border-radius: 8px;
-    padding: 0.5rem 1.5rem;
-    position: fixed;
-    top: 5rem;
+    border: none;
+    background: var(--vermelhoDiretoria);
+    color: var(--Branco);
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(0.75rem, 2vw, 0.9375rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: filter 0.15s, transform 0.1s;
+}
+
+.botaoTeclaTermo:active {
+    transform: scale(0.94);
+}
+
+.botaoTeclaTermo:disabled {
+    cursor: not-allowed;
+}
+
+.teclaEnterTermo,
+.teclaApagarTermo {
+    flex: 1.7;
+}
+
+.teclaApagarTermo {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+}
+
+.teclaCertoTermo {
+    background: var(--azulConteudo);
+}
+
+.teclaPresenteTermo {
+    background: var(--AmareloAuxApoio);
+}
+
+.teclaAusenteTermo {
+    background: var(--vermelhoAux2Diretoria);
+    color: rgba(237, 236, 236, 0.5);
+}
+
+.divSobreposicaoAjudaTermo,
+.divSobreposicaoFimTermo {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
     z-index: 100;
 }
 
-.termo-fim {
-    font-family: 'Bungee', sans-serif;
-    font-size: 1.1rem;
-    text-transform: uppercase;
-    border-radius: 8px;
-    padding: 0.6rem 1.5rem;
-    color: var(--Branco);
-}
-.termo-fim.ganhou { background-color: #2e7d32; }
-.termo-fim.perdeu { background-color: var(--vermelhoDiretoria); }
-
-.termo-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    z-index: 1;
+.divSobreposicaoAjudaTermo {
+    background: rgba(10, 10, 10, 0.6);
 }
 
-.termo-linha {
-    display: flex;
-    gap: 5px;
+.divSobreposicaoFimTermo {
+    background: rgba(10, 10, 10, 0.72);
 }
 
-.termo-celula {
-    width: clamp(44px, 9vw, 56px);
-    height: clamp(44px, 9vw, 56px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Bungee', sans-serif;
-    font-size: clamp(28px, 4vw, 40px);
-    font-weight: 900;
-    color: var(--Branco);
-    text-transform: uppercase;
-    border-radius: clamp(6px, 0.5vw, 8px);
-    background-color: var(--vermelhoDiretoria);
-    border: 2px solid rgba(255,255,255,0.1);
-    transition: background-color 0.3s;
-}
-
-.celula-certo    { background-color: var(--azulConteudo);    border-color: var(--azulConteudo); }
-.celula-presente { background-color: var(--AmareloAuxApoio); border-color: var(--AmareloAuxApoio); }
-.celula-ausente  { background-color: var(--Preto);           border-color: var(--Preto); }
-.celula-ativa    { border-color: rgba(255,255,255,0.5); }
-
-.termo-teclado {
-    display: flex;
-    flex-direction: column;
-    gap: clamp(4px, 0.4vw, 8px);
-    align-items: center;
-    z-index: 1;
-}
-
-.teclado-linha {
-    display: flex;
-    gap: clamp(4px, 0.4vw, 8px);
-}
-
-.teclado-tecla {
-    font-family: 'Bungee', sans-serif;
-    font-size: clamp(15px, 4vw, 25px);
-    font-weight: 900;
-    text-transform: uppercase;
-    color: var(--Branco);
-    background-color: var(--vermelhoDiretoria);
-    border: none;
-    border-radius: 4px;
-    width: clamp(30px, 6.5vw, 50px);
-    height: 46px;
-    padding: 0 clamp(3px, 0.4vw, 6px);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s, transform 0.1s;
-}
-
-.teclado-tecla:hover { filter: brightness(1.2); transform: scale(1.05); }
-.tecla-enter         { width: clamp(56px, 12vw, 126px); }
-.tecla-certo         { background-color: var(--azulConteudo); }
-.tecla-presente      { background-color: var(--AmareloAuxApoio); }
-.tecla-ausente       { background-color: var(--vermelhoAuxDiretoria); color: var(--vermelhoDiretoria); }
-
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 500;
-}
-
-.modal-caixa {
-    background-color: var(--vermelhoAuxDiretoria);
-    border: 2px solid rgba(255,255,255,0.2);
-    border-radius: 16px;
-    padding: 2rem;
-    max-width: 480px;
-    width: 90%;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
-    position: relative;
-    color: var(--Branco);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.95rem;
-    text-align: center;
-}
-
-.modal-fechar {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
+.divCartaoAjudaTermo {
     background: var(--vermelhoDiretoria);
+    border-radius: 25px;
+    padding: 24px 20px;
+    max-width: 340px;
+    color: var(--Branco);
+}
+
+.tituloAjudaTermo {
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(1.125rem, 3vw, 1.5rem);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin: 0 0 12px;
+}
+
+.textoAjudaTermo {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: clamp(0.75rem, 2vw, 0.9375rem);
+    line-height: 1.7;
+    margin: 0 0 14px;
+}
+
+.divLinhaLegendaAjudaTermo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.corLegendaAjudaTermo {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.corCertaLegendaTermo    { background: var(--azulConteudo); }
+.corPresenteLegendaTermo { background: var(--AmareloAuxApoio); }
+.corAusenteLegendaTermo  { background: var(--vermelhoAux2Diretoria); }
+
+.textoLegendaAjudaTermo {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: clamp(0.75rem, 2vw, 0.9375rem);
+}
+
+.botaoEntendiAjudaTermo,
+.botaoReiniciarFimTermo {
+    width: 100%;
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoAuxDiretoria);
     border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    color: var(--Branco);
-    font-size: 1rem;
-    font-weight: 900;
+    border-radius: 8px;
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(0.75rem, 2vw, 0.9375rem);
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-.modal-exemplo {
-    display: flex;
-    gap: 5px;
-    justify-content: center;
-    margin: 0.5rem 0;
+.botaoEntendiAjudaTermo {
+    padding: 12px;
+    margin-top: 16px;
 }
 
-.tag {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 4px;
-    font-family: 'Bungee', sans-serif;
-    font-size: 0.9rem;
+.divCartaoFimTermo {
+    background: var(--vermelhoDiretoria);
+    border-radius: 25px;
+    padding: 28px 22px;
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
     color: var(--Branco);
-    vertical-align: middle;
+    animation: aparecerCelulaTermo 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.tag.certo    { background-color: var(--azulConteudo); }
-.tag.presente { background-color: var(--AmareloAuxApoio); }
-.tag.ausente  { background-color: var(--Preto); }
 
-@media (max-width: 1000px) {
-    .termo-raio { display: none; }
+.tituloFimTermo {
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    margin: 0 0 10px;
+}
 
-    .termo-header-lado { flex: 0 0 100px; }
+.tituloFimTermo.venceuFimTermo  { color: var(--azulConteudo); }
+.tituloFimTermo.perdeuFimTermo  { color: var(--AmareloAuxApoio); }
 
-    .termo-como-jogar { white-space: normal; }
+.textoFimTermo {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: clamp(0.75rem, 2vw, 0.9375rem);
+    opacity: 0.85;
+    margin: 0 0 18px;
+}
+
+.palavraFimTermo {
+    font-family: var(--fonteTituloBungee);
+    color: var(--AmareloAuxApoio);
+}
+
+.botaoReiniciarFimTermo {
+    padding: 13px;
 }
