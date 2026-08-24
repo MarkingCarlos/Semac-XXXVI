@@ -503,7 +503,6 @@ export default function Cotacoes({ cotacoes, setCotacoes, fornecedores, setForne
                                             htmlFor={`campoFreteCotacao-${indice}`}
                                         >
                                             Frete
-                                            <span className="dicaRotuloCampoFinancas"> (deixe zerado se não cobra)</span>
                                         </label>
                                         <CampoMoeda
                                             id={`campoFreteCotacao-${indice}`}
