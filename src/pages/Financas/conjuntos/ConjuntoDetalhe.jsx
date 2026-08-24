@@ -5,7 +5,7 @@ import { listarCotacoes } from '../data/apiCotacoes.js';
 import { listarFornecedores } from '../data/apiFornecedores.js';
 import { buscarConjunto, renomearConjunto, excluirConjunto as excluirConjuntoApi } from '../data/apiConjuntos.js';
 import { criarVariacao, atualizarVariacao, excluirVariacao as excluirVariacaoApi } from '../data/apiVariacoes.js';
-import BuscaItensConjunto from './BuscaItensConjunto.jsx';
+import BuscaItemVariacao from './BuscaItemVariacao.jsx';
 import { menorFornecedor } from './melhorPreco.js';
 import '../financas.css';
 import './conjuntosCotacao.css';
@@ -18,8 +18,9 @@ import './conjuntoDetalhe.css';
    pra recalcular totais em tempo real e só são persistidas (por variação)
    ao sair do campo.
 
-   As tabelas não listam o catálogo inteiro de cotações: só os itens
-   escolhidos na busca (BuscaItensConjunto) entram na grade. */
+   Nenhuma tabela lista o catálogo inteiro de cotações: cada variação
+   monta a PRÓPRIA lista pela busca do seu topo (BuscaItemVariacao), então
+   "Coffee Cheio" pode ter itens que "Coffee Reduzido" nem enxerga. */
 export default function ConjuntoDetalhe() {
     const { id } = useParams();
     const [, navegar] = useLocation();
@@ -30,10 +31,11 @@ export default function ConjuntoDetalhe() {
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState('');
 
-    /* Ids das cotações que compõem este conjunto — a seleção não é
-       persistida: ao recarregar, ela é remontada a partir dos itens que
-       já têm quantidade em alguma variação. */
-    const [itensSelecionados, setItensSelecionados] = useState([]);
+    /* itensPorVariacao[variacaoId] = [cotacaoId] — a lista de itens é de
+       cada variação, não do conjunto. A seleção não é persistida: ao
+       recarregar, é remontada a partir dos itens que já têm quantidade
+       naquela variação. */
+    const [itensPorVariacao, setItensPorVariacao] = useState({});
 
     // edicoes[variacaoId][cotacaoId] = { fornecedorId, quantidade }
     const [edicoes, setEdicoes] = useState({});
@@ -64,13 +66,12 @@ export default function ConjuntoDetalhe() {
                         ]),
                     ),
                 );
-                setItensSelecionados(
-                    Array.from(
-                        new Set(
-                            conjuntoCarregado.variacoes.flatMap((variacao) =>
-                                variacao.itens.filter((item) => item.quantidade > 0).map((item) => item.cotacaoId),
-                            ),
-                        ),
+                setItensPorVariacao(
+                    Object.fromEntries(
+                        conjuntoCarregado.variacoes.map((variacao) => [
+                            variacao.id,
+                            variacao.itens.filter((item) => item.quantidade > 0).map((item) => item.cotacaoId),
+                        ]),
                     ),
                 );
                 setCotacoes(listaCotacoes);
@@ -90,11 +91,12 @@ export default function ConjuntoDetalhe() {
     const cotacaoPorId = useMemo(() => Object.fromEntries(cotacoes.map((c) => [c.id, c])), [cotacoes]);
     const buscarFornecedor = (fornecedorId) => fornecedores.find((f) => f.id === fornecedorId);
 
-    /* Produtos (não linhas de fornecedor) agrupados por categoria — a
-       mesma lista de linhas aparece em todas as tabelas de variação.
-       Só entram os itens escolhidos na busca. */
-    const produtosPorCategoria = useMemo(() => {
-        const escolhidos = new Set(itensSelecionados);
+    /* Produtos (não linhas de fornecedor) de UMA variação, agrupados por
+       categoria. Percorre o catálogo na ordem em que veio da API pra que
+       duas variações que compartilham um item o mostrem na mesma posição
+       relativa — facilita comparar as colunas lado a lado. */
+    const produtosPorCategoriaDe = (variacaoId) => {
+        const escolhidos = new Set(itensPorVariacao[variacaoId] ?? []);
         const porCategoria = new Map();
         for (const cotacao of cotacoes) {
             if (cotacao.fornecedores.length === 0) continue;
@@ -104,7 +106,7 @@ export default function ConjuntoDetalhe() {
             porCategoria.set(cotacao.categoria, lista);
         }
         return Array.from(porCategoria.entries());
-    }, [cotacoes, itensSelecionados]);
+    };
 
     const fornecedorEscolhidoEm = (variacaoId, cotacao) =>
         edicoes[variacaoId]?.[cotacao.id]?.fornecedorId ?? menorFornecedor(cotacao)?.fornecedorId ?? '';
@@ -213,45 +215,31 @@ export default function ConjuntoDetalhe() {
        pelo onBlur da quantidade, onde o estado já está atualizado. */
     const persistirVariacao = (variacao) => persistirMapa(variacao, edicoes[variacao.id] ?? {});
 
-    /* ── Itens que compõem o conjunto ───────────────────────────────
-       Adicionar só amplia a grade. Remover precisa zerar a quantidade
-       do item em cada variação: senão ele continuaria somando no total
-       sem aparecer em tabela nenhuma. */
+    /* ── Itens de cada variação ─────────────────────────────────────
+       Adicionar só amplia a tabela daquela variação. Remover precisa
+       zerar a quantidade junto: senão o item continuaria somando no
+       total sem aparecer na tabela. */
 
-    const adicionarItem = (cotacao) =>
-        setItensSelecionados((atual) => (atual.includes(cotacao.id) ? atual : [...atual, cotacao.id]));
+    const adicionarItem = (variacaoId, cotacao) =>
+        setItensPorVariacao((atual) => {
+            const lista = atual[variacaoId] ?? [];
+            if (lista.includes(cotacao.id)) return atual;
+            return { ...atual, [variacaoId]: [...lista, cotacao.id] };
+        });
 
-    const variacoesComItem = (cotacaoId) =>
-        conjunto.variacoes.filter((variacao) => (edicoes[variacao.id]?.[cotacaoId]?.quantidade ?? 0) > 0);
-
-    const removerItem = (cotacao) => {
-        const afetadas = variacoesComItem(cotacao.id);
-        if (afetadas.length > 0) {
-            const aviso =
-                afetadas.length === 1
-                    ? `"${cotacao.descricao}" tem quantidade em 1 variação. Remover zera essa quantidade.`
-                    : `"${cotacao.descricao}" tem quantidade em ${afetadas.length} variações. Remover zera essas quantidades.`;
+    const removerItem = (variacao, cotacao) => {
+        const temQuantidade = quantidadeEm(variacao.id, cotacao.id) > 0;
+        if (temQuantidade) {
+            const aviso = `Remover "${cotacao.descricao}" de "${variacao.nome}"? A quantidade lançada será zerada.`;
             if (!window.confirm(aviso)) return;
         }
-        const edicoesSemItem = Object.fromEntries(
-            Object.entries(edicoes).map(([variacaoId, escolhas]) => {
-                const { [cotacao.id]: _removida, ...resto } = escolhas;
-                return [variacaoId, resto];
-            }),
-        );
-        setEdicoes(edicoesSemItem);
-        setItensSelecionados((atual) => atual.filter((id) => id !== cotacao.id));
-        afetadas.forEach((variacao) => persistirMapa(variacao, edicoesSemItem[variacao.id] ?? {}));
-    };
-
-    const limparItens = () => {
-        const temQuantidade = itensSelecionados.some((cotacaoId) => variacoesComItem(cotacaoId).length > 0);
-        if (temQuantidade) {
-            if (!window.confirm('Remover todos os itens do conjunto? As quantidades lançadas nas variações serão zeradas.')) return;
-            setEdicoes(Object.fromEntries(conjunto.variacoes.map((variacao) => [variacao.id, {}])));
-            conjunto.variacoes.forEach((variacao) => persistirMapa(variacao, {}));
-        }
-        setItensSelecionados([]);
+        const { [cotacao.id]: _removida, ...escolhasRestantes } = edicoes[variacao.id] ?? {};
+        setEdicoes((atual) => ({ ...atual, [variacao.id]: escolhasRestantes }));
+        setItensPorVariacao((atual) => ({
+            ...atual,
+            [variacao.id]: (atual[variacao.id] ?? []).filter((id) => id !== cotacao.id),
+        }));
+        if (temQuantidade) persistirMapa(variacao, escolhasRestantes);
     };
 
     const salvarNomeConjunto = async () => {
@@ -276,8 +264,48 @@ export default function ConjuntoDetalhe() {
             const nova = await criarVariacao(conjunto.id, nomeNovaVariacao);
             setConjunto((atual) => ({ ...atual, variacoes: [...atual.variacoes, nova] }));
             setEdicoes((atual) => ({ ...atual, [nova.id]: {} }));
+            setItensPorVariacao((atual) => ({ ...atual, [nova.id]: [] }));
             setNomeNovaVariacao('');
             setCriandoVariacao(false);
+        } catch (e) {
+            setErro(e.message);
+        }
+    };
+
+    /* Nome livre de colisão: "Coffee Cheio (cópia)", depois "(cópia 2)"… */
+    const nomeParaCopia = (nomeBase) => {
+        const existentes = new Set(conjunto.variacoes.map((variacao) => variacao.nome));
+        let candidato = `${nomeBase} (cópia)`;
+        let contador = 2;
+        while (existentes.has(candidato)) {
+            candidato = `${nomeBase} (cópia ${contador})`;
+            contador += 1;
+        }
+        return candidato;
+    };
+
+    /* Duplica uma variação inteira: a lista de itens, o fornecedor
+       escolhido em cada um e as quantidades. Como as variações de um
+       conjunto costumam partir da mesma lista, é daqui que se monta a
+       segunda: duplica e ajusta as quantidades.
+
+       A lista local é copiada por inteiro — itens ainda sem quantidade
+       vão junto, mesmo que o backend só guarde os que têm quantidade. */
+    const duplicarVariacao = async (variacao) => {
+        const escolhas = edicoes[variacao.id] ?? {};
+        const itens = Object.entries(escolhas)
+            .filter(([, escolha]) => escolha.quantidade > 0)
+            .map(([cotacaoId, escolha]) => ({
+                cotacaoId: Number(cotacaoId),
+                fornecedorId: escolha.fornecedorId,
+                quantidade: escolha.quantidade,
+            }));
+        try {
+            const nova = await criarVariacao(conjunto.id, nomeParaCopia(variacao.nome));
+            const criada = itens.length > 0 ? await atualizarVariacao(nova.id, nova.nome, itens) : nova;
+            setConjunto((atual) => ({ ...atual, variacoes: [...atual.variacoes, criada] }));
+            setEdicoes((atual) => ({ ...atual, [criada.id]: { ...escolhas } }));
+            setItensPorVariacao((atual) => ({ ...atual, [criada.id]: [...(atual[variacao.id] ?? [])] }));
         } catch (e) {
             setErro(e.message);
         }
@@ -293,6 +321,10 @@ export default function ConjuntoDetalhe() {
             }));
             setEdicoes((atual) => {
                 const { [variacao.id]: _removida, ...resto } = atual;
+                return resto;
+            });
+            setItensPorVariacao((atual) => {
+                const { [variacao.id]: _removidos, ...resto } = atual;
                 return resto;
             });
         } catch (e) {
@@ -389,15 +421,29 @@ export default function ConjuntoDetalhe() {
                                     <div className="cartaoVariacaoConjuntoDetalhe" key={variacao.id}>
                                         <div className="cabecalhoCartaoVariacaoConjuntoDetalhe">
                                             <h2 className="nomeVariacaoConjuntoDetalhe">{variacao.nome}</h2>
-                                            <button
-                                                type="button"
-                                                className="botaoRemoverVariacaoConjuntoDetalhe"
-                                                aria-label={`Remover variação ${variacao.nome}`}
-                                                title="Remover variação"
-                                                onClick={() => removerVariacao(variacao)}
-                                            >
-                                                ×
-                                            </button>
+                                            <div className="acoesCartaoVariacaoConjuntoDetalhe">
+                                                <button
+                                                    type="button"
+                                                    className="botaoDuplicarVariacaoConjuntoDetalhe"
+                                                    aria-label={`Duplicar variação ${variacao.nome}`}
+                                                    title="Duplicar variação"
+                                                    onClick={() => duplicarVariacao(variacao)}
+                                                >
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <rect x="9" y="9" width="13" height="13" rx="2" />
+                                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                                                    </svg>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="botaoRemoverVariacaoConjuntoDetalhe"
+                                                    aria-label={`Remover variação ${variacao.nome}`}
+                                                    title="Remover variação"
+                                                    onClick={() => removerVariacao(variacao)}
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
                                         </div>
                                         <dl className="listaMetricasVariacaoConjuntoDetalhe">
                                             <div className="metricaVariacaoConjuntoDetalhe">
@@ -482,15 +528,6 @@ export default function ConjuntoDetalhe() {
                                 </button>
                             </div>
 
-                            <BuscaItensConjunto
-                                cotacoes={cotacoes}
-                                fornecedores={fornecedores}
-                                selecionados={itensSelecionados}
-                                aoAdicionar={adicionarItem}
-                                aoRemover={removerItem}
-                                aoLimpar={limparItens}
-                            />
-
                             {conjunto.variacoes.length === 0 && (
                                 <p className="celulaVaziaFinancas">
                                     Adicione uma variação acima pra começar a montar a tabela.
@@ -498,19 +535,30 @@ export default function ConjuntoDetalhe() {
                             )}
 
                             <div className="linhaTabelasVariacaoConjuntoDetalhe">
-                            {conjunto.variacoes.map((variacao) => (
+                            {conjunto.variacoes.map((variacao) => {
+                                const produtosDaVariacao = produtosPorCategoriaDe(variacao.id);
+                                return (
                                 <div className="blocoTabelaVariacaoConjuntoDetalhe" key={variacao.id}>
                                     <h3 className="tituloTabelaVariacaoConjuntoDetalhe">{variacao.nome}</h3>
 
-                                    {produtosPorCategoria.length === 0 && (
+                                    <BuscaItemVariacao
+                                        variacaoId={variacao.id}
+                                        variacaoNome={variacao.nome}
+                                        cotacoes={cotacoes}
+                                        fornecedores={fornecedores}
+                                        selecionados={itensPorVariacao[variacao.id] ?? []}
+                                        aoAdicionar={(cotacao) => adicionarItem(variacao.id, cotacao)}
+                                    />
+
+                                    {produtosDaVariacao.length === 0 && (
                                         <p className="celulaVaziaFinancas">
                                             {cotacoes.length === 0
                                                 ? 'Nenhum item cotado ainda — cadastre em Cotação primeiro.'
-                                                : 'Nenhum item no conjunto ainda — busque acima para adicionar.'}
+                                                : 'Nenhum item nesta variação — busque acima para adicionar.'}
                                         </p>
                                     )}
 
-                                    {produtosPorCategoria.map(([categoria, produtosCategoria]) => (
+                                    {produtosDaVariacao.map(([categoria, produtosCategoria]) => (
                                         <div className="grupoCategoriaVariacaoConjuntoDetalhe" key={categoria}>
                                             <div className="cabecalhoCategoriaVariacaoConjuntoDetalhe">
                                                 <span className="tituloCategoriaVariacaoConjuntoDetalhe">
@@ -533,8 +581,19 @@ export default function ConjuntoDetalhe() {
                                                     cotacao.fornecedores.find((linha) => linha.fornecedorId === fornecedorId)?.frete ?? 0;
                                                 return (
                                                     <div className="itemVariacaoConjuntoDetalhe" key={cotacao.id}>
-                                                        <div className="linhaProdutoItemVariacaoConjuntoDetalhe">
+                                                        <div className="cabecalhoItemVariacaoConjuntoDetalhe">
                                                             <span className="nomeProdutoItemVariacaoConjuntoDetalhe">{cotacao.descricao}</span>
+                                                            <button
+                                                                type="button"
+                                                                className="botaoRemoverItemVariacaoConjuntoDetalhe"
+                                                                aria-label={`Remover ${cotacao.descricao} de ${variacao.nome}`}
+                                                                title="Remover desta variação"
+                                                                onClick={() => removerItem(variacao, cotacao)}
+                                                            >
+                                                                ×
+                                                            </button>
+                                                        </div>
+                                                        <div className="linhaProdutoItemVariacaoConjuntoDetalhe">
                                                             <select
                                                                 className="entradaFormularioFinancas seletorFornecedorItemVariacaoConjuntoDetalhe"
                                                                 value={fornecedorId}
@@ -594,7 +653,8 @@ export default function ConjuntoDetalhe() {
                                         </div>
                                     ))}
                                 </div>
-                            ))}
+                                );
+                            })}
                             </div>
                         </div>
                     )}
