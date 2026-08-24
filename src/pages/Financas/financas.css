@@ -58,7 +58,7 @@
 .conteudoFinancas {
     flex: 1;
     min-width: 0;
-    padding: clamp(24px, 4vw, 52px) clamp(24px, 4vw, 52px) 140px;
+    padding: clamp(24px, 4vw, 50px) ;
     box-sizing: border-box;
 }
 
@@ -144,7 +144,6 @@
 }
 
 .secaoFinancas {
-    max-width: 1080px;
     margin: 0 auto;
     animation: entradaSecaoFinancas 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
