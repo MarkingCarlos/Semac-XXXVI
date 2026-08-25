@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'preact/hooks'
 import { useLocation } from 'wouter'
-import { salvarSessao, temAcessoFinanceiro, temAcessoAdmin } from '../../auth/sessao.js'
+import { salvarSessao, temAcessoFinanceiro, temAcessoAdmin, temAcessoParticipante } from '../../auth/sessao.js'
 import { apiFetch } from '../../lib/apiFetch.js'
 import './boxInscricao.css'
 import logoRaios from '../../assets/logoSemacRaios.png'
@@ -18,6 +18,26 @@ import qrCodePix from '../../assets/qr.png'
 function lerParametrosNavegacao() {
     const params = new URLSearchParams(window.location.search)
     return { tab: params.get('tab'), next: params.get('next') }
+}
+
+/* Rotas trancadas por temAcessoAdmin (ver main.jsx). As do financeiro sao
+   reconhecidas pelo prefixo, porque tem subrotas. */
+const ROTAS_ADMIN = ['/admin', '/sorteio', '/checkin']
+
+/* Para onde o login leva a pessoa. O `next` da URL tem prioridade -- foi a
+   rota que exigiu o login --, mas so quando o papel dela da acesso; caso
+   contrario ela vai para a area natural do seu papel. Quem ainda nao tem
+   papel (inscricao aguardando confirmacao) nao tem area nenhuma: devolve
+   null e a pessoa fica na propria tela, com a mensagem de sucesso. */
+function destinoPosLogin(rotaRetorno) {
+    if (rotaRetorno) {
+        if (rotaRetorno.startsWith('/financeiro') && temAcessoFinanceiro()) return rotaRetorno
+        if (ROTAS_ADMIN.includes(rotaRetorno) && temAcessoAdmin())          return rotaRetorno
+        if (rotaRetorno === '/participantes' && temAcessoParticipante())     return rotaRetorno
+    }
+    if (temAcessoAdmin())        return '/admin'
+    if (temAcessoParticipante()) return '/participantes'
+    return null
 }
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
@@ -266,15 +286,19 @@ export default function BoxInscricao() {
                 const corpo = await resposta.json().catch(() => null)
                 if (corpo?.token) salvarSessao(corpo)
                 setFeedback({ tipo: 'sucesso', msg: 'Login efetuado com sucesso!' })
-                if (rotaRetorno === '/financeiro') {
-                    navigate(temAcessoFinanceiro() ? '/financeiro' : '/')
-                } else if (rotaRetorno === '/admin') {
-                    navigate(temAcessoAdmin() ? '/admin' : '/')
-                }
-            } else if (resposta.status === 401) {
-                setFeedback({ tipo: 'erro', msg: 'E-mail ou senha inválidos.' })
+                const destino = destinoPosLogin(rotaRetorno)
+                if (destino) navigate(destino)
             } else {
-                setFeedback({ tipo: 'erro', msg: 'Erro ao entrar. Tente novamente.' })
+                /* 403 = senha certa, mas a conta ainda não pode entrar (inscrição
+                   em validação ou acesso suspenso). O motivo vem em `mensagem`. */
+                const corpo = await resposta.json().catch(() => null)
+                setFeedback({
+                    tipo: 'erro',
+                    msg: corpo?.mensagem
+                        || (resposta.status === 401
+                            ? 'E-mail ou senha inválidos.'
+                            : 'Erro ao entrar. Tente novamente.'),
+                })
             }
         } catch {
             setFeedback({ tipo: 'erro', msg: 'Não foi possível conectar ao servidor.' })
@@ -727,6 +751,7 @@ export default function BoxInscricao() {
                         <CampoSenha
                             value={form.senha}
                             onInput={e => setField('senha', e.target.value)}
+                            permitirVerSenha
                             required
                         />
                         {feedback && <Feedback feedback={feedback} />}
@@ -921,17 +946,35 @@ function CampoTexto({ label, type = 'text', value, onInput, inputMode, required 
     )
 }
 
-function CampoSenha({ value, onInput, senhaOk, required }) {
+function CampoSenha({ value, onInput, senhaOk, required, permitirVerSenha }) {
+    const [senhaVisivel, setSenhaVisivel] = useState(false)
+    const rotuloOlho = senhaVisivel ? 'Ocultar senha' : 'Mostrar senha'
+
     return (
         <div class="campoInscricao">
             <label class="rotuloCampoInscricao">Senha</label>
-            <input
-                class="inputCampoInscricao"
-                type="password"
-                value={value}
-                onInput={onInput}
-                required={required}
-            />
+            <div class="envoltorioSenhaInscricao">
+                <input
+                    class={`inputCampoInscricao ${permitirVerSenha ? 'inputSenhaComOlhoInscricao' : ''}`}
+                    type={permitirVerSenha && senhaVisivel ? 'text' : 'password'}
+                    value={value}
+                    onInput={onInput}
+                    required={required}
+                />
+                {permitirVerSenha && (
+                    <button
+                        type="button"
+                        class="botaoVerSenhaInscricao"
+                        tabIndex={-1}
+                        title={rotuloOlho}
+                        aria-label={rotuloOlho}
+                        aria-pressed={senhaVisivel}
+                        onClick={() => setSenhaVisivel(visivel => !visivel)}
+                    >
+                        <IconeOlhoSenhaInscricao aberto={senhaVisivel} />
+                    </button>
+                )}
+            </div>
             {senhaOk && (
                 <div class="validacaoSenhaInscricao">
                     <Indicador ok={senhaOk.especial}  texto="1 caractere especial" />
@@ -940,6 +983,22 @@ function CampoSenha({ value, onInput, senhaOk, required }) {
                 </div>
             )}
         </div>
+    )
+}
+
+/* Olho do campo de senha: pálpebra aberta, ou riscada quando a senha
+   está visível — o risco indica a ação de esconder. */
+function IconeOlhoSenhaInscricao({ aberto }) {
+    return (
+        <svg
+            width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+        >
+            <path d="M2 12s3.6-6.5 10-6.5 10 6.5 10 6.5-3.6 6.5-10 6.5S2 12 2 12Z" />
+            <circle cx="12" cy="12" r="3" />
+            {aberto && <line x1="4" y1="20" x2="20" y2="4" />}
+        </svg>
     )
 }
 

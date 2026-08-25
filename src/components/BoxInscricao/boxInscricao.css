@@ -236,6 +236,38 @@
 .inputCampoInscricao:focus-visible { border-bottom-color: var(--Branco); }
 .inputCampoInscricao::placeholder   { color: rgba(255, 255, 255, 0.25); }
 
+/* ── Botão de ver senha ───────────────────────────────── */
+
+.envoltorioSenhaInscricao {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* espaço à direita para o texto não passar por baixo do ícone */
+.inputSenhaComOlhoInscricao { padding-right: 2rem; }
+
+.botaoVerSenhaInscricao {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 0.2rem;
+    cursor: pointer;
+    color: var(--Branco);
+    opacity: 0.65;
+    transition: opacity 0.2s;
+}
+
+.botaoVerSenhaInscricao:hover,
+.botaoVerSenhaInscricao:focus-visible { opacity: 1; }
+
 /* ── Indicador de requisito de senha ─────────────────────────── */
 
 .validacaoSenhaInscricao {
