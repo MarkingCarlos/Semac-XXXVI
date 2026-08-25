@@ -27,9 +27,14 @@ const ROTULO_ROLE = Object.fromEntries(PAPEIS_COMISSAO.map(p => [p.valor, p.rotu
 
 const ROTULO_MODELO = { NORMAL: 'Normal', BABY_LOOK: 'Baby Look' }
 
-function textoCamiseta(camiseta) {
-    if (!camiseta) return '—'
-    return `${ROTULO_MODELO[camiseta.modelo] ?? camiseta.modelo} - ${camiseta.tamanho}`
+// Monta o texto da camiseta: "Normal - M", com sufixo "+N" para quem tem
+// mais de um pedido. Retorna '—' se não houver nenhum.
+function textoCamiseta(camisetas) {
+    const lista = camisetas ?? []
+    if (lista.length === 0) return '—'
+    const primeira = lista[0]
+    const texto = `${ROTULO_MODELO[primeira.modelo] ?? primeira.modelo} - ${primeira.tamanho}`
+    return lista.length > 1 ? `${texto} +${lista.length - 1}` : texto
 }
 
 export default function TabelaComissao({ comissao, aoAtualizar }) {
@@ -112,7 +117,7 @@ export default function TabelaComissao({ comissao, aoAtualizar }) {
                                         {membro.ativo ? 'Ativo' : 'Inativo'}
                                     </span>
                                 </td>
-                                <td class="celulaCamisetaAdmin">{textoCamiseta(membro.camiseta)}</td>
+                                <td class="celulaCamisetaAdmin">{textoCamiseta(membro.camisetas)}</td>
                                 <td class="celulaFuncaoComissaoAdmin">
                                     <span class="badgeFuncaoComissaoAdmin">
                                         {ROTULO_ROLE[membro.role] ?? membro.role}

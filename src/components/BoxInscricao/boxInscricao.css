@@ -1,54 +1,56 @@
 /* =================================================================
-   boxInscricao.css — estilos do box de inscrição/login
-   Subcomponentes: CampoTexto, CampoSenha, Indicador
+   boxInscricao.css — cadastro e login da SEMAC XXXVI
+
+   O card segue o protótipo do design system: vermelho sólido, raio 25px
+   e sombra funda, com o amarelo de apoio reservado ao que decide o fluxo
+   (o direito a camiseta, o total e a ação principal de cada etapa).
    ================================================================= */
 
 /* ── Box container ───────────────────────────────────────────── */
 
 .boxInscricao {
-    background: rgba(115, 8, 53, 0.55);
-    backdrop-filter: blur(18px) saturate(160%);
-    -webkit-backdrop-filter: blur(18px) saturate(160%);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
-    border-radius: 16px;
-    padding: 2rem;
+    background: var(--vermelhoDiretoria);
+    border: 1px solid rgba(252, 248, 245, 0.08);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.45);
+    border-radius: 25px;
+    padding: 2.25rem;
     width: 100%;
     color: var(--Branco);
     font-family: 'Montserrat', sans-serif;
 }
 
-/* ── Abas (BoxInscricao) ─────────────────────────────────────── */
+/* ── Abas ────────────────────────────────────────────────────── */
 
 .abasInscricao {
-    display: flex;
-    gap: 2rem;
-    justify-content: center;
-    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem;
+    padding: 0.3rem;
+    background: rgba(0, 0, 0, 0.28);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
 }
 
 .abaInscricao {
     background: none;
     border: none;
-    border-bottom: 3px solid rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.35);
+    border-radius: 9px;
+    color: rgba(252, 248, 245, 0.55);
     font-family: 'Bungee', sans-serif;
-    font-size: 1.5rem;
-    padding: 0 0 0.5rem 0;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    padding: 0.8rem 0.5rem;
     cursor: pointer;
-    transition: color 0.2s, border-color 0.2s;
+    transition: color 0.2s, background-color 0.2s;
 }
 
-
-
-
 .abaInscricaoAtiva {
-    color: var(--Branco);
-    border-bottom-color: var(--AmareloAuxApoio);
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoAuxDiretoria);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
 }
 
 /* ── Transição suave na troca de aba ────────────────────────── */
-
 
 .areaAbasInscricaoSaindo {
     opacity: 0;
@@ -67,58 +69,67 @@
 .indicadorEtapasInscricao {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    margin-bottom: 1.5rem;
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Cada grupo carrega o traço que o liga ao passo anterior, para que o
+   estado (ativo/concluído) governe traço e passo de uma vez só. */
+.grupoEtapaInscricao {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    opacity: 0.4;
+    transition: opacity 0.3s;
 }
 
 .passoEtapaInscricao {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    opacity: 0.35;
-    transition: opacity 0.3s;
+    gap: 0.45rem;
 }
 
 .passoEtapaInscricaoAtivo     { opacity: 1; }
-.passoEtapaInscricaoConcluido { opacity: 0.65; }
+.passoEtapaInscricaoConcluido { opacity: 0.7; }
 
 .numeroEtapaInscricao {
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.4);
+    border: 1.5px solid rgba(252, 248, 245, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Bungee', sans-serif;
-    font-size: 0.8rem;
+    font-size: 0.65rem;
     flex-shrink: 0;
-    transition: background-color 0.3s, border-color 0.3s;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
 }
 
 .passoEtapaInscricaoAtivo .numeroEtapaInscricao {
     background: var(--AmareloAuxApoio);
     border-color: var(--AmareloAuxApoio);
+    color: var(--vermelhoAuxDiretoria);
 }
 
 .passoEtapaInscricaoConcluido .numeroEtapaInscricao {
-    background: rgba(231, 152, 57, 0.35);
     border-color: var(--AmareloAuxApoio);
+    color: var(--AmareloAuxApoio);
 }
 
 .nomeEtapaInscricao {
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-transform: uppercase;
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.62rem;
     letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
 .linhaEtapaInscricao {
-    flex: 1;
-    max-width: 48px;
+    width: 22px;
     height: 2px;
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(252, 248, 245, 0.18);
     border-radius: 2px;
 }
 
@@ -131,40 +142,100 @@
     animation: etapaEntrada 0.35s ease both;
 }
 
-/* ── CampoTexto / CampoSenha ─────────────────────────────────── */
+/* Cabeçalho das etapas 2, 3 e 4 */
 
-.campoInscricao {
-    width: 100%;
+.cabecalhoEtapaInscricao {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
 }
 
+.tituloEtapaInscricao {
+    margin: 0;
+    font-family: 'Bungee', sans-serif;
+    font-size: 1.15rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.subtituloEtapaInscricao {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: rgba(252, 248, 245, 0.7);
+}
+
+/* Rodapé de ações: voltar discreto, avançar dominante */
+
+.acoesEtapaInscricao {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.acoesEtapaInscricao .botaoConfirmarInscricao {
+    flex: 2 1 200px;
+    width: auto;
+    margin-top: 0;
+}
+
+.botaoVoltarEtapaInscricao {
+    flex: 1 1 120px;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1.5px solid rgba(252, 248, 245, 0.3);
+    background: transparent;
+    color: var(--Branco);
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.botaoVoltarEtapaInscricao:hover {
+    border-color: var(--AmareloAuxApoio);
+    background: rgba(231, 152, 57, 0.08);
+}
+
+/* ── CampoTexto / CampoSenha ─────────────────────────────────── */
+
+.gradeCamposDadosInscricao {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+}
+
+.campoInscricao {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
 .rotuloCampoInscricao {
-    font-size: 1.25rem;
     font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
     text-align: left;
     font-weight: 700;
-    text-transform: none;
-    letter-spacing: 0.1em;
-    opacity: 0.8;
+    letter-spacing: 0.02em;
 }
 
 .inputCampoInscricao {
     background: transparent;
     border: none;
-    border-bottom: 2px solid var(--AmareloAuxApoio);
+    border-bottom: 1.5px solid var(--AmareloAuxApoio);
     color: var(--Branco);
     font-family: 'Montserrat', sans-serif;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
-    padding: 0.3rem 0;
+    padding: 0.4rem 0.15rem;
     outline: none;
     transition: border-color 0.2s;
     width: 100%;
 }
-.inputCampoInscricao:focus       { border-bottom-color: var(--Branco); }
-.inputCampoInscricao::placeholder { color: rgba(255, 255, 255, 0.25); }
+.inputCampoInscricao:focus-visible { border-bottom-color: var(--Branco); }
+.inputCampoInscricao::placeholder   { color: rgba(255, 255, 255, 0.25); }
 
 /* ── Indicador de requisito de senha ─────────────────────────── */
 
@@ -179,13 +250,13 @@
     display: flex;
     align-items: center;
     gap: 0.3rem;
-    font-size: 1rem;
+    font-size: 0.72rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.45);
     transition: color 0.25s;
 }
 
-.indicadorSenhaOkInscricao { color: #4caf50; }
+.indicadorSenhaOkInscricao { color: #7bd07f; }
 
 .caixaIndicadorSenhaInscricao {
     width: 10px;
@@ -197,80 +268,16 @@
 }
 
 .indicadorSenhaOkInscricao .caixaIndicadorSenhaInscricao {
-    background-color: #4caf50;
-}
-
-/* ── Seletor de camiseta ─────────────────────────────────────── */
-
-.secaoCamisaInscricao {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 0.25rem;
-}
-
-.modelosCamisaInscricao {
-    display: flex;
-    gap: 0.75rem;
-}
-
-.botaoModeloInscricao {
-    flex: 1;
-    padding: 0.8rem 0.5rem;
-    border-radius: 10px;
-    border: 2px solid rgba(255, 255, 255, 0.12);
-    background-color: rgba(0, 0, 0, 0.2);
-    color: rgba(255, 255, 255, 0.45);
-    font-family: 'Bungee', sans-serif;
-    font-size: 1.5rem;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.botaoModeloInscricaoAtivo {
-    border-color: var(--AmareloAuxApoio);
-    background-color: rgba(231, 152, 57, 0.18);
-    color: var(--Branco);
-}
-
-.tamanhosCamisaInscricao {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.botaoTamanhoInscricao {
-    flex: 1;
-    border-radius: 10px;
-    border: 2px solid rgba(255, 255, 255, 0.12);
-    background-color: rgba(0, 0, 0, 0.2);
-    color: rgba(255, 255, 255, 0.45);
-    font-family: 'Bungee', sans-serif;
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.botaoTamanhoInscricaoAtivo {
-    border-color: var(--Branco);
-    background-color: var(--AmareloAuxApoio);
-    color: var(--Branco);
-}
-
-.avisoCamisaInscricao {
-    text-align: left;
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.55);
+    background-color: #7bd07f;
 }
 
 /* ── Aviso de RA para e-mail institucional UNESP ─────────────── */
 
 .avisoRaUnespInscricao {
     box-sizing: border-box;
-    width: 0;
-    min-width: 100%;
+    width: 100%;
     text-align: left;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     line-height: 1.4;
     color: #ffe08a;
     background: rgba(255, 196, 0, 0.12);
@@ -288,223 +295,504 @@
     transform: translateY(0);
 }
 
-/* ── Tela de comemoração ─────────────────────────────────────── */
-
-.conteinerComemoracaoInscricao {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1.25rem;
-    min-height: 340px;
-    position: relative;
-    padding: 1.5rem 1rem 2rem;
-    text-align: center;
-    overflow: hidden;
-}
-
-.tituloComemoracaoInscricao {
-    font-family: 'Bungee', sans-serif;
-    font-size: 2.4rem;
-    color: var(--AmareloAuxApoio);
-    text-shadow:
-        0 0 24px rgba(231, 152, 57, 0.5),
-        0 2px 8px rgba(0, 0, 0, 0.3);
-    position: relative;
-    z-index: 1;
-    letter-spacing: 0.03em;
-    line-height: 1.15;
-}
-
-.subtituloComemoracaoInscricao {
-    text-align: center;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1rem;
-    color: var(--Branco);
-    line-height: 1.55;
-    max-width: 290px;
-    position: relative;
-    z-index: 1;
-    margin: 0;
-    opacity: 0.92;
-}
-
-.subtituloComemoracaoInscricao strong {
-    color: var(--AmareloAuxApoio);
-    font-weight: 800;
-}
-
-/* ── Feedback de submissão ───────────────────────────────────── */
-
-.feedbackInscricao {
-    font-size: 0.95rem;
-    font-weight: 600;
-    text-align: center;
-    margin: 0;
-    padding: 0.5rem 0.75rem;
-    border-radius: 8px;
-}
-
-.feedbackInscricaoSucesso {
-    background: rgba(76, 175, 80, 0.15);
-    color: #4caf50;
-}
-
-.feedbackInscricaoErro {
-    background: rgba(244, 67, 54, 0.15);
-    color: #f44336;
-}
-
-/* ── Botão de submissão ──────────────────────────────────────── */
-
-.botaoConfirmarInscricao {
-    width: 100%;
-    padding: 1rem;
-    border: none;
-    border-radius: 12px;
-    background-color: var(--AmareloAuxApoio);
-    color: var(--Branco);
-    font-family: 'Bungee', sans-serif;
-    font-size: 1rem;
-    letter-spacing: 0.06em;
-    cursor: pointer;
-    transition: filter 0.2s;
-    margin-top: 0.25rem;
-}
-.botaoConfirmarInscricao:hover    { filter: brightness(1.1); }
-.botaoConfirmarInscricao:disabled { opacity: 0.45; cursor: not-allowed; filter: none; }
-/* ── Logo da aba "Entrar" ────────────────────────────────────── */
-
-.logoSemacEntrar {
-    width: fit-content;
-    margin: 0.5rem auto;
-}
-
-.logoSemacEntrar img {
-    display: block;
-    width: 420px;
-    height: auto;
-}
-/* ── Cards de ingresso (ticket) ─────────────────────────────── */
+/* ── Etapa 2: cards de ingresso ──────────────────────────────── */
 
 .carregandoIngressosInscricao {
     text-align: center;
     opacity: 0.6;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    margin: 0;
+    padding: 1.5rem 0;
 }
 
 .listaCardsIngressoInscricao {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+    gap: 0.75rem;
+}
+
+.cardIngressoInscricao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1.5px solid rgba(252, 248, 245, 0.2);
+    border-radius: 16px;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.cardIngressoInscricao:hover {
+    border-color: rgba(252, 248, 245, 0.4);
+}
+
+.cardIngressoInscricao:focus-visible {
+    outline: 2px solid var(--AmareloAuxApoio);
+    outline-offset: 2px;
+}
+
+.cardIngressoInscricaoSelecionado {
+    background: rgba(231, 152, 57, 0.14);
+    border-color: var(--AmareloAuxApoio);
+}
+
+.topoCardIngressoInscricao {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.6rem;
+}
+
+.nomeIngressoInscricao {
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.cardIngressoInscricaoSelecionado .nomeIngressoInscricao {
+    color: var(--AmareloAuxApoio);
+}
+
+.valorIngressoInscricao {
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    color: var(--AmareloAuxApoio);
+}
+
+.sufixoDiariaInscricao {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: rgba(252, 248, 245, 0.55);
+}
+
+.labelGratisInscricao {
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    color: var(--AmareloAuxApoio);
+}
+
+/* O direito a camiseta é o que o card existe para comunicar */
+.camisetaIngressoInscricao {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: rgba(252, 248, 245, 0.6);
+}
+
+.camisetaIngressoInclusaInscricao {
+    color: var(--AmareloAuxApoio);
+}
+
+/* Seletor de diárias, só dentro do card selecionado */
+
+.blocoDiariasIngressoInscricao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid rgba(252, 248, 245, 0.16);
+}
+
+.rotuloDiariasIngressoInscricao {
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.listaDiariasIngressoInscricao {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.botaoDiariaIngressoInscricao {
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 8px;
+    border: 1.5px solid rgba(252, 248, 245, 0.22);
+    background: rgba(0, 0, 0, 0.2);
+    color: rgba(252, 248, 245, 0.8);
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s, color 0.2s;
+}
+
+.botaoDiariaIngressoInscricao:focus-visible {
+    outline: 2px solid var(--Branco);
+    outline-offset: 2px;
+}
+
+.botaoDiariaIngressoInscricaoAtivo {
+    border-color: var(--AmareloAuxApoio);
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoAuxDiretoria);
+}
+
+.totalDiariasIngressoInscricao {
+    font-size: 0.78rem;
+    color: rgba(252, 248, 245, 0.75);
+}
+
+/* ── Etapa 3: camiseta ───────────────────────────────────────── */
+
+.gradeCamisetaInscricao {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: 1rem;
+    align-items: start;
+}
+
+.colunaEditoresCamisetaInscricao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.editorCamisetaInscricao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(252, 248, 245, 0.14);
+    border-radius: 16px;
+}
+
+.editorCamisetaGratisInscricao {
+    border-color: rgba(231, 152, 57, 0.4);
+}
+
+.topoEditorCamisetaInscricao {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+}
+
+.etiquetaEditorCamisetaInscricao {
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(252, 248, 245, 0.85);
+}
+
+.etiquetaCamisetaGratisInscricao {
+    color: var(--AmareloAuxApoio);
+}
+
+.botaoRemoverCamisetaInscricao {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: rgba(252, 248, 245, 0.7);
+    background: transparent;
+    border: 1px solid rgba(252, 248, 245, 0.25);
+    border-radius: 8px;
+    padding: 0.4rem 0.6rem;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.botaoRemoverCamisetaInscricao:hover {
+    color: var(--Branco);
+    border-color: var(--Branco);
+}
+
+.rotuloOpcaoCamisetaInscricao {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: rgba(252, 248, 245, 0.75);
+}
+
+.modelosCamisaInscricao {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.5rem;
+}
+
+.botaoModeloInscricao {
+    min-height: 46px;
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1.5px solid rgba(252, 248, 245, 0.22);
+    background: rgba(0, 0, 0, 0.2);
+    color: rgba(252, 248, 245, 0.8);
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s, color 0.2s;
+}
+
+.botaoModeloInscricao:focus-visible,
+.botaoTamanhoInscricao:focus-visible {
+    outline: 2px solid var(--Branco);
+    outline-offset: 2px;
+}
+
+.botaoModeloInscricaoAtivo {
+    border-color: var(--AmareloAuxApoio);
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoAuxDiretoria);
+}
+
+.tamanhosCamisaInscricao {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.botaoTamanhoInscricao {
+    min-width: 52px;
+    min-height: 46px;
+    border-radius: 8px;
+    border: 1.5px solid rgba(252, 248, 245, 0.22);
+    background: rgba(0, 0, 0, 0.2);
+    color: rgba(252, 248, 245, 0.8);
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s, color 0.2s;
+}
+
+.botaoTamanhoInscricaoAtivo {
+    border-color: var(--AmareloAuxApoio);
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoAuxDiretoria);
+}
+
+.medidaCamisetaInscricao {
+    font-size: 0.74rem;
+    color: rgba(252, 248, 245, 0.6);
+}
+
+/* Oferta de camiseta avulsa */
+
+.blocoOfertaCamisetaExtraInscricao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+    padding: 1rem;
+    border: 1.5px dashed rgba(231, 152, 57, 0.55);
+    background: rgba(231, 152, 57, 0.09);
+    border-radius: 16px;
+}
+
+.tituloOfertaCamisetaExtraInscricao {
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--AmareloAuxApoio);
+}
+
+.textoOfertaCamisetaExtraInscricao {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: rgba(252, 248, 245, 0.8);
+}
+
+.botaoAdicionarCamisetaInscricao {
+    min-height: 46px;
+    padding: 0.75rem 1.1rem;
+    border: none;
+    border-radius: 8px;
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoAuxDiretoria);
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: filter 0.2s;
+}
+
+.botaoAdicionarCamisetaInscricao:hover { filter: brightness(1.08); }
+
+/* Tabela de medidas do fornecedor */
+
+.tabelaMedidasCamisetaInscricao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.9rem;
+    background: rgba(0, 0, 0, 0.24);
+    border: 1px solid rgba(252, 248, 245, 0.14);
+    border-radius: 16px;
+}
+
+.cabecalhoTabelaMedidasInscricao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.tituloTabelaMedidasInscricao {
+    margin: 0;
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.notaTabelaMedidasInscricao {
+    font-size: 0.65rem;
+    color: rgba(252, 248, 245, 0.65);
+}
+
+.blocoModeloMedidasInscricao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.22);
+    border-radius: 12px;
+}
+
+.tituloModeloMedidasInscricao {
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--AmareloAuxApoio);
+}
+
+.gradeMedidasInscricao {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.3rem 0.5rem;
+    font-size: 0.74rem;
+}
+
+.cabecalhoColunaMedidasInscricao {
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: rgba(252, 248, 245, 0.55);
+}
+
+.tamanhoMedidasInscricao {
+    font-weight: 700;
+}
+
+/* ── Resumo e total ──────────────────────────────────────────── */
+
+.resumoInscricao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.24);
+    border-radius: 16px;
+    width: 100%;
+    text-align: left;
+}
+
+.linhaResumoInscricao {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-size: 0.82rem;
+}
+
+.rotuloResumoInscricao {
+    color: rgba(252, 248, 245, 0.85);
+}
+
+.valorResumoInscricao {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.valorResumoInclusoInscricao {
+    color: var(--AmareloAuxApoio);
+}
+
+.divisorResumoInscricao {
+    height: 1px;
+    background: rgba(252, 248, 245, 0.18);
+}
+
+.linhaTotalCamisetaInscricao {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    background: rgba(0, 0, 0, 0.24);
+    border-radius: 12px;
+}
+
+.rotuloTotalInscricao {
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.valorTotalInscricao {
+    font-family: 'Bungee', sans-serif;
+    font-size: 1rem;
+    color: var(--AmareloAuxApoio);
+}
+
+/* ── Etapa 4: PIX e comprovante ──────────────────────────────── */
+
+.gradePagamentoInscricao {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    align-items: start;
+}
+
+.blocoPixInscricao {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+}
+
+.blocoComprovanteInscricao {
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
 }
 
-.cardIngressoInscricao {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.9rem 1rem 0.9rem 1.25rem;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-left: 3px dashed rgba(255, 255, 255, 0.25);
-    border-radius: 0 10px 10px 0;
-    clip-path: polygon(0 0, 100% 0, 100% 78%, 96% 100%, 0 100%);
-    color: rgba(255, 255, 255, 0.7);
-    cursor: pointer;
-    text-align: left;
-    transition: all 0.2s;
-    font-family: 'Montserrat', sans-serif;
-}
-
-.cardIngressoInscricao:hover {
-    background: rgba(255, 255, 255, 0.07);
-    color: var(--Branco);
-}
-
-.cardIngressoInscricaoSelecionado {
-    background: rgba(231, 152, 57, 0.12);
-    border-color: var(--AmareloAuxApoio);
-    border-left-color: var(--AmareloAuxApoio);
-    color: var(--Branco);
-    box-shadow: 0 0 0 1px var(--AmareloAuxApoio), 0 0 14px rgba(231, 152, 57, 0.25);
-}
-
-.nomeIngressoInscricao {
-    font-weight: 700;
-    font-size: 1rem;
-    letter-spacing: 0.03em;
-}
-
-.valorIngressoInscricao {
+.rotuloChavePixInscricao {
     font-family: 'Bungee', sans-serif;
-    font-size: 1.1rem;
-    letter-spacing: 0.03em;
-    color: var(--AmareloAuxApoio);
-}
-
-.labelGratisInscricao {
-    font-size: 0.8rem;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
-    background: rgba(76, 175, 80, 0.18);
-    color: #4caf50;
-    padding: 0.15rem 0.6rem;
-    border-radius: 20px;
-    border: 1px solid rgba(76, 175, 80, 0.4);
-}
-
-/* ── Tela PIX ────────────────────────────────────────────────── */
-
-.resumoIngressoPixInscricao {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 10px;
-    padding: 0.7rem 1rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-}
-
-.resumoIngressoPixInscricao strong {
-    font-family: 'Bungee', sans-serif;
-    font-size: 1.1rem;
-    color: var(--AmareloAuxApoio);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(252, 248, 245, 0.7);
 }
 
 .wrapperQrInscricao {
     display: flex;
     justify-content: center;
-    background: #fff;
-    border-radius: 12px;
-    padding: 0.75rem;
-    width: fit-content;
-    margin: 0 auto;
+    background: var(--Branco);
+    border-radius: 10px;
+    padding: 0.6rem;
 }
 
 .imagemQrInscricao {
-    width: 160px;
-    height: 160px;
+    width: 150px;
+    height: 150px;
     display: block;
     object-fit: contain;
-}
-
-.blocoChavePixInscricao {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    padding: 0.75rem 1rem;
-}
-
-.rotuloChavePixInscricao {
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    opacity: 0.55;
 }
 
 .linhaChavePixInscricao {
@@ -512,58 +800,59 @@
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
 }
 
 .valorChavePixInscricao {
-    font-family: 'Courier New', monospace;
-    font-size: 0.95rem;
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.72rem;
     color: var(--AmareloAuxApoio);
     word-break: break-all;
 }
 
 .botaoCopiarChaveInscricao {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(252, 248, 245, 0.14);
+    border: none;
     border-radius: 6px;
     color: var(--Branco);
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
-    padding: 0.3rem 0.65rem;
+    padding: 0.45rem 0.65rem;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background-color 0.2s;
     white-space: nowrap;
     flex-shrink: 0;
 }
 
-.botaoCopiarChaveInscricao:hover { background: rgba(255, 255, 255, 0.18); }
+.botaoCopiarChaveInscricao:hover { background: rgba(252, 248, 245, 0.26); }
 
 .botaoCopiadoInscricao {
-    background: rgba(76, 175, 80, 0.2);
-    border-color: rgba(76, 175, 80, 0.5);
-    color: #4caf50;
+    background: rgba(123, 208, 127, 0.22);
+    color: #7bd07f;
 }
 
 .avisoPixInscricao {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.6);
-    text-align: center;
+    font-size: 0.76rem;
+    color: rgba(252, 248, 245, 0.7);
     margin: 0;
     line-height: 1.5;
 }
 
-.avisoPixInscricao strong {
-    color: var(--Branco);
-}
+.avisoPixInscricao strong { color: var(--Branco); }
 
 /* ── Upload de comprovante ───────────────────────────────────── */
 
 .zonaUploadInscricao {
-    border: 2px dashed rgba(255, 255, 255, 0.22);
-    border-radius: 12px;
-    padding: 1.75rem 1rem;
+    border: 1.5px dashed rgba(252, 248, 245, 0.35);
+    background: rgba(0, 0, 0, 0.18);
+    border-radius: 14px;
+    padding: 1.5rem 1rem;
     cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color 0.2s, background-color 0.2s;
     text-align: center;
     display: flex;
     align-items: center;
@@ -580,31 +869,29 @@
 .zonaUploadComArquivoInscricao {
     border-color: var(--AmareloAuxApoio);
     border-style: solid;
-    background: rgba(231, 152, 57, 0.05);
 }
 
 .placeholderUploadInscricao {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.35rem;
 }
 
 .iconeUploadInscricao {
-    font-size: 2rem;
-    opacity: 0.6;
+    font-size: 1.4rem;
+    opacity: 0.7;
     display: block;
 }
 
 .textoUploadInscricao {
-    font-size: 0.9rem;
-    font-weight: 600;
-    opacity: 0.75;
+    font-size: 0.82rem;
+    font-weight: 700;
 }
 
 .subTextoUploadInscricao {
-    font-size: 0.75rem;
-    opacity: 0.45;
+    font-size: 0.7rem;
+    color: rgba(252, 248, 245, 0.6);
 }
 
 .previewComprovanteInscricao {
@@ -623,7 +910,7 @@
 }
 
 .nomeArquivoInscricao {
-    font-size: 0.8rem;
+    font-size: 0.76rem;
     opacity: 0.7;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -632,107 +919,171 @@
 }
 
 .botaoTrocarArquivoInscricao {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--AmareloAuxApoio);
     text-decoration: underline;
-    cursor: pointer;
 }
 
-/* ── monitor largo ───────────────────────────────────────────── */
+/* ── Etapa 5: confirmação ────────────────────────────────────── */
+
+.conteinerComemoracaoInscricao {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0 0.5rem;
+    text-align: center;
+    animation: etapaEntrada 0.35s ease both;
+}
+
+.seloConfirmacaoInscricao {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoAuxDiretoria);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bungee', sans-serif;
+    font-size: 1.5rem;
+}
+
+.tituloComemoracaoInscricao {
+    font-family: 'Bungee', sans-serif;
+    font-size: 1.5rem;
+    color: var(--AmareloAuxApoio);
+    letter-spacing: 0.02em;
+    line-height: 1.15;
+    text-transform: uppercase;
+}
+
+.subtituloComemoracaoInscricao {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.88rem;
+    color: rgba(252, 248, 245, 0.85);
+    line-height: 1.55;
+    max-width: 420px;
+    margin: 0;
+}
+
+/* ── Feedback de submissão ───────────────────────────────────── */
+
+.feedbackInscricao {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    margin: 0;
+    padding: 0.55rem 0.75rem;
+    border-radius: 8px;
+}
+
+.feedbackInscricaoSucesso {
+    background: rgba(123, 208, 127, 0.15);
+    color: #7bd07f;
+}
+
+.feedbackInscricaoErro {
+    background: rgba(244, 67, 54, 0.15);
+    color: #ff8a80;
+}
+
+/* ── Ação principal ──────────────────────────────────────────── */
+
+.botaoConfirmarInscricao {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    background-color: var(--AmareloAuxApoio);
+    color: var(--vermelhoAuxDiretoria);
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: filter 0.2s;
+    margin-top: 0.25rem;
+}
+.botaoConfirmarInscricao:hover    { filter: brightness(1.08); }
+.botaoConfirmarInscricao:disabled { opacity: 0.4; cursor: not-allowed; filter: none; }
+
+/* ── Logo ────────────────────────────────────────────────────── */
+
+.logoSemacEntrar {
+    width: fit-content;
+    margin: 0.25rem auto 1.5rem;
+}
+
+.logoSemacEntrar img {
+    display: block;
+    width: 340px;
+    max-width: 100%;
+    height: auto;
+}
+
+/* ── Monitor largo ───────────────────────────────────────────── */
+
 @media (min-width: 1440px) {
-    .boxInscricao {
-        padding: 3rem;
-    }
-
-    .rotuloCampoInscricao {
-        font-size: 1rem;
-    }
-
-    .abaInscricao {
-        font-size: 1.7rem;
-    }
-
-    .botaoModeloInscricao,
-    .botaoTamanhoInscricao,
-    .botaoConfirmarInscricao {
-        font-size: 1.3rem;
-    }
+    .boxInscricao { padding: 2.75rem; }
+    .abaInscricao { font-size: 1.05rem; }
+    .tituloEtapaInscricao { font-size: 1.3rem; }
 }
 
 /* ── Mobile ──────────────────────────────────────────────────── */
+
 @media (max-width: 768px) {
-    .avisoRaUnespInscricao{
-        font-size: 0.7rem;
-    }
-    .logoSemacEntrar img {
-        width: 320px;
-    }
-    .indicadorSenhaInscricao {
-        display: flex;
-        align-items: center;
-        gap: 0.3rem;
-        font-size: 0.7rem;
-        font-weight: 600;
-        color: rgba(255, 255, 255, 0.4);
-        transition: color 0.25s;
-    }
-
-    .validacaoSenhaInscricao{
-        display: flex;
-        flex-direction: row;
-        gap: 10px;
-    }
-
     .boxInscricao {
-        padding: 1rem;
-        border-radius: 12px;
-        max-width: 100%;
+        padding: 1.25rem 1.1rem;
+        border-radius: 18px;
     }
 
-    .abasInscricao {
-        gap: 1rem;
-        margin-bottom: 1rem;
+    .logoSemacEntrar {
+        margin-bottom: 1.1rem;
     }
 
-    .abaInscricao {
-        font-size: 1.1rem;
+    .logoSemacEntrar img { width: 260px; }
+
+    .abaInscricao { font-size: 0.8rem; padding: 0.7rem 0.4rem; }
+
+    .formularioInscricao { gap: 1rem; }
+
+    /* Só o passo atual mostra o nome — o número basta para os outros */
+    .grupoEtapaInscricao:not(.passoEtapaInscricaoAtivo) .nomeEtapaInscricao {
+        display: none;
     }
 
-    .formularioInscricao {
-        gap: 0.7rem;
-    }
+    .gradeCamposDadosInscricao { gap: 1rem; }
 
-    .rotuloCampoInscricao {
-        font-size: 0.85rem;
-    }
+    .listaCardsIngressoInscricao { grid-template-columns: 1fr; }
 
-    .inputCampoInscricao {
-        font-size: 0.9rem;
-    }
+    /* A tabela de medidas desce para baixo do editor */
+    .gradeCamisetaInscricao { grid-template-columns: 1fr; }
 
-    .botaoModeloInscricao {
-        font-size: 0.7rem;
-        padding: 0.6rem 0.4rem;
-    }
+    .indicadorSenhaInscricao { font-size: 0.66rem; }
 
-    .botaoTamanhoInscricao {
-        font-size: 0.6rem;
-        border-radius: 8px;
-    }
-
-    .avisoCamisaInscricao {
-        font-size: 0.7rem;
-    }
-
-    .botaoConfirmarInscricao {
-        font-size: 0.9rem;
-        padding: 0.85rem;
-    }
-
-    .nomeEtapaInscricao { display: none; }
-
-    .tituloComemoracaoInscricao    { font-size: 1.7rem; }
-    .subtituloComemoracaoInscricao { font-size: 1rem; }
+    .tituloComemoracaoInscricao { font-size: 1.25rem; }
+    .subtituloComemoracaoInscricao { font-size: 0.82rem; }
 }
 
+/* ── Movimento reduzido ──────────────────────────────────────── */
 
+@media (prefers-reduced-motion: reduce) {
+    .formularioInscricao,
+    .conteinerComemoracaoInscricao {
+        animation: none;
+    }
+
+    .areaAbasInscricaoSaindo,
+    .avisoRaUnespInscricao,
+    .grupoEtapaInscricao,
+    .numeroEtapaInscricao,
+    .cardIngressoInscricao,
+    .botaoDiariaIngressoInscricao,
+    .botaoModeloInscricao,
+    .botaoTamanhoInscricao,
+    .botaoConfirmarInscricao,
+    .botaoVoltarEtapaInscricao {
+        transition: none;
+    }
+}

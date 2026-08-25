@@ -294,6 +294,10 @@
     dominant-baseline: middle;
 }
 
+/* A largura útil da silhueta é ~118px: a letra encolhe conforme cresce */
+.letraTamanhoCamiseta2Inicio { font-size: 44px; }
+.letraTamanhoCamiseta3Inicio { font-size: 32px; }
+
 .legendaCamisetaInicio {
     position: relative;
     font-size: 0.8rem;

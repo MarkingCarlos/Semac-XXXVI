@@ -16,18 +16,29 @@ function centavosParaReais(centavos) {
     return Number((centavos / 100).toFixed(2));
 }
 
-/* Backend → interface: valor em reais vira centavos. */
+/* Backend → interface: valor em reais vira centavos. Os demais campos
+   (camisetasGratis, porDia, maxDias) são inteiros/booleanos puros. */
 function deResposta(tipo) {
-    return { ...tipo, valor: reaisParaCentavos(tipo.valor) };
+    return {
+        ...tipo,
+        valor: reaisParaCentavos(tipo.valor),
+        camisetasGratis: tipo.camisetasGratis ?? 0,
+        porDia: tipo.porDia ?? false,
+        maxDias: tipo.maxDias ?? null,
+    };
 }
 
-/* Interface → backend: centavos viram reais. */
+/* Interface → backend: centavos viram reais. `maxDias` só viaja em
+   ingresso de diária — fora disso o backend o zera de qualquer forma. */
 function paraRequisicao(tipo) {
     return {
         nome: tipo.nome,
         valor: centavosParaReais(tipo.valor),
         ano: tipo.ano,
         ativo: tipo.ativo,
+        camisetasGratis: Number(tipo.camisetasGratis) || 0,
+        porDia: !!tipo.porDia,
+        maxDias: tipo.porDia ? Number(tipo.maxDias) || 1 : null,
     };
 }
 

@@ -20,11 +20,16 @@ import {
     atualizarNivel,
     excluirNivel,
 } from '../data/apiNivel.js';
+import {
+    lerCamisetaExtra,
+    salvarCamisetaExtra,
+} from '../data/apiCamisetaExtra.js';
 
-/* Informações SEMAC — três blocos:
+/* Informações SEMAC — quatro blocos:
    1. Tipos de ingresso (tabela `tipo_inscricao`) da edição atual;
-   2. Níveis de participante (tabela `nivel`), nome + xp mínimo;
-   3. Cotas de patrocínio (tabela `cota`), nível + valor.
+   2. Preço da camiseta avulsa (tabela `camiseta_extra`), um por edição;
+   3. Níveis de participante (tabela `nivel`), nome + xp mínimo;
+   4. Cotas de patrocínio (tabela `cota`), nível + valor.
    Valores de ingresso/cota em centavos na interface, convertidos na
    borda da API. Xp mínimo do nível é inteiro puro, sem conversão.
 
@@ -37,7 +42,17 @@ const FORMULARIO_VAZIO = {
     nome: '',
     valor: 0,
     ativo: true,
+    camisetasGratis: 0,
+    porDia: false,
+    maxDias: 1,
 };
+
+/* Rótulo do direito a camiseta exibido no card do ingresso — é o que o
+   participante vê no cadastro, então vale conferir aqui. */
+function rotuloCamisetasIngresso(quantidade) {
+    if (!quantidade) return 'Sem camiseta';
+    return quantidade === 1 ? '1 camiseta grátis' : `${quantidade} camisetas grátis`;
+}
 
 /* Espelha o enum NivelPatrocinio do backend — um registro por nível,
    então só se pode criar cota de um nível ainda não cadastrado. */
@@ -65,6 +80,13 @@ export default function InformacoesSemac() {
     const [formulario, setFormulario] = useState(FORMULARIO_VAZIO);
     const [idEmEdicao, setIdEmEdicao] = useState(null);
     const [idConfirmandoExclusao, setIdConfirmandoExclusao] = useState(null);
+
+    /* ── Preço da camiseta avulsa ─────────────────────────────── */
+    const [precoCamiseta, setPrecoCamiseta] = useState(0);
+    const [rascunhoPrecoCamiseta, setRascunhoPrecoCamiseta] = useState(0);
+    const [editandoPrecoCamiseta, setEditandoPrecoCamiseta] = useState(false);
+    const [salvandoPrecoCamiseta, setSalvandoPrecoCamiseta] = useState(false);
+    const [erroPrecoCamiseta, setErroPrecoCamiseta] = useState('');
 
     /* ── Cotas de patrocínio ──────────────────────────────────── */
     const [cotas, setCotas] = useState([]);
@@ -101,6 +123,9 @@ export default function InformacoesSemac() {
             .then((lista) => { if (ativo) setTipos(lista); })
             .catch((e) => { if (ativo) setErro(e.message); })
             .finally(() => { if (ativo) setCarregando(false); });
+        lerCamisetaExtra(ANO_ATUAL)
+            .then((centavos) => { if (ativo) { setPrecoCamiseta(centavos); setRascunhoPrecoCamiseta(centavos); } })
+            .catch((e) => { if (ativo) setErroPrecoCamiseta(e.message); });
         listarCotas()
             .then((lista) => { if (ativo) setCotas([...lista].sort(porValorCrescente)); })
             .catch((e) => { if (ativo) setErroCotas(e.message); })
@@ -166,6 +191,40 @@ export default function InformacoesSemac() {
         }
     };
 
+    /* ── Preço da camiseta avulsa ─────────────────────────────── */
+
+    const editarPrecoCamiseta = () => {
+        setRascunhoPrecoCamiseta(precoCamiseta);
+        setErroPrecoCamiseta('');
+        setEditandoPrecoCamiseta(true);
+    };
+
+    const cancelarPrecoCamiseta = () => {
+        setRascunhoPrecoCamiseta(precoCamiseta);
+        setEditandoPrecoCamiseta(false);
+    };
+
+    const confirmarPrecoCamiseta = async () => {
+        setSalvandoPrecoCamiseta(true);
+        setErroPrecoCamiseta('');
+        try {
+            const salvo = await salvarCamisetaExtra(ANO_ATUAL, rascunhoPrecoCamiseta);
+            setPrecoCamiseta(salvo);
+            setRascunhoPrecoCamiseta(salvo);
+            setEditandoPrecoCamiseta(false);
+        } catch (e) {
+            setErroPrecoCamiseta(e.message);
+        } finally {
+            setSalvandoPrecoCamiseta(false);
+        }
+    };
+
+    /* Enter confirma, Esc descarta — mesmo atalho do card "Caixa anterior". */
+    const teclasPrecoCamiseta = (evento) => {
+        if (evento.key === 'Enter') { evento.preventDefault(); confirmarPrecoCamiseta(); }
+        if (evento.key === 'Escape') { evento.preventDefault(); cancelarPrecoCamiseta(); }
+    };
+
     const abrirNovo = () => {
         setFormulario(FORMULARIO_VAZIO);
         setIdEmEdicao(null);
@@ -173,7 +232,14 @@ export default function InformacoesSemac() {
     };
 
     const abrirEdicao = (tipo) => {
-        setFormulario({ nome: tipo.nome, valor: tipo.valor, ativo: tipo.ativo });
+        setFormulario({
+            nome: tipo.nome,
+            valor: tipo.valor,
+            ativo: tipo.ativo,
+            camisetasGratis: tipo.camisetasGratis ?? 0,
+            porDia: tipo.porDia ?? false,
+            maxDias: tipo.maxDias ?? 1,
+        });
         setIdEmEdicao(tipo.id);
         setPainelAberto(true);
     };
@@ -315,7 +381,20 @@ export default function InformacoesSemac() {
                                         {tipo.ativo ? 'Ativo' : 'Inativo'}
                                     </span>
                                 </div>
-                                <span className="valorIngressoInfoSemac">{formatarCentavos(tipo.valor)}</span>
+                                <span className="valorIngressoInfoSemac">
+                                    {formatarCentavos(tipo.valor)}
+                                    {tipo.porDia && <span className="sufixoValorIngressoInfoSemac"> / dia</span>}
+                                </span>
+                                <div className="etiquetasIngressoInfoSemac">
+                                    <span className={`etiquetaIngressoInfoSemac ${tipo.camisetasGratis > 0 ? 'etiquetaCamisetaIngressoInfoSemac' : ''}`}>
+                                        {rotuloCamisetasIngresso(tipo.camisetasGratis)}
+                                    </span>
+                                    {tipo.porDia && (
+                                        <span className="etiquetaIngressoInfoSemac">
+                                            até {tipo.maxDias} {tipo.maxDias === 1 ? 'diária' : 'diárias'}
+                                        </span>
+                                    )}
+                                </div>
                                 <div className="acoesCartaoIngressoInfoSemac">
                                     <button
                                         type="button"
@@ -357,6 +436,75 @@ export default function InformacoesSemac() {
                         ))}
                     </div>
                 )}
+            </section>
+
+            {/* ── Preço da camiseta avulsa ────────────────────── */}
+            <section className="blocoInfoSemac" aria-label="Camiseta avulsa">
+                <div className="cabecalhoBlocoInfoSemac">
+                    <div>
+                        <h2 className="tituloBlocoInfoSemac">Camiseta avulsa</h2>
+                        <p className="notaBlocoInfoSemac">
+                            Quanto custa cada camiseta além das inclusas no ingresso. É o preço
+                            oferecido na etapa de camiseta do cadastro.
+                        </p>
+                    </div>
+                </div>
+
+                {erroPrecoCamiseta && <p className="avisoErroAdmin" role="alert">{erroPrecoCamiseta}</p>}
+
+                <div className="cartaoPrecoCamisetaInfoSemac">
+                    <span className="rotuloPrecoCamisetaInfoSemac">Preço por unidade</span>
+                    {editandoPrecoCamiseta ? (
+                        <div className="edicaoPrecoCamisetaInfoSemac">
+                            <CampoMoeda
+                                id="campoPrecoCamisetaExtra"
+                                valorCentavos={rascunhoPrecoCamiseta}
+                                aoMudar={setRascunhoPrecoCamiseta}
+                                aoTeclar={teclasPrecoCamiseta}
+                                rotuloAcessivel="Preço da camiseta avulsa"
+                                autoFoco
+                            />
+                            <button
+                                type="button"
+                                className="botaoAcaoLinhaFinancas"
+                                aria-label="Salvar preço da camiseta"
+                                title="Salvar"
+                                disabled={salvandoPrecoCamiseta}
+                                onClick={confirmarPrecoCamiseta}
+                            >
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 6 9 17l-5-5" />
+                                </svg>
+                            </button>
+                            <button
+                                type="button"
+                                className="botaoAcaoLinhaFinancas"
+                                aria-label="Descartar alteração no preço da camiseta"
+                                title="Descartar"
+                                onClick={cancelarPrecoCamiseta}
+                            >
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 6 6 18M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="edicaoPrecoCamisetaInfoSemac">
+                            <span className="valorIngressoInfoSemac">{formatarCentavos(precoCamiseta)}</span>
+                            <button
+                                type="button"
+                                className="botaoAcaoLinhaFinancas"
+                                aria-label="Editar preço da camiseta"
+                                title="Editar"
+                                onClick={editarPrecoCamiseta}
+                            >
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                </svg>
+                            </button>
+                        </div>
+                    )}
+                </div>
             </section>
 
             {/* ── Níveis de participante ──────────────────────── */}
@@ -535,7 +683,7 @@ export default function InformacoesSemac() {
 
                     <div className="campoFormularioFinancas">
                         <label className="rotuloCampoFinancas" htmlFor="campoValorIngresso">
-                            Valor *
+                            {formulario.porDia ? 'Valor por dia *' : 'Valor *'}
                         </label>
                         <CampoMoeda
                             id="campoValorIngresso"
@@ -544,13 +692,69 @@ export default function InformacoesSemac() {
                         />
                     </div>
 
+                    <div className="campoFormularioFinancas">
+                        <label className="rotuloCampoFinancas" htmlFor="campoCamisetasGratisIngresso">
+                            Camisetas grátis inclusas
+                        </label>
+                        <input
+                            id="campoCamisetasGratisIngresso"
+                            className="entradaFormularioFinancas"
+                            type="number"
+                            min="0"
+                            max="5"
+                            value={formulario.camisetasGratis}
+                            onInput={(e) => setFormulario({
+                                ...formulario,
+                                camisetasGratis: Number(e.currentTarget.value) || 0,
+                            })}
+                        />
+                        <p className="ajudaCampoInfoSemac">
+                            0 deixa a camiseta como compra opcional. Acima de 1, o participante
+                            escolhe modelagem e tamanho uma única vez e recebe todas iguais.
+                        </p>
+                    </div>
+
+                    <label className="campoCheckboxInfoSemac">
+                        <input
+                            type="checkbox"
+                            checked={formulario.porDia}
+                            onInput={(e) => setFormulario({ ...formulario, porDia: e.currentTarget.checked })}
+                        />
+                        <span>Cobrar por diária (o valor acima passa a valer por dia)</span>
+                    </label>
+
+                    {formulario.porDia && (
+                        <div className="campoFormularioFinancas">
+                            <label className="rotuloCampoFinancas" htmlFor="campoMaxDiasIngresso">
+                                Máximo de diárias *
+                            </label>
+                            <input
+                                id="campoMaxDiasIngresso"
+                                className="entradaFormularioFinancas"
+                                type="number"
+                                min="1"
+                                max="15"
+                                required
+                                value={formulario.maxDias}
+                                onInput={(e) => setFormulario({
+                                    ...formulario,
+                                    maxDias: Number(e.currentTarget.value) || 1,
+                                })}
+                            />
+                            <p className="ajudaCampoInfoSemac">
+                                Quantos dias o participante pode escolher no cadastro. Normalmente
+                                é a duração da semana.
+                            </p>
+                        </div>
+                    )}
+
                     <label className="campoCheckboxInfoSemac">
                         <input
                             type="checkbox"
                             checked={formulario.ativo}
                             onInput={(e) => setFormulario({ ...formulario, ativo: e.currentTarget.checked })}
                         />
-                        <span>Ingresso ativo (disponível para seleção na confirmação)</span>
+                        <span>Ingresso ativo (disponível para seleção no cadastro)</span>
                     </label>
 
                     <div className="rodapeFormularioFinancas">

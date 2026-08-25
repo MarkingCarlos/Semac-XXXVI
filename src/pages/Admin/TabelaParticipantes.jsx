@@ -36,10 +36,15 @@ const PAPEIS_COMISSAO = [
     { valor: 'PRESIDENTE',         rotulo: 'Presidente' },
 ]
 
-// Monta o texto da camiseta: "Normal - M". Retorna '—' se não houver pedido.
-function textoCamiseta(camiseta) {
-    if (!camiseta) return '—'
-    return `${ROTULO_MODELO[camiseta.modelo] ?? camiseta.modelo} - ${camiseta.tamanho}`
+// Monta o texto da camiseta: "Normal - M". Quem tem mais de uma (ingresso
+// com várias inclusas, ou avulsas compradas) ganha o sufixo "+N".
+// Retorna '—' se não houver pedido.
+function textoCamiseta(camisetas) {
+    const lista = camisetas ?? []
+    if (lista.length === 0) return '—'
+    const primeira = lista[0]
+    const texto = `${ROTULO_MODELO[primeira.modelo] ?? primeira.modelo} - ${primeira.tamanho}`
+    return lista.length > 1 ? `${texto} +${lista.length - 1}` : texto
 }
 
 // Linha individual da tabela para um participante.
@@ -58,7 +63,7 @@ function LinhaParticipante({ participante, aoAbrirConfirmacao }) {
                     {participante.ativo ? 'Ativo' : 'Inativo'}
                 </span>
             </td>
-            <td class="celulaCamisetaAdmin">{textoCamiseta(participante.camiseta)}</td>
+            <td class="celulaCamisetaAdmin">{textoCamiseta(participante.camisetas)}</td>
             <td class="celulaIngressoParticipantesAdmin">{participante.tipoInscricao?.nome ?? '—'}</td>
             <td class="celulaNivelParticipantesAdmin">
                 {participante.nivel ? `${participante.nivel.nome} (${participante.xp ?? 0} xp)` : '—'}

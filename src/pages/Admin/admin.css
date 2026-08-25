@@ -1028,6 +1028,70 @@
 }
 .campoCheckboxInfoSemac input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--AmareloAuxApoio); }
 
+/* "R$ 25,00 / dia" — o sufixo não compete com o número */
+.sufixoValorIngressoInfoSemac {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: rgba(237, 236, 236, 0.55);
+}
+
+/* O que o ingresso dá direito, do jeito que o participante lê no cadastro */
+.etiquetasIngressoInfoSemac {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.etiquetaIngressoInfoSemac {
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background-color: rgba(0, 0, 0, 0.25);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: rgba(237, 236, 236, 0.6);
+}
+
+.etiquetaCamisetaIngressoInfoSemac {
+    border-color: rgba(231, 152, 57, 0.5);
+    background-color: rgba(231, 152, 57, 0.14);
+    color: var(--AmareloAuxApoio);
+}
+
+/* ── Preço da camiseta avulsa ────────────────────────────────── */
+
+.cartaoPrecoCamisetaInfoSemac {
+    margin-top: 1rem;
+    max-width: 340px;
+    background-color: rgba(0, 0, 0, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.rotuloPrecoCamisetaInfoSemac {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(237, 236, 236, 0.5);
+}
+
+.edicaoPrecoCamisetaInfoSemac {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.edicaoPrecoCamisetaInfoSemac .entradaMoedaFinancas {
+    flex: 1;
+    min-width: 0;
+}
+
 /* ── Responsivo — navbar flutuante encolhe e ganha scroll ────── */
 
 @media (max-width: 820px) {

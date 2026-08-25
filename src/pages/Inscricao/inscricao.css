@@ -1,9 +1,17 @@
+/* Página de /inscricoes — moldura da textura de papel, botão de voltar e
+   centralização do card. O card cresce bastante nas etapas de ingresso e
+   camiseta, então a página rola normalmente em vez de prender o conteúdo
+   numa caixa de altura fixa. O recorte da entrada lateral (GSAP) já vem
+   do `overflow-x: hidden` do body. */
+
 .conteinerInscricao {
     display: flex;
-    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     width: 100vw;
     min-height: 100vh;
-    overflow: hidden;
+    padding: 5rem 1.25rem 3rem;
+    box-sizing: border-box;
     position: relative;
     background-color: var(--vermelhoAuxDiretoria);
     background-size: 110%;
@@ -19,7 +27,6 @@
     background-repeat: no-repeat;
     z-index: 0;
 }
-
 
 /* ── Botão voltar ────────────────────────────────────────────── */
 
@@ -42,37 +49,29 @@
 }
 .botaoVoltarInscricao:hover { background: rgba(255, 255, 255, 0.22); }
 
-/* Box flutua sobre a imagem, centralizado na página */
+/* Box centralizado sobre a textura */
 .inscricaoBox {
-    display: flex;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;
     z-index: 1;
-    width: 70vw;
+    width: 100%;
+    max-width: 820px;
 }
-
-@media (min-width: 1440px) {
-    .inscricaoBox {
-        width: auto;
-    }
-}
-
 
 /* ── Mobile ──────────────────────────────────────────────────── */
 @media (max-width: 768px) {
     .conteinerInscricao {
         background-size: cover;
+        padding: 4.25rem 0.9rem 2.5rem;
+        align-items: flex-start;
     }
-    .inscricaoBox {
-        width: 90%;
-        /*max-height: 90svh;*/
-        overflow-y: auto;
-    }
+
     .botaoVoltarInscricao {
-        position: absolute;
-        top: 0.7rem;
+        top: 0.9rem;
         left: 1rem;
+        font-size: 0.9rem;
     }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .botaoVoltarInscricao { transition: none; }
 }
