@@ -9,12 +9,11 @@
 /* ── Box container ───────────────────────────────────────────── */
 
 .boxInscricao {
-    background: var(--vermelhoDiretoria);
+    background: var(--vermelhoAuxDiretoria);
     border: 1px solid rgba(252, 248, 245, 0.08);
     box-shadow: 0 8px 40px rgba(0, 0, 0, 0.45);
     border-radius: 25px;
     padding: 2.25rem;
-    width: 100%;
     color: var(--Branco);
     font-family: 'Montserrat', sans-serif;
 }
@@ -181,8 +180,8 @@
 
 .botaoVoltarEtapaInscricao {
     flex: 1 1 120px;
-    padding: 1rem;
-    border-radius: 12px;
+    padding: 0.5rem;
+    border-radius: 8px;
     border: 1.5px solid rgba(252, 248, 245, 0.3);
     background: transparent;
     color: var(--Branco);
@@ -582,7 +581,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    align-items: flex-start;
+    align-items: center;
     padding: 1rem;
     border: 1.5px dashed rgba(231, 152, 57, 0.55);
     background: rgba(231, 152, 57, 0.09);
@@ -694,7 +693,6 @@
     padding: 1rem;
     background: rgba(0, 0, 0, 0.24);
     border-radius: 16px;
-    width: 100%;
     text-align: left;
 }
 
@@ -800,7 +798,6 @@
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
-    width: 100%;
     padding: 0.6rem 0.75rem;
     background: rgba(0, 0, 0, 0.25);
     border-radius: 10px;
@@ -991,10 +988,9 @@
 /* ── Ação principal ──────────────────────────────────────────── */
 
 .botaoConfirmarInscricao {
-    width: 100%;
     padding: 1rem;
     border: none;
-    border-radius: 12px;
+    border-radius: 8px;
     background-color: var(--AmareloAuxApoio);
     color: var(--vermelhoAuxDiretoria);
     font-family: 'Bungee', sans-serif;
