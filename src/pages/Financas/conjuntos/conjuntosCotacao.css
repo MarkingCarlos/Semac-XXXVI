@@ -1,0 +1,57 @@
+/* ── Página de conjuntos de cotação (lista) ──────────────────── */
+
+.botaoVoltarConjuntosCotacao {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid rgba(252, 248, 245, 0.15);
+    background: transparent;
+    color: rgba(252, 248, 245, 0.75);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    margin-right: 4px;
+}
+
+.botaoVoltarConjuntosCotacao:hover {
+    background: rgba(252, 248, 245, 0.08);
+    border-color: rgba(252, 248, 245, 0.3);
+}
+
+.avisoErroConjuntosCotacao {
+    margin: 0 0 18px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: rgba(176, 32, 56, 0.18);
+    border: 1px solid rgba(231, 96, 120, 0.4);
+    color: #f3b8c2;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.nomeConjuntoCotacaoLink {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    font-weight: 600;
+    color: #edecec;
+    cursor: pointer;
+    text-align: left;
+}
+
+.nomeConjuntoCotacaoLink:hover {
+    color: var(--AmareloAuxApoio);
+    text-decoration: underline;
+}
+
+.celulaQuantidadeConjuntosCotacao {
+    font-variant-numeric: tabular-nums;
+    color: rgba(252, 248, 245, 0.85);
+}
+
+.celulaCustoTotalConjuntosCotacao {
+    color: var(--AmareloAuxApoio);
+}

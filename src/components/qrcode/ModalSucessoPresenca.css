@@ -1,0 +1,93 @@
+@import '../../index.css';
+
+@keyframes fadeInModalPresenca {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes popInModalPresenca {
+    from { transform: translateY(18px) scale(0.96); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.sobreposicaoModalSucessoPresenca {
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 3, 12, 0.72);
+    display: flex;
+    align-items: flex-end;
+    padding: 20px;
+    animation: fadeInModalPresenca 0.18s ease-out;
+    z-index: 20;
+}
+
+.cartaoModalSucessoPresenca {
+    width: 100%;
+    background: var(--azulConteudo);
+    border-radius: 25px;
+    padding: 26px 22px 22px;
+    position: relative;
+    overflow: hidden;
+    color: var(--Branco);
+    font-family: var(--fonteCorpoMontserrat);
+    animation: popInModalPresenca 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.formaDecorativaModalSucessoPresenca {
+    position: absolute;
+    right: -34px;
+    bottom: -34px;
+    width: 130px;
+    height: 130px;
+    background: var(--azulAuxConteudo);
+    border-radius: 30px;
+    transform: rotate(20deg);
+}
+
+.conteudoModalSucessoPresenca {
+    position: relative;
+}
+
+.iconeCheckModalSucessoPresenca {
+    width: 54px;
+    height: 54px;
+    border-radius: 27px;
+    background: var(--Branco);
+    color: var(--azulAuxConteudo);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.tituloModalSucessoPresenca {
+    font-family: var(--fonteTituloBungee);
+    font-size: 1.3rem;
+    line-height: 1.1;
+}
+
+.nomeParticipanteModalSucessoPresenca {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-top: 12px;
+}
+
+.infoParticipanteModalSucessoPresenca {
+    font-size: 0.75rem;
+    opacity: 0.85;
+    margin-top: 2px;
+}
+
+.botaoProximoModalSucessoPresenca {
+    margin-top: 20px;
+    width: 100%;
+    padding: 15px 0;
+    border: none;
+    border-radius: 8px;
+    background: var(--Branco);
+    color: var(--azulAuxConteudo);
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+}

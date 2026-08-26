@@ -9,11 +9,12 @@
 // (o usuário é identificado pelo token — ver data/apiPerfil.js).
 
 import { useState, useEffect } from 'preact/hooks';
+import { Link } from 'wouter';
 import { buscarPerfil, atualizarPerfil } from '../data/apiPerfil.js';
 import './inicio.css';
 
 const MODELOS = ['BABY_LOOK', 'NORMAL'];
-const TAMANHOS = ['PP', 'P', 'M', 'G', 'GG'];
+const TAMANHOS = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'XXG'];
 
 const LABEL_MODELO = { BABY_LOOK: 'Baby Look', NORMAL: 'Normal' };
 
@@ -46,7 +47,15 @@ function PreviaCamiseta({ modelo, tamanho }) {
             >
                 <path className="corpoCamisetaInicio" d={SILHUETA_CAMISETA[modelo]} />
                 <path className="golaCamisetaInicio" d="M84,40 Q100,54 116,40" />
-                <text className="letraTamanhoCamisetaInicio" x="100" y="140" textAnchor="middle">
+                {/* Tamanhos de 2 e 3 letras (GG, XXG) precisam encolher para
+                    caber dentro da silhueta. `text-anchor` em kebab-case:
+                    camelCase não chega ao SVG. */}
+                <text
+                    className={`letraTamanhoCamisetaInicio letraTamanhoCamiseta${tamanho.length}Inicio`}
+                    x="100"
+                    y="140"
+                    text-anchor="middle"
+                >
                     {tamanho}
                 </text>
             </svg>
@@ -57,7 +66,7 @@ function PreviaCamiseta({ modelo, tamanho }) {
     );
 }
 
-export default function Inicio() {
+export default function Inicio({ podeAcessarFinanceiro = false }) {
     const [perfil, setPerfil] = useState(null);
     const [carregando, setCarregando] = useState(true);
     const [erroCarregar, setErroCarregar] = useState('');
@@ -130,7 +139,15 @@ export default function Inicio() {
                     Perfil<span className="separadorEyebrowInicio">/</span>{funcao}
                 </span>
                 <p className="saudacaoInicio">Bem-vindo,</p>
-                <h1 className="nomeBoasVindasInicio">{primeiroNome}</h1>
+                <div className="linhaNomeCardInicio">
+                    <h1 className="nomeBoasVindasInicio">{primeiroNome}</h1>
+                    {podeAcessarFinanceiro && (
+                        <Link href="/financeiro" className="cartaoIrFinanceiroInicio">
+                            <span className="tituloCartaoIrFinanceiroInicio">Ir para o financeiro</span>
+                            <span className="subtituloCartaoIrFinanceiroInicio">Acessar o painel financeiro da SEMAC</span>
+                        </Link>
+                    )}
+                </div>
                 <p className="emailUsuarioInicio">{perfil.email}</p>
             </header>
 

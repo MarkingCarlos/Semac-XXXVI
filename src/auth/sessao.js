@@ -16,6 +16,10 @@ const PAPEIS_FINANCEIRO = ['DIRETOR_SITE', 'PRESIDENTE'];
 /* Papéis com acesso ao módulo de administração (/admin). */
 const PAPEIS_ADMIN = ['MEMBRO', 'DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_SITE', 'PRESIDENTE'];
 
+/* Papel com acesso à área do participante (/participantes) — atribuído
+   pelo admin quando a inscrição é confirmada (ver apiParticipantes.js). */
+const PAPEIS_PARTICIPANTE = ['PARTICIPANTE'];
+
 /* Retorna true se o token JWT no localStorage está expirado ou ausente.
    Decodifica apenas o payload (segunda parte do JWT) sem validar assinatura. */
 function sessaoExpirada() {
@@ -30,16 +34,18 @@ function sessaoExpirada() {
 }
 
 /* Se a resposta for 401 (token expirado/inválido), limpa a sessão e redireciona
-   para o login preservando a rota de retorno. Retorna true se tratou o 401. */
-export function tratarErroAuth(resposta) {
+   para o login preservando a rota de retorno. Retorna true se tratou o 401.
+   `rotaRetorno` é para onde o login devolve o usuário — o padrão atende o
+   módulo financeiro, e a área do participante passa a própria rota. */
+export function tratarErroAuth(resposta, rotaRetorno = '/financeiro') {
     if (resposta.status !== 401) return false;
     limparSessao();
-    window.location.replace('/inscricoes?tab=entrar&next=/financeiro');
+    window.location.replace(`/inscricoes?tab=entrar&next=${encodeURIComponent(rotaRetorno)}`);
     return true;
 }
 
-export function salvarSessao({ token, id, nome, email, role }) {
-    localStorage.setItem(CHAVE_SESSAO, JSON.stringify({ token, id, nome, email, role }));
+export function salvarSessao({ token, id, nome, email, role, uuid }) {
+    localStorage.setItem(CHAVE_SESSAO, JSON.stringify({ token, id, nome, email, role, uuid }));
 }
 
 export function lerSessao() {
@@ -67,6 +73,11 @@ export function temAcessoFinanceiro() {
 export function temAcessoAdmin() {
     const sessao = lerSessao();
     return !!sessao && PAPEIS_ADMIN.includes(sessao.role) && !sessaoExpirada();
+}
+
+export function temAcessoParticipante() {
+    const sessao = lerSessao();
+    return !!sessao && PAPEIS_PARTICIPANTE.includes(sessao.role) && !sessaoExpirada();
 }
 
 /* Mescla o cabeçalho Authorization (quando há token) aos cabeçalhos

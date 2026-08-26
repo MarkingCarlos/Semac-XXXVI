@@ -36,10 +36,15 @@ const PAPEIS_COMISSAO = [
     { valor: 'PRESIDENTE',         rotulo: 'Presidente' },
 ]
 
-// Monta o texto da camiseta: "Normal - M". Retorna '—' se não houver pedido.
-function textoCamiseta(camiseta) {
-    if (!camiseta) return '—'
-    return `${ROTULO_MODELO[camiseta.modelo] ?? camiseta.modelo} - ${camiseta.tamanho}`
+// Monta o texto da camiseta: "Normal - M". Quem tem mais de uma (ingresso
+// com várias inclusas, ou avulsas compradas) ganha o sufixo "+N".
+// Retorna '—' se não houver pedido.
+function textoCamiseta(camisetas) {
+    const lista = camisetas ?? []
+    if (lista.length === 0) return '—'
+    const primeira = lista[0]
+    const texto = `${ROTULO_MODELO[primeira.modelo] ?? primeira.modelo} - ${primeira.tamanho}`
+    return lista.length > 1 ? `${texto} +${lista.length - 1}` : texto
 }
 
 // Linha individual da tabela para um participante.
@@ -58,18 +63,25 @@ function LinhaParticipante({ participante, aoAbrirConfirmacao }) {
                     {participante.ativo ? 'Ativo' : 'Inativo'}
                 </span>
             </td>
-            <td class="celulaCamisetaAdmin">{textoCamiseta(participante.camiseta)}</td>
+            <td class="celulaCamisetaAdmin">{textoCamiseta(participante.camisetas)}</td>
             <td class="celulaIngressoParticipantesAdmin">{participante.tipoInscricao?.nome ?? '—'}</td>
+            <td class="celulaNivelParticipantesAdmin">
+                {participante.nivel ? `${participante.nivel.nome} (${participante.xp ?? 0} xp)` : '—'}
+            </td>
             <td class="celulaAcaoParticipantesAdmin">
                 {confirmado ? (
                     <div class="grupoAcaoConfirmadoAdmin">
                         <span class="badgeConfirmadoParticipantesAdmin">Confirmado</span>
                         <button
                             type="button"
-                            class="botaoAlterarRoleAdmin"
+                            class="botaoAcaoLinhaFinancas"
+                            aria-label={`Alterar ${participante.nome}`}
+                            title="Alterar"
                             onClick={() => aoAbrirConfirmacao(participante)}
                         >
-                            Alterar
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                            </svg>
                         </button>
                     </div>
                 ) : (
@@ -120,13 +132,14 @@ export default function TabelaParticipantes({ participantes, aoConfirmar }) {
                             <th>Conta</th>
                             <th>Camiseta</th>
                             <th>Ingresso</th>
+                            <th>Nível</th>
                             <th>Ação</th>
                         </tr>
                     </thead>
                     <tbody>
                         {filtrados.length === 0 ? (
                             <tr>
-                                <td colSpan={6} class="tabelaVaziaAdmin">
+                                <td colSpan={7} class="tabelaVaziaAdmin">
                                     Nenhum participante encontrado.
                                 </td>
                             </tr>

@@ -13,15 +13,17 @@
 // Patrocinadores são gerenciados no módulo financeiro (/financeiro).
 // Estado local apenas (mock); a integração com a API virá depois.
 
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect, useRef } from 'preact/hooks';
 import { Link, useLocation } from 'wouter';
-import { lerSessao, limparSessao } from '../../auth/sessao.js';
+import { lerSessao, limparSessao, temAcessoFinanceiro } from '../../auth/sessao.js';
 import '../Financas/financas.css';
 import './admin.css';
 
+import AdminHeader from './AdminHeader.jsx';
 import Inicio from './sections/Inicio.jsx';
 import Doacoes from './sections/Doacoes.jsx';
 import Conteudo from './sections/Conteudo.jsx';
+import Brindes from './sections/Brindes.jsx';
 import InformacoesSemac from './sections/InformacoesSemac.jsx';
 import StatsGrid from './StatsGrid.jsx';
 import TabelaParticipantes from './TabelaParticipantes.jsx';
@@ -30,53 +32,12 @@ import TabelaComissao from './TabelaComissao.jsx';
 import { listarParticipantes, listarComissao } from './data/apiParticipantes.js';
 import { listarEventos } from './data/apiEventos.js';
 
-/* Ícones da navegação — SVGs inline, stroke herda currentColor */
-const ICONES_NAVEGACAO = {
-    inicio: (
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 9.5 12 3l9 6.5" />
-            <path d="M5 9v11h14V9" />
-            <path d="M9 20v-6h6v6" />
-        </svg>
-    ),
-    doacoes: (
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z" />
-        </svg>
-    ),
-    conteudo: (
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" />
-            <path d="M16 2v4M8 2v4M3 10h18" />
-        </svg>
-    ),
-    participantes: (
-        <svg  color="white" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-        </svg>
-    ),
-    comissao: (
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-        </svg>
-    ),
-    informacoes: (
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 16v-4M12 8h.01" />
-        </svg>
-    ),
-};
-
 /* `papeis` opcional: quando presente, a seção só aparece para os roles listados. */
 const SECOES = [
     { id: 'inicio', rotulo: 'Início' },
     { id: 'doacoes', rotulo: 'Doações',papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
     { id: 'conteudo', rotulo: 'Conteúdo', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO']  },
+    { id: 'brindes', rotulo: 'Brindes' },
     { id: 'participantes', rotulo: 'Participantes', papeis: ['DIRETOR_SITE', 'PRESIDENTE']  },
     { id: 'comissao', rotulo: 'Comissão',papeis: ['DIRETOR_SITE', 'PRESIDENTE']  },
     { id: 'informacoes', rotulo: 'Informações SEMAC', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
@@ -86,6 +47,7 @@ export default function Admin() {
     const [, navegar] = useLocation();
     const roleAtual = lerSessao()?.role;
     const secoesVisiveis = SECOES.filter(s => !s.papeis || s.papeis.includes(roleAtual));
+    const podeAcessarFinanceiro = temAcessoFinanceiro();
 
     // Encerra a sessão e volta para o site público.
     function sair() {
@@ -94,6 +56,28 @@ export default function Admin() {
     }
 
     const [secaoAtiva, setSecaoAtiva] = useState('inicio');
+
+    // Indicador deslizante da navbar flutuante: mede a posição/largura do
+    // botão ativo e anima o retângulo amarelo até ele (trilho sem padding
+    // própria, para o cálculo de left/width não precisar descontar o
+    // padding do <nav>).
+    const trilhoNavRef = useRef(null);
+    const botoesNavRef = useRef({});
+    const [indicadorNav, setIndicadorNav] = useState({ left: 0, width: 0 });
+
+    useEffect(() => {
+        function medirIndicador() {
+            const trilho = trilhoNavRef.current;
+            const botaoAtivo = botoesNavRef.current[secaoAtiva];
+            if (!trilho || !botaoAtivo) return;
+            const trilhoRect = trilho.getBoundingClientRect();
+            const botaoRect = botaoAtivo.getBoundingClientRect();
+            setIndicadorNav({ left: botaoRect.left - trilhoRect.left, width: botaoRect.width });
+        }
+        medirIndicador();
+        window.addEventListener('resize', medirIndicador);
+        return () => window.removeEventListener('resize', medirIndicador);
+    }, [secaoAtiva, secoesVisiveis.length]);
 
     const [eventos, setEventos] = useState([]);
     const [carregandoEventos, setCarregandoEventos] = useState(true);
@@ -160,48 +144,12 @@ export default function Admin() {
 
     return (
         <div className="paginaAdmin">
-            {/* ── Sidebar ─────────────────────────────────── */}
-            <aside className="sidebarAdmin">
-                <div className="cabecalhoSidebarAdmin">
-                    <span className="marcaSidebarAdmin">SEMAC</span>
-                    <span className="moduloSidebarAdmin">Administração</span>
-                </div>
-
-                <nav className="navegacaoSidebarAdmin" aria-label="Seções do módulo de administração">
-                    {secoesVisiveis.map((secao) => (
-                        <button
-                            key={secao.id}
-                            type="button"
-                            className={
-                                secaoAtiva === secao.id
-                                    ? 'itemNavegacaoAdmin itemNavegacaoAtivoAdmin'
-                                    : 'itemNavegacaoAdmin'
-                            }
-                            aria-current={secaoAtiva === secao.id ? 'page' : undefined}
-                            onClick={() => setSecaoAtiva(secao.id)}
-                        >
-                            {ICONES_NAVEGACAO[secao.id]}
-                            <span>{secao.rotulo}</span>
-                        </button>
-                    ))}
-                </nav>
-
-                <div className="rodapeSidebarAdmin">
-                    <button type="button" className="botaoSairAdmin" onClick={sair}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                            <path d="M16 17l5-5-5-5" />
-                            <path d="M21 12H9" />
-                        </svg>
-                        <span>Sair</span>
-                    </button>
-                </div>
-            </aside>
+            <AdminHeader />
 
             {/* ── Conteúdo ────────────────────────────────── */}
             <main className="conteudoAdmin">
                 <section key={secaoAtiva} className="secaoAdmin">
-                    {secaoAtiva === 'inicio' && <Inicio />}
+                    {secaoAtiva === 'inicio' && <Inicio podeAcessarFinanceiro={podeAcessarFinanceiro} />}
                     {secaoAtiva === 'doacoes' && <Doacoes />}
                     {secaoAtiva === 'conteudo' && (
                         <Conteudo
@@ -211,6 +159,7 @@ export default function Admin() {
                             erro={erroEventos}
                         />
                     )}
+                    {secaoAtiva === 'brindes' && <Brindes />}
                     {secaoAtiva === 'participantes' && (
                         <div className="conteudoParticipantesAdmin">
                             <header className="cabecalhoSecaoFinancas">
@@ -260,6 +209,36 @@ export default function Admin() {
                     {secaoAtiva === 'informacoes' && <InformacoesSemac />}
                 </section>
             </main>
+
+            {/* ── Navbar flutuante ─────────────────────────── */}
+            <nav className="navFlutuanteAdmin" aria-label="Seções do módulo de administração">
+                <div className="trilhoNavFlutuanteAdmin" ref={trilhoNavRef}>
+                    <div
+                        className="indicadorNavFlutuanteAdmin"
+                        style={{ left: `${indicadorNav.left}px`, width: `${indicadorNav.width}px` }}
+                        aria-hidden="true"
+                    />
+                    {secoesVisiveis.map((secao) => (
+                        <button
+                            key={secao.id}
+                            type="button"
+                            ref={(el) => { botoesNavRef.current[secao.id] = el; }}
+                            className={
+                                secaoAtiva === secao.id
+                                    ? 'itemNavFlutuanteAdmin itemNavFlutuanteAtivoAdmin'
+                                    : 'itemNavFlutuanteAdmin'
+                            }
+                            aria-current={secaoAtiva === secao.id ? 'page' : undefined}
+                            onClick={() => setSecaoAtiva(secao.id)}
+                        >
+                            {secao.rotulo}
+                        </button>
+                    ))}
+                    <button type="button" className="itemNavFlutuanteAdmin itemNavFlutuanteSairAdmin" onClick={sair}>
+                        Sair
+                    </button>
+                </div>
+            </nav>
         </div>
     );
 }

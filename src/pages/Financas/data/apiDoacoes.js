@@ -6,6 +6,8 @@
    o CampoMoeda; o backend usa reais (DECIMAL). A conversão acontece aqui,
    nas bordas da aplicação. */
 
+import { apiFetch } from '../../../lib/apiFetch.js';
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const ROTA_DOADORES = `${API_URL}/api/doador`;
 
@@ -39,13 +41,13 @@ async function lerRespostaOuFalhar(resposta, mensagemErro) {
 }
 
 export async function listarDoadores() {
-    const resposta = await fetch(ROTA_DOADORES);
+    const resposta = await apiFetch(ROTA_DOADORES);
     const lista = await lerRespostaOuFalhar(resposta, 'Falha ao carregar doações.');
     return lista.map(deResposta);
 }
 
 export async function criarDoador(doador) {
-    const resposta = await fetch(ROTA_DOADORES, {
+    const resposta = await apiFetch(ROTA_DOADORES, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(paraRequisicao(doador)),
@@ -55,7 +57,7 @@ export async function criarDoador(doador) {
 }
 
 export async function atualizarDoador(id, doador) {
-    const resposta = await fetch(`${ROTA_DOADORES}/${id}`, {
+    const resposta = await apiFetch(`${ROTA_DOADORES}/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(paraRequisicao(doador)),
@@ -65,7 +67,7 @@ export async function atualizarDoador(id, doador) {
 }
 
 export async function excluirDoador(id) {
-    const resposta = await fetch(`${ROTA_DOADORES}/${id}`, { method: 'DELETE' });
+    const resposta = await apiFetch(`${ROTA_DOADORES}/${id}`, { method: 'DELETE' });
     if (!resposta.ok) {
         throw new Error('Falha ao excluir doação.');
     }

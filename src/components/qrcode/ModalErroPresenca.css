@@ -1,0 +1,104 @@
+@import '../../index.css';
+
+@keyframes fadeInModalErroPresenca {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes popInModalErroPresenca {
+    from { transform: translateY(18px) scale(0.96); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.sobreposicaoModalErroPresenca {
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 3, 12, 0.72);
+    display: flex;
+    align-items: flex-end;
+    padding: 20px;
+    animation: fadeInModalErroPresenca 0.18s ease-out;
+    z-index: 20;
+}
+
+.cartaoModalErroPresenca {
+    width: 100%;
+    background: var(--vermelhoDiretoria);
+    border-radius: 25px;
+    padding: 26px 22px 22px;
+    position: relative;
+    overflow: hidden;
+    color: var(--Branco);
+    font-family: var(--fonteCorpoMontserrat);
+    animation: popInModalErroPresenca 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.formaDecorativaModalErroPresenca {
+    position: absolute;
+    right: -34px;
+    bottom: -34px;
+    width: 130px;
+    height: 130px;
+    background: var(--vermelhoAux2Diretoria);
+    border-radius: 30px;
+    transform: rotate(20deg);
+}
+
+.conteudoModalErroPresenca {
+    position: relative;
+}
+
+.iconeXModalErroPresenca {
+    width: 54px;
+    height: 54px;
+    border-radius: 27px;
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoAuxDiretoria);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.tituloModalErroPresenca {
+    font-family: var(--fonteTituloBungee);
+    font-size: 1.3rem;
+    line-height: 1.1;
+}
+
+.mensagemModalErroPresenca {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-top: 12px;
+}
+
+.acoesModalErroPresenca {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.botaoBuscarModalErroPresenca {
+    width: 100%;
+    padding: 15px 0;
+    border: none;
+    border-radius: 8px;
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoAuxDiretoria);
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.botaoFecharModalErroPresenca {
+    width: 100%;
+    padding: 13px 0;
+    border: 1px solid rgba(252, 248, 245, 0.45);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--Branco);
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.75rem;
+    cursor: pointer;
+}

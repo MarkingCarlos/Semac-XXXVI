@@ -1,0 +1,218 @@
+@import '../../index.css';
+
+@keyframes scanlineTelaCameraCheckin {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(214px); }
+    100% { transform: translateY(0); }
+}
+
+.containerTelaCameraCheckin {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    position: relative;
+    background: var(--vermelhoAuxDiretoria);
+    color: var(--Branco);
+    font-family: var(--fonteCorpoMontserrat);
+}
+
+.barraEventoTelaCameraCheckin {
+    margin: 16px 20px 16px;
+    background: var(--vermelhoDiretoria);
+    border-radius: 16px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 0 0 auto;
+}
+
+.infoEventoTelaCameraCheckin {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.dataEventoTelaCameraCheckin {
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.7rem;
+    color: var(--AmareloAuxApoio);
+    letter-spacing: 0.06em;
+}
+
+.nomeEventoTelaCameraCheckin {
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-top: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.botaoTrocarTelaCameraCheckin {
+    flex: 0 0 auto;
+    background: transparent;
+    border: 1px solid rgba(252, 248, 245, 0.45);
+    color: var(--Branco);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.6rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+}
+
+.visorCameraTelaCameraCheckin {
+    position: relative;
+    margin: 0 20px;
+    flex: 1 1 auto;
+    min-height: 260px;
+    border-radius: 25px;
+    overflow: hidden;
+    background: #1b0510;
+}
+
+.videoTelaCameraCheckin {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.marcadorPosicaoTelaCameraCheckin {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 42%, #3a0b20 0%, #1b0510 70%);
+    color: rgba(252, 248, 245, 0.7);
+    font-size: 0.8rem;
+}
+
+.molduraMiraTelaCameraCheckin {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.miraContainerTelaCameraCheckin {
+    position: relative;
+    width: 234px;
+    height: 234px;
+    max-width: 70vw;
+    max-height: 70vw;
+}
+
+.cantoSuperiorEsquerdoTelaCameraCheckin,
+.cantoSuperiorDireitoTelaCameraCheckin,
+.cantoInferiorEsquerdoTelaCameraCheckin,
+.cantoInferiorDireitoTelaCameraCheckin {
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    border-color: var(--AmareloAuxApoio);
+    border-style: solid;
+    border-width: 0;
+}
+
+.cantoSuperiorEsquerdoTelaCameraCheckin {
+    top: 0;
+    left: 0;
+    border-top-width: 5px;
+    border-left-width: 5px;
+    border-radius: 16px 0 0 0;
+}
+
+.cantoSuperiorDireitoTelaCameraCheckin {
+    top: 0;
+    right: 0;
+    border-top-width: 5px;
+    border-right-width: 5px;
+    border-radius: 0 16px 0 0;
+}
+
+.cantoInferiorEsquerdoTelaCameraCheckin {
+    bottom: 0;
+    left: 0;
+    border-bottom-width: 5px;
+    border-left-width: 5px;
+    border-radius: 0 0 0 16px;
+}
+
+.cantoInferiorDireitoTelaCameraCheckin {
+    bottom: 0;
+    right: 0;
+    border-bottom-width: 5px;
+    border-right-width: 5px;
+    border-radius: 0 0 16px 0;
+}
+
+.linhaEscaneamentoTelaCameraCheckin {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: 10px;
+    height: 2px;
+    background: var(--AmareloAuxApoio);
+    box-shadow: 0 0 14px 2px rgba(231, 152, 57, 0.8);
+    animation: scanlineTelaCameraCheckin 2.6s ease-in-out infinite;
+}
+
+.legendaTelaCameraCheckin {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 16px 18px 18px;
+    background: linear-gradient(to top, rgba(27, 5, 16, 0.92), rgba(27, 5, 16, 0));
+    text-align: center;
+}
+
+.tituloLegendaTelaCameraCheckin {
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+}
+
+.subtituloLegendaTelaCameraCheckin {
+    font-size: 0.7rem;
+    color: rgba(252, 248, 245, 0.7);
+    margin-top: 4px;
+}
+
+.rodapeTelaCameraCheckin {
+    padding: 14px 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex: 0 0 auto;
+}
+
+.contadorTelaCameraCheckin {
+    flex: 0 0 auto;
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--AmareloAuxApoio);
+}
+
+.botaoBuscarManualmenteTelaCameraCheckin {
+    background: transparent;
+    border: none;
+    color: rgba(252, 248, 245, 0.75);
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}

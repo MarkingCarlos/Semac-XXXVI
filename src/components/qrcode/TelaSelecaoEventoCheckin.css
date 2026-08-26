@@ -1,0 +1,173 @@
+@import '../../index.css';
+
+.containerTelaSelecaoCheckin {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background-color: var(--vermelhoAuxDiretoria);
+    color: var(--Branco);
+    font-family: var(--fonteCorpoMontserrat);
+}
+
+.cabecalhoTituloTelaSelecaoCheckin {
+    padding: 4px 24px 22px;
+    border-bottom: 10px solid var(--Branco);
+    flex: 0 0 auto;
+}
+
+.tituloTelaSelecaoCheckin {
+    margin: 0;
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    line-height: 1.1;
+    color: var(--vermelhoDiretoria);
+    text-shadow:
+        3px 0 var(--Branco), -3px 0 var(--Branco),
+        0 3px var(--Branco), 0 -3px var(--Branco),
+        3px 3px var(--Branco), -3px -3px var(--Branco),
+        3px -3px var(--Branco), -3px 3px var(--Branco);
+}
+
+.mensagemEstadoTelaSelecaoCheckin,
+.mensagemErroTelaSelecaoCheckin {
+    padding: 20px 24px 0;
+    font-size: 0.9rem;
+    color: rgba(252, 248, 245, 0.75);
+}
+
+.mensagemErroTelaSelecaoCheckin {
+    color: var(--AmareloAuxApoio);
+}
+
+.blocoDiasTelaSelecaoCheckin {
+    padding: 22px 24px 0;
+    flex: 0 0 auto;
+}
+
+.blocoPalestrasTelaSelecaoCheckin {
+    padding: 22px 24px 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1 1 auto;
+}
+
+.rotuloSecaoTelaSelecaoCheckin {
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    color: var(--AmareloAuxApoio);
+    margin-bottom: 10px;
+}
+
+.listaDiasTelaSelecaoCheckin {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+}
+
+.botaoDiaTelaSelecaoCheckin {
+    flex: 0 0 auto;
+    width: 68px;
+    padding: 10px 0;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    background: var(--vermelhoDiretoria);
+    color: var(--Branco);
+}
+
+.botaoDiaTelaSelecaoCheckinAtivo {
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoAuxDiretoria);
+}
+
+.dataBotaoDiaTelaSelecaoCheckin {
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.95rem;
+}
+
+.semanaBotaoDiaTelaSelecaoCheckin {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.85;
+}
+
+.listaPalestrasTelaSelecaoCheckin {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    padding-bottom: 8px;
+}
+
+.botaoPalestraTelaSelecaoCheckin {
+    text-align: left;
+    border: none;
+    cursor: pointer;
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    background: var(--vermelhoDiretoria);
+    color: var(--Branco);
+}
+
+.botaoPalestraTelaSelecaoCheckinAtivo {
+    background: var(--rosaMarketing);
+}
+
+.horaBotaoPalestraTelaSelecaoCheckin {
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.8rem;
+    color: var(--AmareloAuxApoio);
+    flex: 0 0 auto;
+}
+
+.botaoPalestraTelaSelecaoCheckinAtivo .horaBotaoPalestraTelaSelecaoCheckin {
+    color: var(--Branco);
+}
+
+.nomeBotaoPalestraTelaSelecaoCheckin {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.rodapeTelaSelecaoCheckin {
+    padding: 16px 24px 28px;
+    flex: 0 0 auto;
+}
+
+.botaoIniciarTelaSelecaoCheckin {
+    width: 100%;
+    padding: 17px 0;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--fonteTituloBungee);
+    font-size: 1rem;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoAuxDiretoria);
+    transition: opacity 0.2s ease;
+}
+
+.botaoIniciarTelaSelecaoCheckin:disabled {
+    background: rgba(252, 248, 245, 0.14);
+    color: rgba(252, 248, 245, 0.45);
+    cursor: not-allowed;
+}

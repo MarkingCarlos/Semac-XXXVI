@@ -1,4 +1,5 @@
 import { cabecalhosAuth, tratarErroAuth } from '../../../auth/sessao.js';
+import { apiFetch } from '../../../lib/apiFetch.js';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const ROTA_PATROCINADORES = `${API_URL}/api/patrocinador`;
@@ -56,13 +57,13 @@ async function lerRespostaOuFalhar(resposta, mensagemErro) {
 }
 
 export async function listarPatrocinadores() {
-    const resposta = await fetch(ROTA_PATROCINADORES, { headers: cabecalhosAuth() });
+    const resposta = await apiFetch(ROTA_PATROCINADORES, { headers: cabecalhosAuth() });
     const lista = await lerRespostaOuFalhar(resposta, 'Falha ao carregar patrocinadores.');
     return lista.map(deResposta);
 }
 
 export async function criarPatrocinador(patrocinador) {
-    const resposta = await fetch(ROTA_PATROCINADORES, {
+    const resposta = await apiFetch(ROTA_PATROCINADORES, {
         method: 'POST',
         headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(paraRequisicao(patrocinador)),
@@ -72,7 +73,7 @@ export async function criarPatrocinador(patrocinador) {
 }
 
 export async function atualizarPatrocinador(id, patrocinador) {
-    const resposta = await fetch(`${ROTA_PATROCINADORES}/${id}`, {
+    const resposta = await apiFetch(`${ROTA_PATROCINADORES}/${id}`, {
         method: 'PUT',
         headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(paraRequisicao(patrocinador)),
@@ -82,7 +83,7 @@ export async function atualizarPatrocinador(id, patrocinador) {
 }
 
 export async function atualizarStatusPagamento(id, statusPagamento) {
-    const resposta = await fetch(`${ROTA_PATROCINADORES}/${id}/status`, {
+    const resposta = await apiFetch(`${ROTA_PATROCINADORES}/${id}/status`, {
         method: 'PATCH',
         headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ statusPagamento }),
@@ -92,7 +93,7 @@ export async function atualizarStatusPagamento(id, statusPagamento) {
 }
 
 export async function excluirPatrocinador(id) {
-    const resposta = await fetch(`${ROTA_PATROCINADORES}/${id}`, { method: 'DELETE', headers: cabecalhosAuth() });
+    const resposta = await apiFetch(`${ROTA_PATROCINADORES}/${id}`, { method: 'DELETE', headers: cabecalhosAuth() });
     if (!resposta.ok) {
         throw new Error('Falha ao excluir patrocinador.');
     }

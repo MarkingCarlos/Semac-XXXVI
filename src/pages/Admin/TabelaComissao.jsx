@@ -27,9 +27,14 @@ const ROTULO_ROLE = Object.fromEntries(PAPEIS_COMISSAO.map(p => [p.valor, p.rotu
 
 const ROTULO_MODELO = { NORMAL: 'Normal', BABY_LOOK: 'Baby Look' }
 
-function textoCamiseta(camiseta) {
-    if (!camiseta) return '—'
-    return `${ROTULO_MODELO[camiseta.modelo] ?? camiseta.modelo} - ${camiseta.tamanho}`
+// Monta o texto da camiseta: "Normal - M", com sufixo "+N" para quem tem
+// mais de um pedido. Retorna '—' se não houver nenhum.
+function textoCamiseta(camisetas) {
+    const lista = camisetas ?? []
+    if (lista.length === 0) return '—'
+    const primeira = lista[0]
+    const texto = `${ROTULO_MODELO[primeira.modelo] ?? primeira.modelo} - ${primeira.tamanho}`
+    return lista.length > 1 ? `${texto} +${lista.length - 1}` : texto
 }
 
 export default function TabelaComissao({ comissao, aoAtualizar }) {
@@ -112,7 +117,7 @@ export default function TabelaComissao({ comissao, aoAtualizar }) {
                                         {membro.ativo ? 'Ativo' : 'Inativo'}
                                     </span>
                                 </td>
-                                <td class="celulaCamisetaAdmin">{textoCamiseta(membro.camiseta)}</td>
+                                <td class="celulaCamisetaAdmin">{textoCamiseta(membro.camisetas)}</td>
                                 <td class="celulaFuncaoComissaoAdmin">
                                     <span class="badgeFuncaoComissaoAdmin">
                                         {ROTULO_ROLE[membro.role] ?? membro.role}
@@ -122,10 +127,14 @@ export default function TabelaComissao({ comissao, aoAtualizar }) {
                                     <div class="grupoAcoesComissaoAdmin">
                                         <button
                                             type="button"
-                                            class="botaoAlterarRoleAdmin"
+                                            class="botaoAcaoLinhaFinancas"
+                                            aria-label={`Alterar função de ${membro.nome}`}
+                                            title="Alterar função"
                                             onClick={() => { setErroAcao(''); setMembroEmEdicao(membro) }}
                                         >
-                                            Alterar função
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                            </svg>
                                         </button>
                                         <button
                                             type="button"

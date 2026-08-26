@@ -1,0 +1,198 @@
+@import '../../index.css';
+
+
+.main{
+    position:absolute;
+    top:0;
+    width: 100vw;
+    height: 95vh;
+    display:grid;
+    grid-template-rows:0.9fr 0.8fr 0.7fr 0.6fr;
+    grid-template-columns: 1fr;
+    grid-gap: 20px;
+    border: none;
+    background-color: var(--vermelhoAuxDiretoria);
+    border-radius:0;
+    padding-top:1%;
+    padding-bottom:5%;
+}
+
+.category{
+    width:100%;
+    height:100%;
+    display:grid;
+    grid-template-rows:0.25fr 1.5fr;
+    grid-template-columns: 1fr;
+    row-gap: 5px;
+    place-items: center;
+}
+
+.title{
+    font-size:medium;
+}
+
+.content{
+    width:98%;
+    height:100%;
+    display:flex;
+    flex-direction:row;
+    justify-content: center;
+    gap:10px;
+    align-items:center;
+    place-items: center;
+}
+
+.card{
+    width: 40%;
+    height:100%;
+    border-radius: 10px;
+    background-color: var(--vermelhoDiretoria);
+    transition: transform 0.3s ease-in-out;
+}
+
+.card img{
+    width:85%;
+    height:95%;
+    object-fit: contain;
+    align-self: center;
+    justify-self: center;
+}
+
+/* MODAL: CARD DE DESCRICAO*/
+.card-desc{
+    width:90%;
+    height:90%;
+    background-color: #000;
+    position:absolute;
+    border-radius:10px;
+    top:5%;
+    left:5%;
+    display: grid;
+    grid-template-rows: 0.1fr 0.5fr 1fr;
+    grid-template-columns: 1fr ;
+}
+
+.card-logo{
+  width:auto;
+  height:auto;
+  border-image: linear-gradient(to right, transparent 0%, #fff 50%, transparent 100%) 1;
+  border-style: solid;
+  border-image-width: 0 0 1px 0; /* top, right, bottom, left */
+  grid-row-start: 2;
+  grid-row-end: 3;
+
+}
+
+.card-desc img{
+    width:70%;
+    height:80%;
+    object-fit: contain;;
+}
+
+.card-text{
+    align-self: center;
+    justify-self: center;
+    width:90%;
+    height:90%;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    grid-row-start: 3;
+}
+
+.card-btn{
+    display:flex;
+    justify-content: end;
+}
+
+.card-btn button{
+    width:auto;
+    background-color: #000;
+}
+
+/* ANIMAÇÃO */
+.card:hover{
+    transform: scale(1.05);
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeInEffect 0.1s ease forwards;
+  animation-delay: 0.05s; /* The delay */
+}
+
+@keyframes fadeInEffect {
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.fade-out {
+  animation: fadeOut 0.5s forwards; /* 'forwards' keeps the element at 0 opacity after finishing */
+}
+
+/* FILTRO E EFEITOS */
+.darken {
+  filter: brightness(30%); /* Reduces brightness by half */
+}
+
+/* REPONSIVIDADE*/
+
+@media (min-width: 700px) {
+  .main { 
+    height:95vh;
+    grid-template-rows:1fr 0.9fr 0.8fr 0.7fr;
+   }
+
+   .content{
+    gap:10px;
+   }
+
+   .card{
+    width:30%;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+   }
+
+   .card img{
+    width:60%;
+   }
+
+   /* MODAL: CARD DE DESCRICAO*/
+    .card-desc{
+        width:90%;
+        height:90%;
+        background-color: #000;
+        position:absolute;
+        border-radius:10px;
+        top:5%;
+        left:5%;
+        display: grid;
+        grid-template-rows: 0.1fr 1fr;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .card-logo{
+        width:auto;
+        height:auto;
+        border-image: linear-gradient(to bottom, transparent 0%, #fff 50%, transparent 100%) 1;
+        border-style: solid;
+        border-image-width: 0 1px 0 0; /* top, right, bottom, left */
+        grid-row-start: 1;
+        grid-row-end: 3;
+     }
+
+     .card-desc img{
+        width:90%;
+        height:100%;
+        object-fit: contain;;
+    }
+
+     .card-text{
+        grid-row-start: 2;
+    }
+}

@@ -1,0 +1,110 @@
+@import '../../index.css';
+
+@keyframes fadeInModalBuscaManualPresenca {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes popInModalBuscaManualPresenca {
+    from { transform: translateY(18px) scale(0.96); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.sobreposicaoModalBuscaManualPresenca {
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 3, 12, 0.72);
+    display: flex;
+    align-items: flex-end;
+    animation: fadeInModalBuscaManualPresenca 0.18s ease-out;
+    z-index: 20;
+}
+
+.painelModalBuscaManualPresenca {
+    width: 100%;
+    max-height: 80%;
+    background: var(--vermelhoAuxDiretoria);
+    border-radius: 25px 25px 0 0;
+    padding: 22px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    color: var(--Branco);
+    font-family: var(--fonteCorpoMontserrat);
+    animation: popInModalBuscaManualPresenca 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cabecalhoModalBuscaManualPresenca {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.tituloModalBuscaManualPresenca {
+    font-family: var(--fonteTituloBungee);
+    font-size: 1.05rem;
+}
+
+.botaoFecharModalBuscaManualPresenca {
+    background: transparent;
+    border: none;
+    color: rgba(252, 248, 245, 0.7);
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.campoBuscaModalBuscaManualPresenca {
+    margin-top: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px 16px;
+    border: none;
+    border-radius: 8px;
+    background: var(--Branco);
+    color: var(--vermelhoDiretoria);
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.listaResultadosModalBuscaManualPresenca {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    flex: 1 1 auto;
+}
+
+.mensagemEstadoModalBuscaManualPresenca {
+    font-size: 0.75rem;
+    color: rgba(252, 248, 245, 0.6);
+    padding: 12px 4px;
+}
+
+.botaoResultadoModalBuscaManualPresenca {
+    text-align: left;
+    border: none;
+    cursor: pointer;
+    background: var(--vermelhoDiretoria);
+    border-radius: 16px;
+    padding: 14px 16px;
+    color: var(--Branco);
+}
+
+.botaoResultadoModalBuscaManualPresenca:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.nomeResultadoModalBuscaManualPresenca {
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.emailResultadoModalBuscaManualPresenca {
+    font-size: 0.7rem;
+    opacity: 0.75;
+    margin-top: 3px;
+}

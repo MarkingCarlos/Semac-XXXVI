@@ -6,6 +6,8 @@
    combinação/separação acontece aqui, nas bordas. O tipo é uma FK
    (`tipoEventoId`); guardamos também o rótulo (`tipo`) para exibição. */
 
+import { apiFetch } from '../../../lib/apiFetch.js';
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const ROTA = `${API_URL}/api/evento`;
 
@@ -66,13 +68,13 @@ async function lerOuFalhar(resposta, mensagemPadrao) {
 }
 
 export async function listarEventos() {
-    const resposta = await fetch(ROTA);
+    const resposta = await apiFetch(ROTA);
     const lista = await lerOuFalhar(resposta, 'Falha ao carregar eventos.');
     return lista.map(deResposta);
 }
 
 export async function criarEvento(evento) {
-    const resposta = await fetch(ROTA, {
+    const resposta = await apiFetch(ROTA, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(paraRequisicao(evento)),
@@ -82,7 +84,7 @@ export async function criarEvento(evento) {
 }
 
 export async function atualizarEvento(id, evento) {
-    const resposta = await fetch(`${ROTA}/${id}`, {
+    const resposta = await apiFetch(`${ROTA}/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(paraRequisicao(evento)),
@@ -92,7 +94,7 @@ export async function atualizarEvento(id, evento) {
 }
 
 export async function excluirEvento(id) {
-    const resposta = await fetch(`${ROTA}/${id}`, { method: 'DELETE' });
+    const resposta = await apiFetch(`${ROTA}/${id}`, { method: 'DELETE' });
     if (!resposta.ok) {
         const corpo = await resposta.json().catch(() => null);
         throw new Error(corpo?.mensagem || 'Falha ao excluir evento.');

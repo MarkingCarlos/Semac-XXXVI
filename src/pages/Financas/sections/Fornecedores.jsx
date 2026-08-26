@@ -14,10 +14,10 @@ const FORMULARIO_VAZIO = {
     observacao: '',
 };
 
-/* Fornecedores — cadastro central. As compras referenciam fornecedores
-   por id (FK fornecedor_id no banco); por isso um fornecedor com
-   compras vinculadas não pode ser excluído. */
-export default function Fornecedores({ fornecedores, setFornecedores, compras, carregando, erro }) {
+/* Fornecedores — cadastro central. Compras e cotações referenciam
+   fornecedores por id (FK fornecedor_id no banco); por isso um fornecedor
+   com compras ou cotações vinculadas não pode ser excluído. */
+export default function Fornecedores({ fornecedores, setFornecedores, compras, cotacoes, carregando, erro }) {
     const [painelAberto, setPainelAberto] = useState(false);
     const [formulario, setFormulario] = useState(FORMULARIO_VAZIO);
     const [idEmEdicao, setIdEmEdicao] = useState(null);
@@ -28,6 +28,11 @@ export default function Fornecedores({ fornecedores, setFornecedores, compras, c
 
     const contarComprasVinculadas = (fornecedorId) =>
         compras.filter((compra) => compra.fornecedorId === fornecedorId).length;
+
+    const contarCotacoesVinculadas = (fornecedorId) =>
+        cotacoes.filter((cotacao) =>
+            cotacao.fornecedores.some((linha) => linha.fornecedorId === fornecedorId),
+        ).length;
 
     const fornecedoresFiltrados = filtro.trim()
         ? fornecedores.filter((fornecedor) => normalizar(fornecedor.nome).includes(normalizar(filtro)))
@@ -129,20 +134,21 @@ export default function Fornecedores({ fornecedores, setFornecedores, compras, c
                             <th>Contato</th>
                             <th>Observação</th>
                             <th>Compras</th>
+                            <th>Cotações</th>
                             <th aria-label="Ações" />
                         </tr>
                     </thead>
                     <tbody>
                         {carregando && (
                             <tr>
-                                <td colSpan={5} className="celulaVaziaFinancas">
+                                <td colSpan={6} className="celulaVaziaFinancas">
                                     Carregando fornecedores…
                                 </td>
                             </tr>
                         )}
                         {!carregando && fornecedoresFiltrados.length === 0 && (
                             <tr>
-                                <td colSpan={5} className="celulaVaziaFinancas">
+                                <td colSpan={6} className="celulaVaziaFinancas">
                                     {filtro.trim()
                                         ? 'Nenhum fornecedor encontrado para esse filtro.'
                                         : 'Nenhum fornecedor cadastrado ainda.'}
@@ -151,6 +157,8 @@ export default function Fornecedores({ fornecedores, setFornecedores, compras, c
                         )}
                         {!carregando && fornecedoresFiltrados.map((fornecedor) => {
                             const comprasVinculadas = contarComprasVinculadas(fornecedor.id);
+                            const cotacoesVinculadas = contarCotacoesVinculadas(fornecedor.id);
+                            const possuiVinculo = comprasVinculadas > 0 || cotacoesVinculadas > 0;
                             return (
                                 <tr key={fornecedor.id}>
                                     <td>
@@ -165,6 +173,7 @@ export default function Fornecedores({ fornecedores, setFornecedores, compras, c
                                         {fornecedor.observacao || '—'}
                                     </td>
                                     <td className="celulaContagemFornecedores">{comprasVinculadas}</td>
+                                    <td className="celulaContagemFornecedores">{cotacoesVinculadas}</td>
                                     <td>
                                         <div className="grupoAcoesLinhaFinancas">
                                             <button
@@ -185,17 +194,17 @@ export default function Fornecedores({ fornecedores, setFornecedores, compras, c
                                                         ? 'botaoAcaoLinhaFinancas botaoConfirmarExclusaoFinancas'
                                                         : 'botaoAcaoLinhaFinancas'
                                                 }
-                                                disabled={comprasVinculadas > 0}
+                                                disabled={possuiVinculo}
                                                 aria-label={
-                                                    comprasVinculadas > 0
-                                                        ? `${fornecedor.nome} possui compras vinculadas e não pode ser excluído`
+                                                    possuiVinculo
+                                                        ? `${fornecedor.nome} possui compras ou cotações vinculadas e não pode ser excluído`
                                                         : idConfirmandoExclusao === fornecedor.id
                                                           ? `Confirmar exclusão de ${fornecedor.nome}`
                                                           : `Excluir ${fornecedor.nome}`
                                                 }
                                                 title={
-                                                    comprasVinculadas > 0
-                                                        ? 'Possui compras vinculadas — não pode ser excluído'
+                                                    possuiVinculo
+                                                        ? 'Possui compras ou cotações vinculadas — não pode ser excluído'
                                                         : idConfirmandoExclusao === fornecedor.id
                                                           ? 'Clique novamente para confirmar'
                                                           : 'Excluir'

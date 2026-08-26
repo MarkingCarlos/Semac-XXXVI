@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'preact/hooks'
 import { useLocation } from 'wouter'
 import { COTAS } from '../../data/cotas.js'
+import { listarCotas } from '../Financas/data/apiCotas.js'
+import { formatarCentavos } from '../Financas/utils/moeda.js'
 import './paginaCotas.css'
 import paperTexture from "../../assets/PAPER.png";
 
@@ -11,12 +13,39 @@ export default function PaginaCotas() {
     const [cotaSelecionada, setCotaSelecionada] = useState(null)
     const [nomeEmpresa, setNomeEmpresa]         = useState('')
 
+    /* Valores vindos da tabela `cota` (GET público), indexados por nível.
+       O conteúdo, a ordem e o preço de fallback seguem no COTAS do código:
+       a página renderiza na hora e só sobrescreve o preço quando a API
+       responde — se ela falhar ou a cota não estiver cadastrada, o preço
+       do código permanece. */
+    const [valoresPorNivel, setValoresPorNivel] = useState(null)
+
     const cota       = COTAS.find(cotaItem => cotaItem.id === cotaSelecionada)
     const podeEnviar = cotaSelecionada && nomeEmpresa.trim()
 
     useEffect(() => {
         window.scrollTo(0, 0)
     }, [])
+
+    useEffect(() => {
+        let ativo = true
+        listarCotas()
+            .then(lista => {
+                if (!ativo) return
+                setValoresPorNivel(
+                    Object.fromEntries(lista.map(item => [item.nivel, item.valor]))
+                )
+            })
+            .catch(() => { /* página pública não exibe erro de API */ })
+        return () => { ativo = false }
+    }, [])
+
+    /* Valor 0 (ou cota sem valor definido) é apresentado como "Sob consulta". */
+    function precoDaCota(cotaItem) {
+        const valor = valoresPorNivel?.[cotaItem.id.toUpperCase()]
+        if (valor == null) return cotaItem.preco
+        return valor > 0 ? formatarCentavos(valor) : null
+    }
 
     function handleVoltar() {
         navigate('~/')
@@ -84,8 +113,8 @@ export default function PaginaCotas() {
                         >
                             <div class="cabecalhoCota">
                                 <span class="nomeCota">{cotaItem.nome}</span>
-                                {cotaItem.preco
-                                    ? <span class="precoCota">{cotaItem.preco}</span>
+                                {precoDaCota(cotaItem)
+                                    ? <span class="precoCota">{precoDaCota(cotaItem)}</span>
                                     : <span class="precoCota precoCotaSobConsulta">Sob consulta</span>
                                 }
                             </div>

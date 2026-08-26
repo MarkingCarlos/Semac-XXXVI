@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useLayoutEffect } from 'preact/hooks';
 import './ComoSuaDoacaoAjudaV2.css';
+import { apiFetch } from '../../lib/apiFetch.js';
 
-const META_TOTAL = 1000; // R$ 1.000 — meta de arrecadação desta edição
+const META_TOTAL = 2500; // R$ 2.500 — meta de arrecadação desta edição
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 function formatarReais(valor) {
@@ -142,7 +143,7 @@ function MetaDoacao() {
   // Busca o resumo público (total + nomes deduplicados). Sem valores individuais.
   useEffect(() => {
     let ativo = true;
-    fetch(`${API_URL}/api/doador/resumo-publico`)
+    apiFetch(`${API_URL}/api/doador/resumo-publico`)
       .then((resposta) => (resposta.ok ? resposta.json() : Promise.reject()))
       .then((resumo) => {
         if (!ativo) return;
