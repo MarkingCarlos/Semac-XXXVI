@@ -5,8 +5,7 @@ import Cronograma from "../../components/Cronograma/cronograma.jsx";
 const DAYS = ["SEGUNDA", "TERÇA", "QUARTA", "QUINTA", "SEXTA"];
 const CATEGORIES = ["IA", "BIOINFORMÁTICA", "ROBÓTICA", "UI/UX", "SOFTWARE LIVRE"];
 
-// Para que a semana comece na terça
-const SEMANA_INICIO = 1;
+const SEMANA_INICIO = 0;
 
 // Array exemplo
 const EVENTOS = [
@@ -36,7 +35,7 @@ const EVENTOS = [
     horarioFim: "12:00",
     local: "Auditório A",
     linkTexto: "YOUTUBE/SEMAC",
-    linkUrl: "https://youtube.com/@semac",
+    linkUrl: "https://youtube.com/@SEMACsjrp",
   },
   {
     id: 3,
@@ -58,7 +57,7 @@ const EVENTOS = [
     palestrante: "beltrano",
     descricao:
       "computers",
-    dia: "QUARTA",
+    dia: "SEGUNDA",
     categoria: "UI/UX",
     horarioInicio: "14:00",
     horarioFim: "16:00",

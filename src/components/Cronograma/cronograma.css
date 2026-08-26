@@ -28,7 +28,7 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  background: var(--vermelhoDiretoria, #6d1638);
+  background: var(--rosaMarketing);
   border: 1.5px solid rgba(255, 255, 255, 0.15);
   border-radius: 9px;
   padding: 10px 12px;

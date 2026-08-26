@@ -1,6 +1,7 @@
 import "./cronogramaFiltro.css";
 import SplitText from "./SplitText";
 
+const DIAS_FERIADO = ["QUARTA"];
 
 export default function CronogramaFiltro({
   dias,
@@ -36,7 +37,8 @@ export default function CronogramaFiltro({
 
         <div className="linhaDiasCronograma">
           {dias.map((day, idx) => {
-            const isDisabled = idx < semanaInicio;
+            const isFeriado = DIAS_FERIADO.includes(day);
+            const isDisabled = idx < semanaInicio || isFeriado;
             const isActive = day === selectedDay;
             const cls = isDisabled
               ? "diaDesabilitadoCronograma"

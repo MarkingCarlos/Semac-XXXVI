@@ -4,46 +4,43 @@ import "./cronograma.css";
 function ordenarPorHorario(a, b) {
   return a.horarioInicio.localeCompare(b.horarioInicio);
 }
-const DIA_PARA_INDICE = {
-  SEGUNDA: 1,
-  TERÇA: 2,
-  QUARTA: 3,
-  QUINTA: 4,
-  SEXTA: 5,
+
+// Datas reais da semana do evento: 26 a 30 de outubro de 2026
+// (mês em JS é 0-indexado, por isso outubro = 9)
+const DIA_PARA_DATA = {
+  SEGUNDA: new Date(2026, 9, 26),
+  TERÇA: new Date(2026, 9, 27),
+  QUARTA: new Date(2026, 9, 28),
+  QUINTA: new Date(2026, 9, 29),
+  SEXTA: new Date(2026, 9, 30),
 };
 
-function paraMinutos(horario) {
+function getDataHoraEvento(dia, horario) {
+  const dataBase = DIA_PARA_DATA[dia];
   const [horas, minutos] = horario.split(":").map(Number);
-  return horas * 60 + minutos;
+  const data = new Date(dataBase);
+  data.setHours(horas, minutos, 0, 0);
+  return data;
 }
 
-// Calcula se um evento já passou, está acontecendo agora ou ainda vai acontecer
+// Calcula se um evento já passou, está acontecendo agora ou ainda vai
+// acontecer, comparando a data/hora real do evento com "agora"
 function getStatusEvento(evento, agora) {
-  const diaAtual = agora.getDay();
-  const minutosAgora = agora.getHours() * 60 + agora.getMinutes();
-  const diaEvento = DIA_PARA_INDICE[evento.dia];
-  const diferencaDias = diaEvento - diaAtual;
+  const inicio = getDataHoraEvento(evento.dia, evento.horarioInicio);
+  const fim = getDataHoraEvento(evento.dia, evento.horarioFim);
 
-  if (diferencaDias === 0) {
-    const inicio = paraMinutos(evento.horarioInicio);
-    const fim = paraMinutos(evento.horarioFim);
-    if (minutosAgora >= inicio && minutosAgora < fim) return "agora";
-    return minutosAgora < inicio ? "futuro" : "passado";
-  }
-
-  return diferencaDias > 0 ? "futuro" : "passado";
+  if (agora >= inicio && agora < fim) return "agora";
+  return agora < inicio ? "futuro" : "passado";
 }
 
-function getChaveOrdenacao(evento, agora) {
-  const diaAtual = agora.getDay();
-  const diferencaDias = DIA_PARA_INDICE[evento.dia] - diaAtual;
-  return diferencaDias * 1440 + paraMinutos(evento.horarioInicio);
+function getChaveOrdenacao(evento) {
+  return getDataHoraEvento(evento.dia, evento.horarioInicio).getTime();
 }
 
 function getRotuloEvento(status, ehProximo) {
   if (status === "agora") return "ACONTECENDO AGORA";
   if (ehProximo) return "PRÓXIMO EVENTO";
-  if (status === "futuro") return "A ACONTECER";
+  if (status === "futuro") return "EM BREVE";
   return "ENCERRADO";
 }
 
@@ -83,12 +80,12 @@ export default function Cronograma({ eventos, selectedDay, selectedFilter }) {
   const proximoEventoGlobal = eventos
     .map((evento) => ({ evento, status: getStatusEvento(evento, agora) }))
     .filter(({ status }) => status === "futuro")
-    .sort((a, b) => getChaveOrdenacao(a.evento, agora) - getChaveOrdenacao(b.evento, agora))[0]
+    .sort((a, b) => getChaveOrdenacao(a.evento) - getChaveOrdenacao(b.evento))[0]
     ?.evento;
 
   const statusSelecionado = eventoSelecionado && getStatusEvento(eventoSelecionado, agora);
   const ehProximoSelecionado = eventoSelecionado?.id === proximoEventoGlobal?.id;
-  
+
   return (
     <div className="wrapperCronogramaCorpo">
       <div className="corpoCronograma">
