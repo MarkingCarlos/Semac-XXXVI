@@ -2,8 +2,8 @@ import { useState, useEffect, useRef, useLayoutEffect } from 'preact/hooks';
 import './ComoSuaDoacaoAjudaV2.css';
 import { apiFetch } from '../../lib/apiFetch.js';
 
-const META_TOTAL = 2500; // R$ 2.500 — meta de arrecadação desta edição
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+const ANO_ATUAL = new Date().getFullYear();
 
 function formatarReais(valor) {
   return valor.toLocaleString('pt-BR', {
@@ -134,11 +134,12 @@ function NomesDoadores({ nomes }) {
 function MetaDoacao() {
   const [arrecadado, setArrecadado] = useState(0);
   const [doadores, setDoadores] = useState([]);
+  const [metaTotal, setMetaTotal] = useState(0);
   const [largura, setLargura] = useState(0);
   const [visivel, setVisivel] = useState(false);
   const refTrilho = useRef(null);
 
-  const porcentagem = Math.min(Math.round((arrecadado / META_TOTAL) * 100), 100);
+  const porcentagem = metaTotal > 0 ? Math.min(Math.round((arrecadado / metaTotal) * 100), 100) : 0;
 
   // Busca o resumo público (total + nomes deduplicados). Sem valores individuais.
   useEffect(() => {
@@ -149,6 +150,21 @@ function MetaDoacao() {
         if (!ativo) return;
         setArrecadado(Number(resumo.totalArrecadado) || 0);
         setDoadores(Array.isArray(resumo.doadores) ? resumo.doadores : []);
+      })
+      .catch(() => {}); // silencioso: barra permanece em 0% se a API falhar
+    return () => {
+      ativo = false;
+    };
+  }, []);
+
+  // Busca a meta de arrecadação da edição, configurável no /admin.
+  useEffect(() => {
+    let ativo = true;
+    apiFetch(`${API_URL}/api/meta-doacao?ano=${ANO_ATUAL}`)
+      .then((resposta) => (resposta.ok ? resposta.json() : Promise.reject()))
+      .then((meta) => {
+        if (!ativo) return;
+        setMetaTotal(Number(meta.valor) || 0);
       })
       .catch(() => {}); // silencioso: barra permanece em 0% se a API falhar
     return () => {
@@ -178,7 +194,7 @@ function MetaDoacao() {
 
   return (
     <div className="metaDoacao">
-      <span className="valorMeta">{formatarReais(META_TOTAL)}</span>
+      <span className="valorMeta">{formatarReais(metaTotal)}</span>
       <div className="metaDoacaoTrilho" ref={refTrilho}>
         <div className="metaDoacaoProgresso" style={{ width: `${largura}%` }} />
       </div>

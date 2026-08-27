@@ -24,13 +24,18 @@ import {
     lerCamisetaExtra,
     salvarCamisetaExtra,
 } from '../data/apiCamisetaExtra.js';
+import {
+    lerMetaDoacao,
+    salvarMetaDoacao,
+} from '../data/apiMetaDoacao.js';
 
-/* Informações SEMAC — quatro blocos:
+/* Informações SEMAC — cinco blocos:
    1. Tipos de ingresso (tabela `tipo_inscricao`) da edição atual;
    2. Preço da camiseta avulsa (tabela `camiseta_extra`), um por edição;
-   3. Níveis de participante (tabela `nivel`), nome + xp mínimo;
-   4. Cotas de patrocínio (tabela `cota`), nível + valor.
-   Valores de ingresso/cota em centavos na interface, convertidos na
+   3. Meta de doação (tabela `meta_doacao`), um por edição;
+   4. Níveis de participante (tabela `nivel`), nome + xp mínimo;
+   5. Cotas de patrocínio (tabela `cota`), nível + valor.
+   Valores de ingresso/cota/meta em centavos na interface, convertidos na
    borda da API. Xp mínimo do nível é inteiro puro, sem conversão.
 
    Os benefícios e as cores de cada cota seguem no código
@@ -88,6 +93,13 @@ export default function InformacoesSemac() {
     const [salvandoPrecoCamiseta, setSalvandoPrecoCamiseta] = useState(false);
     const [erroPrecoCamiseta, setErroPrecoCamiseta] = useState('');
 
+    /* ── Meta de doação ────────────────────────────────────────── */
+    const [metaDoacao, setMetaDoacao] = useState(0);
+    const [rascunhoMetaDoacao, setRascunhoMetaDoacao] = useState(0);
+    const [editandoMetaDoacao, setEditandoMetaDoacao] = useState(false);
+    const [salvandoMetaDoacao, setSalvandoMetaDoacao] = useState(false);
+    const [erroMetaDoacao, setErroMetaDoacao] = useState('');
+
     /* ── Cotas de patrocínio ──────────────────────────────────── */
     const [cotas, setCotas] = useState([]);
     const [carregandoCotas, setCarregandoCotas] = useState(true);
@@ -126,6 +138,9 @@ export default function InformacoesSemac() {
         lerCamisetaExtra(ANO_ATUAL)
             .then((centavos) => { if (ativo) { setPrecoCamiseta(centavos); setRascunhoPrecoCamiseta(centavos); } })
             .catch((e) => { if (ativo) setErroPrecoCamiseta(e.message); });
+        lerMetaDoacao(ANO_ATUAL)
+            .then((centavos) => { if (ativo) { setMetaDoacao(centavos); setRascunhoMetaDoacao(centavos); } })
+            .catch((e) => { if (ativo) setErroMetaDoacao(e.message); });
         listarCotas()
             .then((lista) => { if (ativo) setCotas([...lista].sort(porValorCrescente)); })
             .catch((e) => { if (ativo) setErroCotas(e.message); })
@@ -223,6 +238,39 @@ export default function InformacoesSemac() {
     const teclasPrecoCamiseta = (evento) => {
         if (evento.key === 'Enter') { evento.preventDefault(); confirmarPrecoCamiseta(); }
         if (evento.key === 'Escape') { evento.preventDefault(); cancelarPrecoCamiseta(); }
+    };
+
+    /* ── Meta de doação ────────────────────────────────────────── */
+
+    const editarMetaDoacao = () => {
+        setRascunhoMetaDoacao(metaDoacao);
+        setErroMetaDoacao('');
+        setEditandoMetaDoacao(true);
+    };
+
+    const cancelarMetaDoacao = () => {
+        setRascunhoMetaDoacao(metaDoacao);
+        setEditandoMetaDoacao(false);
+    };
+
+    const confirmarMetaDoacao = async () => {
+        setSalvandoMetaDoacao(true);
+        setErroMetaDoacao('');
+        try {
+            const salvo = await salvarMetaDoacao(ANO_ATUAL, rascunhoMetaDoacao);
+            setMetaDoacao(salvo);
+            setRascunhoMetaDoacao(salvo);
+            setEditandoMetaDoacao(false);
+        } catch (e) {
+            setErroMetaDoacao(e.message);
+        } finally {
+            setSalvandoMetaDoacao(false);
+        }
+    };
+
+    const teclasMetaDoacao = (evento) => {
+        if (evento.key === 'Enter') { evento.preventDefault(); confirmarMetaDoacao(); }
+        if (evento.key === 'Escape') { evento.preventDefault(); cancelarMetaDoacao(); }
     };
 
     const abrirNovo = () => {
@@ -497,6 +545,75 @@ export default function InformacoesSemac() {
                                 aria-label="Editar preço da camiseta"
                                 title="Editar"
                                 onClick={editarPrecoCamiseta}
+                            >
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                </svg>
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </section>
+
+            {/* ── Meta de doação ─────────────────────────────── */}
+            <section className="blocoInfoSemac" aria-label="Meta de doação">
+                <div className="cabecalhoBlocoInfoSemac">
+                    <div>
+                        <h2 className="tituloBlocoInfoSemac">Meta de doação</h2>
+                        <p className="notaBlocoInfoSemac">
+                            Valor exibido na barra de progresso da campanha de doação, na
+                            página pública.
+                        </p>
+                    </div>
+                </div>
+
+                {erroMetaDoacao && <p className="avisoErroAdmin" role="alert">{erroMetaDoacao}</p>}
+
+                <div className="cartaoPrecoCamisetaInfoSemac">
+                    <span className="rotuloPrecoCamisetaInfoSemac">Meta de arrecadação</span>
+                    {editandoMetaDoacao ? (
+                        <div className="edicaoPrecoCamisetaInfoSemac">
+                            <CampoMoeda
+                                id="campoMetaDoacao"
+                                valorCentavos={rascunhoMetaDoacao}
+                                aoMudar={setRascunhoMetaDoacao}
+                                aoTeclar={teclasMetaDoacao}
+                                rotuloAcessivel="Meta de doação"
+                                autoFoco
+                            />
+                            <button
+                                type="button"
+                                className="botaoAcaoLinhaFinancas"
+                                aria-label="Salvar meta de doação"
+                                title="Salvar"
+                                disabled={salvandoMetaDoacao}
+                                onClick={confirmarMetaDoacao}
+                            >
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 6 9 17l-5-5" />
+                                </svg>
+                            </button>
+                            <button
+                                type="button"
+                                className="botaoAcaoLinhaFinancas"
+                                aria-label="Descartar alteração na meta de doação"
+                                title="Descartar"
+                                onClick={cancelarMetaDoacao}
+                            >
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 6 6 18M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="edicaoPrecoCamisetaInfoSemac">
+                            <span className="valorIngressoInfoSemac">{formatarCentavos(metaDoacao)}</span>
+                            <button
+                                type="button"
+                                className="botaoAcaoLinhaFinancas"
+                                aria-label="Editar meta de doação"
+                                title="Editar"
+                                onClick={editarMetaDoacao}
                             >
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
