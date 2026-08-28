@@ -4,6 +4,7 @@
    reais (DECIMAL). A conversão acontece aqui, nas bordas. */
 
 import { apiFetch } from '../../../lib/apiFetch.js';
+import { cabecalhosAuth } from '../../../auth/sessao.js';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const ROTA = `${API_URL}/api/tipo-inscricao`;
@@ -60,7 +61,7 @@ export async function listarTiposInscricao(ano) {
 export async function criarTipoInscricao(tipo) {
     const resposta = await apiFetch(ROTA, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(paraRequisicao(tipo)),
     });
     const criado = await lerOuFalhar(resposta, 'Falha ao criar ingresso.');
@@ -70,7 +71,7 @@ export async function criarTipoInscricao(tipo) {
 export async function atualizarTipoInscricao(id, tipo) {
     const resposta = await apiFetch(`${ROTA}/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(paraRequisicao(tipo)),
     });
     const atualizado = await lerOuFalhar(resposta, 'Falha ao atualizar ingresso.');
@@ -78,7 +79,7 @@ export async function atualizarTipoInscricao(id, tipo) {
 }
 
 export async function excluirTipoInscricao(id) {
-    const resposta = await apiFetch(`${ROTA}/${id}`, { method: 'DELETE' });
+    const resposta = await apiFetch(`${ROTA}/${id}`, { method: 'DELETE', headers: cabecalhosAuth() });
     if (!resposta.ok) {
         const corpo = await resposta.json().catch(() => null);
         throw new Error(corpo?.mensagem || 'Falha ao excluir ingresso.');

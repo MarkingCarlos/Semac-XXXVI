@@ -19,7 +19,7 @@ async function lerOuFalhar(resposta, mensagemPadrao) {
 /* Pessoas com presença confirmada no evento e que ainda não ganharam
    nenhum brinde — a pool que alimenta o rolo de nomes do sorteio. */
 export async function listarElegiveis(eventoId) {
-    const resposta = await apiFetch(`${ROTA}/elegiveis?eventoId=${eventoId}`);
+    const resposta = await apiFetch(`${ROTA}/elegiveis?eventoId=${eventoId}`, { headers: cabecalhosAuth() });
     return lerOuFalhar(resposta, 'Falha ao carregar os participantes elegíveis.');
 }
 
