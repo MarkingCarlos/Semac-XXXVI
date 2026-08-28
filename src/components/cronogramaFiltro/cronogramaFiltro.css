@@ -117,8 +117,8 @@
 }
 
 .botaoFiltroCronograma.filtroAtivoCronograma {
-  background: var(--vermelhoDiretoria);
-  color: #ffffff;
+  background: #ffffff;
+  color: var(--vermelhoDiretoria);
   border: 1px solid var(--Branco);
   font-weight: 700;
 }
