@@ -1,0 +1,377 @@
+/* ── Base (mobile-first: iPhone 14 = 390px) ─────────────────────────── */
+
+.wrapperCronogramaCorpo {
+  display: flex;
+  justify-content: center;
+  padding: 0 14px 28px;
+}
+
+.corpoCronograma {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.listaEventosCronograma {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 340px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.eventoItemCronograma {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  background: var(--rosaMarketing);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9px;
+  padding: 10px 12px;
+  cursor: pointer;
+  text-align: left;
+  outline: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.eventoItemCronograma:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.eventoItemAtivoCronograma {
+  border-color: var(--AmareloAuxApoio, #f2a63f);
+}
+
+.eventoItemPassadoCronograma {
+  opacity: 0.45;
+}
+
+.eventoAoVivoCronograma {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  margin-left: auto;
+  border-radius: 50%;
+  background: var(--AmareloAuxApoio, #f2a63f);
+  box-shadow: 0 0 0 3px rgba(242, 166, 63, 0.25);
+}
+
+.eventoHorarioCronograma {
+  flex-shrink: 0;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.6);
+  min-width: 38px;
+}
+
+.eventoTextoCronograma {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.eventoTituloCronograma {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--AmareloAuxApoio, #f2a63f);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.eventoPalestranteCronograma {
+  font-size: 0.58rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.semEventosCronograma {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.55);
+  text-align: center;
+  padding: 20px 8px;
+}
+
+.destaqueCronograma {
+  background: var(--vermelhoDiretoria, #6d1638);
+  border: 1.5px solid var(--Branco, #ffffff);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.destaqueTopoCronograma {
+  background: var(--AmareloAuxApoio, #f2a63f);
+  color: #3a0a1e;
+  padding: 12px 14px 10px;
+}
+
+.destaqueSeloCronograma {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.destaqueBolinhaCronograma {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #3a0a1e;
+  display: inline-block;
+}
+
+.destaqueTituloCronograma {
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+}
+
+.destaqueConteudoCronograma {
+  padding: 12px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.destaqueRotuloCronograma {
+  display: block;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 2px;
+}
+
+.destaqueDescricaoCronograma {
+  font-size: 0.68rem;
+  line-height: 1.5;
+  color: var(--Branco, #ffffff);
+}
+
+.destaqueGradeCronograma {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding-top: 10px;
+}
+
+.destaqueCampoCronograma {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.destaqueValorCronograma {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--Branco, #ffffff);
+}
+
+.destaqueLinkCronograma {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--AmareloAuxApoio, #f2a63f);
+  text-decoration: none;
+  line-height: 1;
+  width: fit-content;
+}
+
+.destaqueLinkCronograma svg {
+  flex-shrink: 0;
+  position: relative;
+  top: -1px;
+}
+
+.destaqueLinkCronograma:hover {
+  text-decoration: underline;
+}
+
+/* ── Monitores normais (≥ 1024px, até 2559px) ────────────────────────── */
+
+@media (min-width: 1024px) {
+  .wrapperCronogramaCorpo {
+    padding: 0 32px 36px;
+  }
+
+  .corpoCronograma {
+    max-width: 100vw;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 0 48px;
+  }
+
+  .listaEventosCronograma {
+    flex: 1;
+    max-height: 520px;
+    gap: 14px;
+  }
+
+  .eventoItemCronograma {
+    gap: 18px;
+    padding: 16px 18px;
+    border-radius: 12px;
+  }
+
+  .eventoHorarioCronograma {
+    font-size: 0.95rem;
+    min-width: 58px;
+  }
+
+  .eventoTituloCronograma {
+    font-size: 1.05rem;
+  }
+
+  .eventoPalestranteCronograma {
+    font-size: 0.75rem;
+  }
+
+  .destaqueCronograma {
+    flex: 1.15;
+    border-radius: 16px;
+  }
+
+  .destaqueTopoCronograma {
+    padding: 22px 26px 18px;
+  }
+
+  .destaqueSeloCronograma {
+    font-size: 0.75rem;
+  }
+
+  .destaqueTituloCronograma {
+    font-size: 1.6rem;
+  }
+
+  .destaqueConteudoCronograma {
+    padding: 22px 26px 26px;
+    gap: 18px;
+  }
+
+  .destaqueRotuloCronograma {
+    font-size: 0.7rem;
+  }
+
+  .destaqueDescricaoCronograma {
+    font-size: 0.95rem;
+  }
+
+  .destaqueGradeCronograma {
+    gap: 18px 14px;
+    padding-top: 18px;
+  }
+
+  .destaqueValorCronograma {
+    font-size: 0.95rem;
+  }
+
+  .destaqueLinkCronograma {
+    font-size: 0.95rem;
+  }
+}
+
+/* ── Monitores grandes (≥ 2560px, > 27 pol 4K / ultrawide) ─────────── */
+
+@media (min-width: 2560px) {
+  .wrapperCronogramaCorpo {
+    padding: 0 60px 64px;
+  }
+
+  .corpoCronograma {
+    max-width: 1600px;
+    gap: 40px;
+  }
+
+  .listaEventosCronograma {
+    max-height: 780px;
+    gap: 20px;
+  }
+
+  .eventoItemCronograma {
+    gap: 26px;
+    padding: 24px 28px;
+    border-radius: 16px;
+    border-width: 2px;
+  }
+
+  .eventoHorarioCronograma {
+    font-size: 1.5rem;
+    min-width: 90px;
+  }
+
+  .eventoTituloCronograma {
+    font-size: 1.7rem;
+  }
+
+  .eventoPalestranteCronograma {
+    font-size: 1.1rem;
+  }
+
+  .destaqueCronograma {
+    border-radius: 22px;
+    border-width: 2px;
+  }
+
+  .destaqueTopoCronograma {
+    padding: 34px 40px 28px;
+  }
+
+  .destaqueSeloCronograma {
+    font-size: 1.05rem;
+    gap: 8px;
+  }
+
+  .destaqueBolinhaCronograma {
+    width: 9px;
+    height: 9px;
+  }
+
+  .destaqueTituloCronograma {
+    font-size: 2.4rem;
+  }
+
+  .destaqueConteudoCronograma {
+    padding: 34px 40px 40px;
+    gap: 26px;
+  }
+
+  .destaqueRotuloCronograma {
+    font-size: 1.05rem;
+  }
+
+  .destaqueDescricaoCronograma {
+    font-size: 1.4rem;
+  }
+
+  .destaqueGradeCronograma {
+    gap: 26px 20px;
+    padding-top: 26px;
+  }
+
+  .destaqueValorCronograma {
+    font-size: 1.4rem;
+  }
+
+  .destaqueLinkCronograma {
+    font-size: 1.4rem;
+  }
+}

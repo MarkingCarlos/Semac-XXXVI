@@ -1,34 +1,24 @@
-import { useState } from "react";
-import "./CronogramaFiltro.css";
+import "./cronogramaFiltro.css";
 import SplitText from "./SplitText";
 
-const exemplo = [
-  {
-    titulo: "Sei lá",
-    descricao: "aaaaaaaaaaaaaaaaaaa",
-    dia: "TERÇA",
-    categoria: "IA",
-  }
-]
+const DIAS_FERIADO = ["QUARTA"];
 
-const DAYS = ["SEGUNDA", "TERÇA", "QUARTA", "QUINTA", "SEXTA"];
-const CATEGORIES = ["IA", "BIOINFORMÁTICA", "ROBÓTICA", "UI/UX", "SOFTWARE LIVRE"];
-
-// Para que a semana comece na terça
-const SEMANA_INICIO = 1;
-
-export default function CronogramaFiltro() {
-  const [selectedDay, setSelectedDay] = useState(DAYS[SEMANA_INICIO]);
-  const [selectedFilter, setSelectedFilter] = useState(null);
-
+export default function CronogramaFiltro({
+  dias,
+  categorias,
+  semanaInicio,
+  selectedDay,
+  setSelectedDay,
+  selectedFilter,
+  setSelectedFilter,
+}) {
   function handleFilterClick(category) {
-    setSelectedFilter(prev => prev === category ? null : category);
+    setSelectedFilter((prev) => (prev === category ? null : category));
   }
 
   return (
     <div className="wrapperCronograma">
       <div className="cartaoCronograma">
-
         <h1 className="tituloCronograma tituloSecao">
           <SplitText
             key={selectedDay}
@@ -46,10 +36,15 @@ export default function CronogramaFiltro() {
         </h1>
 
         <div className="linhaDiasCronograma">
-          {DAYS.map((day, idx) => {
-            const isDisabled = idx < SEMANA_INICIO;
+          {dias.map((day, idx) => {
+            const isFeriado = DIAS_FERIADO.includes(day);
+            const isDisabled = idx < semanaInicio || isFeriado;
             const isActive = day === selectedDay;
-            const cls = isDisabled ? "diaDesabilitadoCronograma" : isActive ? "diaAtivoCronograma" : "diaInativoCronograma";
+            const cls = isDisabled
+              ? "diaDesabilitadoCronograma"
+              : isActive
+              ? "diaAtivoCronograma"
+              : "diaInativoCronograma";
 
             return (
               <button
@@ -63,44 +58,30 @@ export default function CronogramaFiltro() {
           })}
         </div>
 
-        {/* <div className="divider" /> */}
-
         <div className="linhaFiltrosCronograma">
           <span className="rotuloFiltroCronograma">Filtrar:</span>
 
           <button
-            className={`botaoFiltroCronograma ${selectedFilter === null ? "filtroAtivoCronograma" : "filtroInativoCronograma"}`}
+            className={`botaoFiltroCronograma ${
+              selectedFilter === null ? "filtroAtivoCronograma" : "filtroInativoCronograma"
+            }`}
             onClick={() => setSelectedFilter(null)}
           >
             TODOS
           </button>
 
-          {CATEGORIES.map((category) => (
+          {categorias.map((category) => (
             <button
               key={category}
-              className={`botaoFiltroCronograma ${category === selectedFilter ? "filtroAtivoCronograma" : "filtroInativoCronograma"}`}
+              className={`botaoFiltroCronograma ${
+                category === selectedFilter ? "filtroAtivoCronograma" : "filtroInativoCronograma"
+              }`}
               onClick={() => handleFilterClick(category)}
             >
               {category}
             </button>
           ))}
         </div>
-
-        {/* Exemplo
-        <div className="eventos-container">
-          {eventosFiltrados.length > 0 ? (
-            eventosFiltrados.map((evento, index) => (
-              <div className="evento-card" key={index}>
-                <h2>{evento.titulo}</h2>
-                <p>{evento.descricao}</p>
-                <span>{evento.categoria}</span>
-              </div>
-            ))
-          ) : (
-            <p className="sem-eventos">Nenhum evento</p>
-          )}
-        </div> */}
-
       </div>
     </div>
   );
