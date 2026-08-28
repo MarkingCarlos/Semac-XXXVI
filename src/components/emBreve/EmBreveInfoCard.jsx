@@ -35,7 +35,7 @@ export default function EmBreveInfoCard() {
 
           {/* Cabeçalho do card */}
           <p className="rotulo rotuloLaranja">Anúncio dos palestrantes</p>
-          <p className="dataAnuncio">28 · AGOSTO · 2026 · 09H</p>
+          <p className="dataAnuncio">01 · SETEMBRO · 2026 · 09H</p>
 
           {/* Countdown regressivo */}
           <CountdownBreve tamanho="lg" />
