@@ -16,6 +16,22 @@ export default function ModalSucessoPresenca({ participante, onFechar }) {
                     {participante.infoAdicional && (
                         <div className="infoParticipanteModalSucessoPresenca">{participante.infoAdicional}</div>
                     )}
+                    {participante.xpGanho != null && (
+                        <div
+                            className={
+                                participante.xpGanho > 0
+                                    ? 'xpModalSucessoPresenca'
+                                    : 'xpModalSucessoPresenca xpZeradoModalSucessoPresenca'
+                            }
+                        >
+                            {participante.xpGanho > 0 ? `+${participante.xpGanho} XP` : 'Sem XP (atraso)'}
+                            {participante.atrasoMinutos > 0 && (
+                                <span className="atrasoModalSucessoPresenca">
+                                    {' '}· atraso de {participante.atrasoMinutos} min
+                                </span>
+                            )}
+                        </div>
+                    )}
                     <button type="button" onClick={onFechar} className="botaoProximoModalSucessoPresenca">
                         LER PRÓXIMO
                     </button>

@@ -6,9 +6,13 @@
    /admin; minicursos ele escolhe aqui, respeitando lotação e um por
    faixa de horário (ver data/apiEventosParticipantes.js).
 
-   Nível/XP, ranking, conquistas, perfil e certificados seguem em
-   mockParticipante.js — nenhum endpoint expõe esses dados ainda. Nome e
-   e-mail exibidos são os reais, tirados da sessão. */
+   Nível/XP é real, creditado no check-in (ver
+   InscricaoEventoService.marcarPresente no backend) e lido de
+   data/apiPerfilParticipante.js. Ranking (pódio/lista completa),
+   conquistas, perfil (curso/inscrição/minicursos/presenças) e
+   certificados seguem em mockParticipante.js — nenhum endpoint expõe
+   esses outros dados ainda. Nome e e-mail exibidos são os reais, tirados
+   da sessão. */
 
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { useLocation } from 'wouter';
@@ -28,6 +32,7 @@ import {
     inscreverEmMinicurso,
     cancelarMinicurso,
 } from './data/apiEventosParticipantes.js';
+import { buscarNivelParticipante } from './data/apiPerfilParticipante.js';
 import {
     montarDiasDaSemana,
     diaInicialAgenda,
@@ -40,7 +45,6 @@ import {
 } from './data/agendaParticipantes.js';
 
 import {
-    nivelMockParticipante,
     conquistasMockParticipante,
     rankingMockParticipante,
     comoGanharXpMockParticipante,
@@ -84,6 +88,8 @@ export default function Participantes() {
     const [meusEventos, setMeusEventos] = useState([]);
     const [carregandoAgenda, setCarregandoAgenda] = useState(true);
     const [erroAgenda, setErroAgenda] = useState('');
+    const [nivel, setNivel] = useState(null);
+    const [carregandoNivel, setCarregandoNivel] = useState(true);
     const [diaSelecionado, setDiaSelecionado] = useState('');
     const [erroMinicurso, setErroMinicurso] = useState('');
     const [minicursoEmEspera, setMinicursoEmEspera] = useState(null);
@@ -100,6 +106,17 @@ export default function Participantes() {
         carregarAgenda()
             .catch((erro) => { if (ativo) setErroAgenda(erro.message); })
             .finally(() => { if (ativo) setCarregandoAgenda(false); });
+        return () => { ativo = false; };
+    }, []);
+
+    /* Nível/xp real, separado da agenda: uma falha aqui não deve impedir
+       a programação de aparecer, e vice-versa. */
+    useEffect(() => {
+        let ativo = true;
+        buscarNivelParticipante()
+            .then((valor) => { if (ativo) setNivel(valor); })
+            .catch(() => {})
+            .finally(() => { if (ativo) setCarregandoNivel(false); });
         return () => { ativo = false; };
     }, []);
 
@@ -247,7 +264,8 @@ export default function Participantes() {
 
                 {abaAtiva === 'inicio' && (
                     <SecaoInicioParticipantes
-                        nivel={nivelMockParticipante}
+                        nivel={nivel}
+                        carregandoNivel={carregandoNivel}
                         atividadeAtual={atividadeAtual}
                         atividadeSeguinte={atividadeSeguinte}
                         meuDia={meuDia}
@@ -280,7 +298,7 @@ export default function Participantes() {
                         nome={nomeParticipante}
                         email={emailParticipante}
                         iniciais={iniciais}
-                        nivel={nivelMockParticipante}
+                        nivel={nivel}
                         perfil={perfilMockParticipante}
                         conquistas={conquistasMockParticipante}
                         certificados={certificadosMockParticipante}

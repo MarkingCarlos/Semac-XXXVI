@@ -4,11 +4,14 @@
    participantes.css) — o mesmo JSX é reorganizado em coluna única ou
    coluna principal + barra lateral.
 
-   Nível, ranking e conquistas ainda vêm de mockParticipante.js; o resto
-   é a programação real da API. */
+   Nível/XP é real (data/apiPerfilParticipante.js). `nivel` vem null
+   enquanto carrega ou quando a pessoa ainda não tem xp atribuído (ex.:
+   inscrição não confirmada). Ranking (lista ao lado) e conquistas ainda
+   vêm de mockParticipante.js; o resto é a programação real da API. */
 
 export default function SecaoInicioParticipantes({
     nivel,
+    carregandoNivel,
     atividadeAtual,
     atividadeSeguinte,
     meuDia,
@@ -27,37 +30,53 @@ export default function SecaoInicioParticipantes({
         <div className="grelhaInicioParticipantes">
             <div className="colunaPrincipalInicioParticipantes">
                 <div className="cardNivelInicioParticipantes">
-                    <div className="linhaTopoCardNivelInicioParticipantes">
-                        <div className="blocoNivelCardNivelInicioParticipantes">
-                            <span className="rotuloNivelCardNivelInicioParticipantes">NÍVEL {nivel.numero}</span>
-                            <span className="nomeNivelCardNivelInicioParticipantes">{nivel.nome}</span>
-                        </div>
-                        <div className="blocoXpCardNivelInicioParticipantes">
-                            <span className="valorXpCardNivelInicioParticipantes">{nivel.xp} XP</span>
-                            <span className="posicaoCardNivelInicioParticipantes">
-                                {nivel.posicaoRanking}º de {nivel.totalParticipantesRanking} no ranking
-                            </span>
-                        </div>
-                    </div>
-                    <div className="progressoCardNivelInicioParticipantes">
-                        <div className="trilhoProgressoCardNivelInicioParticipantes">
-                            <div
-                                className="preenchimentoProgressoCardNivelInicioParticipantes"
-                                style={{ width: `${Math.min(100, (nivel.xp / (nivel.xp + nivel.xpFaltanteProximoNivel)) * 100)}%` }}
-                            />
-                        </div>
-                        <span className="textoProgressoCardNivelInicioParticipantes">
-                            Faltam <strong>{nivel.xpFaltanteProximoNivel} XP</strong> para {nivel.proximoNivelNome} — cada presença vale {nivel.xpPorPresenca} XP
-                        </span>
-                    </div>
-                    <div className="botoesCardNivelInicioParticipantes">
-                        <button type="button" className="botaoQrCardNivelInicioParticipantes" onClick={onAbrirQr}>
-                            MEU QR CODE
-                        </button>
-                        <button type="button" className="botaoRankingCardNivelInicioParticipantes" onClick={onVerRanking}>
-                            RANKING
-                        </button>
-                    </div>
+                    {!nivel ? (
+                        <p className="avisoVazioAgendaParticipantes">
+                            {carregandoNivel ? 'Carregando seu nível…' : 'Seu nível aparece aqui assim que a inscrição for confirmada.'}
+                        </p>
+                    ) : (
+                        <>
+                            <div className="linhaTopoCardNivelInicioParticipantes">
+                                <div className="blocoNivelCardNivelInicioParticipantes">
+                                    <span className="rotuloNivelCardNivelInicioParticipantes">SEU NÍVEL</span>
+                                    <span className="nomeNivelCardNivelInicioParticipantes">{nivel.nome}</span>
+                                </div>
+                                <div className="blocoXpCardNivelInicioParticipantes">
+                                    <span className="valorXpCardNivelInicioParticipantes">{nivel.xp} XP</span>
+                                    {nivel.posicaoRanking != null && (
+                                        <span className="posicaoCardNivelInicioParticipantes">
+                                            {nivel.posicaoRanking}º de {nivel.totalParticipantesRanking} no ranking
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="progressoCardNivelInicioParticipantes">
+                                <div className="trilhoProgressoCardNivelInicioParticipantes">
+                                    <div
+                                        className="preenchimentoProgressoCardNivelInicioParticipantes"
+                                        style={{
+                                            width: nivel.proximoNivelNome
+                                                ? `${Math.min(100, (nivel.xp / (nivel.xp + nivel.xpFaltanteProximoNivel)) * 100)}%`
+                                                : '100%',
+                                        }}
+                                    />
+                                </div>
+                                <span className="textoProgressoCardNivelInicioParticipantes">
+                                    {nivel.proximoNivelNome
+                                        ? <>Faltam <strong>{nivel.xpFaltanteProximoNivel} XP</strong> para {nivel.proximoNivelNome}</>
+                                        : 'Você alcançou o nível máximo!'}
+                                </span>
+                            </div>
+                            <div className="botoesCardNivelInicioParticipantes">
+                                <button type="button" className="botaoQrCardNivelInicioParticipantes" onClick={onAbrirQr}>
+                                    MEU QR CODE
+                                </button>
+                                <button type="button" className="botaoRankingCardNivelInicioParticipantes" onClick={onVerRanking}>
+                                    RANKING
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 <div className="blocoAconteceAgoraInicioParticipantes">

@@ -1,21 +1,13 @@
-/* Dados mockados da Área do Participante (XP, ranking, conquistas,
-   perfil e certificados). Nenhum endpoint de API expõe isso ainda — nome
-   e e-mail reais vêm da sessão (ver Participantes.jsx).
+/* Dados mockados da Área do Participante (ranking, conquistas, perfil e
+   certificados). Nenhum endpoint de API expõe isso ainda — nome e e-mail
+   reais vêm da sessão (ver Participantes.jsx).
+
+   Nível/xp NÃO está mais aqui: é real, vindo de
+   data/apiPerfilParticipante.js (GET /api/pessoa/me).
 
    Programação, agenda e minicursos NÃO estão aqui: são reais, vindos de
    /api/evento e /api/evento/meus (ver data/apiEventosParticipantes.js e
    data/agendaParticipantes.js). */
-
-export const nivelMockParticipante = {
-    numero: 2,
-    nome: 'PRATA',
-    xp: 150,
-    xpFaltanteProximoNivel: 150,
-    proximoNivelNome: 'OURO',
-    xpPorPresenca: 50,
-    posicaoRanking: 12,
-    totalParticipantesRanking: 214,
-};
 
 export const conquistasMockParticipante = [
     { id: 'chegou-cedo', rotulo: 'CHEGOU CEDO', valorExibido: '1º', desbloqueada: true, cor: 'amarelo' },

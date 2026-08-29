@@ -1,5 +1,7 @@
 /* Aba "Perfil": dados da inscrição, conquistas e certificados (quando
-   liberados). Nome/e-mail vêm da sessão real; o resto ainda é mock. */
+   liberados). Nome/e-mail e nível/xp vêm de dados reais; o resto (curso,
+   inscrição, conquistas, certificados) ainda é mock. `nivel` vem null
+   enquanto carrega ou quando a pessoa ainda não tem xp atribuído. */
 
 export default function SecaoPerfilParticipantes({
     nome,
@@ -20,7 +22,9 @@ export default function SecaoPerfilParticipantes({
                 <div className="identidadeSecaoPerfilParticipantes">
                     <span className="nomeSecaoPerfilParticipantes">{nome.toUpperCase()}</span>
                     <span className="cursoSecaoPerfilParticipantes">{perfil.curso}</span>
-                    <span className="seloNivelSecaoPerfilParticipantes">NÍVEL {nivel.numero} · {nivel.nome}</span>
+                    {nivel && (
+                        <span className="seloNivelSecaoPerfilParticipantes">{nivel.nome} · {nivel.xp} XP</span>
+                    )}
                 </div>
             </div>
 
