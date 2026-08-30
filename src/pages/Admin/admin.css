@@ -650,21 +650,29 @@
     gap: 10px;
 }
 
-.botaoConfirmarParticipanteAdmin {
-    padding: 0.4rem 0.9rem;
-    border-radius: 8px;
-    border: 1px solid rgba(231, 152, 57, 0.5);
-    background-color: rgba(231, 152, 57, 0.15);
+/* Ícone de "Confirmar" (participante pendente) — mesmo tamanho/formato de
+   .botaoAcaoLinhaFinancas, mas em âmbar para se destacar como ação principal
+   da linha. */
+.botaoConfirmarLinhaParticipantesAdmin {
     color: var(--AmareloAuxApoio);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.78rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.15s, border-color 0.15s;
+    border-color: rgba(231, 152, 57, 0.5);
+    background-color: rgba(231, 152, 57, 0.15);
 }
-.botaoConfirmarParticipanteAdmin:hover {
+.botaoConfirmarLinhaParticipantesAdmin:hover {
     background-color: rgba(231, 152, 57, 0.28);
     border-color: var(--AmareloAuxApoio);
+}
+
+/* .botaoAcaoLinhaFinancas (financas.css) não define estado desabilitado —
+   só é feito por página no módulo financeiro (fornecedores.css). O /admin
+   não importa esse arquivo, então replica aqui para os ícones de ação. */
+.botaoAcaoLinhaFinancas:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+.botaoAcaoLinhaFinancas:disabled:hover {
+    color: rgba(252, 248, 245, 0.6);
+    border-color: rgba(252, 248, 245, 0.15);
 }
 
 .badgeConfirmadoParticipantesAdmin {
@@ -775,24 +783,6 @@
     align-items: center;
     gap: 0.75rem;
     white-space: nowrap;
-}
-.botaoDesativarComissaoAdmin {
-    background: none;
-    border: none;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-decoration: underline;
-    color: rgba(237, 236, 236, 0.55);
-    cursor: pointer;
-    padding: 0;
-    transition: color 0.15s;
-}
-.botaoDesativarComissaoAdmin:hover { color: var(--Branco); }
-.botaoDesativarComissaoAdmin:disabled { cursor: default; opacity: 0.6; }
-.botaoDesativarConfirmandoComissaoAdmin {
-    color: #e9897b;
-    text-decoration: underline;
 }
 
 .opcaoRoleModalParticipantesAdmin {

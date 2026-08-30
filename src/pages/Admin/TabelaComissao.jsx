@@ -9,10 +9,11 @@
 // Props:
 //   comissao    — array de membros da comissão vindo do Admin pai
 //   aoAtualizar — (membroAtualizado) => void, após alterar função/ativo
+//   aoExcluir   — (id) => void, após excluir definitivamente
 
 import { useState, useMemo } from 'preact/hooks'
 import { createPortal } from 'preact/compat'
-import { atribuirRole, definirAtivo } from './data/apiParticipantes.js'
+import { atribuirRole, definirAtivo, excluirParticipante } from './data/apiParticipantes.js'
 
 // Papéis de comissão e seus rótulos amigáveis (espelham o enum Role).
 const PAPEIS_COMISSAO = [
@@ -37,10 +38,11 @@ function textoCamiseta(camisetas) {
     return lista.length > 1 ? `${texto} +${lista.length - 1}` : texto
 }
 
-export default function TabelaComissao({ comissao, aoAtualizar }) {
+export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
     const [busca, setBusca] = useState('')
     const [membroEmEdicao, setMembroEmEdicao] = useState(null)
     const [idConfirmandoDesativar, setIdConfirmandoDesativar] = useState(null)
+    const [idConfirmandoExcluir, setIdConfirmandoExcluir] = useState(null)
     const [idProcessando, setIdProcessando] = useState(null)
     const [erroAcao, setErroAcao] = useState('')
 
@@ -68,6 +70,26 @@ export default function TabelaComissao({ comissao, aoAtualizar }) {
         } finally {
             setIdProcessando(null)
             setIdConfirmandoDesativar(null)
+        }
+    }
+
+    // Exclusão definitiva: exige 2 cliques, como o desativar. O backend
+    // recusa (409) quem organizou sorteios ou mexeu no caixa do Fundunesp.
+    async function excluir(membro) {
+        if (idConfirmandoExcluir !== membro.id) {
+            setIdConfirmandoExcluir(membro.id)
+            return
+        }
+        setErroAcao('')
+        setIdProcessando(membro.id)
+        try {
+            await excluirParticipante(membro.id)
+            aoExcluir(membro.id)
+        } catch (e) {
+            setErroAcao(e.message)
+        } finally {
+            setIdProcessando(null)
+            setIdConfirmandoExcluir(null)
         }
     }
 
@@ -138,17 +160,48 @@ export default function TabelaComissao({ comissao, aoAtualizar }) {
                                         </button>
                                         <button
                                             type="button"
-                                            class={`botaoDesativarComissaoAdmin ${idConfirmandoDesativar === membro.id ? 'botaoDesativarConfirmandoComissaoAdmin' : ''}`}
+                                            class={`botaoAcaoLinhaFinancas ${idConfirmandoDesativar === membro.id ? 'botaoConfirmarExclusaoFinancas' : ''}`}
                                             disabled={idProcessando === membro.id}
-                                            onClick={() => alternarAtivo(membro)}
-                                        >
-                                            {idProcessando === membro.id
-                                                ? '...'
-                                                : !membro.ativo
+                                            aria-label={
+                                                !membro.ativo
+                                                    ? `Reativar ${membro.nome}`
+                                                    : idConfirmandoDesativar === membro.id
+                                                        ? `Confirmar desativação de ${membro.nome}`
+                                                        : `Desativar ${membro.nome}`
+                                            }
+                                            title={
+                                                !membro.ativo
                                                     ? 'Reativar'
                                                     : idConfirmandoDesativar === membro.id
-                                                        ? 'Confirmar'
-                                                        : 'Desativar'}
+                                                        ? 'Clique novamente para confirmar'
+                                                        : 'Desativar'
+                                            }
+                                            onClick={() => alternarAtivo(membro)}
+                                        >
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M12 2v10" />
+                                                <path d="M18.4 6.6a9 9 0 1 1-12.77.04" />
+                                            </svg>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class={`botaoAcaoLinhaFinancas ${idConfirmandoExcluir === membro.id ? 'botaoConfirmarExclusaoFinancas' : ''}`}
+                                            disabled={idProcessando === membro.id}
+                                            aria-label={
+                                                idConfirmandoExcluir === membro.id
+                                                    ? `Confirmar exclusão de ${membro.nome}`
+                                                    : `Excluir ${membro.nome}`
+                                            }
+                                            title={
+                                                idConfirmandoExcluir === membro.id
+                                                    ? 'Clique novamente para confirmar'
+                                                    : 'Excluir'
+                                            }
+                                            onClick={() => excluir(membro)}
+                                        >
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                            </svg>
                                         </button>
                                     </div>
                                 </td>

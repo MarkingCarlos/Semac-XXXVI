@@ -8,10 +8,11 @@
 // Props:
 //   participantes — array completo de participantes vindo do Admin pai
 //   aoConfirmar   — (idPessoa, novoRole) => void, chamado após confirmar
+//   aoExcluir     — (id) => void, chamado após excluir definitivamente
 
 import { useState, useMemo } from 'preact/hooks'
 import { createPortal } from 'preact/compat'
-import { atribuirRole } from './data/apiParticipantes.js'
+import { atribuirRole, excluirParticipante } from './data/apiParticipantes.js'
 import { listarTiposInscricao } from './data/apiTipoInscricao.js'
 import { formatarCentavos } from '../Financas/utils/moeda.js'
 
@@ -48,7 +49,7 @@ function textoCamiseta(camisetas) {
 }
 
 // Linha individual da tabela para um participante.
-function LinhaParticipante({ participante, aoAbrirConfirmacao }) {
+function LinhaParticipante({ participante, aoAbrirConfirmacao, aoExcluir, confirmandoExcluir, processandoExcluir }) {
     const confirmado = participante.role === 'PARTICIPANTE'
 
     return (
@@ -69,38 +70,63 @@ function LinhaParticipante({ participante, aoAbrirConfirmacao }) {
                 {participante.nivel ? `${participante.nivel.nome} (${participante.xp ?? 0} xp)` : '—'}
             </td>
             <td class="celulaAcaoParticipantesAdmin">
-                {confirmado ? (
-                    <div class="grupoAcaoConfirmadoAdmin">
-                        <span class="badgeConfirmadoParticipantesAdmin">Confirmado</span>
+                <div class="grupoAcoesLinhaFinancas">
+                    {confirmado ? (
+                        <div class="grupoAcaoConfirmadoAdmin">
+                            <span class="badgeConfirmadoParticipantesAdmin">Confirmado</span>
+                            <button
+                                type="button"
+                                class="botaoAcaoLinhaFinancas"
+                                aria-label={`Alterar ${participante.nome}`}
+                                title="Alterar"
+                                onClick={() => aoAbrirConfirmacao(participante)}
+                            >
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                </svg>
+                            </button>
+                        </div>
+                    ) : (
                         <button
                             type="button"
-                            class="botaoAcaoLinhaFinancas"
-                            aria-label={`Alterar ${participante.nome}`}
-                            title="Alterar"
+                            class="botaoAcaoLinhaFinancas botaoConfirmarLinhaParticipantesAdmin"
+                            aria-label={`Confirmar inscrição de ${participante.nome}`}
+                            title="Confirmar"
                             onClick={() => aoAbrirConfirmacao(participante)}
                         >
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                <polyline points="20 6 9 17 4 12" />
                             </svg>
                         </button>
-                    </div>
-                ) : (
+                    )}
                     <button
                         type="button"
-                        class="botaoConfirmarParticipanteAdmin"
-                        onClick={() => aoAbrirConfirmacao(participante)}
+                        class={`botaoAcaoLinhaFinancas ${confirmandoExcluir ? 'botaoConfirmarExclusaoFinancas' : ''}`}
+                        disabled={processandoExcluir}
+                        aria-label={
+                            confirmandoExcluir
+                                ? `Confirmar exclusão de ${participante.nome}`
+                                : `Excluir ${participante.nome}`
+                        }
+                        title={confirmandoExcluir ? 'Clique novamente para confirmar' : 'Excluir'}
+                        onClick={() => aoExcluir(participante)}
                     >
-                        Confirmar
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                        </svg>
                     </button>
-                )}
+                </div>
             </td>
         </tr>
     )
 }
 
-export default function TabelaParticipantes({ participantes, aoConfirmar }) {
+export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcluir }) {
     const [busca, setBusca] = useState('')
     const [participanteEmConfirmacao, setParticipanteEmConfirmacao] = useState(null)
+    const [idConfirmandoExcluir, setIdConfirmandoExcluir] = useState(null)
+    const [idProcessandoExcluir, setIdProcessandoExcluir] = useState(null)
+    const [erroExclusao, setErroExclusao] = useState('')
 
     const filtrados = useMemo(() =>
         participantes.filter(participante =>
@@ -109,6 +135,26 @@ export default function TabelaParticipantes({ participantes, aoConfirmar }) {
         ),
         [participantes, busca]
     )
+
+    // Exclusão definitiva: exige 2 cliques. O backend recusa (409) quem
+    // organizou sorteios ou mexeu no caixa do Fundunesp.
+    async function excluir(participante) {
+        if (idConfirmandoExcluir !== participante.id) {
+            setIdConfirmandoExcluir(participante.id)
+            return
+        }
+        setErroExclusao('')
+        setIdProcessandoExcluir(participante.id)
+        try {
+            await excluirParticipante(participante.id)
+            aoExcluir(participante.id)
+        } catch (e) {
+            setErroExclusao(e.message)
+        } finally {
+            setIdProcessandoExcluir(null)
+            setIdConfirmandoExcluir(null)
+        }
+    }
 
     return (
         <div class="conteinerTabelaAdmin">
@@ -122,6 +168,8 @@ export default function TabelaParticipantes({ participantes, aoConfirmar }) {
                     onInput={e => setBusca(e.target.value)}
                 />
             </div>
+
+            {erroExclusao && <p class="avisoErroModalParticipantesAdmin">{erroExclusao}</p>}
 
             <div class="scrollTabelaAdmin">
                 <table class="tabelaAdmin">
@@ -148,6 +196,9 @@ export default function TabelaParticipantes({ participantes, aoConfirmar }) {
                                 key={participante.id}
                                 participante={participante}
                                 aoAbrirConfirmacao={setParticipanteEmConfirmacao}
+                                aoExcluir={excluir}
+                                confirmandoExcluir={idConfirmandoExcluir === participante.id}
+                                processandoExcluir={idProcessandoExcluir === participante.id}
                             />
                         ))}
                     </tbody>

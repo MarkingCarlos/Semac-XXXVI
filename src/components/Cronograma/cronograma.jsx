@@ -111,8 +111,12 @@ export default function Cronograma({ eventos, selectedDay, selectedFilter }) {
             </div>
 
             <div className="destaqueConteudoCronograma">
-              <span className="destaqueRotuloCronograma">Sobre a palestra</span>
-              <p className="destaqueDescricaoCronograma">{eventoSelecionado.descricao}</p>
+              {eventoSelecionado.descricao && (
+                <>
+                  <span className="destaqueRotuloCronograma">Sobre a palestra</span>
+                  <p className="destaqueDescricaoCronograma">{eventoSelecionado.descricao}</p>
+                </>
+              )}
 
               <div className="destaqueGradeCronograma">
                 <div className="destaqueCampoCronograma">

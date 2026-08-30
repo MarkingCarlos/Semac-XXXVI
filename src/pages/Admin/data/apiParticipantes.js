@@ -55,3 +55,17 @@ export async function definirAtivo(id, ativo) {
     }
     return resposta.json();
 }
+
+/* Exclui definitivamente um participante ou membro da comissão. Ação
+   irreversível: o backend recusa (409) quem organizou sorteios ou fez
+   ajustes no caixa do Fundunesp, para não perder esse histórico. */
+export async function excluirParticipante(id) {
+    const resposta = await apiFetch(`${API_URL}/api/pessoa/${id}`, {
+        method: 'DELETE',
+        headers: cabecalhosAuth(),
+    });
+    if (!resposta.ok) {
+        const corpo = await resposta.json().catch(() => null);
+        throw new Error(corpo?.mensagem || 'Não foi possível excluir esta pessoa.');
+    }
+}

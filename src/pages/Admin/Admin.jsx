@@ -142,6 +142,13 @@ export default function Admin() {
         );
     }
 
+    // Remove a pessoa da lista local após a exclusão definitiva confirmada
+    // pela API (ambas listas, pois o id só pode estar em uma delas).
+    function aoExcluirPessoa(id) {
+        setParticipantes((prev) => prev.filter((p) => p.id !== id));
+        setComissao((prev) => prev.filter((m) => m.id !== id));
+    }
+
     return (
         <div className="paginaAdmin">
             <AdminHeader />
@@ -181,6 +188,7 @@ export default function Admin() {
                                     <TabelaParticipantes
                                         participantes={participantes}
                                         aoConfirmar={aoConfirmarParticipante}
+                                        aoExcluir={aoExcluirPessoa}
                                     />
                                 </>
                             )}
@@ -202,7 +210,7 @@ export default function Admin() {
                             {carregandoComissao ? (
                                 <p className="estadoCarregandoParticipantesAdmin">Carregando comissão...</p>
                             ) : (
-                                <TabelaComissao comissao={comissao} aoAtualizar={aoAtualizarComissao} />
+                                <TabelaComissao comissao={comissao} aoAtualizar={aoAtualizarComissao} aoExcluir={aoExcluirPessoa} />
                             )}
                         </div>
                     )}
