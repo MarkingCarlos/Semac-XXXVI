@@ -37,41 +37,38 @@
 }
 
 .botaoDiaCronograma {
+  font-family: var(--fonteTituloBungee), sans-serif;
   font-size: 0.65rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
+  font-weight: 400;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
-  padding: 5px 11px;
-  border-radius: 7px;
+  padding: 8px 18px;
+  border-radius: 15px;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition: filter 0.15s, background 0.15s, color 0.15s, border-color 0.15s;
   outline: none;
-}
-
-.botaoDiaCronograma.diaDesabilitadoCronograma {
-  background: transparent;
-  color: rgba(255, 255, 255, 0.22);
-  border: 1.5px solid rgba(255, 255, 255, 0.18);
-  cursor: default;
-  pointer-events: none;
+  border: 1.5px solid transparent;
 }
 
 .botaoDiaCronograma.diaInativoCronograma {
-  background: transparent;
-  color: rgba(255, 255, 255, 0.7);
-  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.75);
+  border-color: rgba(255, 255, 255, 0.22);
 }
 
 .botaoDiaCronograma.diaInativoCronograma:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.85);
+  filter: brightness(1.12);
+  border-color: rgba(255, 255, 255, 0.45);
 }
 
 .botaoDiaCronograma.diaAtivoCronograma {
   background: var(--AmareloAuxApoio);
-  color: #ffffff;
-  border: 1.5px solid var(--Branco);
+  color: var(--vermelhoAuxDiretoria);
+  border-color: var(--AmareloAuxApoio);
+}
+
+.botaoDiaCronograma.diaAtivoCronograma:hover {
+  filter: brightness(1.12);
 }
 
 .linhaFiltrosCronograma {
@@ -83,44 +80,44 @@
 }
 
 .rotuloFiltroCronograma {
-  font-family: Montserrat;
-  font-size: 0.58rem;
-  font-weight: 600;
-  letter-spacing: 0.2em;
+  font-family: var(--fonteTituloBungee), sans-serif;
+  font-size: 0.55rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.72);
   margin-right: 4px;
 }
 
 .botaoFiltroCronograma {
-  font-size: 0.58rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
+  font-family: var(--fonteTituloBungee), sans-serif;
+  font-size: 0.52rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  padding: 3px 9px;
-  border-radius: 7px;
+  padding: 4px 10px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition: filter 0.15s, background 0.15s, color 0.15s;
   outline: none;
+  border: 1px solid transparent;
 }
 
 .botaoFiltroCronograma.filtroInativoCronograma {
-  background: transparent;
-  color: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.75);
+  border-color: rgba(255, 255, 255, 0.28);
 }
 
 .botaoFiltroCronograma.filtroInativoCronograma:hover {
-  background: rgba(255, 255, 255, 0.07);
-  color: #fff;
+  filter: brightness(1.15);
   border-color: rgba(255, 255, 255, 0.5);
 }
 
 .botaoFiltroCronograma.filtroAtivoCronograma {
-  background: #ffffff;
-  color: var(--vermelhoDiretoria);
-  border: 1px solid var(--Branco);
-  font-weight: 700;
+  background: var(--vermelhoDiretoria);
+  color: var(--Branco);
+  border-color: transparent;
 }
 
 /* ── Monitores normais (≥ 1024px, até 2559px) ────────────────────────── */
@@ -146,9 +143,8 @@
   }
 
   .botaoDiaCronograma {
-    font-size: 1.2rem;
-    padding: 8px 22px;
-    border-radius: 9px;
+    font-size: 1rem;
+    padding: 12px 26px;
   }
 
   .linhaFiltrosCronograma {
@@ -156,13 +152,12 @@
   }
 
   .rotuloFiltroCronograma {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
   }
 
   .botaoFiltroCronograma {
-    font-size: 1rem;
-    padding: 5px 14px;
-    border-radius: 8px;
+    font-size: 0.75rem;
+    padding: 7px 14px;
   }
 }
 
@@ -189,19 +184,9 @@
   }
 
   .botaoDiaCronograma {
-    font-size: 2rem;
-    padding: 14px 38px;
-    border-radius: 14px;
-    border-width: 2px;
-  }
-
-  .botaoDiaCronograma.diaDesabilitadoCronograma,
-  .botaoDiaCronograma.diaInativoCronograma {
-    border-width: 2px;
-  }
-
-  .botaoDiaCronograma.diaAtivoCronograma {
-    border-width: 2px;
+    font-size: 1.6rem;
+    padding: 18px 46px;
+    border-width: 2.5px;
   }
 
   .linhaFiltrosCronograma {
@@ -214,8 +199,8 @@
   }
 
   .botaoFiltroCronograma {
-    font-size: 1rem;
-    padding: 8px 24px;
-    border-radius: 12px;
+    font-size: 1.1rem;
+    padding: 10px 22px;
+    border-radius: 10px;
   }
 }

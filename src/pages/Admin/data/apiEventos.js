@@ -3,8 +3,9 @@
 
    A interface trabalha com data e horários separados (`data`, `horaInicio`,
    `horaFim`); o backend usa `dataHoraInicio`/`dataHoraFim` (DATETIME). A
-   combinação/separação acontece aqui, nas bordas. O tipo é uma FK
-   (`tipoEventoId`); guardamos também o rótulo (`tipo`) para exibição. */
+   combinação/separação acontece aqui, nas bordas. Tipo e trilha são FKs
+   (`tipoEventoId`/`trilhaId`); guardamos também o rótulo (`tipo`/
+   `trilhaNome`) para exibição. Trilha é opcional (nem todo evento tem). */
 
 import { apiFetch } from '../../../lib/apiFetch.js';
 import { cabecalhosAuth } from '../../../auth/sessao.js';
@@ -30,6 +31,8 @@ function deResposta(evento) {
         tipo: evento.tipoEvento ? evento.tipoEvento.nome : '',
         local: evento.local || '',
         descricao: evento.descricao || '',
+        trilhaId: evento.trilha ? evento.trilha.id : null,
+        trilhaNome: evento.trilha ? evento.trilha.nome : '',
         data: inicio.data,
         horaInicio: inicio.hora,
         horaFim: fim.hora,
@@ -49,6 +52,7 @@ function paraRequisicao(evento) {
         tipoEventoId: Number(evento.tipoEventoId),
         local: evento.local || null,
         descricao: evento.descricao || null,
+        trilhaId: evento.trilhaId ? Number(evento.trilhaId) : null,
         dataHoraInicio: `${evento.data}T${evento.horaInicio}:00`,
         dataHoraFim: `${evento.data}T${evento.horaFim}:00`,
         capacidadeMaxima: Number(evento.capacidadeMaxima),

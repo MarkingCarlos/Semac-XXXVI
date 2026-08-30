@@ -1,0 +1,12 @@
+.carregandoProgramacao,
+.erroProgramacao {
+  text-align: center;
+  padding: 60px 20px;
+  font-family: var(--fonteCorpoMontserrat), sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.erroProgramacao {
+  color: var(--AmareloAuxApoio);
+}

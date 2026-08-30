@@ -8,17 +8,24 @@ import {
     atualizarTipoEvento,
     excluirTipoEvento,
 } from '../data/apiTipoEvento.js';
+import {
+    listarTrilhas,
+    criarTrilha,
+    atualizarTrilha,
+    excluirTrilha,
+} from '../data/apiTrilha.js';
 
 /* Conteúdo — eventos (tabela `evento`) com seu tipo (`tipo_evento`) e
    palestrantes (`palestrante`, vínculo recriado a cada gravação). A lista
    de eventos é carregada e mantida pelo Admin; aqui ficam o formulário de
-   evento e o painel de gerenciamento dos tipos de evento. */
+   evento e os painéis de gerenciamento dos tipos de evento e das trilhas. */
 
 const EVENTO_VAZIO = {
     nome: '',
     tipoEventoId: '',
     local: '',
     descricao: '',
+    trilhaId: '',
     data: '',
     horaInicio: '',
     horaFim: '',
@@ -27,6 +34,7 @@ const EVENTO_VAZIO = {
 };
 
 const TIPO_VAZIO = { nome: '', pontos: '', exigeInscricao: false };
+const TRILHA_VAZIA = { nome: '' };
 
 /* 'YYYY-MM-DD' → 'DD/MM/YYYY' (sem Date para não sofrer com fuso) */
 function formatarDataEvento(data) {
@@ -55,11 +63,23 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
     const [salvandoTipo, setSalvandoTipo] = useState(false);
     const [erroTipo, setErroTipo] = useState('');
 
+    // Trilhas (seletor do formulário + painel de gerenciamento)
+    const [trilhas, setTrilhas] = useState([]);
+    const [painelTrilhasAberto, setPainelTrilhasAberto] = useState(false);
+    const [formularioTrilha, setFormularioTrilha] = useState(TRILHA_VAZIA);
+    const [idTrilhaEmEdicao, setIdTrilhaEmEdicao] = useState(null);
+    const [idTrilhaConfirmandoExclusao, setIdTrilhaConfirmandoExclusao] = useState(null);
+    const [salvandoTrilha, setSalvandoTrilha] = useState(false);
+    const [erroTrilha, setErroTrilha] = useState('');
+
     useEffect(() => {
         let ativo = true;
         listarTiposEvento()
             .then((lista) => { if (ativo) setTiposEvento(lista); })
             .catch(() => { if (ativo) setErroTipo('Não foi possível carregar os tipos de evento.'); });
+        listarTrilhas()
+            .then((lista) => { if (ativo) setTrilhas(lista); })
+            .catch(() => { if (ativo) setErroTrilha('Não foi possível carregar as trilhas.'); });
         return () => { ativo = false; };
     }, []);
 
@@ -80,6 +100,7 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
             ...EVENTO_VAZIO,
             ...evento,
             tipoEventoId: evento.tipoEventoId ?? '',
+            trilhaId: evento.trilhaId ?? '',
             palestrantes: (evento.palestrantes || []).map((p) => ({ ...p })),
         });
         setIdEmEdicao(evento.id);
@@ -201,6 +222,61 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
         }
     };
 
+    // ── Painel de trilhas ──────────────────────────────────────────
+    const abrirPainelTrilhas = () => {
+        setFormularioTrilha(TRILHA_VAZIA);
+        setIdTrilhaEmEdicao(null);
+        setErroTrilha('');
+        setPainelTrilhasAberto(true);
+    };
+
+    const editarTrilha = (trilha) => {
+        setFormularioTrilha({ nome: trilha.nome });
+        setIdTrilhaEmEdicao(trilha.id);
+        setErroTrilha('');
+    };
+
+    const cancelarEdicaoTrilha = () => {
+        setFormularioTrilha(TRILHA_VAZIA);
+        setIdTrilhaEmEdicao(null);
+    };
+
+    const salvarTrilha = async (evento) => {
+        evento.preventDefault();
+        setSalvandoTrilha(true);
+        setErroTrilha('');
+        try {
+            if (idTrilhaEmEdicao !== null) {
+                const atualizada = await atualizarTrilha(idTrilhaEmEdicao, formularioTrilha);
+                setTrilhas(trilhas.map((t) => (t.id === idTrilhaEmEdicao ? atualizada : t)));
+            } else {
+                const criada = await criarTrilha(formularioTrilha);
+                setTrilhas([...trilhas, criada]);
+            }
+            cancelarEdicaoTrilha();
+        } catch (e) {
+            setErroTrilha(e.message);
+        } finally {
+            setSalvandoTrilha(false);
+        }
+    };
+
+    const removerTrilha = async (id) => {
+        if (idTrilhaConfirmandoExclusao !== id) {
+            setIdTrilhaConfirmandoExclusao(id);
+            return;
+        }
+        setErroTrilha('');
+        try {
+            await excluirTrilha(id);
+            setTrilhas(trilhas.filter((t) => t.id !== id));
+        } catch (e) {
+            setErroTrilha(e.message);
+        } finally {
+            setIdTrilhaConfirmandoExclusao(null);
+        }
+    };
+
     return (
         <div className="conteudoConteudoAdmin">
             <header className="cabecalhoSecaoFinancas">
@@ -229,6 +305,9 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                     <button type="button" className="botaoFantasmaFinancas" onClick={abrirPainelTipos}>
                         Tipos de evento
                     </button>
+                    <button type="button" className="botaoFantasmaFinancas" onClick={abrirPainelTrilhas}>
+                        Trilhas
+                    </button>
                     <button type="button" className="botaoPrimarioFinancas" onClick={abrirNovoEvento}>
                         + Novo evento
                     </button>
@@ -244,6 +323,7 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                         <tr>
                             <th>Evento</th>
                             <th>Tipo</th>
+                            <th>Trilha</th>
                             <th>Local</th>
                             <th>Data / horário</th>
                             <th>Capacidade</th>
@@ -254,12 +334,12 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                     <tbody>
                         {carregando && (
                             <tr>
-                                <td colSpan={7} className="celulaVaziaFinancas">Carregando eventos…</td>
+                                <td colSpan={8} className="celulaVaziaFinancas">Carregando eventos…</td>
                             </tr>
                         )}
                         {!carregando && eventosFiltrados.length === 0 && (
                             <tr>
-                                <td colSpan={7} className="celulaVaziaFinancas">
+                                <td colSpan={8} className="celulaVaziaFinancas">
                                     {filtro.trim()
                                         ? 'Nenhum evento encontrado para esse filtro.'
                                         : 'Nenhum evento cadastrado ainda.'}
@@ -274,6 +354,7 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                                         ? <span className="seloTipoConteudo">{evento.tipo}</span>
                                         : '—'}
                                 </td>
+                                <td>{evento.trilhaNome || '—'}</td>
                                 <td className="celulaLocalConteudo">{evento.local || '—'}</td>
                                 <td className="celulaDataFinancas">
                                     {formatarDataEvento(evento.data)}
@@ -373,6 +454,21 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                             value={formulario.local}
                             onInput={(e) => setFormulario({ ...formulario, local: e.currentTarget.value })}
                         />
+                    </div>
+
+                    <div className="campoFormularioFinancas">
+                        <label className="rotuloCampoFinancas" htmlFor="campoTrilhaEvento">Trilha</label>
+                        <select
+                            id="campoTrilhaEvento"
+                            className="entradaFormularioFinancas"
+                            value={formulario.trilhaId}
+                            onChange={(e) => setFormulario({ ...formulario, trilhaId: e.currentTarget.value })}
+                        >
+                            <option value="">Nenhuma</option>
+                            {trilhas.map((trilha) => (
+                                <option key={trilha.id} value={trilha.id}>{trilha.nome}</option>
+                            ))}
+                        </select>
                     </div>
 
                     <div className="campoFormularioFinancas">
@@ -624,6 +720,94 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                                 : idTipoEmEdicao !== null
                                     ? 'Salvar tipo'
                                     : 'Adicionar tipo'}
+                        </button>
+                    </div>
+                </form>
+            </PainelLateral>
+
+            {/* ── Painel: gerenciamento das trilhas ─────────────────── */}
+            <PainelLateral
+                aberto={painelTrilhasAberto}
+                titulo="Trilhas"
+                aoFechar={() => setPainelTrilhasAberto(false)}
+            >
+                {erroTrilha && <p className="avisoErroAdmin" role="alert">{erroTrilha}</p>}
+
+                <ul className="listaTiposEventoConteudo">
+                    {trilhas.length === 0 && (
+                        <p className="avisoVazioPalestrantesConteudo">Nenhuma trilha cadastrada ainda.</p>
+                    )}
+                    {trilhas.map((trilha) => (
+                        <li key={trilha.id} className="itemTipoEventoConteudo">
+                            <div className="infoTipoEventoConteudo">
+                                <span className="nomeTipoEventoConteudo">{trilha.nome}</span>
+                            </div>
+                            <div className="grupoAcoesLinhaFinancas">
+                                <button
+                                    type="button"
+                                    className="botaoAcaoLinhaFinancas"
+                                    aria-label={`Editar trilha ${trilha.nome}`}
+                                    title="Editar"
+                                    onClick={() => editarTrilha(trilha)}
+                                >
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                    </svg>
+                                </button>
+                                <button
+                                    type="button"
+                                    className={
+                                        idTrilhaConfirmandoExclusao === trilha.id
+                                            ? 'botaoAcaoLinhaFinancas botaoConfirmarExclusaoFinancas'
+                                            : 'botaoAcaoLinhaFinancas'
+                                    }
+                                    aria-label={
+                                        idTrilhaConfirmandoExclusao === trilha.id
+                                            ? `Confirmar exclusão da trilha ${trilha.nome}`
+                                            : `Excluir trilha ${trilha.nome}`
+                                    }
+                                    title={
+                                        idTrilhaConfirmandoExclusao === trilha.id
+                                            ? 'Clique novamente para confirmar'
+                                            : 'Excluir'
+                                    }
+                                    onClick={() => removerTrilha(trilha.id)}
+                                >
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+
+                <form className="formularioFinancas" onSubmit={salvarTrilha}>
+                    <div className="campoFormularioFinancas">
+                        <label className="rotuloCampoFinancas" htmlFor="campoNomeTrilha">
+                            {idTrilhaEmEdicao !== null ? 'Editando trilha' : 'Nova trilha'} *
+                        </label>
+                        <input
+                            id="campoNomeTrilha"
+                            className="entradaFormularioFinancas"
+                            placeholder="Nome da trilha"
+                            required
+                            value={formularioTrilha.nome}
+                            onInput={(e) => setFormularioTrilha({ ...formularioTrilha, nome: e.currentTarget.value })}
+                        />
+                    </div>
+                    <div className="rodapeFormularioFinancas">
+                        {idTrilhaEmEdicao !== null && (
+                            <button type="button" className="botaoFantasmaFinancas" onClick={cancelarEdicaoTrilha}>
+                                Cancelar edição
+                            </button>
+                        )}
+                        <button type="submit" className="botaoPrimarioFinancas" disabled={salvandoTrilha}>
+                            {salvandoTrilha
+                                ? 'Salvando…'
+                                : idTrilhaEmEdicao !== null
+                                    ? 'Salvar trilha'
+                                    : 'Adicionar trilha'}
                         </button>
                     </div>
                 </form>
