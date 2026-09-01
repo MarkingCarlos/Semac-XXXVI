@@ -30,12 +30,12 @@ export function App() {
         <div>
             <Sobre/>
         </div>
-        {/*<div>*/}
-        {/*    <CronogramaBreve/>*/}
-        {/*</div>*/}
         <div>
-            <Programacao/>
+            <CronogramaBreve/>
         </div>
+        {/*<div>*/}
+        {/*    <Programacao/>*/}
+        {/*</div>*/}
         <div>
             <PatrocinadoresCompacto/>
         </div>
