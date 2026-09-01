@@ -132,7 +132,7 @@
 .sheetCronograma {
   position: fixed;
   inset: 0;
-  z-index: 60;
+  z-index: 1001;
   display: flex;
   flex-direction: column;
   background: rgba(58, 4, 27, 0.9);
