@@ -14,9 +14,7 @@
   gap: 14px;
 }
 
-.corpoCronograma::-webkit-scrollbar {
-  display: none;
-}
+
 
 .listaEventosCronograma {
   display: flex;
@@ -24,7 +22,12 @@
   gap: 10px;
   max-height: 340px;
   overflow-y: auto;
-  padding-right: 2px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.listaEventosCronograma::-webkit-scrollbar {
+  display: none;
 }
 
 .eventoItemCronograma {
