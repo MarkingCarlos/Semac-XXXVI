@@ -127,11 +127,9 @@
   inset: 0;
   z-index: 60;
   display: flex;
-  align-items: flex-start;
-  background: rgba(58, 4, 27, 0.88);
-  padding: 16px;
+  flex-direction: column;
+  background: rgba(58, 4, 27, 0.9);
   box-sizing: border-box;
-  overflow-y: auto;
 }
 
 .destaqueCronograma {
@@ -143,6 +141,24 @@
   width: 100%;
 }
 
+.sheetCronograma .destaqueCronograma {
+  flex: none;
+  width: 95%;
+  max-width: 420px;
+  margin: auto;
+  max-height: 88vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 25px;
+  box-shadow: 2px 8px 28px rgba(0, 0, 0, 0.5);
+  animation: entradaSheetTopoCronograma 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes entradaSheetTopoCronograma {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
 .botaoFecharDestaqueCronograma {
   position: absolute;
   top: 14px;
@@ -150,7 +166,7 @@
   z-index: 2;
   width: 34px;
   height: 34px;
-  border-radius: 9999px;
+  border-radius: 25px;
   border: none;
   background: rgba(115, 8, 53, 0.9);
   color: var(--Branco, #fcf8f5);
@@ -158,12 +174,20 @@
   font-size: 15px;
   line-height: 1;
   cursor: pointer;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  transition: background 0.25s;
 }
 
 .destaqueTopoCronograma {
   background: var(--AmareloAuxApoio, #f2a63f);
   color: var(--vermelhoAuxDiretoria, #730835);
   text-align: left;
+}
+
+.sheetCronograma .destaqueTopoCronograma {
+  padding: 20px 22px 22px;
 }
 
 .destaqueSeloCronograma {
@@ -174,6 +198,10 @@
   font-size: 0.55rem;
   letter-spacing: 0.06em;
   margin-bottom: 6px;
+}
+
+.sheetCronograma .destaqueSeloCronograma {
+  font-size: 0.7rem;
 }
 
 .destaqueBolinhaCronograma {
@@ -203,12 +231,22 @@
   color: var(--Branco);
 }
 
+.sheetCronograma .destaqueTituloCronograma {
+  font-size: clamp(1.2rem, 1.5vw, 1.625rem);
+  padding-right: 40px;
+}
+
 .destaqueConteudoCronograma {
   background-color: var(--vermelhoAuxDiretoria);
   padding: 12px 14px 14px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.sheetCronograma .destaqueConteudoCronograma {
+  padding: 20px 20px 24px;
+  gap: 15px;
 }
 
 .destaqueRotuloCronograma {
@@ -222,17 +260,31 @@
   text-align: left;
 }
 
+.sheetCronograma .destaqueRotuloCronograma {
+  font-size: 0.8rem;
+}
+
 .destaqueDescricaoCronograma {
+  text-align: justify;
   font-family: "Montserrat", sans-serif;
   font-size: 0.68rem;
   line-height: 1.5;
   color: var(--Branco, #ffffff);
 }
 
+.sheetCronograma .destaqueDescricaoCronograma {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
 .destaqueGradeCronograma {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
+}
+
+.sheetCronograma .destaqueGradeCronograma {
+  gap: 10px;
 }
 
 .destaqueCampoCronograma {
@@ -246,10 +298,18 @@
   padding: 8px 10px 9px;
 }
 
+.sheetCronograma .destaqueCampoCronograma {
+  padding: 11px 13px 13px;
+}
+
 .destaqueValorCronograma {
   font-size: 0.68rem;
   font-weight: 700;
   color: var(--Branco, #ffffff);
+}
+
+.sheetCronograma .destaqueValorCronograma {
+  font-size: 0.85rem;
 }
 
 .destaqueValorHorarioCronograma {
@@ -270,6 +330,10 @@
   transition: color 0.2s;
 }
 
+.sheetCronograma .destaqueLinkCronograma {
+  font-size: 0.85rem;
+}
+
 .destaqueLinkCronograma svg {
   flex-shrink: 0;
   position: relative;
@@ -278,6 +342,24 @@
 
 .destaqueLinkCronograma:hover {
   color: var(--AmareloAuxApoio, #f2a63f);
+}
+
+.botaoVoltarProgramacaoCronograma {
+  width: 100%;
+  min-height: 46px;
+  border: none;
+  border-radius: 8px;
+  background: var(--AmareloAuxApoio, #f2a63f);
+  color: var(--vermelhoAuxDiretoria, #730835);
+  font-family: var(--fonteTituloBungee), sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.botaoVoltarProgramacaoCronograma:hover {
+  filter: brightness(1.08);
 }
 
 /* ── Monitores normais (≥ 1024px, até 2559px) ────────────────────────── */

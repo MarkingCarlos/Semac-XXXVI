@@ -28,7 +28,7 @@ const CONSULTA_MOBILE_CRONOGRAMA = "(max-width: 1023px)";
 
 /**
  * Card com o detalhe da palestra selecionada. No desktop fica inline, ao
- * lado da lista; no mobile vira um sheet fullscreen com botão de fechar.
+ * lado da lista; no mobile vira um sheet que desce do topo da tela.
  */
 function DestaqueCronograma({
   envolverEmSheet,
@@ -38,7 +38,10 @@ function DestaqueCronograma({
   ehProximoSelecionado,
 }) {
   const cartao = (
-    <div className="destaqueCronograma">
+    <div
+      className="destaqueCronograma"
+      onClick={envolverEmSheet ? (e) => e.stopPropagation() : undefined}
+    >
       {envolverEmSheet && (
         <button
           type="button"
@@ -99,11 +102,27 @@ function DestaqueCronograma({
             </a>
           </div>
         </div>
+
+        {envolverEmSheet && (
+          <button
+            type="button"
+            className="botaoVoltarProgramacaoCronograma"
+            onClick={aoFechar}
+          >
+            Voltar à programação
+          </button>
+        )}
       </div>
     </div>
   );
 
-  return envolverEmSheet ? <div className="sheetCronograma">{cartao}</div> : cartao;
+  if (!envolverEmSheet) return cartao;
+
+  return (
+    <div className="sheetCronograma" onClick={aoFechar}>
+      {cartao}
+    </div>
+  );
 }
 
 /**
@@ -123,7 +142,7 @@ export default function Cronograma({ eventos, selectedDay, selectedFilter }) {
     return () => clearInterval(intervalo);
   }, []);
 
-  // No mobile o detalhe da palestra vira um sheet fullscreen em vez de ficar inline
+  // No mobile o detalhe da palestra vira um sheet que desce do topo em vez de ficar inline
   useEffect(() => {
     const consulta = window.matchMedia(CONSULTA_MOBILE_CRONOGRAMA);
     const aoMudar = (e) => {
