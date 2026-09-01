@@ -1,7 +1,7 @@
 /* =================================================================
    relatorioCamisetas.css — relatório "Camisetas" da aba Relatórios
    Cartões (reaproveitam .cartaoEstatisticaAdmin/.numeroEstatisticaAdmin/
-   .rotuloEstatisticaAdmin de admin.css) + gráfico de rosca em SVG puro
+   .rotuloEstatisticaAdmin de admin.css) + gráfico de rosca via Recharts
    + tabela de apoio (reaproveita .tabelaAdmin/.conteinerTabelaAdmin).
    ================================================================= */
 
@@ -25,6 +25,41 @@
 .cartaoDadasRelatorioCamisetas .numeroEstatisticaAdmin { color: var(--AmareloAuxApoio); }
 .cartaoAvulsasRelatorioCamisetas .numeroEstatisticaAdmin { color: var(--rosaMarketing); }
 
+/* ── Por perfil / Financeiro ────────────────────────────────── */
+
+.blocoSecaoRelatorioCamisetas {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.blocoSecaoRelatorioCamisetas > .tituloTabelaAdmin {
+    padding: 0 0.25rem;
+}
+
+.gradeComissaoParticipantesRelatorioCamisetas,
+.gradeFinanceiroRelatorioCamisetas {
+    display: grid;
+    gap: 1rem;
+}
+
+.gradeComissaoParticipantesRelatorioCamisetas { grid-template-columns: repeat(2, 1fr); }
+.gradeFinanceiroRelatorioCamisetas { grid-template-columns: repeat(3, 1fr); }
+
+@media (max-width: 640px) {
+    .gradeComissaoParticipantesRelatorioCamisetas,
+    .gradeFinanceiroRelatorioCamisetas {
+        grid-template-columns: 1fr;
+    }
+}
+
+.cartaoComissaoRelatorioCamisetas .numeroEstatisticaAdmin { color: var(--rosaMarketing); }
+.cartaoParticipantesRelatorioCamisetas .numeroEstatisticaAdmin { color: var(--AmareloAuxApoio); }
+
+.cartaoReceitaRelatorioCamisetas .numeroEstatisticaAdmin { color: var(--Branco); }
+.cartaoCustoRelatorioCamisetas .numeroEstatisticaAdmin { color: var(--rosaMarketing); }
+.cartaoLucroRelatorioCamisetas .numeroEstatisticaAdmin { color: var(--AmareloAuxApoio); }
+
 /* ── Gráfico de rosca ────────────────────────────────────────── */
 
 .blocoGraficoRelatorioCamisetas {
@@ -42,21 +77,37 @@
     flex-shrink: 0;
 }
 
-.trilhoDonutRelatorioCamisetas {
-    fill: none;
-    stroke: rgba(255, 255, 255, 0.08);
-    stroke-width: 20;
+.trilhoDonutRelatorioCamisetas { fill: rgba(255, 255, 255, 0.08); }
+
+/* Paradas dos gradientes das fatias — mesma cor da legenda, do opaco no
+   topo pro semitransparente na base, pra dar profundidade sem sair da
+   paleta do projeto. */
+.paradaInicioDadasRelatorioCamisetas { stop-color: var(--AmareloAuxApoio); stop-opacity: 1; }
+.paradaFimDadasRelatorioCamisetas { stop-color: var(--AmareloAuxApoio); stop-opacity: 0.55; }
+.paradaInicioAvulsasRelatorioCamisetas { stop-color: var(--rosaMarketing); stop-opacity: 1; }
+.paradaFimAvulsasRelatorioCamisetas { stop-color: var(--rosaMarketing); stop-opacity: 0.55; }
+
+.svgDonutRelatorioCamisetas path {
+    transition: filter 0.2s ease;
+    cursor: pointer;
 }
 
-.fatiaDadasDonutRelatorioCamisetas,
-.fatiaAvulsasDonutRelatorioCamisetas {
-    fill: none;
-    stroke-width: 20;
-    transition: stroke-dasharray 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+.svgDonutRelatorioCamisetas path:hover {
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.35));
 }
 
-.fatiaDadasDonutRelatorioCamisetas { stroke: var(--AmareloAuxApoio); }
-.fatiaAvulsasDonutRelatorioCamisetas { stroke: var(--rosaMarketing); }
+.tooltipDonutRelatorioCamisetas {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: rgba(11, 11, 11, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 0.4rem 0.7rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    color: var(--Branco);
+}
 
 .numeroCentralDonutRelatorioCamisetas {
     font-family: 'Bungee', sans-serif;
@@ -89,6 +140,19 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 0.88rem;
     color: rgba(237, 236, 236, 0.85);
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Ao passar o mouse num item, os outros escurecem — reforça a ligação
+   com a fatia correspondente, que também aumenta (activeShape do Pie). */
+.legendaDonutRelatorioCamisetas:hover .itemLegendaRelatorioCamisetas {
+    opacity: 0.5;
+}
+
+.legendaDonutRelatorioCamisetas:hover .itemLegendaRelatorioCamisetas:hover {
+    opacity: 1;
+    transform: translateX(2px);
 }
 
 .itemLegendaRelatorioCamisetas strong {

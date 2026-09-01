@@ -1,0 +1,104 @@
+/* =================================================================
+   modalEditarCamisetas.css — editor de camisetas (ModalEditarCamisetas)
+   Reaproveita a casca de modal de admin.css (overlayModalParticipantesAdmin,
+   modalConfirmarParticipantesAdmin, tituloModalParticipantesAdmin etc.).
+   ================================================================= */
+
+.modalEditarCamisetasAdmin {
+    max-width: 560px;
+}
+
+.listaLinhasCamisetasAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+}
+
+.vazioLinhasCamisetasAdmin {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.82rem;
+    color: rgba(237, 236, 236, 0.55);
+    margin: 0;
+}
+
+.linhaCamisetaAdmin {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.selectLinhaCamisetaAdmin {
+    flex: 1 1 120px;
+    min-width: 100px;
+    padding: 0.5rem 0.6rem;
+}
+
+.selectTamanhoLinhaCamisetaAdmin {
+    flex: 0 1 80px;
+    min-width: 70px;
+}
+
+.alternarAvulsaLinhaCamisetaAdmin {
+    display: flex;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 9px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.botaoAlternarAvulsaAdmin {
+    padding: 0.5rem 0.7rem;
+    background: none;
+    border: none;
+    color: rgba(237, 236, 236, 0.6);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.botaoAlternarAvulsaAdmin:disabled { cursor: default; }
+.botaoAlternarAvulsaAdmin + .botaoAlternarAvulsaAdmin { border-left: 1px solid rgba(255, 255, 255, 0.18); }
+
+.botaoAlternarAvulsaAtivoAdmin {
+    background-color: var(--AmareloAuxApoio);
+    color: #1a0810;
+}
+
+.botaoRemoverLinhaCamisetaAdmin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: none;
+    color: rgba(237, 236, 236, 0.6);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: border-color 0.15s, color 0.15s;
+}
+.botaoRemoverLinhaCamisetaAdmin:hover { color: #f3b8c2; border-color: rgba(231, 96, 120, 0.4); }
+.botaoRemoverLinhaCamisetaAdmin:disabled { opacity: 0.4; cursor: default; }
+
+.botaoAdicionarLinhaCamisetaAdmin {
+    margin-top: 0.75rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 9px;
+    border: 1px dashed rgba(255, 255, 255, 0.25);
+    background: none;
+    color: rgba(237, 236, 236, 0.75);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+}
+.botaoAdicionarLinhaCamisetaAdmin:hover { color: var(--Branco); border-color: rgba(255, 255, 255, 0.45); }
+.botaoAdicionarLinhaCamisetaAdmin:disabled { opacity: 0.4; cursor: default; }

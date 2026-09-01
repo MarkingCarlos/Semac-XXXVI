@@ -56,6 +56,22 @@ export async function definirAtivo(id, ativo) {
     return resposta.json();
 }
 
+/* Substitui a lista inteira de camisetas da pessoa (replace-all) — editor
+   restrito a DIRETOR_SITE/PRESIDENTE (mesmo acesso do financeiro). Cada
+   item é { modelo, tamanho, avulsa }. Retorna a pessoa atualizada. */
+export async function atualizarCamisetas(id, camisetas) {
+    const resposta = await apiFetch(`${API_URL}/api/pessoa/${id}/camisetas`, {
+        method: 'PUT',
+        headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ camisetas }),
+    });
+    if (!resposta.ok) {
+        const corpo = await resposta.json().catch(() => null);
+        throw new Error(corpo?.mensagem || 'Não foi possível salvar as camisetas.');
+    }
+    return resposta.json();
+}
+
 /* Exclui definitivamente um participante ou membro da comissão. Ação
    irreversível: o backend recusa (409) quem organizou sorteios ou fez
    ajustes no caixa do Fundunesp, para não perder esse histórico. */

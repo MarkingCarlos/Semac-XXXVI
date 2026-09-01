@@ -15,6 +15,8 @@ import { createPortal } from 'preact/compat'
 import { atribuirRole, excluirParticipante } from './data/apiParticipantes.js'
 import { listarTiposInscricao } from './data/apiTipoInscricao.js'
 import { formatarCentavos } from '../Financas/utils/moeda.js'
+import { temAcessoFinanceiro } from '../../auth/sessao.js'
+import ModalEditarCamisetas from './ModalEditarCamisetas.jsx'
 
 const ANO_ATUAL = new Date().getFullYear()
 
@@ -50,7 +52,10 @@ function textoCamiseta(camisetas) {
 }
 
 // Linha individual da tabela para um participante.
-function LinhaParticipante({ participante, aoAbrirConfirmacao, aoExcluir, confirmandoExcluir, processandoExcluir }) {
+function LinhaParticipante({
+    participante, aoAbrirConfirmacao, aoExcluir, confirmandoExcluir, processandoExcluir,
+    podeEditarCamisetas, aoEditarCamisetas,
+}) {
     const confirmado = participante.role === 'PARTICIPANTE'
 
     return (
@@ -100,6 +105,19 @@ function LinhaParticipante({ participante, aoAbrirConfirmacao, aoExcluir, confir
                             </svg>
                         </button>
                     )}
+                    {podeEditarCamisetas && (
+                        <button
+                            type="button"
+                            class="botaoAcaoLinhaFinancas"
+                            aria-label={`Editar camisetas de ${participante.nome}`}
+                            title="Editar camisetas"
+                            onClick={() => aoEditarCamisetas(participante)}
+                        >
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z" />
+                            </svg>
+                        </button>
+                    )}
                     <button
                         type="button"
                         class={`botaoAcaoLinhaFinancas ${confirmandoExcluir ? 'botaoConfirmarExclusaoFinancas' : ''}`}
@@ -125,9 +143,11 @@ function LinhaParticipante({ participante, aoAbrirConfirmacao, aoExcluir, confir
 export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcluir }) {
     const [busca, setBusca] = useState('')
     const [participanteEmConfirmacao, setParticipanteEmConfirmacao] = useState(null)
+    const [participanteEditandoCamisetas, setParticipanteEditandoCamisetas] = useState(null)
     const [idConfirmandoExcluir, setIdConfirmandoExcluir] = useState(null)
     const [idProcessandoExcluir, setIdProcessandoExcluir] = useState(null)
     const [erroExclusao, setErroExclusao] = useState('')
+    const podeEditarCamisetas = temAcessoFinanceiro()
 
     const filtrados = useMemo(() =>
         participantes.filter(participante =>
@@ -200,6 +220,8 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
                                 aoExcluir={excluir}
                                 confirmandoExcluir={idConfirmandoExcluir === participante.id}
                                 processandoExcluir={idProcessandoExcluir === participante.id}
+                                podeEditarCamisetas={podeEditarCamisetas}
+                                aoEditarCamisetas={setParticipanteEditandoCamisetas}
                             />
                         ))}
                     </tbody>
@@ -209,6 +231,14 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
             <div class="rodapeTabelaAdmin">
                 Exibindo {filtrados.length} de {participantes.length} participantes
             </div>
+
+            {participanteEditandoCamisetas && (
+                <ModalEditarCamisetas
+                    pessoa={participanteEditandoCamisetas}
+                    aoFechar={() => setParticipanteEditandoCamisetas(null)}
+                    aoAtualizado={aoConfirmar}
+                />
+            )}
 
             {participanteEmConfirmacao && (
                 <ModalConfirmarParticipante

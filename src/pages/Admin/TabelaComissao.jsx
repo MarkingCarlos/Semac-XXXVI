@@ -14,6 +14,8 @@
 import { useState, useMemo } from 'preact/hooks'
 import { createPortal } from 'preact/compat'
 import { atribuirRole, definirAtivo, excluirParticipante } from './data/apiParticipantes.js'
+import { temAcessoFinanceiro } from '../../auth/sessao.js'
+import ModalEditarCamisetas from './ModalEditarCamisetas.jsx'
 
 // Papéis de comissão e seus rótulos amigáveis (espelham o enum Role).
 const PAPEIS_COMISSAO = [
@@ -42,10 +44,12 @@ function textoCamiseta(camisetas) {
 export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
     const [busca, setBusca] = useState('')
     const [membroEmEdicao, setMembroEmEdicao] = useState(null)
+    const [membroEditandoCamisetas, setMembroEditandoCamisetas] = useState(null)
     const [idConfirmandoDesativar, setIdConfirmandoDesativar] = useState(null)
     const [idConfirmandoExcluir, setIdConfirmandoExcluir] = useState(null)
     const [idProcessando, setIdProcessando] = useState(null)
     const [erroAcao, setErroAcao] = useState('')
+    const podeEditarCamisetas = temAcessoFinanceiro()
 
     const filtrados = useMemo(() =>
         comissao.filter(membro =>
@@ -159,6 +163,19 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
                                                 <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
                                             </svg>
                                         </button>
+                                        {podeEditarCamisetas && (
+                                            <button
+                                                type="button"
+                                                class="botaoAcaoLinhaFinancas"
+                                                aria-label={`Editar camisetas de ${membro.nome}`}
+                                                title="Editar camisetas"
+                                                onClick={() => setMembroEditandoCamisetas(membro)}
+                                            >
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z" />
+                                                </svg>
+                                            </button>
+                                        )}
                                         <button
                                             type="button"
                                             class={`botaoAcaoLinhaFinancas ${idConfirmandoDesativar === membro.id ? 'botaoConfirmarExclusaoFinancas' : ''}`}
@@ -215,6 +232,14 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
             <div class="rodapeTabelaAdmin">
                 Exibindo {filtrados.length} de {comissao.length} membros
             </div>
+
+            {membroEditandoCamisetas && (
+                <ModalEditarCamisetas
+                    pessoa={membroEditandoCamisetas}
+                    aoFechar={() => setMembroEditandoCamisetas(null)}
+                    aoAtualizado={aoAtualizar}
+                />
+            )}
 
             {membroEmEdicao && (
                 <ModalAlterarFuncao
