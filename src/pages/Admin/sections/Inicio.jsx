@@ -25,6 +25,7 @@ const LABEL_FUNCAO = {
     DIRETOR_CONTEUDO: 'Diretor(a) de Conteúdo',
     DIRETOR_PATROCINIO: 'Diretor(a) de Patrocínio',
     DIRETOR_APOIO: 'Diretor(a) de Apoio',
+    DIRETOR_MARKETING: 'Diretor(a) de Marketing',
     PRESIDENTE: 'Presidente',
 };
 

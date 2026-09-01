@@ -122,11 +122,42 @@
   padding: 20px 8px;
 }
 
+.sheetCronograma {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: flex-start;
+  background: rgba(58, 4, 27, 0.88);
+  padding: 16px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
 .destaqueCronograma {
+  position: relative;
   background: var(--vermelhoDiretoria);
   box-shadow: 2px 4px 28px rgba(0, 0, 0, 0.8);
   border-radius: 25px;
   overflow: hidden;
+  width: 100%;
+}
+
+.botaoFecharDestaqueCronograma {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  border: none;
+  background: rgba(115, 8, 53, 0.9);
+  color: var(--Branco, #fcf8f5);
+  font-family: var(--fonteTituloBungee), sans-serif;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .destaqueTopoCronograma {

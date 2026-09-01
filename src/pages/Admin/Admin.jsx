@@ -25,6 +25,7 @@ import Doacoes from './sections/Doacoes.jsx';
 import Conteudo from './sections/Conteudo.jsx';
 import Brindes from './sections/Brindes.jsx';
 import InformacoesSemac from './sections/InformacoesSemac.jsx';
+import Relatorios from './sections/Relatorios.jsx';
 import StatsGrid from './StatsGrid.jsx';
 import TabelaParticipantes from './TabelaParticipantes.jsx';
 import TabelaComissao from './TabelaComissao.jsx';
@@ -38,6 +39,7 @@ const SECOES = [
     { id: 'doacoes', rotulo: 'Doações',papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
     { id: 'conteudo', rotulo: 'Conteúdo', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO']  },
     { id: 'brindes', rotulo: 'Brindes' },
+    { id: 'relatorios', rotulo: 'Relatórios' },
     { id: 'participantes', rotulo: 'Participantes', papeis: ['DIRETOR_SITE', 'PRESIDENTE']  },
     { id: 'comissao', rotulo: 'Comissão',papeis: ['DIRETOR_SITE', 'PRESIDENTE']  },
     { id: 'informacoes', rotulo: 'Informações SEMAC', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
@@ -167,6 +169,7 @@ export default function Admin() {
                         />
                     )}
                     {secaoAtiva === 'brindes' && <Brindes />}
+                    {secaoAtiva === 'relatorios' && <Relatorios />}
                     {secaoAtiva === 'participantes' && (
                         <div className="conteudoParticipantesAdmin">
                             <header className="cabecalhoSecaoFinancas">

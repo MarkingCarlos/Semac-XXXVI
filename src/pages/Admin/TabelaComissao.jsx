@@ -22,6 +22,7 @@ const PAPEIS_COMISSAO = [
     { valor: 'DIRETOR_CONTEUDO',   rotulo: 'Diretor(a) de Conteúdo' },
     { valor: 'DIRETOR_PATROCINIO', rotulo: 'Diretor(a) de Patrocínio' },
     { valor: 'DIRETOR_APOIO',      rotulo: 'Diretor(a) de Apoio' },
+    { valor: 'DIRETOR_MARKETING',  rotulo: 'Diretor(a) de Marketing' },
     { valor: 'PRESIDENTE',         rotulo: 'Presidente' },
 ]
 const ROTULO_ROLE = Object.fromEntries(PAPEIS_COMISSAO.map(p => [p.valor, p.rotulo]))

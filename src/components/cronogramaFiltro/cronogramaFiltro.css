@@ -31,9 +31,17 @@
 .linhaDiasCronograma {
   display: flex;
   gap: 6px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  margin: 0 -16px 10px;
+  padding: 0 16px;
+}
+
+.linhaDiasCronograma::-webkit-scrollbar {
+  display: none;
 }
 
 .botaoDiaCronograma {
@@ -48,6 +56,7 @@
   transition: filter 0.15s, background 0.15s, color 0.15s, border-color 0.15s;
   outline: none;
   border: 1.5px solid transparent;
+  flex: none;
 }
 
 .botaoDiaCronograma.diaInativoCronograma {
@@ -138,8 +147,12 @@
   }
 
   .linhaDiasCronograma {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    justify-content: center;
     gap: 12px;
-    margin-bottom: 18px;
+    margin: 0 0 18px;
+    padding: 0;
   }
 
   .botaoDiaCronograma {

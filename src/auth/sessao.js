@@ -14,7 +14,7 @@ const CHAVE_SESSAO = 'semacSessao';
 const PAPEIS_FINANCEIRO = ['DIRETOR_SITE', 'PRESIDENTE'];
 
 /* Papéis com acesso ao módulo de administração (/admin). */
-const PAPEIS_ADMIN = ['MEMBRO', 'DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_SITE', 'PRESIDENTE'];
+const PAPEIS_ADMIN = ['MEMBRO', 'DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'];
 
 /* Papel com acesso à área do participante (/participantes) — atribuído
    pelo admin quando a inscrição é confirmada (ver apiParticipantes.js). */

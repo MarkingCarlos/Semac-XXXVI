@@ -1,0 +1,106 @@
+/* =================================================================
+   relatorioCamisetas.css — relatório "Camisetas" da aba Relatórios
+   Cartões (reaproveitam .cartaoEstatisticaAdmin/.numeroEstatisticaAdmin/
+   .rotuloEstatisticaAdmin de admin.css) + gráfico de rosca em SVG puro
+   + tabela de apoio (reaproveita .tabelaAdmin/.conteinerTabelaAdmin).
+   ================================================================= */
+
+.conteudoRelatorioCamisetas {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.gradeCartoesRelatorioCamisetas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 640px) {
+    .gradeCartoesRelatorioCamisetas { grid-template-columns: 1fr; }
+}
+
+.cartaoTotalRelatorioCamisetas .numeroEstatisticaAdmin { color: var(--Branco); }
+.cartaoDadasRelatorioCamisetas .numeroEstatisticaAdmin { color: var(--AmareloAuxApoio); }
+.cartaoAvulsasRelatorioCamisetas .numeroEstatisticaAdmin { color: var(--rosaMarketing); }
+
+/* ── Gráfico de rosca ────────────────────────────────────────── */
+
+.blocoGraficoRelatorioCamisetas {
+    padding: 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+}
+
+.svgDonutRelatorioCamisetas {
+    width: 180px;
+    height: 180px;
+    flex-shrink: 0;
+}
+
+.trilhoDonutRelatorioCamisetas {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.08);
+    stroke-width: 20;
+}
+
+.fatiaDadasDonutRelatorioCamisetas,
+.fatiaAvulsasDonutRelatorioCamisetas {
+    fill: none;
+    stroke-width: 20;
+    transition: stroke-dasharray 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fatiaDadasDonutRelatorioCamisetas { stroke: var(--AmareloAuxApoio); }
+.fatiaAvulsasDonutRelatorioCamisetas { stroke: var(--rosaMarketing); }
+
+.numeroCentralDonutRelatorioCamisetas {
+    font-family: 'Bungee', sans-serif;
+    font-size: 2rem;
+    fill: var(--Branco);
+}
+
+.rotuloCentralDonutRelatorioCamisetas {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    fill: rgba(237, 236, 236, 0.5);
+}
+
+.legendaDonutRelatorioCamisetas {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.itemLegendaRelatorioCamisetas {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.88rem;
+    color: rgba(237, 236, 236, 0.85);
+}
+
+.itemLegendaRelatorioCamisetas strong {
+    color: var(--Branco);
+}
+
+.marcadorLegendaRelatorioCamisetas {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.marcadorDadasRelatorioCamisetas { background-color: var(--AmareloAuxApoio); }
+.marcadorAvulsasRelatorioCamisetas { background-color: var(--rosaMarketing); }

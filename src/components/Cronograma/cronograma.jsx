@@ -23,18 +23,116 @@ function getRotuloEvento(status, ehProximo) {
   return "ENCERRADO";
 }
 
+// Mesmo breakpoint usado no CSS do módulo (mobile-first, vira desktop em 1024px)
+const CONSULTA_MOBILE_CRONOGRAMA = "(max-width: 1023px)";
+
+/**
+ * Card com o detalhe da palestra selecionada. No desktop fica inline, ao
+ * lado da lista; no mobile vira um sheet fullscreen com botão de fechar.
+ */
+function DestaqueCronograma({
+  envolverEmSheet,
+  aoFechar,
+  eventoSelecionado,
+  statusSelecionado,
+  ehProximoSelecionado,
+}) {
+  const cartao = (
+    <div className="destaqueCronograma">
+      {envolverEmSheet && (
+        <button
+          type="button"
+          className="botaoFecharDestaqueCronograma"
+          aria-label="Fechar"
+          onClick={aoFechar}
+        >
+          ×
+        </button>
+      )}
+      <div className="destaqueTopoCronograma">
+        <span className="destaqueSeloCronograma">
+          <span
+            className={`destaqueBolinhaCronograma ${
+              statusSelecionado === "agora" ? "destaqueBolinhaAoVivoCronograma" : ""
+            }`}
+          />
+          {getRotuloEvento(statusSelecionado, ehProximoSelecionado)}
+        </span>
+        <h2 className="destaqueTituloCronograma">{eventoSelecionado.titulo}</h2>
+      </div>
+
+      <div className="destaqueConteudoCronograma">
+        {eventoSelecionado.descricao && (
+          <>
+            <span className="destaqueRotuloCronograma">Sobre a palestra</span>
+            <p className="destaqueDescricaoCronograma">{eventoSelecionado.descricao}</p>
+          </>
+        )}
+
+        <div className="destaqueGradeCronograma">
+          <div className="destaqueCampoCronograma">
+            <span className="destaqueRotuloCronograma">Palestrante</span>
+            <span className="destaqueValorCronograma">{eventoSelecionado.palestrante}</span>
+          </div>
+          <div className="destaqueCampoCronograma">
+            <span className="destaqueRotuloCronograma">Horário</span>
+            <span className="destaqueValorCronograma destaqueValorHorarioCronograma">
+              {eventoSelecionado.horarioInicio} - {eventoSelecionado.horarioFim}
+            </span>
+          </div>
+          <div className="destaqueCampoCronograma">
+            <span className="destaqueRotuloCronograma">Local</span>
+            <span className="destaqueValorCronograma">{eventoSelecionado.local}</span>
+          </div>
+          <div className="destaqueCampoCronograma">
+            <span className="destaqueRotuloCronograma">Veja também em</span>
+            <a
+              className="destaqueLinkCronograma"
+              href={eventoSelecionado.linkUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.4 3.5 12 3.5 12 3.5s-7.4 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c2 .6 9.4.6 9.4.6s7.4 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.5v-7l6.3 3.5-6.3 3.5Z" />
+              </svg>
+              {eventoSelecionado.linkTexto}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return envolverEmSheet ? <div className="sheetCronograma">{cartao}</div> : cartao;
+}
+
 /**
  * Recebe a lista de eventos e filtros selecionados em cronogramaFiltro e ordena por horário
  * lista de eventos à esquerda e item selecionado à direita
  */
+
 export default function Cronograma({ eventos, selectedDay, selectedFilter }) {
   const [selectedEventId, setSelectedEventId] = useState(null);
   const [agora, setAgora] = useState(() => new Date());
+  const [isMobile, setIsMobile] = useState(false);
+  const [sheetAberto, setSheetAberto] = useState(false);
 
   // Atualiza o relógio para refletir a hora real sem precisar recarregar a página
   useEffect(() => {
     const intervalo = setInterval(() => setAgora(new Date()), 60 * 1000);
     return () => clearInterval(intervalo);
+  }, []);
+
+  // No mobile o detalhe da palestra vira um sheet fullscreen em vez de ficar inline
+  useEffect(() => {
+    const consulta = window.matchMedia(CONSULTA_MOBILE_CRONOGRAMA);
+    const aoMudar = (e) => {
+      setIsMobile(e.matches);
+      setSheetAberto(false);
+    };
+    setIsMobile(consulta.matches);
+    consulta.addEventListener("change", aoMudar);
+    return () => consulta.removeEventListener("change", aoMudar);
   }, []);
 
   const eventosFiltrados = eventos
@@ -51,7 +149,13 @@ export default function Cronograma({ eventos, selectedDay, selectedFilter }) {
     if (!aindaExiste) {
       setSelectedEventId(eventosFiltrados[0]?.id ?? null);
     }
+    setSheetAberto(false);
   }, [selectedDay, selectedFilter]);
+
+  function selecionarEvento(id) {
+    setSelectedEventId(id);
+    if (isMobile) setSheetAberto(true);
+  }
 
   const eventoSelecionado =
     eventosFiltrados.find((e) => e.id === selectedEventId) ?? eventosFiltrados[0] ?? null;
@@ -79,7 +183,7 @@ export default function Cronograma({ eventos, selectedDay, selectedFilter }) {
                   className={`eventoItemCronograma ${
                     isSelected ? "eventoItemAtivoCronograma" : ""
                   } ${status === "passado" ? "eventoItemPassadoCronograma" : ""}`}
-                  onClick={() => setSelectedEventId(evento.id)}
+                  onClick={() => selecionarEvento(evento.id)}
                 >
                   <span className="eventoRailCronograma" />
                   <span className="eventoHorarioCronograma">{evento.horarioInicio}</span>
@@ -96,60 +200,14 @@ export default function Cronograma({ eventos, selectedDay, selectedFilter }) {
           )}
         </div>
 
-        {eventoSelecionado && (
-          <div className="destaqueCronograma">
-            <div className="destaqueTopoCronograma">
-              <span className="destaqueSeloCronograma">
-                <span
-                  className={`destaqueBolinhaCronograma ${
-                    statusSelecionado === "agora" ? "destaqueBolinhaAoVivoCronograma" : ""
-                  }`}
-                />
-                {getRotuloEvento(statusSelecionado, ehProximoSelecionado)}
-              </span>
-              <h2 className="destaqueTituloCronograma">{eventoSelecionado.titulo}</h2>
-            </div>
-
-            <div className="destaqueConteudoCronograma">
-              {eventoSelecionado.descricao && (
-                <>
-                  <span className="destaqueRotuloCronograma">Sobre a palestra</span>
-                  <p className="destaqueDescricaoCronograma">{eventoSelecionado.descricao}</p>
-                </>
-              )}
-
-              <div className="destaqueGradeCronograma">
-                <div className="destaqueCampoCronograma">
-                  <span className="destaqueRotuloCronograma">Palestrante</span>
-                  <span className="destaqueValorCronograma">{eventoSelecionado.palestrante}</span>
-                </div>
-                <div className="destaqueCampoCronograma">
-                  <span className="destaqueRotuloCronograma">Horário</span>
-                  <span className="destaqueValorCronograma destaqueValorHorarioCronograma">
-                    {eventoSelecionado.horarioInicio} - {eventoSelecionado.horarioFim}
-                  </span>
-                </div>
-                <div className="destaqueCampoCronograma">
-                  <span className="destaqueRotuloCronograma">Local</span>
-                  <span className="destaqueValorCronograma">{eventoSelecionado.local}</span>
-                </div>
-                <div className="destaqueCampoCronograma">
-                  <span className="destaqueRotuloCronograma">Veja também em</span>
-                  <a
-                    className="destaqueLinkCronograma"
-                    href={eventoSelecionado.linkUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                      <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.4 3.5 12 3.5 12 3.5s-7.4 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c2 .6 9.4.6 9.4.6s7.4 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.5v-7l6.3 3.5-6.3 3.5Z" />
-                    </svg>
-                    {eventoSelecionado.linkTexto}
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
+        {eventoSelecionado && (isMobile ? sheetAberto : true) && (
+          <DestaqueCronograma
+            envolverEmSheet={isMobile}
+            aoFechar={() => setSheetAberto(false)}
+            eventoSelecionado={eventoSelecionado}
+            statusSelecionado={statusSelecionado}
+            ehProximoSelecionado={ehProximoSelecionado}
+          />
         )}
       </div>
     </div>
