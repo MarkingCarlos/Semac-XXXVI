@@ -56,6 +56,22 @@ export async function definirAtivo(id, ativo) {
     return resposta.json();
 }
 
+/* Busca o arquivo do comprovante de pagamento anexado no cadastro (imagem
+   ou PDF). Devolve um Blob — a rota exige o Bearer token, então não dá pra
+   usar a URL direto num <img src>; o chamador monta um object URL local
+   (URL.createObjectURL) pra exibir e revoga (URL.revokeObjectURL) depois. */
+export async function buscarComprovante(id) {
+    const resposta = await apiFetch(`${API_URL}/api/pessoa/${id}/comprovante`, {
+        headers: cabecalhosAuth(),
+    });
+    if (!resposta.ok) {
+        throw new Error(resposta.status === 404
+            ? 'Nenhum comprovante encontrado para esta pessoa.'
+            : 'Não foi possível carregar o comprovante.');
+    }
+    return resposta.blob();
+}
+
 /* Substitui a lista inteira de camisetas da pessoa (replace-all) — editor
    restrito a DIRETOR_SITE/PRESIDENTE (mesmo acesso do financeiro). Cada
    item é { modelo, tamanho, avulsa }. Retorna a pessoa atualizada. */

@@ -10,9 +10,9 @@
 //   aoConfirmar   — (idPessoa, novoRole) => void, chamado após confirmar
 //   aoExcluir     — (id) => void, chamado após excluir definitivamente
 
-import { useState, useMemo } from 'preact/hooks'
+import { useState, useMemo, useEffect } from 'preact/hooks'
 import { createPortal } from 'preact/compat'
-import { atribuirRole, excluirParticipante } from './data/apiParticipantes.js'
+import { atribuirRole, excluirParticipante, buscarComprovante } from './data/apiParticipantes.js'
 import { listarTiposInscricao } from './data/apiTipoInscricao.js'
 import { formatarCentavos } from '../Financas/utils/moeda.js'
 import { temAcessoFinanceiro } from '../../auth/sessao.js'
@@ -281,6 +281,35 @@ function ModalConfirmarParticipante({ participante, aoFechar, aoConfirmado }) {
 
     const podeInteragir = !salvando && !sucesso
 
+    // Comprovante de pagamento anexado no cadastro — baixado como blob (a
+    // rota exige o Bearer token, então não dá pra usar direto num <img src>)
+    // e virado num object URL local pro preview inline.
+    const [comprovanteUrl, setComprovanteUrl] = useState(null)
+    const [comprovanteTipo, setComprovanteTipo] = useState(null)
+    const [carregandoComprovante, setCarregandoComprovante] = useState(false)
+    const [erroComprovante, setErroComprovante] = useState(null)
+
+    useEffect(() => {
+        if (!participante.temComprovante) return
+        let ativo = true
+        let urlCriada = null
+        setCarregandoComprovante(true)
+        setErroComprovante(null)
+        buscarComprovante(participante.id)
+            .then(blob => {
+                if (!ativo) return
+                urlCriada = URL.createObjectURL(blob)
+                setComprovanteUrl(urlCriada)
+                setComprovanteTipo(blob.type)
+            })
+            .catch(e => { if (ativo) setErroComprovante(e.message) })
+            .finally(() => { if (ativo) setCarregandoComprovante(false) })
+        return () => {
+            ativo = false
+            if (urlCriada) URL.revokeObjectURL(urlCriada)
+        }
+    }, [participante.id, participante.temComprovante])
+
     // Avança para a etapa de ingresso e carrega os ativos do ano atual.
     function irParaIngresso() {
         setErro(null)
@@ -315,7 +344,7 @@ function ModalConfirmarParticipante({ participante, aoFechar, aoConfirmado }) {
     // escapando do overflow:hidden e do containing block da tabela.
     return createPortal(
         <div class="overlayModalParticipantesAdmin" onClick={podeInteragir ? aoFechar : undefined}>
-            <div class="modalConfirmarParticipantesAdmin" onClick={e => e.stopPropagation()}>
+            <div class="modalConfirmarParticipantesAdmin modalConfirmarComComprovanteAdmin" onClick={e => e.stopPropagation()}>
                 {sucesso ? (
                     <div class="sucessoModalParticipantesAdmin">
                         <span class="iconeSucessoModalParticipantesAdmin">✓</span>
@@ -327,6 +356,42 @@ function ModalConfirmarParticipante({ participante, aoFechar, aoConfirmado }) {
                         <p class="subtituloModalParticipantesAdmin">
                             Defina o papel de <strong>{participante.nome}</strong> no sistema.
                         </p>
+
+                        {participante.temComprovante ? (
+                            <div class="blocoComprovanteModalAdmin">
+                                <span class="rotuloComprovanteModalAdmin">Comprovante de pagamento</span>
+                                {carregandoComprovante && (
+                                    <p class="estadoCarregandoParticipantesAdmin">Carregando comprovante...</p>
+                                )}
+                                {erroComprovante && <p class="avisoErroModalParticipantesAdmin">{erroComprovante}</p>}
+                                {comprovanteUrl && comprovanteTipo?.startsWith('image/') && (
+                                    <img
+                                        src={comprovanteUrl}
+                                        class="previewComprovanteModalAdmin"
+                                        alt={`Comprovante de pagamento de ${participante.nome}`}
+                                    />
+                                )}
+                                {comprovanteUrl && comprovanteTipo === 'application/pdf' && (
+                                    <iframe
+                                        src={comprovanteUrl}
+                                        class="previewComprovantePdfModalAdmin"
+                                        title={`Comprovante de pagamento de ${participante.nome}`}
+                                    />
+                                )}
+                                {comprovanteUrl && (
+                                    <a
+                                        href={comprovanteUrl}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        class="linkAbrirComprovanteModalAdmin"
+                                    >
+                                        Abrir em nova aba
+                                    </a>
+                                )}
+                            </div>
+                        ) : (
+                            <p class="avisoSemComprovanteModalAdmin">Nenhum comprovante de pagamento anexado.</p>
+                        )}
 
                         <div class="opcoesRoleModalParticipantesAdmin">
                             {OPCOES_ROLE.map(opcao => (
