@@ -5,6 +5,7 @@ import FooterNovo from "./pages/Footer/FooterNovo.jsx";
 import Doacao from "./pages/Doacao/doacao.jsx";
 import SobreComissao from "./pages/SobreComissao/sobreComissao.jsx";
 import CronogramaBreve from "./pages/cronogramaBreve/CronogramaBreve.jsx";
+import Youtube from "./pages/YouTube/youtube.jsx";
 import PatrocinadoresCompacto from "./pages/PatrocinadoresCompacto/PatrocinadoresCompacto.jsx";
 import Programacao from "./pages/Programacao/programacao.jsx"
 import { NavPontos } from "./components/NavPontos/navPontos.jsx";
@@ -33,6 +34,9 @@ export function App() {
         <div>
             <CronogramaBreve/>
         </div>
+        {/* <div>
+            <Youtube/>
+        </div> */}
         {/*<div>*/}
         {/*    <Programacao/>*/}
         {/*</div>*/}

@@ -1,0 +1,100 @@
+.paginaYoutube {
+  padding: 23px 56px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  font-family: 'Bungee', sans-serif;
+  box-sizing: border-box;
+  background-color: var(--vermelhoAuxDiretoria);
+}
+
+.conteudoPrincipal{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.cardYoutube {
+    width: 80%;
+    border-radius: 15px;
+    background-color: var(--vermelhoAuxDiretoria);
+    border: 1px solid rgba(252,248,245,0.14);
+    padding: 20px 20px 15px;
+    box-shadow: 0px 4px 28px rgba(0, 0, 0, 0.6);
+}
+
+.tituloEmBreve {
+    color: #E79839;
+}
+
+.cardYoutube h2 {
+    font-size: clamp(0.9rem, 2vw, 1.9rem);
+}
+
+.cardYoutube iframe {
+    margin-top: 10px;
+}
+
+.live {
+    width: 70%;
+    height: 350px;
+}
+
+@media (min-width: 1440px) {
+    .live {
+        width: 65%;
+        height: 500px;
+    }
+}
+
+@media (min-width: 1900px) {
+    .live {
+        width: 65%;
+        height: 600px;
+    }
+}
+
+@media (min-width: 2200px) {
+    .live {
+        width: 65%;
+        height: 800px;
+    }
+}
+
+@media (max-width: 1000px) {
+    .live {
+        width: 80%;
+        height: 300px;
+    }
+}
+
+@media (max-width: 800px) {
+    .live {
+        width: 90%;
+        height: 200px;
+    }
+}
+
+@media (max-width: 600px) {
+    .cardYoutube {
+        width: 90%;
+    }
+    
+    .live {
+        width: 90%;
+        height: 150px;
+    }
+}
+
+@media (max-width: 400px) {
+    .cardYoutube {
+        width: 95%;
+    }
+
+    .live {
+        width: 100%;
+        height: 100px;
+    }
+}
