@@ -97,7 +97,7 @@
 .imagemQrDoacao {
     width: 50%;
     border-radius: 12px;
-    background: var(--Branco);
+    background: #ffffff;
     padding: 1rem;
     object-fit: contain;
 }
