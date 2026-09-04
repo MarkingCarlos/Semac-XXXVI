@@ -1,3 +1,10 @@
+.tituloPaginaPatrocinadores {
+    font-family: var(--fonteTituloBungee), sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-align: center;
+}
+
 .paginaPatrocinadores {
     display: flex;
     align-items: center;

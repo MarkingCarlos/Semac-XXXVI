@@ -43,3 +43,54 @@
     border: 1px solid rgba(252, 248, 245, 0.2);
     background: rgba(252, 248, 245, 0.05);
 }
+
+.areaLogoPatrocinios {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 88px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px dashed rgba(252, 248, 245, 0.28);
+    background: rgba(252, 248, 245, 0.05);
+    cursor: pointer;
+    transition: border-color 0.16s ease, background 0.16s ease;
+}
+
+.areaLogoPatrocinios:hover {
+    border-color: rgba(231, 152, 57, 0.6);
+    background: rgba(252, 248, 245, 0.08);
+}
+
+.placeholderLogoPatrocinios {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: rgba(252, 248, 245, 0.55);
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.iconeLogoPatrocinios {
+    font-size: 1.1rem;
+    color: rgba(252, 248, 245, 0.4);
+}
+
+.previewLogoPatrocinios {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.previewImagemLogoPatrocinios {
+    max-width: 160px;
+    max-height: 64px;
+    object-fit: contain;
+}
+
+.botaoTrocarLogoPatrocinios {
+    font-size: 0.74rem;
+    color: rgba(252, 248, 245, 0.55);
+}

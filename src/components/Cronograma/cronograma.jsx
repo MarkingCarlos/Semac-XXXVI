@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getCorTipoEvento } from "./tiposEventoCores.js";
 import "./cronograma.css";
 
 function ordenarPorHorario(a, b) {
@@ -26,6 +27,30 @@ function getRotuloEvento(status, ehProximo) {
 // Mesmo breakpoint usado no CSS do módulo (mobile-first, vira desktop em 1024px)
 const CONSULTA_MOBILE_CRONOGRAMA = "(max-width: 1023px)";
 
+// Amostra padrão da descrição da palestra antes do botão "Leia mais"
+const LIMITE_PALAVRAS_DESCRICAO_CRONOGRAMA = 100;
+
+function contarPalavras(texto) {
+  return texto.trim().split(/\s+/).filter(Boolean);
+}
+
+function truncarPalavras(palavras, limite) {
+  return palavras.slice(0, limite).join(" ") + "…";
+}
+
+function SeloTipoEventoCronograma({ tipo, className }) {
+  if (!tipo) return null;
+  const cor = getCorTipoEvento(tipo);
+  return (
+    <span
+      className={className}
+      style={{ borderColor: cor, background: `${cor}1F`, color: cor }}
+    >
+      {tipo}
+    </span>
+  );
+}
+
 /**
  * Card com o detalhe da palestra selecionada. No desktop fica inline, ao
  * lado da lista; no mobile vira um sheet que desce do topo da tela.
@@ -37,6 +62,17 @@ function DestaqueCronograma({
   statusSelecionado,
   ehProximoSelecionado,
 }) {
+  const [descricaoExpandida, setDescricaoExpandida] = useState(false);
+
+  const palavrasDescricao = eventoSelecionado.descricao
+    ? contarPalavras(eventoSelecionado.descricao)
+    : [];
+  const descricaoExcedeLimite = palavrasDescricao.length > LIMITE_PALAVRAS_DESCRICAO_CRONOGRAMA;
+  const textoDescricaoExibido =
+    !descricaoExcedeLimite || descricaoExpandida
+      ? eventoSelecionado.descricao
+      : truncarPalavras(palavrasDescricao, LIMITE_PALAVRAS_DESCRICAO_CRONOGRAMA);
+
   const cartao = (
     <div
       className="destaqueCronograma"
@@ -68,7 +104,16 @@ function DestaqueCronograma({
         {eventoSelecionado.descricao && (
           <>
             <span className="destaqueRotuloCronograma">Sobre a palestra</span>
-            <p className="destaqueDescricaoCronograma">{eventoSelecionado.descricao}</p>
+            <p className="destaqueDescricaoCronograma">{textoDescricaoExibido}</p>
+            {descricaoExcedeLimite && (
+              <button
+                type="button"
+                className="botaoLeiaMaisDescricaoCronograma"
+                onClick={() => setDescricaoExpandida((atual) => !atual)}
+              >
+                {descricaoExpandida ? "Ler menos" : "Leia mais"}
+              </button>
+            )}
           </>
         )}
 
@@ -209,6 +254,10 @@ export default function Cronograma({ eventos, selectedDay, selectedFilter }) {
                   <span className="eventoTextoCronograma">
                     <span className="eventoTituloCronograma">{evento.titulo}</span>
                     <span className="eventoPalestranteCronograma">{evento.palestrante}</span>
+                    <SeloTipoEventoCronograma
+                      tipo={evento.tipo}
+                      className="eventoSeloTipoEventoCronograma"
+                    />
                   </span>
                   {status === "agora" && <span className="eventoAoVivoCronograma" />}
                 </button>
@@ -221,6 +270,7 @@ export default function Cronograma({ eventos, selectedDay, selectedFilter }) {
 
         {eventoSelecionado && (isMobile ? sheetAberto : true) && (
           <DestaqueCronograma
+            key={eventoSelecionado.id}
             envolverEmSheet={isMobile}
             aoFechar={() => setSheetAberto(false)}
             eventoSelecionado={eventoSelecionado}

@@ -41,6 +41,7 @@ function deResposta(evento) {
         descricao: evento.descricao || '',
         dia: DIAS_SEMANA[inicio.getDay()],
         categoria: evento.trilha ? evento.trilha.nome : null,
+        tipo: evento.tipoEvento ? evento.tipoEvento.nome : null,
         horarioInicio: horaCurta(evento.dataHoraInicio),
         horarioFim: horaCurta(evento.dataHoraFim),
         dataHoraInicio: inicio,

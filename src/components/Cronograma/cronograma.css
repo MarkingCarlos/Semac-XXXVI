@@ -122,6 +122,20 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
+.eventoSeloTipoEventoCronograma {
+  display: inline-block;
+  width: fit-content;
+  margin-top: 4px;
+  padding: 2px 7px;
+  border: 1px solid;
+  border-radius: 20px;
+  font-family: var(--fonteTituloBungee), sans-serif;
+  font-size: 0.48rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
 .semEventosCronograma {
   font-size: 0.7rem;
   color: rgba(255, 255, 255, 0.55);
@@ -243,6 +257,12 @@
   padding-right: 40px;
 }
 
+
+
+.sheetCronograma  {
+  font-size: 0.65rem;
+}
+
 .destaqueConteudoCronograma {
   background-color: var(--vermelhoAuxDiretoria);
   padding: 12px 14px 14px;
@@ -284,6 +304,30 @@
   line-height: 1.5;
 }
 
+.botaoLeiaMaisDescricaoCronograma {
+  display: inline-block;
+  width: fit-content;
+  margin-top: 4px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: var(--fonteTituloBungee), sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--AmareloAuxApoio, #f2a63f);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.botaoLeiaMaisDescricaoCronograma:hover {
+  color: var(--Branco, #ffffff);
+}
+
+.sheetCronograma .botaoLeiaMaisDescricaoCronograma {
+  font-size: 0.75rem;
+}
+
 .destaqueGradeCronograma {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -317,6 +361,7 @@
 
 .sheetCronograma .destaqueValorCronograma {
   font-size: 0.85rem;
+  text-align: left;
 }
 
 .destaqueValorHorarioCronograma {
@@ -409,6 +454,12 @@
     font-size: 0.75rem;
   }
 
+  .eventoSeloTipoEventoCronograma {
+    margin-top: 6px;
+    padding: 3px 9px;
+    font-size: 0.62rem;
+  }
+
   .destaqueCronograma {
     flex: 1.15;
   }
@@ -427,7 +478,7 @@
 
   .destaqueConteudoCronograma {
     padding: 22px 26px 26px;
-    gap: 15px;
+    gap: 5px;
   }
 
   .destaqueRotuloCronograma {
@@ -437,6 +488,11 @@
   .destaqueDescricaoCronograma {
     text-align: left;
     font-size: 1rem;
+  }
+
+  .botaoLeiaMaisDescricaoCronograma {
+    margin-bottom: 6px;
+    font-size: 0.8rem;
   }
 
   .destaqueGradeCronograma {
@@ -500,6 +556,12 @@
     font-size: 1.1rem;
   }
 
+  .eventoSeloTipoEventoCronograma {
+    margin-top: 10px;
+    padding: 5px 14px;
+    font-size: 0.95rem;
+  }
+
   .destaqueTopoCronograma {
     padding: 34px 40px 28px;
   }
@@ -518,6 +580,7 @@
     font-size: 2.4rem;
   }
 
+
   .destaqueConteudoCronograma {
     padding: 34px 40px 40px;
     gap: 20px;
@@ -529,6 +592,11 @@
 
   .destaqueDescricaoCronograma {
     font-size: 2rem;
+  }
+
+  .botaoLeiaMaisDescricaoCronograma {
+    margin-top: 10px;
+    font-size: 1.3rem;
   }
 
   .destaqueGradeCronograma {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect, useRef } from 'preact/hooks';
 import PainelLateral from '../components/PainelLateral.jsx';
 import CampoMoeda from '../components/CampoMoeda.jsx';
 import { formatarCentavos, formatarData, normalizar } from '../utils/moeda.js';
@@ -8,6 +8,8 @@ import {
     atualizarPatrocinador,
     atualizarStatusPagamento,
     excluirPatrocinador,
+    enviarLogoPatrocinador,
+    urlLogoPatrocinador,
 } from '../data/apiPatrocinios.js';
 import './patrocinios.css';
 
@@ -35,6 +37,9 @@ export default function Patrocinios({ patrocinadores, setPatrocinadores, carrega
     const [salvando, setSalvando] = useState(false);
     const [erroAcao, setErroAcao] = useState('');
     const [cotas, setCotas] = useState([]);
+    const [arquivoLogoSelecionado, setArquivoLogoSelecionado] = useState(null);
+    const [previewLogoSelecionado, setPreviewLogoSelecionado] = useState(null);
+    const inputLogoRef = useRef(null);
 
     // Cotas disponíveis para o select (nível + valor vêm do banco).
     useEffect(() => {
@@ -53,13 +58,23 @@ export default function Patrocinios({ patrocinadores, setPatrocinadores, carrega
     const abrirNovoPatrocinio = () => {
         setFormulario(FORMULARIO_VAZIO);
         setIdEmEdicao(null);
+        setArquivoLogoSelecionado(null);
+        setPreviewLogoSelecionado(null);
         setPainelAberto(true);
     };
 
     const abrirEdicaoPatrocinio = (patrocinador) => {
         setFormulario({ ...patrocinador });
         setIdEmEdicao(patrocinador.id);
+        setArquivoLogoSelecionado(null);
+        setPreviewLogoSelecionado(null);
         setPainelAberto(true);
+    };
+
+    const handleArquivoLogo = (arquivo) => {
+        if (!arquivo) return;
+        setArquivoLogoSelecionado(arquivo);
+        setPreviewLogoSelecionado(URL.createObjectURL(arquivo));
     };
 
     /* Ao trocar a cota, o nível e o valor da cota são preenchidos automaticamente */
@@ -87,16 +102,24 @@ export default function Patrocinios({ patrocinadores, setPatrocinadores, carrega
         setSalvando(true);
         setErroAcao('');
         try {
+            let salvo = idEmEdicao !== null
+                ? await atualizarPatrocinador(idEmEdicao, registro)
+                : await criarPatrocinador(registro);
+
+            // Envia a logo escolhida (se houver) só depois de garantir o id do
+            // patrocinador — pra um cadastro novo, ele só existe após o passo acima.
+            if (arquivoLogoSelecionado) {
+                salvo = await enviarLogoPatrocinador(salvo.id, arquivoLogoSelecionado);
+            }
+
             if (idEmEdicao !== null) {
-                const atualizado = await atualizarPatrocinador(idEmEdicao, registro);
                 setPatrocinadores(
                     patrocinadores.map((patrocinador) =>
-                        patrocinador.id === idEmEdicao ? atualizado : patrocinador,
+                        patrocinador.id === idEmEdicao ? salvo : patrocinador,
                     ),
                 );
             } else {
-                const criado = await criarPatrocinador(registro);
-                setPatrocinadores([...patrocinadores, criado]);
+                setPatrocinadores([...patrocinadores, salvo]);
             }
             setPainelAberto(false);
         } catch (e) {
@@ -422,13 +445,36 @@ export default function Patrocinios({ patrocinadores, setPatrocinadores, carrega
                         <label className="rotuloCampoFinancas" htmlFor="campoLogoPatrocinio">
                             Logo
                         </label>
-                        <input
-                            id="campoLogoPatrocinio"
-                            className="entradaFormularioFinancas"
-                            placeholder="ex.: nic-br.png (arquivo em src/assets/patrocinadores)"
-                            value={formulario.logoUrl}
-                            onInput={(e) => setFormulario({ ...formulario, logoUrl: e.currentTarget.value })}
-                        />
+                        <div
+                            className="areaLogoPatrocinios"
+                            onClick={() => inputLogoRef.current?.click()}
+                        >
+                            <input
+                                id="campoLogoPatrocinio"
+                                ref={inputLogoRef}
+                                type="file"
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                                onChange={(e) => handleArquivoLogo(e.currentTarget.files[0])}
+                            />
+                            {previewLogoSelecionado || (idEmEdicao !== null && formulario.logoUrl) ? (
+                                <div className="previewLogoPatrocinios">
+                                    <img
+                                        src={previewLogoSelecionado || urlLogoPatrocinador(idEmEdicao)}
+                                        alt=""
+                                        className="previewImagemLogoPatrocinios"
+                                    />
+                                    <span className="botaoTrocarLogoPatrocinios">
+                                        {arquivoLogoSelecionado ? arquivoLogoSelecionado.name : 'Trocar logo'}
+                                    </span>
+                                </div>
+                            ) : (
+                                <div className="placeholderLogoPatrocinios">
+                                    <span className="iconeLogoPatrocinios">↑</span>
+                                    <span>Clique para escolher uma imagem</span>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     <div className="rodapeFormularioFinancas">

@@ -98,3 +98,24 @@ export async function excluirPatrocinador(id) {
         throw new Error('Falha ao excluir patrocinador.');
     }
 }
+
+/* URL pública que serve a logo do patrocinador (GET /api/patrocinador/{id}/logo).
+   Só faz sentido chamar quando o patrocinador já tem logoUrl (ou seja, já
+   teve um arquivo enviado) — usado tanto no preview do formulário quanto
+   no site público. */
+export function urlLogoPatrocinador(id) {
+    return `${ROTA_PATROCINADORES}/${id}/logo`;
+}
+
+export async function enviarLogoPatrocinador(id, arquivo) {
+    const formData = new FormData();
+    formData.append('arquivo', arquivo);
+    const resposta = await apiFetch(`${ROTA_PATROCINADORES}/${id}/logo`, {
+        method: 'POST',
+        headers: cabecalhosAuth(),
+        body: formData,
+        timeout: 60000, // upload de arquivo: janela maior que o padrão
+    });
+    const atualizado = await lerRespostaOuFalhar(resposta, 'Falha ao enviar a logo.');
+    return deResposta(atualizado);
+}

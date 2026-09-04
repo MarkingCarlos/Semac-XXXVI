@@ -6,6 +6,7 @@ import Doacao from "./pages/Doacao/doacao.jsx";
 import SobreComissao from "./pages/SobreComissao/sobreComissao.jsx";
 import CronogramaBreve from "./pages/cronogramaBreve/CronogramaBreve.jsx";
 import PatrocinadoresCompacto from "./pages/PatrocinadoresCompacto/PatrocinadoresCompacto.jsx";
+import Patrocinadores from "./pages/Patrocinadores/Patrocinadores.jsx"
 import Programacao from "./pages/Programacao/programacao.jsx"
 import { NavPontos } from "./components/NavPontos/navPontos.jsx";
 import paperTexture from './assets/PAPER.png';

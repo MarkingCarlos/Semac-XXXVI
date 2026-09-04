@@ -73,6 +73,15 @@ export default function CronogramaContainer() {
 
   const dias = useMemo(() => diasComEvento(eventos), [eventos]);
 
+  // A programação carrega de forma assíncrona e muda a altura da página; o
+  // Lenis (index.html) usa naiveDimensions e não percebe isso sozinho, então
+  // avisamos manualmente depois que o conteúdo real é renderizado.
+  useEffect(() => {
+    if (!carregando) {
+      requestAnimationFrame(() => window.lenis?.resize());
+    }
+  }, [carregando, selectedDay, selectedFilter]);
+
   if (carregando) {
     return <p className="carregandoProgramacao">Carregando programação…</p>;
   }

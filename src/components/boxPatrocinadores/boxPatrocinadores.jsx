@@ -1,12 +1,45 @@
+import { useRef, useState, useEffect } from 'preact/hooks';
 import './boxPatrocinadores.css';
 
-import exemploLogo from '../../assets/exPatrocinador/alura.svg';
-import LogoSlider from '../LogoSlider/LogoSlider.jsx';
+import { listarPatrocinadoresPublicos } from '../../pages/Patrocinadores/data/apiPatrocinadores.js';
 
+// Ordem de exibição dos níveis, do maior pro menor — mesmos valores do
+// enum NivelPatrocinio no backend. Nível sem nenhum patrocinador não aparece.
+const ORDEM_NIVEIS = ['ESPECIAL', 'PLATINA', 'OURO', 'PRATA', 'BRONZE', 'APOIADOR'];
 
-export default function Patrocinadores() {
+// Mesmo breakpoint usado no CSS deste componente (ver @media max-width: 768px)
+const CONSULTA_MOBILE_PATROCINADORES = '(max-width: 768px)';
+
+// A partir de quantos itens o nível Apoiador vira carrossel no mobile
+const LIMITE_ITENS_CARROSSEL_APOIADOR = 3;
+
+function agruparPorNivel(patrocinadores) {
+    return ORDEM_NIVEIS
+        .map((nivel) => ({
+            tier: nivel,
+            items: patrocinadores.filter((p) => p.nivel === nivel),
+        }))
+        .filter((grupo) => grupo.items.length > 0);
+}
+
+function ItemPatrocinador({ item }) {
+    return (
+        <div className="itemNivelPatrocinadores" style={{ '--item-delay': `${item.delay}s` }}>
+            <div className="cartaoLogoNivelPatrocinadores">
+                <img src={item.logo} alt={item.nome} className="logoNivelPatrocinadores" />
+            </div>
+            <span className="nomeItemPatrocinadores">{item.nome}</span>
+        </div>
+    );
+}
+
+export default function BoxPatrocinadores() {
     const sectionRef = useRef(null);
     const [isVisible, setIsVisible] = useState(false);
+    const [patrocinadores, setPatrocinadores] = useState([]);
+    const [carregando, setCarregando] = useState(true);
+    const [erro, setErro] = useState('');
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -17,37 +50,38 @@ export default function Patrocinadores() {
         return () => observer.disconnect();
     }, []);
 
-    const patrocinadores = [
-        {
-            tier: "PLATINA",
-            items: [
-                { nome: "nome", logo: exemploLogo },
-                { nome: "nome", logo: exemploLogo },
-            ],
-        },
-        {
-            tier: "OURO",
-            items: [
-                { nome: "nome", logo: exemploLogo },
-            ],
-        },
-        {
-            tier: "PRATA",
-            items: [
-                { nome: "nome", logo: exemploLogo },
-            ],
-        },
-        {
-            tier: "BRONZE",
-            items: [
-                { nome: "nome", logo: exemploLogo },
-            ],
-        },
-    ];
+    useEffect(() => {
+        const consulta = window.matchMedia(CONSULTA_MOBILE_PATROCINADORES);
+        const aoMudar = (e) => setIsMobile(e.matches);
+        setIsMobile(consulta.matches);
+        consulta.addEventListener('change', aoMudar);
+        return () => consulta.removeEventListener('change', aoMudar);
+    }, []);
 
-    // Calcula delay global: itens do tier anterior + buffer entre tiers
+    useEffect(() => {
+        let ativo = true;
+        listarPatrocinadoresPublicos()
+            .then((lista) => { if (ativo) setPatrocinadores(lista); })
+            .catch((e) => { if (ativo) setErro(e.message); })
+            .finally(() => { if (ativo) setCarregando(false); });
+        return () => { ativo = false; };
+    }, []);
+
+    if (carregando || erro || patrocinadores.length === 0) {
+        return (
+            <section ref={sectionRef} className="secaoPatrocinadores">
+                <p className="statusPatrocinadores">
+                    {carregando
+                        ? 'Carregando patrocinadores…'
+                        : erro || 'Patrocinadores em breve.'}
+                </p>
+            </section>
+        );
+    }
+
+    // Calcula delay global: itens do nível anterior + buffer entre níveis
     let runningDelay = 0.1;
-    const tiersWithDelays = patrocinadores.map((tier) => {
+    const tiersComDelay = agruparPorNivel(patrocinadores).map((tier) => {
         const items = tier.items.map((item, j) => ({
             ...item,
             delay: runningDelay + j * 0.12,
@@ -58,22 +92,34 @@ export default function Patrocinadores() {
 
     return (
         <section ref={sectionRef} className={`secaoPatrocinadores${isVisible ? ' secaoPatrocinadoresVisivel' : ''}`}>
-            {tiersWithDelays.map((tier, i) => (
-                <div className={`nivel${tier.tier.charAt(0) + tier.tier.slice(1).toLowerCase()}Patrocinadores`} key={i}>
-                    <h2 className="tituloNivelPatrocinadores">{tier.tier}</h2>
-                    <div className="conteinerItensNivelPatrocinadores">
-                        {tier.items.map((item, j) => (
-                            <div
-                                className="itemNivelPatrocinadores"
-                                key={j}
-                                style={{ '--item-delay': `${item.delay}s` }}
-                            >
-                                <img src={item.logo} alt={item.nome} className="logoNivelPatrocinadores" />
+            {tiersComDelay.map((tier) => {
+                // Só o nível Apoiador vira carrossel no mobile quando tem
+                // muitos itens — os demais níveis sempre quebram linha.
+                const carrossel = tier.tier === 'APOIADOR'
+                    && isMobile
+                    && tier.items.length > LIMITE_ITENS_CARROSSEL_APOIADOR;
+
+                return (
+                    <div className={`nivel${tier.tier.charAt(0) + tier.tier.slice(1).toLowerCase()}Patrocinadores`} key={tier.tier}>
+                        <h2 className="tituloNivelPatrocinadores">{tier.tier}</h2>
+                        {carrossel ? (
+                            <div className="conteinerCarrosselPatrocinadores">
+                                <div className="trilhaCarrosselPatrocinadores">
+                                    {[...tier.items, ...tier.items].map((item, i) => (
+                                        <ItemPatrocinador item={item} key={`${item.id}-${i}`} />
+                                    ))}
+                                </div>
                             </div>
-                        ))}
+                        ) : (
+                            <div className="conteinerItensNivelPatrocinadores">
+                                {tier.items.map((item) => (
+                                    <ItemPatrocinador item={item} key={item.id} />
+                                ))}
+                            </div>
+                        )}
                     </div>
-                </div>
-            ))}
+                );
+            })}
         </section>
     );
 }

@@ -5,7 +5,7 @@ const Patrocinadores = () =>{
 
     return (
         <div >
-            <h1 className="tituloSecao" style={{marginBottom: '1rem'}}>Patrocinadores</h1>
+            <h1 className="tituloSecao tituloPaginaPatrocinadores" style={{marginBottom: '1rem'}}>Patrocinadores</h1>
             <div className="paginaPatrocinadores">
                 <BoxPatrocinadores/>
             </div>
