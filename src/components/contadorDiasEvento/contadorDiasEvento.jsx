@@ -1,48 +1,55 @@
 import { useState, useEffect } from 'preact/hooks'
 import './contadorDiasEvento.css'
 
-const DATA_INICIO_EVENTO = new Date(2026, 9, 26)
-const TEXTO_DATA_INICIO_EVENTO = DATA_INICIO_EVENTO.toLocaleDateString('pt-BR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-})
+const DATA_INICIO_EVENTO = '2026-10-26T08:00:00-03:00'
 
-function calcularDiasRestantes() {
-    const hoje = new Date()
-    const inicioHoje = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate())
-    const diferencaEmMs = DATA_INICIO_EVENTO - inicioHoje
-    return Math.ceil(diferencaEmMs / (1000 * 60 * 60 * 24))
+function calcularTempoRestante() {
+    const alvo = new Date(DATA_INICIO_EVENTO).getTime()
+    const diferencaEmMs = Math.max(0, alvo - Date.now())
+    const segundosTotais = Math.floor(diferencaEmMs / 1000)
+    const doisDigitos = (numero) => String(numero).padStart(2, '0')
+
+    const dias = Math.floor(segundosTotais / 86400)
+    const horas = Math.floor((segundosTotais % 86400) / 3600)
+    const minutos = Math.floor((segundosTotais % 3600) / 60)
+    const segundos = segundosTotais % 60
+
+    return {
+        dias: String(dias),
+        textoTempoRestante: `${doisDigitos(horas)}H ${doisDigitos(minutos)}M ${doisDigitos(segundos)}S`,
+    }
 }
 
 const ContadorDiasEvento = () => {
-    const [diasRestantes, setDiasRestantes] = useState(calcularDiasRestantes)
+    const [tempoRestante, setTempoRestante] = useState(calcularTempoRestante)
 
     useEffect(() => {
         const intervaloAtualizacaoContagem = setInterval(() => {
-            setDiasRestantes(calcularDiasRestantes())
-        }, 1000 * 60 * 60)
+            setTempoRestante(calcularTempoRestante())
+        }, 1000)
         return () => clearInterval(intervaloAtualizacaoContagem)
     }, [])
 
-    const eventoJaComecou = diasRestantes <= 0
-
     return (
         <section id="contadorDias" className="containerFaixaContadorDias">
-            {eventoJaComecou ? (
-                <p className="textoEventoIniciadoContadorDias">A SEMAC XXXVI começou!</p>
-            ) : (
-                <>
-                    <span className="numeroDiasContadorDias">{diasRestantes}</span>
-                    <span className="divisorContadorDias" aria-hidden="true" />
-                    <div className="colunaLegendaContadorDias">
-                        <p className="textoLegendaContadorDias">
-                            {diasRestantes === 1 ? 'dia' : 'dias'} para a SEMAC XXXVI
-                        </p>
-                        <p className="textoDataContadorDias">Começa em {TEXTO_DATA_INICIO_EVENTO}</p>
+            <div className="ondaTopoContadorDias" />
+            <div className="gradienteContadorDias" />
+            <div className="blobDecorativoContadorDias" />
+            <div className="conteudoContadorDias">
+                <div className="blocoNumeroContadorDias">
+                    <span className="numeroDiasContadorDias">{tempoRestante.dias}</span>
+                    <span className="rotuloDiasContadorDias">DIAS</span>
+                </div>
+                <div className="colunaTextoContadorDias">
+                    <p className="tituloContadorDias">PARA A XXXVI SEMANA DA COMPUTAÇÃO</p>
+                    <div className="linhaDataLocalContadorDias">
+                        <span className="tracoAmareloContadorDias" aria-hidden="true" />
+                        <span className="textoDataLocalContadorDias">26 a 30 de outubro de 2026 · IBILCE/UNESP</span>
                     </div>
-                </>
-            )}
+                    <p className="textoTempoRestanteContadorDias">{tempoRestante.textoTempoRestante} RESTANTES</p>
+                </div>
+            </div>
+            <div className="ondaBaseContadorDias" />
         </section>
     )
 }

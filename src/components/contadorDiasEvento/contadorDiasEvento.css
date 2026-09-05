@@ -1,68 +1,111 @@
 .containerFaixaContadorDias {
-    width: 100%;
+    position: relative;
+    overflow: hidden;
+    background: var(--vermelhoAux2Diretoria);
+}
+
+.ondaTopoContadorDias {
+    height: 44px;
+    background: var(--vermelhoAuxDiretoria);
+    mask: url(../../assets/waveCima.svg) bottom center / 100% 100% no-repeat;
+    -webkit-mask: url(../../assets/waveCima.svg) bottom center / 100% 100% no-repeat;
+}
+
+.ondaBaseContadorDias {
+    height: 44px;
+    background: var(--vermelhoAuxDiretoria);
+    mask: url(../../assets/waveBaixoFaixaContador.svg) top center / 100% 100% no-repeat;
+    -webkit-mask: url(../../assets/waveBaixoFaixaContador.svg) top center / 100% 100% no-repeat;
+}
+
+.gradienteContadorDias {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(110% 170% at 10% 0%, rgba(161, 5, 53, 0.9), rgba(133, 7, 53, 0) 62%);
+    pointer-events: none;
+}
+
+.blobDecorativoContadorDias {
+    position: absolute;
+    right: -70px;
+    bottom: -90px;
+    width: 260px;
+    height: 260px;
+    border-radius: 30px;
+    background: var(--vermelhoAuxDiretoria);
+    transform: rotate(20deg);
+    pointer-events: none;
+}
+
+.conteudoContadorDias {
+    position: relative;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: clamp(1.25rem, 4vw, 2.5rem);
-    padding: clamp(2rem, 5vw, 3.5rem) 1.5rem;
-    background: var(--vermelhoEscuro);
+    gap: clamp(24px, 4vw, 64px);
+    padding: clamp(32px, 5vw, 64px) clamp(24px, 5vw, 72px);
+}
+
+.blocoNumeroContadorDias {
+    display: flex;
+    align-items: baseline;
+    gap: clamp(10px, 1.5vw, 18px);
 }
 
 .numeroDiasContadorDias {
     font-family: var(--fonteTituloBungee), cursive;
-    font-size: clamp(3.5rem, 9vw, 6.5rem);
-    line-height: 1;
+    font-size: clamp(72px, 11vw, 152px);
+    line-height: 0.78;
+    color: var(--AmareloAuxApoio);
+}
+
+.rotuloDiasContadorDias {
+    font-family: var(--fonteTituloBungee), cursive;
+    font-size: clamp(18px, 2.4vw, 32px);
     color: var(--Branco);
 }
 
-.divisorContadorDias {
-    width: 2px;
-    height: clamp(3rem, 6vw, 4.5rem);
-    background: var(--AmareloAuxApoio);
-    flex-shrink: 0;
-}
-
-.colunaLegendaContadorDias {
+.colunaTextoContadorDias {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
+    gap: clamp(8px, 1vw, 14px);
+    max-width: 520px;
 }
 
-.textoLegendaContadorDias {
-    font-family: var(--fonteCorpoMontserrat), sans-serif;
-    font-size: clamp(1.1rem, 2.2vw, 1.5rem);
-    font-weight: 700;
-    color: var(--AmareloAuxApoio);
+.tituloContadorDias {
+    font-family: var(--fonteTituloBungee), cursive;
+    font-size: clamp(18px, 2.4vw, 30px);
+    line-height: 1.15;
+    letter-spacing: 0.04em;
+    color: var(--Branco);
     margin: 0;
 }
 
-.textoDataContadorDias {
+.linhaDataLocalContadorDias {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.tracoAmareloContadorDias {
+    width: 44px;
+    height: 4px;
+    border-radius: 8px;
+    background: var(--AmareloAuxApoio);
+    flex: 0 0 auto;
+}
+
+.textoDataLocalContadorDias {
     font-family: var(--fonteCorpoMontserrat), sans-serif;
-    font-size: clamp(0.9rem, 1.6vw, 1.05rem);
+    font-size: clamp(14px, 1.4vw, 17px);
+    color: var(--Branco);
+}
+
+.textoTempoRestanteContadorDias {
+    font-family: var(--fonteTituloBungee), cursive;
+    font-size: clamp(11px, 1.1vw, 13px);
+    letter-spacing: 0.12em;
     color: rgba(237, 236, 236, 0.75);
     margin: 0;
-}
-
-.textoEventoIniciadoContadorDias {
-    font-family: var(--fonteTituloBungee), cursive;
-    font-size: clamp(1.5rem, 4vw, 2.5rem);
-    color: var(--Branco);
-    text-align: center;
-    margin: 0;
-}
-
-@media (max-width: 640px) {
-    .containerFaixaContadorDias {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .divisorContadorDias {
-        width: clamp(3rem, 20vw, 5rem);
-        height: 2px;
-    }
-
-    .colunaLegendaContadorDias {
-        align-items: center;
-    }
 }
