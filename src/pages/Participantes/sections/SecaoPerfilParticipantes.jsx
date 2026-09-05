@@ -17,42 +17,43 @@ export default function SecaoPerfilParticipantes({
 }) {
     return (
         <div className="secaoPerfilParticipantes">
-            <div className="cabecalhoSecaoPerfilParticipantes">
-                <div className="avatarSecaoPerfilParticipantes">{iniciais}</div>
-                <div className="identidadeSecaoPerfilParticipantes">
-                    <span className="nomeSecaoPerfilParticipantes">{nome.toUpperCase()}</span>
-                    <span className="cursoSecaoPerfilParticipantes">{perfil.curso}</span>
-                    {nivel && (
-                        <span className="seloNivelSecaoPerfilParticipantes">{nivel.nome} · {nivel.xp} XP</span>
-                    )}
+            <div className="dadosParticipante">
+                <div className="cabecalhoSecaoPerfilParticipantes">
+                    <div className="avatarSecaoPerfilParticipantes">{iniciais}</div>
+                    <div className="identidadeSecaoPerfilParticipantes">
+                        <span className="nomeSecaoPerfilParticipantes">{nome.toUpperCase()}</span>
+                        <span className="cursoSecaoPerfilParticipantes">{perfil.curso}</span>
+                        {nivel && (
+                            <span className="seloNivelSecaoPerfilParticipantes">{nivel.nome} · {nivel.xp} XP</span>
+                        )}
+                    </div>
+                </div>
+
+                <div className="botoesSecaoPerfilParticipantes">
+                    <button type="button" className="botaoQrSecaoPerfilParticipantes" onClick={onAbrirQr}>MEU QR CODE</button>
+                    <button type="button" className="botaoEditarSecaoPerfilParticipantes">EDITAR DADOS</button>
+                </div>
+
+                <div className="cardDadosInscricaoSecaoPerfilParticipantes">
+                    <span className="tituloCardDadosInscricaoSecaoPerfilParticipantes">DADOS DA INSCRIÇÃO</span>
+                    <div className="linhaCardDadosInscricaoSecaoPerfilParticipantes">
+                        <span className="rotuloLinhaCardDadosInscricaoSecaoPerfilParticipantes">E-mail</span>
+                        <span>{email || '—'}</span>
+                    </div>
+                    <div className="linhaCardDadosInscricaoSecaoPerfilParticipantes">
+                        <span className="rotuloLinhaCardDadosInscricaoSecaoPerfilParticipantes">Inscrição</span>
+                        <span>{perfil.numeroInscricao}</span>
+                    </div>
+                    <div className="linhaCardDadosInscricaoSecaoPerfilParticipantes">
+                        <span className="rotuloLinhaCardDadosInscricaoSecaoPerfilParticipantes">Minicursos</span>
+                        <span>{perfil.minicursosUsados} de {perfil.minicursosTotais} vagas usadas</span>
+                    </div>
+                    <div className="linhaCardDadosInscricaoSecaoPerfilParticipantes">
+                        <span className="rotuloLinhaCardDadosInscricaoSecaoPerfilParticipantes">Presenças</span>
+                        <span>{perfil.presencas} de {perfil.presencasTotais} atividades</span>
+                    </div>
                 </div>
             </div>
-
-            <div className="botoesSecaoPerfilParticipantes">
-                <button type="button" className="botaoQrSecaoPerfilParticipantes" onClick={onAbrirQr}>MEU QR CODE</button>
-                <button type="button" className="botaoEditarSecaoPerfilParticipantes">EDITAR DADOS</button>
-            </div>
-
-            <div className="cardDadosInscricaoSecaoPerfilParticipantes">
-                <span className="tituloCardDadosInscricaoSecaoPerfilParticipantes">DADOS DA INSCRIÇÃO</span>
-                <div className="linhaCardDadosInscricaoSecaoPerfilParticipantes">
-                    <span className="rotuloLinhaCardDadosInscricaoSecaoPerfilParticipantes">E-mail</span>
-                    <span>{email || '—'}</span>
-                </div>
-                <div className="linhaCardDadosInscricaoSecaoPerfilParticipantes">
-                    <span className="rotuloLinhaCardDadosInscricaoSecaoPerfilParticipantes">Inscrição</span>
-                    <span>{perfil.numeroInscricao}</span>
-                </div>
-                <div className="linhaCardDadosInscricaoSecaoPerfilParticipantes">
-                    <span className="rotuloLinhaCardDadosInscricaoSecaoPerfilParticipantes">Minicursos</span>
-                    <span>{perfil.minicursosUsados} de {perfil.minicursosTotais} vagas usadas</span>
-                </div>
-                <div className="linhaCardDadosInscricaoSecaoPerfilParticipantes">
-                    <span className="rotuloLinhaCardDadosInscricaoSecaoPerfilParticipantes">Presenças</span>
-                    <span>{perfil.presencas} de {perfil.presencasTotais} atividades</span>
-                </div>
-            </div>
-
             <div className="blocoConquistasSecaoPerfilParticipantes">
                 <div className="cabecalhoBlocoSecaoPerfilParticipantes">
                     <span className="rotuloBlocoSecaoPerfilParticipantes">CONQUISTAS</span>

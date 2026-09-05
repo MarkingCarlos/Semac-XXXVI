@@ -886,13 +886,13 @@ export default function BoxInscricao() {
                                 {resultadoPagamentoCartao && (
                                     <p class="subtituloComemoracaoInscricao">
                                         {resultadoPagamentoCartao.status === 'approved'
-                                            ? 'Pagamento aprovado — falta só a confirmação da comissão organizadora.'
+                                            ? 'Pagamento aprovado, logo a comissão irá liberar seu acesso à plataforma.'
                                             : 'Recebemos os dados do pagamento e vamos confirmar em breve.'}
                                     </p>
                                 )}
                                 <p class="subtituloComemoracaoInscricao">
                                     {camisetasInclusas > 0 || camisetasExtras.length > 0
-                                        ? 'Sua camiseta chega junto com o kit SEMAC no primeiro dia do evento.'
+                                        ? 'Sua camiseta chega junto com o kit SEMAC no primeiro dia do evento. \n Em breve iremos liberar o acesso à plataforma'
                                         : 'Confirmaremos os dados em breve e você receberá um e-mail.'}
                                 </p>
                                 <ResumoInscricao linhas={linhasResumo()} total={total} />

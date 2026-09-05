@@ -105,16 +105,26 @@
 
 /* ── Conteúdo ─────────────────────────────────────────────── */
 .conteudoParticipantes {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   padding: 20px 20px 32px;
   max-width: 1280px;
   width: 100%;
-  margin: 0 auto;
   box-sizing: border-box;
 }
 
 @media (min-width: 860px) {
-  .conteudoParticipantes { padding: 32px 40px 44px; }
+  .conteudoParticipantes {
+    padding: 32px 40px 44px;
+    max-width: 1500px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .conteudoParticipantes {
+    max-width: 2000px;
+  }
 }
 
 .rotuloBlocoInicioParticipantes,
@@ -554,6 +564,10 @@
   .barraLateralInicioParticipantes { width: 340px; flex: none; }
 }
 
+@media (min-width: 1600px) {
+  .barraLateralInicioParticipantes { width: 420px; }
+}
+
 .cardBarraLateralInicioParticipantes {
   background: var(--vermelhoAux2Participantes);
   border-radius: var(--radius-lg, 25px);
@@ -627,7 +641,7 @@
 .blocoAconteceAgoraInicioParticipantes { display: flex; flex-direction: column; gap: 10px; }
 
 .cardAconteceAgoraInicioParticipantes {
-  background: var(--brancoQuenteParticipantes);
+  background: var(--AmareloAuxApoio);
   border-radius: var(--radius-lg, 25px);
   padding: 18px 20px;
   display: flex;
@@ -636,10 +650,21 @@
   color: var(--vermelhoAuxDiretoria);
 }
 
-.categoriaCardAconteceAgoraInicioParticipantes { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: var(--rosaMarketing); }
+.categoriaCardAconteceAgoraInicioParticipantes {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--Branco);
+}
 .tituloCardAconteceAgoraInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 17px; line-height: 1.15; }
 
-.tagsCardAconteceAgoraInicioParticipantes { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tagsCardAconteceAgoraInicioParticipantes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
 
 .tagLocalAconteceAgoraInicioParticipantes,
 .tagHorarioAconteceAgoraInicioParticipantes {
@@ -688,6 +713,10 @@
 
 @media (min-width: 860px) {
   .grelhaMinicursosInicioParticipantes { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+}
+
+@media (min-width: 1600px) {
+  .grelhaMinicursosInicioParticipantes { grid-template-columns: repeat(4, 1fr); }
 }
 
 .cardMinicursoInicioParticipantes {
@@ -770,6 +799,10 @@
   .grelhaPalestrasSemanaInicioParticipantes { grid-template-columns: repeat(3, 1fr); gap: 20px; }
 }
 
+@media (min-width: 1600px) {
+  .grelhaPalestrasSemanaInicioParticipantes { grid-template-columns: repeat(4, 1fr); }
+}
+
 .cardPalestraSemanaInicioParticipantes {
   background: var(--vermelhoDiretoria);
   border-radius: var(--radius-lg, 25px);
@@ -784,7 +817,11 @@
 .horarioCardPalestraSemanaInicioParticipantes { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: var(--AmareloAuxApoio); }
 .cardPalestraSemanaInicioParticipantes.statusMeuDiaAtualParticipantes .horarioCardPalestraSemanaInicioParticipantes { color: var(--rosaMarketing); }
 
-.tituloCardPalestraSemanaInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 16px; line-height: 1.15; }
+.tituloCardPalestraSemanaInicioParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 12px;
+  line-height: 1.15;
+}
 .detalheCardPalestraSemanaInicioParticipantes { font-size: 11px; opacity: 0.75; margin-top: auto; }
 
 /* conquistas */
@@ -942,11 +979,34 @@
    ============================================================ */
 .secaoRankingParticipantes { display: flex; flex-direction: column; gap: 18px; max-width: 640px; }
 
-@media (min-width: 860px) { .secaoRankingParticipantes { max-width: 760px; margin: 0 auto; } }
+@media (min-width: 860px) { .secaoRankingParticipantes { max-width: none; width: 100%; } }
 
 .cabecalhoSecaoRankingParticipantes { display: flex; flex-direction: column; gap: 4px; }
 .tituloSecaoRankingParticipantes { font-family: var(--fonteTituloBungee); font-size: 20px; }
 .subtituloSecaoRankingParticipantes { font-size: 12px; color: rgba(252, 248, 245, 0.7); }
+
+.corpoSecaoRankingParticipantes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.colunaPrincipalRankingParticipantes { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+
+@media (min-width: 860px) {
+  .corpoSecaoRankingParticipantes { flex-direction: row; align-items: flex-start; gap: 28px; }
+  .colunaPrincipalRankingParticipantes {
+    flex: 2;
+  }
+  .barraLateralRankingParticipantes {
+    width: 340px;
+    /*flex: 1;*/
+  }
+}
+
+@media (min-width: 1600px) {
+  .barraLateralRankingParticipantes { width: 420px; }
+}
 
 .podioRankingParticipantes { display: flex; align-items: flex-end; gap: 10px; }
 
@@ -992,6 +1052,13 @@
 
 .itemListaVoceRankingParticipantes { background: var(--brancoQuenteParticipantes); color: var(--vermelhoAuxDiretoria); padding: 13px 14px; }
 
+/* Só aparece em telas grandes, pra preencher o espaço vazio da lista curta. */
+.itemListaExtraRankingParticipantes { display: none; }
+
+@media (min-width: 1600px) {
+  .itemListaExtraRankingParticipantes { display: flex; }
+}
+
 .posicaoItemListaRankingParticipantes { font-family: var(--fonteTituloBungee); font-size: 12px; color: var(--AmareloAuxApoio); min-width: 26px; }
 .itemListaVoceRankingParticipantes .posicaoItemListaRankingParticipantes { color: var(--rosaMarketing); }
 .nomeItemListaRankingParticipantes { flex: 1; font-size: 12px; font-weight: 600; }
@@ -1020,9 +1087,19 @@
 /* ============================================================
    Aba Perfil
    ============================================================ */
-.secaoPerfilParticipantes { display: flex; flex-direction: column; gap: 20px; max-width: 640px; }
+.secaoPerfilParticipantes {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  max-width: 640px;
+}
 
-@media (min-width: 860px) { .secaoPerfilParticipantes { max-width: 760px; margin: 0 auto; } }
+
+@media (min-width: 860px) {
+  .secaoPerfilParticipantes {
+  max-width: 760px;
+  }
+}
 
 .cabecalhoSecaoPerfilParticipantes { display: flex; align-items: center; gap: 14px; }
 

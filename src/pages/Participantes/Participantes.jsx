@@ -8,11 +8,12 @@
 
    Nível/XP é real, creditado no check-in (ver
    InscricaoEventoService.marcarPresente no backend) e lido de
-   data/apiPerfilParticipante.js. Ranking (pódio/lista completa),
-   conquistas, perfil (curso/inscrição/minicursos/presenças) e
-   certificados seguem em mockParticipante.js — nenhum endpoint expõe
-   esses outros dados ainda. Nome e e-mail exibidos são os reais, tirados
-   da sessão. */
+   data/apiPerfilParticipante.js. Ranking também é real, vindo de
+   GET /api/pessoa/ranking (data/apiRankingParticipante.js) e fatiado em
+   pódio/lista por data/rankingParticipantes.js. Conquistas, perfil
+   (curso/inscrição/minicursos/presenças) e certificados seguem em
+   mockParticipante.js — nenhum endpoint expõe esses outros dados ainda.
+   Nome e e-mail exibidos são os reais, tirados da sessão. */
 
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { useLocation } from 'wouter';
@@ -33,6 +34,8 @@ import {
     cancelarMinicurso,
 } from './data/apiEventosParticipantes.js';
 import { buscarNivelParticipante } from './data/apiPerfilParticipante.js';
+import { buscarRankingParticipante } from './data/apiRankingParticipante.js';
+import { montarRankingExibicao } from './data/rankingParticipantes.js';
 import {
     montarDiasDaSemana,
     diaInicialAgenda,
@@ -46,11 +49,12 @@ import {
 
 import {
     conquistasMockParticipante,
-    rankingMockParticipante,
     comoGanharXpMockParticipante,
     perfilMockParticipante,
     certificadosMockParticipante,
 } from './mockParticipante.js';
+
+const RANKING_VAZIO_PARTICIPANTES = { totalParticipantes: 0, atualizadoEm: '', podio: [], lista: [] };
 
 const ABAS_PARTICIPANTES = [
     { id: 'inicio', rotulo: 'Início' },
@@ -90,6 +94,7 @@ export default function Participantes() {
     const [erroAgenda, setErroAgenda] = useState('');
     const [nivel, setNivel] = useState(null);
     const [carregandoNivel, setCarregandoNivel] = useState(true);
+    const [ranking, setRanking] = useState(RANKING_VAZIO_PARTICIPANTES);
     const [diaSelecionado, setDiaSelecionado] = useState('');
     const [erroMinicurso, setErroMinicurso] = useState('');
     const [minicursoEmEspera, setMinicursoEmEspera] = useState(null);
@@ -117,6 +122,15 @@ export default function Participantes() {
             .then((valor) => { if (ativo) setNivel(valor); })
             .catch(() => {})
             .finally(() => { if (ativo) setCarregandoNivel(false); });
+        return () => { ativo = false; };
+    }, []);
+
+    /* Ranking real, também separado da agenda. */
+    useEffect(() => {
+        let ativo = true;
+        buscarRankingParticipante()
+            .then((resposta) => { if (ativo && resposta) setRanking(montarRankingExibicao(resposta)); })
+            .catch(() => {});
         return () => { ativo = false; };
     }, []);
 
@@ -181,6 +195,13 @@ export default function Participantes() {
     );
 
     const totalMinicursos = useMemo(() => eventos.filter(ehMinicurso).length, [eventos]);
+
+    /* Widget de ranking do Início é compacto: sem a cauda extra que só
+       aparece na aba Ranking pra preencher telas grandes. */
+    const rankingWidgetInicio = useMemo(
+        () => ({ ...ranking, lista: ranking.lista.filter((pessoa) => !pessoa.extraTelaGrande) }),
+        [ranking],
+    );
 
     function irPara(aba) {
         setAbaAtiva(aba);
@@ -273,7 +294,7 @@ export default function Participantes() {
                         conquistas={conquistasMockParticipante}
                         meusMinicursos={meusMinicursos}
                         totalMinicursos={totalMinicursos}
-                        ranking={rankingMockParticipante}
+                        ranking={rankingWidgetInicio}
                         carregando={carregandoAgenda}
                         onAbrirQr={() => setQrAberto(true)}
                         onVerRanking={() => irPara('ranking')}
@@ -291,7 +312,7 @@ export default function Participantes() {
                     />
                 )}
                 {abaAtiva === 'ranking' && (
-                    <SecaoRankingParticipantes ranking={rankingMockParticipante} comoGanharXp={comoGanharXpMockParticipante} />
+                    <SecaoRankingParticipantes ranking={ranking} comoGanharXp={comoGanharXpMockParticipante} />
                 )}
                 {abaAtiva === 'perfil' && (
                     <SecaoPerfilParticipantes

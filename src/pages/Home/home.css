@@ -53,7 +53,7 @@
     background: var(--AmareloAuxApoio, #E79839);
     color: var(--Branco);
     font-family: var(--fonteTituloBungee), sans-serif;
-    font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+    font-size: clamp(1rem, 1.1vw, 1.05rem);
     letter-spacing: 0.06em;
     text-transform: uppercase;
     line-height: 1;

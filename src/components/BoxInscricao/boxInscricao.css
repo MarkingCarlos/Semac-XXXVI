@@ -728,6 +728,7 @@
 /* ── Resumo e total ──────────────────────────────────────────── */
 
 .resumoInscricao {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 0.6rem;
@@ -736,6 +737,7 @@
     border-radius: 16px;
     text-align: left;
 }
+
 
 .linhaResumoInscricao {
     display: flex;
@@ -1024,7 +1026,7 @@
     flex-direction: column;
     align-items: center;
     gap: 1rem;
-    padding: 1rem 0 0.5rem;
+    padding: 0.5rem 0 0.5rem;
     text-align: center;
     animation: etapaEntrada 0.35s ease both;
 }
@@ -1056,7 +1058,8 @@
     font-size: 0.88rem;
     color: rgba(252, 248, 245, 0.85);
     line-height: 1.55;
-    max-width: 420px;
+    white-space: pre-line;
+    /*max-width: 420px;*/
     margin: 0;
 }
 

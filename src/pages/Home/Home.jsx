@@ -17,10 +17,6 @@ const Home = () =>{
 
                 <img src={logoSemac} className="imagemLogoHome" alt="LOGO SEMAC" />
 
-            {/*/!* Portal para o body — o wrapper "position: sticky" da Home em*/}
-            {/*    app.jsx cria um containing block, e o position: fixed do*/}
-            {/*    botão ficaria preso a ele em vez de cobrir a viewport*/}
-            {/*    inteira durante a rolagem (mesmo motivo do PainelLateral). *!/*/}
             {/*{createPortal(*/}
             {/*    <button*/}
             {/*        type="button"*/}

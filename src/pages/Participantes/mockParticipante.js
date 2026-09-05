@@ -1,9 +1,12 @@
-/* Dados mockados da Área do Participante (ranking, conquistas, perfil e
+/* Dados mockados da Área do Participante (conquistas, perfil e
    certificados). Nenhum endpoint de API expõe isso ainda — nome e e-mail
    reais vêm da sessão (ver Participantes.jsx).
 
    Nível/xp NÃO está mais aqui: é real, vindo de
    data/apiPerfilParticipante.js (GET /api/pessoa/me).
+
+   Ranking NÃO está mais aqui: é real, vindo de
+   data/apiRankingParticipante.js (GET /api/pessoa/ranking).
 
    Programação, agenda e minicursos NÃO estão aqui: são reais, vindos de
    /api/evento e /api/evento/meus (ver data/apiEventosParticipantes.js e
@@ -19,31 +22,6 @@ export const conquistasMockParticipante = [
     { id: 'feedback', rotulo: 'FEEDBACK', valorExibido: '?', desbloqueada: false },
     { id: 'secreta', rotulo: 'SECRETA', valorExibido: '?', desbloqueada: false },
 ];
-
-export const rankingMockParticipante = {
-    totalParticipantes: 214,
-    atualizadoEm: '19h40',
-    podio: [
-        { posicao: 2, nome: 'Diego', xp: 380 },
-        { posicao: 1, nome: 'Maíra', xp: 400 },
-        { posicao: 3, nome: 'Ana', xp: 350 },
-    ],
-    lista: [
-        { posicao: 4, nome: 'Pedro Nakano', xp: 320 },
-        { posicao: 5, nome: 'Luana Bispo', xp: 300 },
-        { posicao: 11, nome: 'Bruna Lima', xp: 200 },
-        { posicao: 12, nome: 'Você', xp: 150, voce: true },
-        { posicao: 13, nome: 'Rafael Sato', xp: 150 },
-    ],
-    listaCompleta: [
-        { posicao: 1, nome: 'Maíra Fontes', xp: 400 },
-        { posicao: 2, nome: 'Diego Prado', xp: 380 },
-        { posicao: 3, nome: 'Ana Ruiz', xp: 350 },
-        { posicao: 4, nome: 'Pedro Nakano', xp: 320 },
-        { posicao: 5, nome: 'Luana Bispo', xp: 300 },
-        { posicao: 12, nome: 'Você', xp: 150, voce: true },
-    ],
-};
 
 export const comoGanharXpMockParticipante = [
     { acao: 'Presença em palestra', valor: 50 },
