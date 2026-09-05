@@ -32,9 +32,6 @@ const ContadorDiasEvento = () => {
 
     return (
         <section id="contadorDias" className="containerFaixaContadorDias">
-            <div className="ondaTopoContadorDias" />
-            <div className="gradienteContadorDias" />
-            <div className="blobDecorativoContadorDias" />
             <div className="conteudoContadorDias">
                 <div className="blocoNumeroContadorDias">
                     <span className="numeroDiasContadorDias">{tempoRestante.dias}</span>
@@ -49,7 +46,6 @@ const ContadorDiasEvento = () => {
                     <p className="textoTempoRestanteContadorDias">{tempoRestante.textoTempoRestante} RESTANTES</p>
                 </div>
             </div>
-            <div className="ondaBaseContadorDias" />
         </section>
     )
 }

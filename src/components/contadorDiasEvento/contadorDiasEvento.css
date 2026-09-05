@@ -39,9 +39,10 @@
 
 .conteudoContadorDias {
     position: relative;
+    background: var(--vermelhoAuxDiretoria);
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     gap: clamp(24px, 4vw, 64px);
     padding: clamp(32px, 5vw, 64px) clamp(24px, 5vw, 72px);
