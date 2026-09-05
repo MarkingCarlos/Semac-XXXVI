@@ -103,14 +103,7 @@
     color: rgba(252, 248, 245, 0.5);
 }
 
-/* ── Painel: formulário + prévia ─────────────────────────────── */
-
-.painelPerfilInicio {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 300px;
-    gap: 28px;
-    align-items: start;
-}
+/* ── Formulário ───────────────────────────────────────────────── */
 
 .formularioPerfilInicio {
     display: flex;
@@ -119,6 +112,75 @@
     border: 1px solid rgba(252, 248, 245, 0.08);
     border-radius: 16px;
     padding: 26px 26px 24px;
+}
+
+/* ── Lista de camisetas — uma pessoa pode ter mais de uma (a
+   inclusa no kit e eventuais avulsas compradas à parte) ───────── */
+
+.listaCamisetasInicio {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.vazioCamisetasInicio {
+    margin: 0 0 20px;
+    font-size: 0.86rem;
+    color: rgba(252, 248, 245, 0.55);
+}
+
+.linhaCamisetaInicio {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 190px;
+    gap: 20px;
+    align-items: start;
+    padding: 18px 18px 16px;
+    background: rgba(252, 248, 245, 0.03);
+    border: 1px solid rgba(252, 248, 245, 0.08);
+    border-radius: 14px;
+}
+
+.controlesLinhaCamisetaInicio {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.cabecalhoLinhaCamisetaInicio {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.indiceLinhaCamisetaInicio {
+    font-family: 'Bungee', cursive;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgba(252, 248, 245, 0.55);
+}
+
+.etiquetaOrigemLinhaCamisetaInicio {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.etiquetaOrigemInclusaLinhaCamisetaInicio {
+    background: rgba(231, 152, 57, 0.14);
+    color: #E79839;
+}
+
+.etiquetaOrigemAvulsaLinhaCamisetaInicio {
+    background: rgba(252, 248, 245, 0.08);
+    color: rgba(252, 248, 245, 0.7);
 }
 
 /* Grupos de seleção da camiseta */
@@ -243,11 +305,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 14px;
-    padding: 30px 20px 24px;
-    background: rgba(61, 1, 24, 0.35);
-    border: 1px solid rgba(252, 248, 245, 0.08);
-    border-radius: 16px;
+    gap: 10px;
+    padding: 12px 10px 14px;
     overflow: hidden;
 }
 
@@ -317,8 +376,8 @@
 
 /* ── Responsivo ──────────────────────────────────────────────── */
 
-@media (max-width: 720px) {
-    .painelPerfilInicio {
+@media (max-width: 560px) {
+    .linhaCamisetaInicio {
         grid-template-columns: 1fr;
     }
 

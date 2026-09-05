@@ -1,6 +1,6 @@
 /* Nível/xp reais do participante logado (GET /api/pessoa/me). Mesmo
    endpoint usado pela seção "Início" do /admin — aqui só a parte de
-   gamificação é usada; os campos de conta (nome, email, camiseta) já vêm
+   gamificação é usada; os campos de conta (nome, email, camisetas) já vêm
    da sessão/perfil mockado. */
 
 import { apiFetch } from '../../../lib/apiFetch.js';

@@ -1,9 +1,12 @@
 // Seção "Início" do /admin — a primeira que o membro da comissão vê.
 // Dá as boas-vindas pelo nome e deixa manter os dados do kit em dia:
-// RA, tipo e tamanho da camiseta são editáveis; e-mail e função são
-// apenas exibidos. A prévia da camiseta à direita se atualiza ao vivo:
-// a silhueta muda (Baby Look afunila na cintura; Normal é reto) e o
-// tamanho é "estampado" no centro.
+// RA e, para cada camiseta que a pessoa já tem (pode ter mais de uma —
+// a inclusa no kit e eventuais avulsas compradas à parte), o tipo e o
+// tamanho são editáveis; e-mail e função são apenas exibidos. Cada
+// camiseta tem sua própria prévia visual ao lado, que se atualiza ao
+// vivo: a silhueta muda (Baby Look afunila na cintura; Normal é reto) e
+// o tamanho é "estampado" no centro. Não dá pra adicionar nem remover
+// camiseta por aqui — só o admin faz isso (ModalEditarCamisetas.jsx).
 //
 // Dados vêm de GET /api/pessoa/me e são salvos em PATCH /api/pessoa/me
 // (o usuário é identificado pelo token — ver data/apiPerfil.js).
@@ -67,14 +70,78 @@ function PreviaCamiseta({ modelo, tamanho }) {
     );
 }
 
+// Uma camiseta editável: seletores de modelo/tamanho + prévia própria.
+// `avulsa` é só exibido (etiqueta) — quem marca isso é o admin.
+function LinhaCamisetaInicio({ camiseta, indice, aoAlterarCampo, desabilitado, ehComissao }) {
+    // Para a comissão, "avulsa" não significa compra à parte (ela não paga
+    // pelo kit) — é o modelo de camiseta de participante, já que só a
+    // inclusa é o benefício exclusivo da função (mesma regra de
+    // RelatorioService.relatorioCamisetas). Por isso o rótulo muda.
+    const rotuloOrigem = camiseta.avulsa
+        ? (ehComissao ? 'Participante' : 'Avulsa')
+        : 'Inclusa no kit';
+
+    return (
+        <div className="linhaCamisetaInicio">
+            <div className="controlesLinhaCamisetaInicio">
+                <div className="cabecalhoLinhaCamisetaInicio">
+                    <span className="indiceLinhaCamisetaInicio">Camiseta {indice + 1}</span>
+                    <span
+                        className={`etiquetaOrigemLinhaCamisetaInicio ${camiseta.avulsa ? 'etiquetaOrigemAvulsaLinhaCamisetaInicio' : 'etiquetaOrigemInclusaLinhaCamisetaInicio'}`}
+                    >
+                        {rotuloOrigem}
+                    </span>
+                </div>
+
+                <div className="grupoCamisetaInicio">
+                    <span className="rotuloCampoFinancas">Tipo de camiseta</span>
+                    <div className="opcoesModeloInicio">
+                        {MODELOS.map((opcao) => (
+                            <button
+                                key={opcao}
+                                type="button"
+                                className={`botaoModeloInicio ${camiseta.modelo === opcao ? 'botaoModeloAtivoInicio' : ''}`}
+                                aria-pressed={camiseta.modelo === opcao}
+                                disabled={desabilitado}
+                                onClick={() => aoAlterarCampo(indice, 'modelo', opcao)}
+                            >
+                                {LABEL_MODELO[opcao]}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="grupoCamisetaInicio">
+                    <span className="rotuloCampoFinancas">Tamanho</span>
+                    <div className="opcoesTamanhoInicio">
+                        {TAMANHOS.map((opcao) => (
+                            <button
+                                key={opcao}
+                                type="button"
+                                className={`botaoTamanhoInicio ${camiseta.tamanho === opcao ? 'botaoTamanhoAtivoInicio' : ''}`}
+                                aria-pressed={camiseta.tamanho === opcao}
+                                disabled={desabilitado}
+                                onClick={() => aoAlterarCampo(indice, 'tamanho', opcao)}
+                            >
+                                {opcao}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <PreviaCamiseta modelo={camiseta.modelo} tamanho={camiseta.tamanho} />
+        </div>
+    );
+}
+
 export default function Inicio({ podeAcessarFinanceiro = false }) {
     const [perfil, setPerfil] = useState(null);
     const [carregando, setCarregando] = useState(true);
     const [erroCarregar, setErroCarregar] = useState('');
 
     const [ra, setRa] = useState('');
-    const [modelo, setModelo] = useState('BABY_LOOK');
-    const [tamanho, setTamanho] = useState('M');
+    const [camisetas, setCamisetas] = useState([]);
 
     const [salvando, setSalvando] = useState(false);
     const [erroSalvar, setErroSalvar] = useState('');
@@ -84,8 +151,7 @@ export default function Inicio({ podeAcessarFinanceiro = false }) {
     function aplicarPerfil(dados) {
         setPerfil(dados);
         setRa(dados.ra ?? '');
-        setModelo(dados.camiseta?.modelo ?? 'BABY_LOOK');
-        setTamanho(dados.camiseta?.tamanho ?? 'M');
+        setCamisetas((dados.camisetas ?? []).map(c => ({ ...c })));
     }
 
     useEffect(() => {
@@ -97,10 +163,17 @@ export default function Inicio({ podeAcessarFinanceiro = false }) {
         return () => { ativo = false; };
     }, []);
 
+    function alterarCampoCamiseta(indice, campo, valor) {
+        setCamisetas(camisetas.map((c, i) => (i === indice ? { ...c, [campo]: valor } : c)));
+    }
+
     const baseRa = perfil?.ra ?? '';
-    const baseModelo = perfil?.camiseta?.modelo ?? 'BABY_LOOK';
-    const baseTamanho = perfil?.camiseta?.tamanho ?? 'M';
-    const alterou = ra.trim() !== baseRa || modelo !== baseModelo || tamanho !== baseTamanho;
+    const baseCamisetas = perfil?.camisetas ?? [];
+    const camisetasAlteraram = camisetas.some((c, i) => {
+        const base = baseCamisetas[i];
+        return !base || c.modelo !== base.modelo || c.tamanho !== base.tamanho;
+    });
+    const alterou = ra.trim() !== baseRa || camisetasAlteraram;
 
     async function salvar(e) {
         e.preventDefault();
@@ -109,7 +182,10 @@ export default function Inicio({ podeAcessarFinanceiro = false }) {
         setErroSalvar('');
         setSucesso(false);
         try {
-            const atualizado = await atualizarPerfil({ ra, modelo, tamanho });
+            const atualizado = await atualizarPerfil({
+                ra,
+                camisetas: camisetas.map(({ id, modelo, tamanho }) => ({ id, modelo, tamanho })),
+            });
             if (atualizado) {
                 aplicarPerfil(atualizado);
                 setSucesso(true);
@@ -152,78 +228,57 @@ export default function Inicio({ podeAcessarFinanceiro = false }) {
                 <p className="emailUsuarioInicio">{perfil.email}</p>
             </header>
 
-            <div className="painelPerfilInicio">
-                <form className="formularioPerfilInicio" onSubmit={salvar}>
-                    <p className="divisorFormularioFinancas">Seu kit SEMAC</p>
+            <form className="formularioPerfilInicio" onSubmit={salvar}>
+                <p className="divisorFormularioFinancas">Seu kit SEMAC</p>
 
-                    <div className="campoFormularioFinancas">
-                        <label className="rotuloCampoFinancas" htmlFor="campoRaInicio">RA</label>
-                        <input
-                            id="campoRaInicio"
-                            className="entradaFormularioFinancas"
-                            inputMode="numeric"
-                            placeholder="Seu registro acadêmico"
-                            value={ra}
-                            onInput={(e) => setRa(e.currentTarget.value)}
-                        />
+                <div className="campoFormularioFinancas">
+                    <label className="rotuloCampoFinancas" htmlFor="campoRaInicio">RA</label>
+                    <input
+                        id="campoRaInicio"
+                        className="entradaFormularioFinancas"
+                        inputMode="numeric"
+                        placeholder="Seu registro acadêmico"
+                        value={ra}
+                        onInput={(e) => setRa(e.currentTarget.value)}
+                    />
+                </div>
+
+                {camisetas.length === 0 ? (
+                    <p className="vazioCamisetasInicio">Nenhuma camiseta cadastrada.</p>
+                ) : (
+                    <div className="listaCamisetasInicio">
+                        {camisetas.map((camiseta, indice) => (
+                            <LinhaCamisetaInicio
+                                key={camiseta.id}
+                                camiseta={camiseta}
+                                indice={indice}
+                                aoAlterarCampo={alterarCampoCamiseta}
+                                desabilitado={salvando}
+                                ehComissao={perfil.role !== 'PARTICIPANTE'}
+                            />
+                        ))}
                     </div>
+                )}
 
-                    <div className="grupoCamisetaInicio">
-                        <span className="rotuloCampoFinancas">Tipo de camiseta</span>
-                        <div className="opcoesModeloInicio">
-                            {MODELOS.map((opcao) => (
-                                <button
-                                    key={opcao}
-                                    type="button"
-                                    className={`botaoModeloInicio ${modelo === opcao ? 'botaoModeloAtivoInicio' : ''}`}
-                                    aria-pressed={modelo === opcao}
-                                    onClick={() => setModelo(opcao)}
-                                >
-                                    {LABEL_MODELO[opcao]}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+                {erroSalvar && <p className="avisoErroInicio">{erroSalvar}</p>}
 
-                    <div className="grupoCamisetaInicio">
-                        <span className="rotuloCampoFinancas">Tamanho</span>
-                        <div className="opcoesTamanhoInicio">
-                            {TAMANHOS.map((opcao) => (
-                                <button
-                                    key={opcao}
-                                    type="button"
-                                    className={`botaoTamanhoInicio ${tamanho === opcao ? 'botaoTamanhoAtivoInicio' : ''}`}
-                                    aria-pressed={tamanho === opcao}
-                                    onClick={() => setTamanho(opcao)}
-                                >
-                                    {opcao}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {erroSalvar && <p className="avisoErroInicio">{erroSalvar}</p>}
-
-                    <div className="rodapePerfilInicio">
-                        <button
-                            type="submit"
-                            className="botaoPrimarioFinancas"
-                            disabled={!alterou || salvando}
-                        >
-                            {salvando ? 'Salvando...' : 'Salvar alterações'}
-                        </button>
-                        <span
-                            className={`avisoSucessoInicio ${sucesso ? 'avisoSucessoVisivelInicio' : ''}`}
-                            role="status"
-                            aria-live="polite"
-                        >
-                            {sucesso ? 'Alterações salvas' : ''}
-                        </span>
-                    </div>
-                </form>
-
-                <PreviaCamiseta modelo={modelo} tamanho={tamanho} />
-            </div>
+                <div className="rodapePerfilInicio">
+                    <button
+                        type="submit"
+                        className="botaoPrimarioFinancas"
+                        disabled={!alterou || salvando}
+                    >
+                        {salvando ? 'Salvando...' : 'Salvar alterações'}
+                    </button>
+                    <span
+                        className={`avisoSucessoInicio ${sucesso ? 'avisoSucessoVisivelInicio' : ''}`}
+                        role="status"
+                        aria-live="polite"
+                    >
+                        {sucesso ? 'Alterações salvas' : ''}
+                    </span>
+                </div>
+            </form>
         </div>
     );
 }
