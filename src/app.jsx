@@ -38,7 +38,7 @@ export function App() {
             <Programacao/>
         </div>
         <div>
-            <Patrocinadores/>
+            <PatrocinadoresCompacto/>
         </div>
         <div>
             <Doacao/>
