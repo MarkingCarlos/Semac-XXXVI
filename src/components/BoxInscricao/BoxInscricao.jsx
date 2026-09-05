@@ -611,9 +611,6 @@ export default function BoxInscricao() {
                             <div class="formularioInscricao">
                                 <div class="cabecalhoEtapaInscricao">
                                     <h2 class="tituloEtapaInscricao">Escolha seu ingresso</h2>
-                                    <p class="subtituloEtapaInscricao">
-                                        O ingresso define se você leva camiseta sem pagar nada a mais.
-                                    </p>
                                 </div>
 
                                 {carregandoIngressos ? (
