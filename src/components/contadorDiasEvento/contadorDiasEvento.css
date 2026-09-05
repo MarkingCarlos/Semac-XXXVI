@@ -1,0 +1,68 @@
+.containerFaixaContadorDias {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(1.25rem, 4vw, 2.5rem);
+    padding: clamp(2rem, 5vw, 3.5rem) 1.5rem;
+    background: var(--vermelhoEscuro);
+}
+
+.numeroDiasContadorDias {
+    font-family: var(--fonteTituloBungee), cursive;
+    font-size: clamp(3.5rem, 9vw, 6.5rem);
+    line-height: 1;
+    color: var(--Branco);
+}
+
+.divisorContadorDias {
+    width: 2px;
+    height: clamp(3rem, 6vw, 4.5rem);
+    background: var(--AmareloAuxApoio);
+    flex-shrink: 0;
+}
+
+.colunaLegendaContadorDias {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.textoLegendaContadorDias {
+    font-family: var(--fonteCorpoMontserrat), sans-serif;
+    font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+    font-weight: 700;
+    color: var(--AmareloAuxApoio);
+    margin: 0;
+}
+
+.textoDataContadorDias {
+    font-family: var(--fonteCorpoMontserrat), sans-serif;
+    font-size: clamp(0.9rem, 1.6vw, 1.05rem);
+    color: rgba(237, 236, 236, 0.75);
+    margin: 0;
+}
+
+.textoEventoIniciadoContadorDias {
+    font-family: var(--fonteTituloBungee), cursive;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    color: var(--Branco);
+    text-align: center;
+    margin: 0;
+}
+
+@media (max-width: 640px) {
+    .containerFaixaContadorDias {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .divisorContadorDias {
+        width: clamp(3rem, 20vw, 5rem);
+        height: 2px;
+    }
+
+    .colunaLegendaContadorDias {
+        align-items: center;
+    }
+}
