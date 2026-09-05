@@ -892,7 +892,7 @@ export default function BoxInscricao() {
                                 )}
                                 <p class="subtituloComemoracaoInscricao">
                                     {camisetasInclusas > 0 || camisetasExtras.length > 0
-                                        ? 'Sua camiseta chega junto com o kit SEMAC no primeiro dia do evento. \n Em breve iremos liberar o acesso à plataforma'
+                                        ? 'Sua camiseta chega junto com o kit SEMAC no primeiro dia do evento. \n Em breve iremos liberar seu acesso à plataforma.'
                                         : 'Confirmaremos os dados em breve e você receberá um e-mail.'}
                                 </p>
                                 <ResumoInscricao linhas={linhasResumo()} total={total} />

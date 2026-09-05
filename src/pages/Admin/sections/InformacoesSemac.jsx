@@ -28,13 +28,19 @@ import {
     lerMetaDoacao,
     salvarMetaDoacao,
 } from '../data/apiMetaDoacao.js';
+import {
+    lerConfiguracaoInscricao,
+    salvarConfiguracaoInscricao,
+} from '../data/apiConfiguracaoInscricao.js';
 
-/* Informações SEMAC — cinco blocos:
-   1. Tipos de ingresso (tabela `tipo_inscricao`) da edição atual;
-   2. Preço da camiseta avulsa (tabela `camiseta_extra`), um por edição;
-   3. Meta de doação (tabela `meta_doacao`), um por edição;
-   4. Níveis de participante (tabela `nivel`), nome + xp mínimo;
-   5. Cotas de patrocínio (tabela `cota`), nível + valor.
+/* Informações SEMAC — seis blocos:
+   1. Inscrições abertas (tabela `configuracao_inscricao`), liga/desliga
+      o botão "Inscreva-se" da Home, um por edição;
+   2. Tipos de ingresso (tabela `tipo_inscricao`) da edição atual;
+   3. Preço da camiseta avulsa (tabela `camiseta_extra`), um por edição;
+   4. Meta de doação (tabela `meta_doacao`), um por edição;
+   5. Níveis de participante (tabela `nivel`), nome + xp mínimo;
+   6. Cotas de patrocínio (tabela `cota`), nível + valor.
    Valores de ingresso/cota/meta em centavos na interface, convertidos na
    borda da API. Xp mínimo do nível é inteiro puro, sem conversão.
 
@@ -80,6 +86,11 @@ export default function InformacoesSemac() {
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState('');
     const [salvando, setSalvando] = useState(false);
+
+    /* ── Inscrições abertas ───────────────────────────────────── */
+    const [inscricoesAbertas, setInscricoesAbertas] = useState(true);
+    const [salvandoInscricoesAbertas, setSalvandoInscricoesAbertas] = useState(false);
+    const [erroInscricoesAbertas, setErroInscricoesAbertas] = useState('');
 
     const [painelAberto, setPainelAberto] = useState(false);
     const [formulario, setFormulario] = useState(FORMULARIO_VAZIO);
@@ -141,6 +152,9 @@ export default function InformacoesSemac() {
         lerMetaDoacao(ANO_ATUAL)
             .then((centavos) => { if (ativo) { setMetaDoacao(centavos); setRascunhoMetaDoacao(centavos); } })
             .catch((e) => { if (ativo) setErroMetaDoacao(e.message); });
+        lerConfiguracaoInscricao(ANO_ATUAL)
+            .then((aberta) => { if (ativo) setInscricoesAbertas(aberta); })
+            .catch((e) => { if (ativo) setErroInscricoesAbertas(e.message); });
         listarCotas()
             .then((lista) => { if (ativo) setCotas([...lista].sort(porValorCrescente)); })
             .catch((e) => { if (ativo) setErroCotas(e.message); })
@@ -151,6 +165,21 @@ export default function InformacoesSemac() {
             .finally(() => { if (ativo) setCarregandoNiveisParticipante(false); });
         return () => { ativo = false; };
     }, []);
+
+    /* ── Inscrições abertas ───────────────────────────────────── */
+
+    const alternarInscricoesAbertas = async (novoValor) => {
+        setSalvandoInscricoesAbertas(true);
+        setErroInscricoesAbertas('');
+        try {
+            const salvo = await salvarConfiguracaoInscricao(ANO_ATUAL, novoValor);
+            setInscricoesAbertas(salvo);
+        } catch (e) {
+            setErroInscricoesAbertas(e.message);
+        } finally {
+            setSalvandoInscricoesAbertas(false);
+        }
+    };
 
     const abrirNovoNivelParticipante = () => {
         setFormularioNivelParticipante({ nome: '', xpMinimo: 0 });
@@ -401,6 +430,33 @@ export default function InformacoesSemac() {
                     </p>
                 </div>
             </header>
+
+            {/* ── Inscrições abertas ───────────────────────────── */}
+            <section className="blocoInfoSemac" aria-label="Inscrições abertas">
+                <div className="cabecalhoBlocoInfoSemac">
+                    <div>
+                        <h2 className="tituloBlocoInfoSemac">Inscrições</h2>
+                        <p className="notaBlocoInfoSemac">
+                            Controla se o botão "Inscreva-se" aparece na página inicial pública.
+                        </p>
+                    </div>
+                </div>
+
+                {erroInscricoesAbertas && <p className="avisoErroAdmin" role="alert">{erroInscricoesAbertas}</p>}
+
+                <div className="cartaoPrecoCamisetaInfoSemac">
+                    <span className="rotuloPrecoCamisetaInfoSemac">Botão "Inscreva-se" na Home</span>
+                    <label className="campoCheckboxInfoSemac">
+                        <input
+                            type="checkbox"
+                            checked={inscricoesAbertas}
+                            disabled={salvandoInscricoesAbertas}
+                            onInput={(e) => alternarInscricoesAbertas(e.currentTarget.checked)}
+                        />
+                        <span>{inscricoesAbertas ? 'Inscrições abertas' : 'Inscrições fechadas'}</span>
+                    </label>
+                </div>
+            </section>
 
             {/* ── Tipos de ingresso ───────────────────────────── */}
             <section className="blocoInfoSemac" aria-label="Tipos de ingresso">
