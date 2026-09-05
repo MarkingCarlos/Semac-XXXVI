@@ -345,10 +345,13 @@
     padding: 1.5rem 0;
 }
 
+/* Colunas tipo "mural": cada coluna se ajusta à altura do próprio
+   conteúdo, então o card da diária (que cresce quando selecionado) não
+   estica os outros cards da mesma linha — eles só ficam mais compactos
+   na coluna vizinha. */
 .listaCardsIngressoInscricao {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
-    gap: 0.75rem;
+    column-width: 255px;
+    column-gap: 0.75rem;
 }
 
 .cardIngressoInscricao {
@@ -356,12 +359,14 @@
     flex-direction: column;
     gap: 0.6rem;
     padding: 1rem;
+    margin-bottom: 0.75rem;
     background: rgba(0, 0, 0, 0.2);
     border: 1.5px solid rgba(252, 248, 245, 0.2);
     border-radius: 16px;
     cursor: pointer;
     text-align: left;
     transition: border-color 0.2s, background-color 0.2s;
+    break-inside: avoid;
 }
 
 .cardIngressoInscricao:hover {
@@ -1150,7 +1155,7 @@
 
     .gradeCamposDadosInscricao { gap: 1rem; }
 
-    .listaCardsIngressoInscricao { grid-template-columns: 1fr; }
+    .listaCardsIngressoInscricao { column-width: auto; column-count: 1; }
 
     /* A tabela de medidas desce para baixo do editor */
     .gradeCamisetaInscricao { grid-template-columns: 1fr; }
