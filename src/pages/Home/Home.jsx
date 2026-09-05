@@ -34,7 +34,7 @@ const Home = () =>{
                 <button
                     type="button"
                     className="botaoInscrevaSeHome"
-                    onClick={() => navigate('/participantes')}
+                    onClick={() => navigate('/inscricoes')}
                 >
                     Inscreva-se
                 </button>,
