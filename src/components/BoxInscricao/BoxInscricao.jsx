@@ -775,7 +775,7 @@ export default function BoxInscricao() {
                                 )}
 
                                 {formaPagamento === 'cartao' ? (
-                                    <div class="blocoCartaoInscricao">
+                                    <div class="blocoCartaoInscricao" key="cartao">
                                         {!brickCartaoPronto && (
                                             <p class="carregandoBrickCartaoInscricao">Carregando formulário de cartão…</p>
                                         )}
@@ -785,7 +785,7 @@ export default function BoxInscricao() {
                                         )}
                                     </div>
                                 ) : (
-                                    <div class="gradePagamentoInscricao">
+                                    <div class="gradePagamentoInscricao" key="pix">
                                         <div class="blocoPixInscricao">
                                             <span class="rotuloChavePixInscricao">QR Code PIX</span>
                                             <div class="wrapperQrInscricao">
