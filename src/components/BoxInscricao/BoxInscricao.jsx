@@ -962,7 +962,7 @@ function CardIngresso({ tipo, selecionado, dias, aoSelecionar, aoEscolherDias })
             <span class={`camisetaIngressoInscricao ${inclusas > 0 ? 'camisetaIngressoInclusaInscricao' : ''}`}>
                 {inclusas === 0
                     ? 'Kit SEMAC não incluso.'
-                    : `${inclusas} ${plural(inclusas, 'Kit SEMAC incluso.', 'Kit SEMAC incluso')}`}
+                    : 'Kit SEMAC incluso.'}
             </span>
 
             {selecionado && tipo.porDia && (
