@@ -29,6 +29,24 @@ const OPCOES_ROLE = [
     { valor: 'MEMBRO',       rotulo: 'Membro',       descricao: 'Comissão organizadora' },
 ]
 
+// Status cru devolvido pela Mercado Pago, traduzido pra exibição no modal.
+const ROTULO_STATUS_CARTAO = {
+    approved: 'Aprovado',
+    rejected: 'Recusado',
+    pending: 'Em análise',
+    in_process: 'Em análise',
+    in_mediation: 'Em mediação',
+    cancelled: 'Cancelado',
+    refunded: 'Reembolsado',
+    charged_back: 'Estornado (chargeback)',
+}
+
+// Valor do pagamento no cartão já vem em reais (BigDecimal do backend) —
+// não usar formatarCentavos (feita pra campos em centavos) aqui.
+function formatarReais(valor) {
+    return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+}
+
 // Papéis de comissão escolhidos no dropdown quando a categoria é "Membro".
 const PAPEIS_COMISSAO = [
     { valor: 'MEMBRO',             rotulo: 'Membro' },
@@ -357,7 +375,25 @@ function ModalConfirmarParticipante({ participante, aoFechar, aoConfirmado }) {
                             Defina o papel de <strong>{participante.nome}</strong> no sistema.
                         </p>
 
-                        {participante.temComprovante ? (
+                        {participante.formaPagamento === 'CARTAO' ? (
+                            <div class="blocoPagamentoCartaoModalAdmin">
+                                <span class="rotuloPagamentoCartaoModalAdmin">Pagamento por cartão</span>
+                                <span class={`badgeStatusCartaoModalAdmin badgeStatusCartao${
+                                    participante.pagamentoCartao.status === 'approved' ? 'Aprovado' : 'Pendente'
+                                }ModalAdmin`}>
+                                    {ROTULO_STATUS_CARTAO[participante.pagamentoCartao.status] ?? participante.pagamentoCartao.status}
+                                </span>
+                                <span class="detalhePagamentoCartaoModalAdmin">
+                                    {participante.pagamentoCartao.parcelas}x — {formatarReais(participante.pagamentoCartao.valorCobrado)}
+                                </span>
+                                <span class="detalhePagamentoCartaoModalAdmin">
+                                    ID Mercado Pago: {participante.pagamentoCartao.mpPaymentId}
+                                </span>
+                                {participante.pagamentoCartao.statusDetail && (
+                                    <span class="detalheStatusCartaoModalAdmin">{participante.pagamentoCartao.statusDetail}</span>
+                                )}
+                            </div>
+                        ) : participante.temComprovante ? (
                             <div class="blocoComprovanteModalAdmin">
                                 <span class="rotuloComprovanteModalAdmin">Comprovante de pagamento</span>
                                 {carregandoComprovante && (

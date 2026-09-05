@@ -785,6 +785,61 @@
     font-size: 0.8rem;
 }
 
+/* ── Evidência de pagamento por cartão (Mercado Pago) ────────────
+   Mesmo lugar visual do bloco de comprovante acima -- um substitui o
+   outro conforme participante.formaPagamento. */
+.blocoPagamentoCartaoModalAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin: 0 0 1.25rem;
+    padding: 0.85rem;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-family: 'Montserrat', sans-serif;
+}
+
+.rotuloPagamentoCartaoModalAdmin {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: rgba(237, 236, 236, 0.6);
+}
+
+.badgeStatusCartaoModalAdmin {
+    align-self: flex-start;
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+}
+
+.badgeStatusCartaoAprovadoModalAdmin {
+    background-color: rgba(82, 171, 177, 0.15);
+    color: var(--azulConteudo);
+    border: 1px solid rgba(82, 171, 177, 0.5);
+}
+
+.badgeStatusCartaoPendenteModalAdmin {
+    background-color: rgba(231, 152, 57, 0.15);
+    color: var(--AmareloAuxApoio);
+    border: 1px solid rgba(231, 152, 57, 0.5);
+}
+
+.detalhePagamentoCartaoModalAdmin {
+    font-size: 0.85rem;
+    color: var(--Branco);
+}
+
+.detalheStatusCartaoModalAdmin {
+    font-size: 0.75rem;
+    color: rgba(237, 236, 236, 0.55);
+}
+
 .opcoesRoleModalParticipantesAdmin {
     font-family: 'Montserrat', sans-serif;
     display: flex;

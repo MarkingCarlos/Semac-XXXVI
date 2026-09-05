@@ -197,6 +197,15 @@
     background: rgba(231, 152, 57, 0.08);
 }
 
+.botaoVoltarEtapaInscricao:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+.botaoVoltarEtapaInscricao:disabled:hover {
+    border-color: rgba(252, 248, 245, 0.3);
+    background: transparent;
+}
+
 /* ── CampoTexto / CampoSenha ─────────────────────────────────── */
 
 .gradeCamposDadosInscricao {
@@ -872,6 +881,61 @@
 }
 
 .avisoPixInscricao strong { color: var(--Branco); }
+
+/* ── Etapa 4: alternador Pix / Cartão ─────────────────────────── */
+
+.alternadorFormaPagamentoInscricao {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    background: rgba(0, 0, 0, 0.28);
+    border-radius: 10px;
+    margin: 0.25rem 0 1rem;
+}
+
+.opcaoFormaPagamentoInscricao {
+    background: none;
+    border: none;
+    border-radius: 7px;
+    color: rgba(252, 248, 245, 0.55);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.6rem 0.5rem;
+    cursor: pointer;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.opcaoFormaPagamentoInscricaoAtiva {
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoAuxDiretoria);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Etapa 4: Cartão de crédito (Mercado Pago) ────────────────── */
+
+.blocoCartaoInscricao {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    padding: 1rem;
+}
+
+.containerBrickCartaoInscricao {
+    /* Fundo claro: o Card Payment Brick renderiza texto escuro por padrão,
+       ilegível sobre o vermelho do card. */
+    background: var(--Branco);
+    border-radius: 10px;
+    min-height: 300px;
+    padding: 0.5rem;
+}
+
+.carregandoBrickCartaoInscricao {
+    font-size: 0.8rem;
+    color: rgba(252, 248, 245, 0.7);
+    text-align: center;
+    margin: 0.75rem 0 0;
+}
 
 /* ── Upload de comprovante ───────────────────────────────────── */
 

@@ -2,9 +2,13 @@ import { useState, useRef, useEffect } from 'preact/hooks'
 import { useLocation } from 'wouter'
 import { salvarSessao, temAcessoFinanceiro, temAcessoAdmin, temAcessoParticipante } from '../../auth/sessao.js'
 import { apiFetch } from '../../lib/apiFetch.js'
+import { criarPagamentoCartao } from './apiPagamento.js'
+import { carregarMercadoPago } from './lib/carregarMercadoPago.js'
 import './boxInscricao.css'
 import logoRaios from '../../assets/logoSemacRaios.png'
 import qrCodePix from '../../assets/qr.png'
+
+const MERCADOPAGO_PUBLIC_KEY = import.meta.env.MERCADOPAGOKEY
 
 /* Cadastro em quatro etapas. O ingresso escolhido na etapa 2 governa o
    resto do fluxo: ele diz quantas camisetas vêm inclusas e quanto há a
@@ -113,10 +117,22 @@ export default function BoxInscricao() {
     const [copiado,            setCopiado]            = useState(false)
     const [dragAtivo,          setDragAtivo]          = useState(false)
 
+    /* Pix ou cartão, escolhidos na etapa de pagamento. O uuid da pessoa
+       fica em cache assim que criado (garantirPessoaCriada) pra não
+       recadastrar em cada nova tentativa de pagamento -- o cartão pode
+       ser recusado e a pessoa tentar de novo (outro cartão, ou Pix). */
+    const [formaPagamento,          setFormaPagamento]          = useState('pix')
+    const [uuidCriado,              setUuidCriado]              = useState(null)
+    const [brickCartaoPronto,       setBrickCartaoPronto]       = useState(false)
+    const [processandoPagamento,    setProcessandoPagamento]    = useState(false)
+    const [resultadoPagamentoCartao, setResultadoPagamentoCartao] = useState(null)
+
     const [enviando, setEnviando] = useState(false)
     const [feedback, setFeedback] = useState(null)
 
     const inputComprovanteRef = useRef(null)
+    const brickContainerRef   = useRef(null)
+    const brickControllerRef  = useRef(null)
 
     const senhaOk = {
         especial:  /[^a-zA-Z0-9]/.test(form.senha),
@@ -159,6 +175,52 @@ export default function BoxInscricao() {
             .catch(() => setFeedback({ tipo: 'erro', msg: 'Não foi possível carregar os ingressos.' }))
             .finally(() => setCarregandoIngressos(false))
     }, [aba, etapa, ingressos.length])
+
+    /* Monta o Card Payment Brick quando a pessoa abre a aba "Cartão" na
+       etapa de pagamento; desmonta ao sair da etapa ou trocar pra Pix, pra
+       não deixar dois brickss vivos. Sem chave pública configurada a aba
+       fica oculta (ver render mais abaixo) e este efeito nem chega a rodar. */
+    useEffect(() => {
+        if (etapa !== 4 || formaPagamento !== 'cartao' || !MERCADOPAGO_PUBLIC_KEY) return
+
+        let cancelado = false
+        setBrickCartaoPronto(false)
+
+        carregarMercadoPago()
+            .then(MercadoPago => {
+                if (cancelado || !brickContainerRef.current) return null
+                const mp = new MercadoPago(MERCADOPAGO_PUBLIC_KEY, { locale: 'pt-BR' })
+                return mp.bricks().create('cardPayment', brickContainerRef.current.id, {
+                    initialization: { amount: total },
+                    callbacks: {
+                        // onReady é obrigatório pro SDK (mesmo com onError presente) --
+                        // sem ele, bricks().create() rejeita com "Callbacks onReady
+                        // and/or onError are required" e o brick nunca aparece.
+                        onReady: () => { if (!cancelado) setBrickCartaoPronto(true) },
+                        onSubmit: onSubmitBrickCartao,
+                        onError: erro => setFeedback({
+                            tipo: 'erro',
+                            msg: erro?.message || 'Não foi possível validar os dados do cartão.',
+                        }),
+                    },
+                })
+            })
+            .then(controller => {
+                if (!controller) return
+                if (cancelado) { controller.unmount(); return }
+                brickControllerRef.current = controller
+            })
+            .catch(() => setFeedback({
+                tipo: 'erro',
+                msg: 'Não foi possível carregar o pagamento por cartão. Tente o Pix.',
+            }))
+
+        return () => {
+            cancelado = true
+            brickControllerRef.current?.unmount()
+            brickControllerRef.current = null
+        }
+    }, [etapa, formaPagamento])
 
     /* ── Valores ─────────────────────────────────────────────────── */
 
@@ -307,46 +369,57 @@ export default function BoxInscricao() {
         }
     }
 
-    /* Cria a pessoa com o ingresso e as camisetas escolhidas; envia o
-       comprovante logo em seguida quando há valor a pagar. */
-    async function finalizarInscricao() {
-        if (total > 0 && !arquivoComprovante) return
-        setEnviando(true)
-        setFeedback(null)
+    /* Cria a pessoa com o ingresso e as camisetas escolhidas -- só na
+       primeira chamada; tentativas seguintes (cartão recusado, troca pra
+       Pix) reaproveitam o uuid já criado em vez de recadastrar, o que
+       bateria no 409 de e-mail/CPF duplicado. Lança um Error com mensagem
+       amigável em qualquer falha (HTTP ou de rede) para o chamador exibir. */
+    async function garantirPessoaCriada() {
+        if (uuidCriado) return uuidCriado
 
         const camisetas = [
             ...Array.from({ length: camisetasInclusas }, () => ({ ...camisetaGratis })),
             ...camisetasExtras,
         ]
 
+        const respostaInscricao = await apiFetch(`${API_URL}/api/inscricao`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                nome:            form.nome,
+                cpf:             form.cpf.replace(/\D/g, ''),
+                ra:              form.ra || null,
+                email:           form.email,
+                senha:           form.senha,
+                tipoInscricaoId: ingresso.id,
+                dias:            ingresso.porDia ? dias : null,
+                camisetas,
+            }),
+        })
+
+        if (respostaInscricao.status === 409) {
+            const corpo = await respostaInscricao.json().catch(() => null)
+            throw new Error(corpo?.mensagem || 'CPF ou e-mail já cadastrado.')
+        }
+        if (!respostaInscricao.ok) {
+            const corpo = await respostaInscricao.json().catch(() => null)
+            throw new Error(corpo?.mensagem || 'Erro ao realizar inscrição. Tente novamente.')
+        }
+
+        const { uuid } = await respostaInscricao.json()
+        setUuidCriado(uuid)
+        return uuid
+    }
+
+    /* Fluxo Pix: garante a pessoa criada, sobe o comprovante e fecha em
+       etapa(5). O resultado do cartão (quando é essa a forma escolhida)
+       segue seu próprio caminho, ver onSubmitBrickCartao mais abaixo. */
+    async function finalizarInscricao() {
+        if (total > 0 && !arquivoComprovante) return
+        setEnviando(true)
+        setFeedback(null)
         try {
-            const respostaInscricao = await apiFetch(`${API_URL}/api/inscricao`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    nome:            form.nome,
-                    cpf:             form.cpf.replace(/\D/g, ''),
-                    ra:              form.ra || null,
-                    email:           form.email,
-                    senha:           form.senha,
-                    tipoInscricaoId: ingresso.id,
-                    dias:            ingresso.porDia ? dias : null,
-                    camisetas,
-                }),
-            })
-
-            if (respostaInscricao.status === 409) {
-                const corpo = await respostaInscricao.json().catch(() => null)
-                setFeedback({ tipo: 'erro', msg: corpo?.mensagem || 'CPF ou e-mail já cadastrado.' })
-                return
-            }
-            if (!respostaInscricao.ok) {
-                const corpo = await respostaInscricao.json().catch(() => null)
-                setFeedback({ tipo: 'erro', msg: corpo?.mensagem || 'Erro ao realizar inscrição. Tente novamente.' })
-                return
-            }
-
-            const { uuid } = await respostaInscricao.json()
+            const uuid = await garantirPessoaCriada()
 
             if (arquivoComprovante) {
                 const formData = new FormData()
@@ -359,10 +432,46 @@ export default function BoxInscricao() {
             }
 
             setEtapa(5)
-        } catch {
-            setFeedback({ tipo: 'erro', msg: 'Não foi possível conectar ao servidor.' })
+        } catch (erro) {
+            setFeedback({
+                tipo: 'erro',
+                msg: erro instanceof TypeError ? 'Não foi possível conectar ao servidor.' : erro.message,
+            })
         } finally {
             setEnviando(false)
+        }
+    }
+
+    /* Envio do Card Payment Brick: tokenizou no navegador, agora garante a
+       pessoa criada e cobra o cartão. Qualquer status devolvido (aprovado,
+       recusado, em análise) segue para a etapa 5 -- a confirmação da
+       inscrição continua manual no /admin de qualquer forma, então não há
+       motivo pra travar a pessoa aqui num cartão recusado; ela já viu o
+       resultado e pode tentar de novo ou trocar pra Pix se quiser. */
+    async function onSubmitBrickCartao(dadosFormulario) {
+        setProcessandoPagamento(true)
+        setFeedback(null)
+        try {
+            const uuid = await garantirPessoaCriada()
+            const resultado = await criarPagamentoCartao({
+                pessoaUuid:      uuid,
+                token:           dadosFormulario.token,
+                paymentMethodId: dadosFormulario.payment_method_id,
+                issuerId:        dadosFormulario.issuer_id,
+                installments:    dadosFormulario.installments,
+                payerEmail:      dadosFormulario.payer.email,
+                payerCpf:        dadosFormulario.payer.identification.number,
+            })
+            setResultadoPagamentoCartao(resultado)
+            setEtapa(5)
+        } catch (erro) {
+            setFeedback({
+                tipo: 'erro',
+                msg: erro instanceof TypeError ? 'Não foi possível conectar ao servidor.' : erro.message,
+            })
+            throw erro // o Brick espera a promise rejeitada pra destravar o botão de envio
+        } finally {
+            setProcessandoPagamento(false)
         }
     }
 
@@ -637,87 +746,134 @@ export default function BoxInscricao() {
                                 <div class="cabecalhoEtapaInscricao">
                                     <h2 class="tituloEtapaInscricao">Pagamento</h2>
                                     <p class="subtituloEtapaInscricao">
-                                        Pague por PIX e envie o comprovante para confirmarmos sua inscrição.
+                                        {formaPagamento === 'cartao'
+                                            ? 'Pague no cartão de crédito, em até 12x, direto por aqui.'
+                                            : 'Pague por PIX e envie o comprovante para confirmarmos sua inscrição.'}
                                     </p>
                                 </div>
 
                                 <ResumoInscricao linhas={linhasResumo()} total={total} />
 
-                                <div class="gradePagamentoInscricao">
-                                    <div class="blocoPixInscricao">
-                                        <span class="rotuloChavePixInscricao">QR Code PIX</span>
-                                        <div class="wrapperQrInscricao">
-                                            <img src={qrCodePix} alt="QR Code PIX" class="imagemQrInscricao" />
-                                        </div>
-                                        <div class="linhaChavePixInscricao">
-                                            <span class="valorChavePixInscricao">{CHAVE_PIX}</span>
-                                            <button
-                                                type="button"
-                                                class={`botaoCopiarChaveInscricao ${copiado ? 'botaoCopiadoInscricao' : ''}`}
-                                                onClick={copiarChavePix}
-                                            >
-                                                {copiado ? 'Copiado ✓' : 'Copiar'}
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div class="blocoComprovanteInscricao">
-                                        <span class="rotuloCampoInscricao">Comprovante de pagamento</span>
-                                        <div
-                                            class={`zonaUploadInscricao ${dragAtivo ? 'zonaUploadAtivaInscricao' : ''} ${arquivoComprovante ? 'zonaUploadComArquivoInscricao' : ''}`}
-                                            onClick={() => inputComprovanteRef.current?.click()}
-                                            onDragOver={e => { e.preventDefault(); setDragAtivo(true) }}
-                                            onDragLeave={() => setDragAtivo(false)}
-                                            onDrop={e => {
-                                                e.preventDefault()
-                                                setDragAtivo(false)
-                                                handleArquivoComprovante(e.dataTransfer.files[0])
-                                            }}
+                                {MERCADOPAGO_PUBLIC_KEY && (
+                                    <div class="alternadorFormaPagamentoInscricao" role="tablist" aria-label="Forma de pagamento">
+                                        <button
+                                            type="button"
+                                            role="tab"
+                                            aria-selected={formaPagamento === 'pix'}
+                                            class={`opcaoFormaPagamentoInscricao ${formaPagamento === 'pix' ? 'opcaoFormaPagamentoInscricaoAtiva' : ''}`}
+                                            onClick={() => { setFeedback(null); setFormaPagamento('pix') }}
                                         >
-                                            <input
-                                                ref={inputComprovanteRef}
-                                                type="file"
-                                                accept="image/*,application/pdf"
-                                                style={{ display: 'none' }}
-                                                onChange={e => handleArquivoComprovante(e.target.files[0])}
-                                            />
-                                            {arquivoComprovante ? (
-                                                <div class="previewComprovanteInscricao">
-                                                    {previewComprovante
-                                                        ? <img src={previewComprovante} class="previewImagemInscricao" alt="Comprovante" />
-                                                        : <span class="iconeUploadInscricao">📄</span>
-                                                    }
-                                                    <span class="nomeArquivoInscricao">{arquivoComprovante.name}</span>
-                                                    <span class="botaoTrocarArquivoInscricao">Trocar arquivo</span>
-                                                </div>
-                                            ) : (
-                                                <div class="placeholderUploadInscricao">
-                                                    <span class="iconeUploadInscricao">↑</span>
-                                                    <span class="textoUploadInscricao">Clique ou arraste o comprovante aqui</span>
-                                                    <span class="subTextoUploadInscricao">JPG, PNG ou PDF</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                        <p class="avisoPixInscricao">
-                                            Pague o valor exato de <strong>{formatarMoeda(total)}</strong> e guarde o comprovante.
-                                        </p>
+                                            Pix
+                                        </button>
+                                        <button
+                                            type="button"
+                                            role="tab"
+                                            aria-selected={formaPagamento === 'cartao'}
+                                            class={`opcaoFormaPagamentoInscricao ${formaPagamento === 'cartao' ? 'opcaoFormaPagamentoInscricaoAtiva' : ''}`}
+                                            onClick={() => { setFeedback(null); setFormaPagamento('cartao') }}
+                                        >
+                                            Cartão de crédito
+                                        </button>
                                     </div>
-                                </div>
+                                )}
+
+                                {formaPagamento === 'cartao' ? (
+                                    <div class="blocoCartaoInscricao">
+                                        {!brickCartaoPronto && (
+                                            <p class="carregandoBrickCartaoInscricao">Carregando formulário de cartão…</p>
+                                        )}
+                                        <div id="cardPaymentBrickContainerInscricao" class="containerBrickCartaoInscricao" ref={brickContainerRef} />
+                                        {processandoPagamento && (
+                                            <p class="carregandoBrickCartaoInscricao">Processando pagamento…</p>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div class="gradePagamentoInscricao">
+                                        <div class="blocoPixInscricao">
+                                            <span class="rotuloChavePixInscricao">QR Code PIX</span>
+                                            <div class="wrapperQrInscricao">
+                                                <img src={qrCodePix} alt="QR Code PIX" class="imagemQrInscricao" />
+                                            </div>
+                                            <div class="linhaChavePixInscricao">
+                                                <span class="valorChavePixInscricao">{CHAVE_PIX}</span>
+                                                <button
+                                                    type="button"
+                                                    class={`botaoCopiarChaveInscricao ${copiado ? 'botaoCopiadoInscricao' : ''}`}
+                                                    onClick={copiarChavePix}
+                                                >
+                                                    {copiado ? 'Copiado ✓' : 'Copiar'}
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="blocoComprovanteInscricao">
+                                            <span class="rotuloCampoInscricao">Comprovante de pagamento</span>
+                                            <div
+                                                class={`zonaUploadInscricao ${dragAtivo ? 'zonaUploadAtivaInscricao' : ''} ${arquivoComprovante ? 'zonaUploadComArquivoInscricao' : ''}`}
+                                                onClick={() => inputComprovanteRef.current?.click()}
+                                                onDragOver={e => { e.preventDefault(); setDragAtivo(true) }}
+                                                onDragLeave={() => setDragAtivo(false)}
+                                                onDrop={e => {
+                                                    e.preventDefault()
+                                                    setDragAtivo(false)
+                                                    handleArquivoComprovante(e.dataTransfer.files[0])
+                                                }}
+                                            >
+                                                <input
+                                                    ref={inputComprovanteRef}
+                                                    type="file"
+                                                    accept="image/*,application/pdf"
+                                                    style={{ display: 'none' }}
+                                                    onChange={e => handleArquivoComprovante(e.target.files[0])}
+                                                />
+                                                {arquivoComprovante ? (
+                                                    <div class="previewComprovanteInscricao">
+                                                        {previewComprovante
+                                                            ? <img src={previewComprovante} class="previewImagemInscricao" alt="Comprovante" />
+                                                            : <span class="iconeUploadInscricao">📄</span>
+                                                        }
+                                                        <span class="nomeArquivoInscricao">{arquivoComprovante.name}</span>
+                                                        <span class="botaoTrocarArquivoInscricao">Trocar arquivo</span>
+                                                    </div>
+                                                ) : (
+                                                    <div class="placeholderUploadInscricao">
+                                                        <span class="iconeUploadInscricao">↑</span>
+                                                        <span class="textoUploadInscricao">Clique ou arraste o comprovante aqui</span>
+                                                        <span class="subTextoUploadInscricao">JPG, PNG ou PDF</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <p class="avisoPixInscricao">
+                                                Pague o valor exato de <strong>{formatarMoeda(total)}</strong> e guarde o comprovante.
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
 
                                 {feedback && <Feedback feedback={feedback} />}
 
                                 <div class="acoesEtapaInscricao">
-                                    <button type="button" class="botaoVoltarEtapaInscricao" onClick={voltarEtapa}>
-                                        ← Voltar
-                                    </button>
                                     <button
                                         type="button"
-                                        class="botaoConfirmarInscricao"
-                                        disabled={enviando || !arquivoComprovante}
-                                        onClick={finalizarInscricao}
+                                        class="botaoVoltarEtapaInscricao"
+                                        onClick={voltarEtapa}
+                                        disabled={!!uuidCriado}
+                                        title={uuidCriado
+                                            ? 'Sua inscrição já foi registrada com essas escolhas — não é mais possível trocar o ingresso ou a camiseta.'
+                                            : undefined}
                                     >
-                                        {enviando ? 'Enviando…' : 'Finalizar inscrição'}
+                                        ← Voltar
                                     </button>
+                                    {formaPagamento === 'pix' && (
+                                        <button
+                                            type="button"
+                                            class="botaoConfirmarInscricao"
+                                            disabled={enviando || !arquivoComprovante}
+                                            onClick={finalizarInscricao}
+                                        >
+                                            {enviando ? 'Enviando…' : 'Finalizar inscrição'}
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -727,6 +883,13 @@ export default function BoxInscricao() {
                             <div class="conteinerComemoracaoInscricao">
                                 <span class="seloConfirmacaoInscricao">✓</span>
                                 <div class="tituloComemoracaoInscricao">Inscrição enviada!</div>
+                                {resultadoPagamentoCartao && (
+                                    <p class="subtituloComemoracaoInscricao">
+                                        {resultadoPagamentoCartao.status === 'approved'
+                                            ? 'Pagamento aprovado — falta só a confirmação da comissão organizadora.'
+                                            : 'Recebemos os dados do pagamento e vamos confirmar em breve.'}
+                                    </p>
+                                )}
                                 <p class="subtituloComemoracaoInscricao">
                                     {camisetasInclusas > 0 || camisetasExtras.length > 0
                                         ? 'Sua camiseta chega junto com o kit SEMAC no primeiro dia do evento.'
