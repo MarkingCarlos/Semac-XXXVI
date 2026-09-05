@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'preact/hooks';
+import { useState, useEffect } from 'preact/hooks';
 import './boxPatrocinadores.css';
 
 import { listarPatrocinadoresPublicos } from '../../pages/Patrocinadores/data/apiPatrocinadores.js';
@@ -24,7 +24,7 @@ function agruparPorNivel(patrocinadores) {
 
 function ItemPatrocinador({ item }) {
     return (
-        <div className="itemNivelPatrocinadores" style={{ '--item-delay': `${item.delay}s` }}>
+        <div className="itemNivelPatrocinadores">
             <div className="cartaoLogoNivelPatrocinadores">
                 <img src={item.logo} alt={item.nome} className="logoNivelPatrocinadores" />
             </div>
@@ -34,21 +34,10 @@ function ItemPatrocinador({ item }) {
 }
 
 export default function BoxPatrocinadores() {
-    const sectionRef = useRef(null);
-    const [isVisible, setIsVisible] = useState(false);
     const [patrocinadores, setPatrocinadores] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState('');
     const [isMobile, setIsMobile] = useState(false);
-
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            ([entry]) => setIsVisible(entry.isIntersecting),
-            { threshold: 0.05 }
-        );
-        if (sectionRef.current) observer.observe(sectionRef.current);
-        return () => observer.disconnect();
-    }, []);
 
     useEffect(() => {
         const consulta = window.matchMedia(CONSULTA_MOBILE_PATROCINADORES);
@@ -69,7 +58,7 @@ export default function BoxPatrocinadores() {
 
     if (carregando || erro || patrocinadores.length === 0) {
         return (
-            <section ref={sectionRef} className="secaoPatrocinadores">
+            <section className="secaoPatrocinadores">
                 <p className="statusPatrocinadores">
                     {carregando
                         ? 'Carregando patrocinadores…'
@@ -79,20 +68,9 @@ export default function BoxPatrocinadores() {
         );
     }
 
-    // Calcula delay global: itens do nível anterior + buffer entre níveis
-    let runningDelay = 0.1;
-    const tiersComDelay = agruparPorNivel(patrocinadores).map((tier) => {
-        const items = tier.items.map((item, j) => ({
-            ...item,
-            delay: runningDelay + j * 0.12,
-        }));
-        runningDelay += tier.items.length * 0.12 + 0.25;
-        return { ...tier, items };
-    });
-
     return (
-        <section ref={sectionRef} className={`secaoPatrocinadores${isVisible ? ' secaoPatrocinadoresVisivel' : ''}`}>
-            {tiersComDelay.map((tier) => {
+        <section className="secaoPatrocinadores">
+            {agruparPorNivel(patrocinadores).map((tier) => {
                 // Só o nível Apoiador vira carrossel no mobile quando tem
                 // muitos itens — os demais níveis sempre quebram linha.
                 const carrossel = tier.tier === 'APOIADOR'
