@@ -6,6 +6,7 @@
    o CampoMoeda; o backend usa reais (DECIMAL). A conversão acontece aqui,
    nas bordas da aplicação. */
 
+import { cabecalhosAuth, tratarErroAuth } from '../../../auth/sessao.js';
 import { apiFetch } from '../../../lib/apiFetch.js';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
@@ -35,6 +36,7 @@ function paraRequisicao(doador) {
 
 async function lerRespostaOuFalhar(resposta, mensagemErro) {
     if (!resposta.ok) {
+        if (tratarErroAuth(resposta)) return;
         throw new Error(mensagemErro);
     }
     return resposta.json();
@@ -49,7 +51,7 @@ export async function listarDoadores() {
 export async function criarDoador(doador) {
     const resposta = await apiFetch(ROTA_DOADORES, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(paraRequisicao(doador)),
     });
     const criado = await lerRespostaOuFalhar(resposta, 'Falha ao registrar doação.');
@@ -59,7 +61,7 @@ export async function criarDoador(doador) {
 export async function atualizarDoador(id, doador) {
     const resposta = await apiFetch(`${ROTA_DOADORES}/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(paraRequisicao(doador)),
     });
     const atualizado = await lerRespostaOuFalhar(resposta, 'Falha ao atualizar doação.');
@@ -67,8 +69,12 @@ export async function atualizarDoador(id, doador) {
 }
 
 export async function excluirDoador(id) {
-    const resposta = await apiFetch(`${ROTA_DOADORES}/${id}`, { method: 'DELETE' });
+    const resposta = await apiFetch(`${ROTA_DOADORES}/${id}`, {
+        method: 'DELETE',
+        headers: cabecalhosAuth(),
+    });
     if (!resposta.ok) {
+        if (tratarErroAuth(resposta)) return;
         throw new Error('Falha ao excluir doação.');
     }
 }
