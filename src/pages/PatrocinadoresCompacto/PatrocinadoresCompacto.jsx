@@ -8,7 +8,7 @@ export default function PatrocinadoresCompacto() {
     const [, navigate] = useLocation()
 
     return (
-        <section id="Patrocinadores" className="secaoPatrocinadoresCompacto" >
+        <section  className="secaoPatrocinadoresCompacto" >
 
             {/* ── Topo centralizado: título + pitch + CTA ──────── */}
             <div className="topoPatrocinadoresCompacto">

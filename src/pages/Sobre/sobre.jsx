@@ -6,6 +6,7 @@ import SobreFotos from "../../components/BoxSobreFotos/sobreFotos.jsx";
 import imgQuemSomos from '../../assets/BoxSobre/apresentacaoTrabalhos.png';
 import imgOQueOferecemos from '../../assets/BoxSobre/oQueOferecemos.png';
 import imgOQueBuscamos from '../../assets/BoxSobre/o_que_buscamos.png';
+import SplitText from "../../components/cronogramaFiltro/SplitText.jsx";
 
 const ESTATISTICAS = [
     { plataforma: 'YouTube', href: 'https://www.youtube.com/@SEMACsjrp', cor: 'var(--vermelhoDiretoria)', stats: [{ label: 'Visualizações', valor: '3.396' }, { label: 'Alcance', valor: '4.400' }] },
@@ -93,7 +94,11 @@ const sobre = () =>{
     }, []);
 
     return (
+
         <section id="sobre" ref={sectionRef} className={`conteinerSecaoSobre ${isExiting ? 'secaoSaindoSobre' : ''}`} >
+            <h1 className="tituloSecao">
+                Sobre a SEMAC
+            </h1>
             <div className="sobreSecao">
                 <div className="colunasSobreNos">
                     <SobreFotos

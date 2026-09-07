@@ -228,7 +228,7 @@
 .modalQrParticipantes {
   width: 100%;
   max-width: 400px;
-  background: var(--brancoQuenteParticipantes);
+  background: var(--vermelhoAuxDiretoria);
   border-radius: var(--radius-lg, 25px);
   padding: 24px;
   display: flex;
@@ -247,7 +247,7 @@
   width: 100%;
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
+  justify-content: center;
   gap: 12px;
 }
 
@@ -255,11 +255,14 @@
 
 .tituloModalQrParticipantes {
   font-family: var(--fonteTituloBungee);
-  font-size: 16px;
-  color: var(--vermelhoAuxDiretoria);
+  font-size: 20px;
+  color: var(--Branco);
 }
 
-.subtituloModalQrParticipantes { font-size: 11px; color: rgba(115, 8, 53, 0.75); }
+.subtituloModalQrParticipantes {
+  font-size: 12px;
+  color: rgb(225 218 222 / 0.75);
+}
 
 .botaoFecharModalQrParticipantes {
   width: 34px;
@@ -289,12 +292,20 @@
 
 .identidadeModalQrParticipantes { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 
-.nomeModalQrParticipantes { font-family: var(--fonteTituloBungee); font-size: 14px; color: var(--vermelhoAuxDiretoria); }
-.inscricaoModalQrParticipantes { font-family: var(--fonteTituloBungee); font-size: 12px; color: var(--rosaMarketing); }
+.nomeModalQrParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 14px;
+  color: var(--Branco);
+}
+.inscricaoModalQrParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 12px;
+  color: var(--AmareloAuxApoio);
+}
 
 .avisoAgoraModalQrParticipantes {
   width: 100%;
-  background: var(--azulConteudo);
+  background: var(--AmareloAuxApoio);
   border-radius: var(--radius-md, 16px);
   padding: 12px 14px;
   display: flex;
@@ -310,11 +321,16 @@
   flex: none;
 }
 
-.textoAgoraModalQrParticipantes { font-size: 11px; color: var(--brancoQuenteParticipantes); line-height: 1.35; }
+.textoAgoraModalQrParticipantes {
+  font-size: 12px;
+  color: var(--vermelhoAuxDiretoria);
+  /*line-height: 1.35;*/
+  font-weight: bold;
+}
 
 .rodapeModalQrParticipantes {
   font-size: 10px;
-  color: rgba(115, 8, 53, 0.6);
+  color: rgb(242 242 242 / 60%);
   text-align: center;
   line-height: 1.45;
 }
@@ -762,7 +778,11 @@
   border: 2px solid var(--AmareloAuxApoio);
 }
 
-.statusMeuDiaProximoParticipantes { background: var(--azulConteudo); }
+.statusMeuDiaProximoParticipantes {
+  text-align: left;
+  background: #95073b;
+  color: #ffffff;
+}
 
 .horarioItemMeuDiaInicioParticipantes {
   display: flex;
@@ -877,13 +897,26 @@
 /* ============================================================
    Aba Agenda
    ============================================================ */
-.secaoAgendaParticipantes { display: flex; flex-direction: column; gap: 18px; max-width: 640px; }
+.secaoAgendaParticipantes {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
 
-@media (min-width: 860px) { .secaoAgendaParticipantes { max-width: 760px; margin: 0 auto; } }
+@media (min-width: 860px) {
+
+}
 
 .cabecalhoSecaoAgendaParticipantes { display: flex; flex-direction: column; gap: 4px; }
-.tituloSecaoAgendaParticipantes { font-family: var(--fonteTituloBungee); font-size: 20px; }
-.subtituloSecaoAgendaParticipantes { font-size: 12px; color: rgba(252, 248, 245, 0.7); line-height: 1.4; }
+.tituloSecaoAgendaParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 40px;
+}
+.subtituloSecaoAgendaParticipantes {
+  font-size: 15px;
+  color: rgba(252, 248, 245, 0.7);
+  line-height: 1.4;
+}
 
 .seletorDiasAgendaParticipantes { display: flex; gap: 8px; }
 
@@ -905,8 +938,14 @@
 
 .itemDiaSelecionadoAgendaParticipantes { background: var(--brancoQuenteParticipantes); color: var(--vermelhoAuxDiretoria); }
 
-.rotuloItemDiaAgendaParticipantes { font-family: var(--fonteTituloBungee); font-size: 12px; }
-.dataItemDiaAgendaParticipantes { font-size: 9px; opacity: 0.7; }
+.rotuloItemDiaAgendaParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 15px;
+}
+.dataItemDiaAgendaParticipantes {
+  font-size: 12px;
+  opacity: 0.7;
+}
 .itemDiaSelecionadoAgendaParticipantes .dataItemDiaAgendaParticipantes { font-weight: 700; color: var(--rosaMarketing); opacity: 1; }
 
 .avisoCarregandoAgendaParticipantes,
@@ -946,10 +985,28 @@
 .localCardAtividadeAgendaParticipantes { font-size: 9px; font-weight: 700; opacity: 0.7; }
 
 .textoCardAtividadeAgendaParticipantes { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.tituloCardAtividadeAgendaParticipantes { font-family: var(--fonteTituloBungee); font-size: 13px; line-height: 1.2; }
-.detalheCardAtividadeAgendaParticipantes { font-size: 11px; opacity: 0.75; }
-.statusAtividadeAtualAgendaParticipantes .detalheCardAtividadeAgendaParticipantes { color: var(--rosaMarketing); font-weight: 700; opacity: 1; }
+.tituloCardAtividadeAgendaParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 20px;
+  line-height: 1.2;
+}
 
+.detalheCardAtividadeAgendaParticipantes {
+  font-size: 15px;
+  opacity: 0.75;
+}
+.statusAtividadeAtualAgendaParticipantes .detalheCardAtividadeAgendaParticipantes { color: var(--rosaMarketing); font-weight: 700; opacity: 1; }
+@media (max-width: 768px) {
+  .tituloCardAtividadeAgendaParticipantes {
+    text-align: left;
+    font-size: 12px;
+  }
+  .detalheCardAtividadeAgendaParticipantes {
+    text-align: left;
+    font-size: 12px;
+    opacity: 0.75;
+  }
+}
 .marcaConcluidaCardAtividadeAgendaParticipantes {
   width: 26px;
   height: 26px;
@@ -1091,13 +1148,17 @@
   display: flex;
   flex-direction: row;
   gap: 20px;
-  max-width: 640px;
 }
 
+.dadosParticipante{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 2;
+}
 
 @media (min-width: 860px) {
   .secaoPerfilParticipantes {
-  max-width: 760px;
   }
 }
 
@@ -1116,7 +1177,12 @@
 }
 
 .identidadeSecaoPerfilParticipantes { display: flex; flex-direction: column; gap: 3px; }
-.nomeSecaoPerfilParticipantes { font-family: var(--fonteTituloBungee); font-size: 18px; line-height: 1.1; }
+.nomeSecaoPerfilParticipantes {
+  text-align: left;
+  font-family: var(--fonteTituloBungee);
+  font-size: 18px;
+  line-height: 1.1;
+}
 .cursoSecaoPerfilParticipantes { font-size: 11px; color: rgba(252, 248, 245, 0.7); }
 
 .seloNivelSecaoPerfilParticipantes {
@@ -1125,7 +1191,7 @@
   background: var(--AmareloAuxApoio);
   color: var(--vermelhoAuxDiretoria);
   padding: 4px 8px;
-  border-radius: 9999px;
+  border-radius: 10px;
   align-self: flex-start;
 }
 
@@ -1167,8 +1233,14 @@
 .rotuloLinhaCardDadosInscricaoSecaoPerfilParticipantes { color: rgba(252, 248, 245, 0.6); }
 
 .blocoConquistasSecaoPerfilParticipantes,
-.blocoCertificadosSecaoPerfilParticipantes { display: flex; flex-direction: column; gap: 10px; }
-
+.blocoCertificadosSecaoPerfilParticipantes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.blocoConquistasSecaoPerfilParticipantes{
+  flex: 1;
+}
 .blocoCertificadosSecaoPerfilParticipantes .rotuloBlocoSecaoPerfilParticipantes { font-size: 15px; }
 
 .cardCertificadoSecaoPerfilParticipantes {

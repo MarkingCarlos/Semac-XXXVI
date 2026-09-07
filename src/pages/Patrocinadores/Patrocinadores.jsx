@@ -4,7 +4,7 @@ import './patrocinadores.css';
 const Patrocinadores = () =>{
 
     return (
-        <div >
+        <div id="Patrocinadores">
             <h1 className="tituloSecao tituloPaginaPatrocinadores" style={{marginBottom: '1rem'}}>Patrocinadores</h1>
             <div className="paginaPatrocinadores">
                 <BoxPatrocinadores/>

@@ -42,16 +42,17 @@
     background: var(--vermelhoAuxDiretoria);
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-start;
+    align-items: flex-end;
     justify-content: center;
-    gap: clamp(24px, 4vw, 64px);
-    padding: clamp(32px, 5vw, 64px) clamp(24px, 5vw, 72px);
+    gap: 10px;
+    padding: clamp(32px, 5vw, 50px) clamp(24px, 5vw, 72px);
 }
 
 .blocoNumeroContadorDias {
     display: flex;
-    align-items: baseline;
-    gap: clamp(10px, 1.5vw, 18px);
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-end;
 }
 
 .numeroDiasContadorDias {
@@ -68,10 +69,9 @@
 }
 
 .colunaTextoContadorDias {
-    display: flex;
-    flex-direction: column;
+
     gap: clamp(8px, 1vw, 14px);
-    max-width: 520px;
+
 }
 
 .tituloContadorDias {

@@ -34,18 +34,23 @@ const ContadorDiasEvento = () => {
         <section id="contadorDias" className="containerFaixaContadorDias">
             <div className="conteudoContadorDias">
                 <div className="blocoNumeroContadorDias">
-                    <span className="numeroDiasContadorDias">{tempoRestante.dias}</span>
-                    <span className="rotuloDiasContadorDias">DIAS</span>
-                </div>
-                <div className="colunaTextoContadorDias">
-                    <p className="tituloContadorDias">PARA A XXXVI SEMANA DA COMPUTAÇÃO</p>
+                    <div>
+                        <span className="numeroDiasContadorDias">{tempoRestante.dias}</span>
+                        <span className="rotuloDiasContadorDias">DIAS PARA A XXXVI SEMANA DA COMPUTAÇÃO</span>
+                    </div>
                     <div className="linhaDataLocalContadorDias">
                         <span className="tracoAmareloContadorDias" aria-hidden="true" />
                         <span className="textoDataLocalContadorDias">26 a 30 de outubro de 2026 · IBILCE/UNESP</span>
                     </div>
-                    <p className="textoTempoRestanteContadorDias">{tempoRestante.textoTempoRestante} RESTANTES</p>
                 </div>
+                <div className="colunaTextoContadorDias">
+                    {/*<p className="tituloContadorDias">PARA A XXXVI SEMANA DA COMPUTAÇÃO</p>*/}
+
+                    {/*<p className="textoTempoRestanteContadorDias">{tempoRestante.textoTempoRestante} RESTANTES</p>*/}
+                </div>
+
             </div>
+
         </section>
     )
 }
