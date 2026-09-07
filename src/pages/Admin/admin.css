@@ -155,7 +155,7 @@
 }
 
 .secaoAdmin {
-    max-width: 1080px;
+    /*max-width: 1080px;*/
     margin: 0 auto;
     animation: entradaSecaoAdmin 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
