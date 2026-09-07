@@ -41,6 +41,22 @@ export async function atribuirRole(id, role, tipoInscricaoId = null) {
     return resposta.json();
 }
 
+/* Desfaz a confirmação: volta a pessoa para "aguardando confirmação"
+   (role = NULL). O backend recusa (409) quando já há presença registrada
+   em algum evento, para não perder esse histórico. Retorna a pessoa
+   atualizada. */
+export async function desconfirmarParticipante(id) {
+    const resposta = await apiFetch(`${API_URL}/api/pessoa/${id}/desconfirmar`, {
+        method: 'PATCH',
+        headers: cabecalhosAuth(),
+    });
+    if (!resposta.ok) {
+        const corpo = await resposta.json().catch(() => null);
+        throw new Error(corpo?.mensagem || 'Não foi possível desconfirmar esta pessoa.');
+    }
+    return resposta.json();
+}
+
 /* Ativa/desativa uma pessoa (ex.: suspender membro da comissão).
    Retorna a pessoa atualizada. */
 export async function definirAtivo(id, ativo) {

@@ -120,28 +120,32 @@ export default function Admin() {
         return () => { ativo = false; };
     }, []);
 
-    // Após confirmar: qualquer papel de comissão (≠ PARTICIPANTE) sai da
-    // tabela de participantes e entra na lista da comissão na hora;
-    // PARTICIPANTE permanece com o registro atualizado (papel + ingresso).
-    function aoConfirmarParticipante(atualizado) {
-        if (atualizado.role !== 'PARTICIPANTE') {
+    // Move a pessoa entre as duas listas conforme o role atualizado, nas
+    // duas direções: confirmar (participantes → comissão ou fica em
+    // participantes), alterar função (comissão → comissão), desconfirmar
+    // (qualquer uma das duas → volta para participantes com role null,
+    // já que é lá que fica quem está aguardando confirmação). Quando o id
+    // não estava na lista de destino (ex.: desconfirmou alguém que só
+    // existia em comissao), ele é inserido — por isso nunca usa só `map`.
+    function aoAtualizarPessoa(atualizado) {
+        const ehComissao = atualizado.role != null && atualizado.role !== 'PARTICIPANTE';
+
+        if (ehComissao) {
             setParticipantes((prev) => prev.filter((p) => p.id !== atualizado.id));
             setComissao((prev) => {
                 const semEle = prev.filter((m) => m.id !== atualizado.id);
                 return [...semEle, atualizado].sort((a, b) => a.nome.localeCompare(b.nome));
             });
         } else {
-            setParticipantes((prev) =>
-                prev.map((p) => (p.id === atualizado.id ? atualizado : p))
-            );
+            setComissao((prev) => prev.filter((m) => m.id !== atualizado.id));
+            setParticipantes((prev) => {
+                const jaExiste = prev.some((p) => p.id === atualizado.id);
+                const lista = jaExiste
+                    ? prev.map((p) => (p.id === atualizado.id ? atualizado : p))
+                    : [...prev, atualizado];
+                return lista.sort((a, b) => a.nome.localeCompare(b.nome));
+            });
         }
-    }
-
-    // Atualiza um membro da comissão após alterar função ou ativar/desativar.
-    function aoAtualizarComissao(atualizado) {
-        setComissao((prev) =>
-            prev.map((m) => (m.id === atualizado.id ? atualizado : m))
-        );
     }
 
     // Remove a pessoa da lista local após a exclusão definitiva confirmada
@@ -190,7 +194,7 @@ export default function Admin() {
                                     <StatsGrid participantes={participantes} />
                                     <TabelaParticipantes
                                         participantes={participantes}
-                                        aoConfirmar={aoConfirmarParticipante}
+                                        aoConfirmar={aoAtualizarPessoa}
                                         aoExcluir={aoExcluirPessoa}
                                     />
                                 </>
@@ -213,7 +217,7 @@ export default function Admin() {
                             {carregandoComissao ? (
                                 <p className="estadoCarregandoParticipantesAdmin">Carregando comissão...</p>
                             ) : (
-                                <TabelaComissao comissao={comissao} aoAtualizar={aoAtualizarComissao} aoExcluir={aoExcluirPessoa} />
+                                <TabelaComissao comissao={comissao} aoAtualizar={aoAtualizarPessoa} aoExcluir={aoExcluirPessoa} />
                             )}
                         </div>
                     )}

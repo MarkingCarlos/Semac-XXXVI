@@ -311,6 +311,26 @@
     background-color: #7bd07f;
 }
 
+/* ── Checkbox "Sou estudante da UNESP" ───────────────────────── */
+
+.campoCheckboxUnespInscricao {
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--Branco);
+    cursor: pointer;
+}
+
+.campoCheckboxUnespInscricao input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--AmareloAuxApoio);
+}
+
 /* ── Aviso de RA para e-mail institucional UNESP ─────────────── */
 
 .avisoRaUnespInscricao {

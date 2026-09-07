@@ -579,6 +579,7 @@
 .celulaNomeAdmin  { font-weight: 600; }
 .celulaEmailAdmin { opacity: 0.6; font-size: 0.8rem; }
 .celulaRaAdmin    { font-family: monospace; font-size: 0.85rem; opacity: 0.8; }
+.celulaTelefoneAdmin { font-family: monospace; font-size: 0.85rem; opacity: 0.8; white-space: nowrap; }
 
 .celulaNumeroAdmin {
     text-align: center;

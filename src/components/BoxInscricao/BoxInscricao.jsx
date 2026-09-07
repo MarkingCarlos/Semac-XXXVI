@@ -74,6 +74,20 @@ function mascaraCPF(valor) {
         .slice(0, 14)
 }
 
+// Aplica a máscara de telefone enquanto o usuário digita: (00) 00000-0000
+// (celular, 11 dígitos) ou (00) 0000-0000 (fixo, 10 dígitos).
+function mascaraTelefone(valor) {
+    const digitos = valor.replace(/\D/g, '').slice(0, 11)
+    if (digitos.length <= 10) {
+        return digitos
+            .replace(/(\d{2})(\d)/, '($1) $2')
+            .replace(/(\d{4})(\d)/, '$1-$2')
+    }
+    return digitos
+        .replace(/(\d{2})(\d)/, '($1) $2')
+        .replace(/(\d{5})(\d)/, '$1-$2')
+}
+
 function formatarMoeda(valor) {
     return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 }
@@ -99,7 +113,7 @@ export default function BoxInscricao() {
        entra. Mantém os campos por assunto e o formulário curto. */
     const [subEtapaDados, setSubEtapaDados] = useState('identificacao')
 
-    const [form, setForm] = useState({ nome: '', cpf: '', ra: '', email: '', senha: '' })
+    const [form, setForm] = useState({ nome: '', cpf: '', ra: '', telefone: '', email: '', senha: '', ehUnesp: false })
 
     const [ingressos,           setIngressos]           = useState([])
     const [carregandoIngressos, setCarregandoIngressos] = useState(false)
@@ -141,15 +155,20 @@ export default function BoxInscricao() {
     }
     const senhaValida = senhaOk.especial && senhaOk.maiusculo && senhaOk.minimo8
 
+    const telefoneValido = form.telefone.replace(/\D/g, '').length >= 10
     const identificacaoValida = form.nome.trim() && form.cpf.replace(/\D/g, '').length === 11
-    const acessoValido = form.email.trim() && senhaValida
+        && telefoneValido && (!form.ehUnesp || form.ra.trim())
 
-    const avisoRaUnesp = form.email.toLowerCase().includes('@unesp') && !form.ra.trim()
+    // Estudante da UNESP precisa de e-mail institucional — bloqueia o avanço
+    // em vez de só avisar, diferente do comportamento antigo.
+    const emailUnespInvalido = form.ehUnesp && form.email.trim() !== ''
+        && !form.email.toLowerCase().trim().endsWith('@unesp.br')
+    const acessoValido = form.email.trim() && senhaValida && !emailUnespInvalido
 
     const [avisoMontado, setAvisoMontado] = useState(false)
     const [avisoVisivel, setAvisoVisivel] = useState(false)
     useEffect(() => {
-        if (avisoRaUnesp) {
+        if (emailUnespInvalido) {
             setAvisoMontado(true)
             const id = requestAnimationFrame(() => setAvisoVisivel(true))
             return () => cancelAnimationFrame(id)
@@ -157,7 +176,7 @@ export default function BoxInscricao() {
         setAvisoVisivel(false)
         const id = setTimeout(() => setAvisoMontado(false), 300)
         return () => clearTimeout(id)
-    }, [avisoRaUnesp])
+    }, [emailUnespInvalido])
 
     /* Ingressos e preço da camiseta avulsa são carregados juntos ao entrar
        na etapa 2: a etapa 3 já precisa do preço para montar a oferta. */
@@ -389,8 +408,10 @@ export default function BoxInscricao() {
                 nome:            form.nome,
                 cpf:             form.cpf.replace(/\D/g, ''),
                 ra:              form.ra || null,
+                telefone:        form.telefone.replace(/\D/g, ''),
                 email:           form.email,
                 senha:           form.senha,
+                ehUnesp:         form.ehUnesp,
                 tipoInscricaoId: ingresso.id,
                 dias:            ingresso.porDia ? dias : null,
                 camisetas,
@@ -555,12 +576,28 @@ export default function BoxInscricao() {
                                         required
                                     />
                                     <CampoTexto
-                                        label="RA (opcional)"
+                                        label="Telefone"
+                                        value={form.telefone}
+                                        onInput={e => setField('telefone', mascaraTelefone(e.target.value))}
+                                        inputMode="numeric"
+                                        required
+                                    />
+                                    <CampoTexto
+                                        label={form.ehUnesp ? 'RA' : 'RA (opcional)'}
                                         value={form.ra}
                                         onInput={e => setField('ra', e.target.value)}
                                         inputMode="numeric"
+                                        required={form.ehUnesp}
                                     />
                                 </div>
+                                <label class="campoCheckboxUnespInscricao">
+                                    <input
+                                        type="checkbox"
+                                        checked={form.ehUnesp}
+                                        onInput={e => setField('ehUnesp', e.currentTarget.checked)}
+                                    />
+                                    <span>Sou estudante da UNESP</span>
+                                </label>
                                 <button type="submit" class="botaoConfirmarInscricao" disabled={!identificacaoValida}>
                                     Próxima etapa
                                 </button>
@@ -582,7 +619,7 @@ export default function BoxInscricao() {
                                 />
                                 {avisoMontado && (
                                     <p class={`avisoRaUnespInscricao ${avisoVisivel ? 'avisoRaUnespInscricaoVisivel' : ''}`}>
-                                        É muito importante que preencha o campo de RA, para que possamos gerar o seu certificado.
+                                        Estudante da UNESP precisa de um e-mail terminado em @unesp.br.
                                     </p>
                                 )}
                                 <CampoSenha

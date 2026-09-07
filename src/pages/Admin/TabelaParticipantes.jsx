@@ -12,7 +12,7 @@
 
 import { useState, useMemo, useEffect } from 'preact/hooks'
 import { createPortal } from 'preact/compat'
-import { atribuirRole, excluirParticipante, buscarComprovante } from './data/apiParticipantes.js'
+import { atribuirRole, desconfirmarParticipante, excluirParticipante, buscarComprovante } from './data/apiParticipantes.js'
 import { listarTiposInscricao } from './data/apiTipoInscricao.js'
 import { formatarCentavos } from '../Financas/utils/moeda.js'
 import { temAcessoFinanceiro } from '../../auth/sessao.js'
@@ -69,9 +69,20 @@ function textoCamiseta(camisetas) {
     return lista.length > 1 ? `${texto} +${lista.length - 1}` : texto
 }
 
+// Formata o telefone salvo (só dígitos) para exibição: (00) 00000-0000
+// (celular) ou (00) 0000-0000 (fixo). '—' se não houver telefone.
+function textoTelefone(telefone) {
+    if (!telefone) return '—'
+    const digitos = telefone.replace(/\D/g, '')
+    if (digitos.length === 11) return digitos.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
+    if (digitos.length === 10) return digitos.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3')
+    return telefone
+}
+
 // Linha individual da tabela para um participante.
 function LinhaParticipante({
     participante, aoAbrirConfirmacao, aoExcluir, confirmandoExcluir, processandoExcluir,
+    aoDesconfirmar, confirmandoDesconfirmar, processandoDesconfirmar,
     podeEditarCamisetas, aoEditarCamisetas,
 }) {
     const confirmado = participante.role === 'PARTICIPANTE'
@@ -83,6 +94,7 @@ function LinhaParticipante({
                 <span class="emailParticipanteAdmin">{participante.email}</span>
             </td>
             <td class="celulaRaAdmin">{participante.ra ?? '—'}</td>
+            <td class="celulaTelefoneAdmin">{textoTelefone(participante.telefone)}</td>
             <td>
                 <span class={`badgeContaAdmin ${participante.ativo ? 'badgeContaAtivoAdmin' : 'badgeContaInativoAdmin'}`}>
                     {participante.ativo ? 'Ativo' : 'Inativo'}
@@ -107,6 +119,22 @@ function LinhaParticipante({
                             >
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                </svg>
+                            </button>
+                            <button
+                                type="button"
+                                class={`botaoAcaoLinhaFinancas ${confirmandoDesconfirmar ? 'botaoConfirmarExclusaoFinancas' : ''}`}
+                                disabled={processandoDesconfirmar}
+                                aria-label={
+                                    confirmandoDesconfirmar
+                                        ? `Confirmar desconfirmação de ${participante.nome}`
+                                        : `Desconfirmar ${participante.nome}`
+                                }
+                                title={confirmandoDesconfirmar ? 'Clique novamente para confirmar' : 'Desconfirmar (volta para aguardando)'}
+                                onClick={() => aoDesconfirmar(participante)}
+                            >
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9 14 4 9l5-5M4 9h10.5a5.5 5.5 0 0 1 0 11H11" />
                                 </svg>
                             </button>
                         </div>
@@ -165,6 +193,9 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
     const [idConfirmandoExcluir, setIdConfirmandoExcluir] = useState(null)
     const [idProcessandoExcluir, setIdProcessandoExcluir] = useState(null)
     const [erroExclusao, setErroExclusao] = useState('')
+    const [idConfirmandoDesconfirmar, setIdConfirmandoDesconfirmar] = useState(null)
+    const [idProcessandoDesconfirmar, setIdProcessandoDesconfirmar] = useState(null)
+    const [erroDesconfirmar, setErroDesconfirmar] = useState('')
     const podeEditarCamisetas = temAcessoFinanceiro()
 
     const filtrados = useMemo(() =>
@@ -195,6 +226,26 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
         }
     }
 
+    // Desconfirmação: exige 2 cliques, mesmo padrão da exclusão. O backend
+    // recusa (409) quem já tem presença registrada em algum evento.
+    async function desconfirmar(participante) {
+        if (idConfirmandoDesconfirmar !== participante.id) {
+            setIdConfirmandoDesconfirmar(participante.id)
+            return
+        }
+        setErroDesconfirmar('')
+        setIdProcessandoDesconfirmar(participante.id)
+        try {
+            const atualizado = await desconfirmarParticipante(participante.id)
+            aoConfirmar(atualizado)
+        } catch (e) {
+            setErroDesconfirmar(e.message)
+        } finally {
+            setIdProcessandoDesconfirmar(null)
+            setIdConfirmandoDesconfirmar(null)
+        }
+    }
+
     return (
         <div class="conteinerTabelaAdmin">
             <div class="topoTabelaAdmin">
@@ -209,6 +260,7 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
             </div>
 
             {erroExclusao && <p class="avisoErroModalParticipantesAdmin">{erroExclusao}</p>}
+            {erroDesconfirmar && <p class="avisoErroModalParticipantesAdmin">{erroDesconfirmar}</p>}
 
             <div class="scrollTabelaAdmin">
                 <table class="tabelaAdmin">
@@ -216,6 +268,7 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
                         <tr>
                             <th>Nome</th>
                             <th>RA</th>
+                            <th>Telefone</th>
                             <th>Conta</th>
                             <th>Camiseta</th>
                             <th>Ingresso</th>
@@ -226,7 +279,7 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
                     <tbody>
                         {filtrados.length === 0 ? (
                             <tr>
-                                <td colSpan={7} class="tabelaVaziaAdmin">
+                                <td colSpan={8} class="tabelaVaziaAdmin">
                                     Nenhum participante encontrado.
                                 </td>
                             </tr>
@@ -238,6 +291,9 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
                                 aoExcluir={excluir}
                                 confirmandoExcluir={idConfirmandoExcluir === participante.id}
                                 processandoExcluir={idProcessandoExcluir === participante.id}
+                                aoDesconfirmar={desconfirmar}
+                                confirmandoDesconfirmar={idConfirmandoDesconfirmar === participante.id}
+                                processandoDesconfirmar={idProcessandoDesconfirmar === participante.id}
                                 podeEditarCamisetas={podeEditarCamisetas}
                                 aoEditarCamisetas={setParticipanteEditandoCamisetas}
                             />

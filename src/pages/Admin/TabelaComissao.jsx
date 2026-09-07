@@ -13,7 +13,7 @@
 
 import { useState, useMemo } from 'preact/hooks'
 import { createPortal } from 'preact/compat'
-import { atribuirRole, definirAtivo, excluirParticipante } from './data/apiParticipantes.js'
+import { atribuirRole, definirAtivo, desconfirmarParticipante, excluirParticipante } from './data/apiParticipantes.js'
 import { temAcessoFinanceiro } from '../../auth/sessao.js'
 import ModalEditarCamisetas from './ModalEditarCamisetas.jsx'
 
@@ -41,12 +41,23 @@ function textoCamiseta(camisetas) {
     return lista.length > 1 ? `${texto} +${lista.length - 1}` : texto
 }
 
+// Formata o telefone salvo (só dígitos) para exibição: (00) 00000-0000
+// (celular) ou (00) 0000-0000 (fixo). '—' se não houver telefone.
+function textoTelefone(telefone) {
+    if (!telefone) return '—'
+    const digitos = telefone.replace(/\D/g, '')
+    if (digitos.length === 11) return digitos.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
+    if (digitos.length === 10) return digitos.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3')
+    return telefone
+}
+
 export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
     const [busca, setBusca] = useState('')
     const [membroEmEdicao, setMembroEmEdicao] = useState(null)
     const [membroEditandoCamisetas, setMembroEditandoCamisetas] = useState(null)
     const [idConfirmandoDesativar, setIdConfirmandoDesativar] = useState(null)
     const [idConfirmandoExcluir, setIdConfirmandoExcluir] = useState(null)
+    const [idConfirmandoDesconfirmar, setIdConfirmandoDesconfirmar] = useState(null)
     const [idProcessando, setIdProcessando] = useState(null)
     const [erroAcao, setErroAcao] = useState('')
     const podeEditarCamisetas = temAcessoFinanceiro()
@@ -98,6 +109,26 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
         }
     }
 
+    // Desconfirmação: exige 2 cliques, mesmo padrão do desativar/excluir.
+    // O backend recusa (409) quem já tem presença registrada em algum evento.
+    async function desconfirmar(membro) {
+        if (idConfirmandoDesconfirmar !== membro.id) {
+            setIdConfirmandoDesconfirmar(membro.id)
+            return
+        }
+        setErroAcao('')
+        setIdProcessando(membro.id)
+        try {
+            const atualizado = await desconfirmarParticipante(membro.id)
+            aoAtualizar(atualizado)
+        } catch (e) {
+            setErroAcao(e.message)
+        } finally {
+            setIdProcessando(null)
+            setIdConfirmandoDesconfirmar(null)
+        }
+    }
+
     return (
         <div class="conteinerTabelaAdmin">
             <div class="topoTabelaAdmin">
@@ -119,6 +150,7 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
                         <tr>
                             <th>Nome</th>
                             <th>RA</th>
+                            <th>Telefone</th>
                             <th>Conta</th>
                             <th>Camiseta</th>
                             <th>Função</th>
@@ -128,7 +160,7 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
                     <tbody>
                         {filtrados.length === 0 ? (
                             <tr>
-                                <td colSpan={6} class="tabelaVaziaAdmin">
+                                <td colSpan={7} class="tabelaVaziaAdmin">
                                     Nenhum membro da comissão encontrado.
                                 </td>
                             </tr>
@@ -139,6 +171,7 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
                                     <span class="emailParticipanteAdmin">{membro.email}</span>
                                 </td>
                                 <td class="celulaRaAdmin">{membro.ra ?? '—'}</td>
+                                <td class="celulaTelefoneAdmin">{textoTelefone(membro.telefone)}</td>
                                 <td>
                                     <span class={`badgeContaAdmin ${membro.ativo ? 'badgeContaAtivoAdmin' : 'badgeContaInativoAdmin'}`}>
                                         {membro.ativo ? 'Ativo' : 'Inativo'}
@@ -161,6 +194,26 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
                                         >
                                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                            </svg>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class={`botaoAcaoLinhaFinancas ${idConfirmandoDesconfirmar === membro.id ? 'botaoConfirmarExclusaoFinancas' : ''}`}
+                                            disabled={idProcessando === membro.id}
+                                            aria-label={
+                                                idConfirmandoDesconfirmar === membro.id
+                                                    ? `Confirmar desconfirmação de ${membro.nome}`
+                                                    : `Desconfirmar ${membro.nome}`
+                                            }
+                                            title={
+                                                idConfirmandoDesconfirmar === membro.id
+                                                    ? 'Clique novamente para confirmar'
+                                                    : 'Desconfirmar (volta para aguardando)'
+                                            }
+                                            onClick={() => desconfirmar(membro)}
+                                        >
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M9 14 4 9l5-5M4 9h10.5a5.5 5.5 0 0 1 0 11H11" />
                                             </svg>
                                         </button>
                                         {podeEditarCamisetas && (
