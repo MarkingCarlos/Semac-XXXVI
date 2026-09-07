@@ -18,7 +18,10 @@ function centavosParaReais(centavos) {
 }
 
 /* Backend → interface: valor em reais vira centavos. Os demais campos
-   (camisetasGratis, porDia, maxDias) são inteiros/booleanos puros. */
+   (camisetasGratis, porDia, maxDias) são inteiros/booleanos puros.
+   `codigo` nunca vem do backend (ver TipoInscricaoResponseDTO) — só
+   `codigoDefinido` diz se já existe um configurado; `codigo` e
+   `codigoAlterado` são estado local de edição, sempre começando vazios. */
 function deResposta(tipo) {
     return {
         ...tipo,
@@ -26,11 +29,17 @@ function deResposta(tipo) {
         camisetasGratis: tipo.camisetasGratis ?? 0,
         porDia: tipo.porDia ?? false,
         maxDias: tipo.maxDias ?? null,
+        codigoDefinido: tipo.codigoDefinido ?? false,
+        codigo: '',
+        codigoAlterado: false,
     };
 }
 
 /* Interface → backend: centavos viram reais. `maxDias` só viaja em
-   ingresso de diária — fora disso o backend o zera de qualquer forma. */
+   ingresso de diária — fora disso o backend o zera de qualquer forma.
+   `alterarCodigo` só vai true quando o admin mexeu no campo de código
+   (ver InformacoesSemac.jsx) — do contrário o backend preserva o que
+   já estava salvo, já que o valor real nunca chega até aqui. */
 function paraRequisicao(tipo) {
     return {
         nome: tipo.nome,
@@ -40,6 +49,8 @@ function paraRequisicao(tipo) {
         camisetasGratis: Number(tipo.camisetasGratis) || 0,
         porDia: !!tipo.porDia,
         maxDias: tipo.porDia ? Number(tipo.maxDias) || 1 : null,
+        codigo: tipo.codigo || '',
+        alterarCodigo: !!tipo.codigoAlterado,
     };
 }
 

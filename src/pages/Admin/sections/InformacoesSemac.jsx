@@ -56,6 +56,9 @@ const FORMULARIO_VAZIO = {
     camisetasGratis: 0,
     porDia: false,
     maxDias: 1,
+    codigoDefinido: false,
+    codigo: '',
+    codigoAlterado: false,
 };
 
 /* Rótulo do direito a camiseta exibido no card do ingresso — é o que o
@@ -316,6 +319,12 @@ export default function InformacoesSemac() {
             camisetasGratis: tipo.camisetasGratis ?? 0,
             porDia: tipo.porDia ?? false,
             maxDias: tipo.maxDias ?? 1,
+            // O código real nunca vem do backend — só se já existe um
+            // configurado. Campo começa vazio; mexer nele (mesmo pra
+            // apagar) é o que sinaliza a troca (ver codigoAlterado).
+            codigoDefinido: tipo.codigoDefinido ?? false,
+            codigo: '',
+            codigoAlterado: false,
         });
         setIdEmEdicao(tipo.id);
         setPainelAberto(true);
@@ -497,6 +506,9 @@ export default function InformacoesSemac() {
                                         <span className="etiquetaIngressoInfoSemac">
                                             até {tipo.maxDias} {tipo.maxDias === 1 ? 'diária' : 'diárias'}
                                         </span>
+                                    )}
+                                    {tipo.codigoDefinido && (
+                                        <span className="etiquetaIngressoInfoSemac">🔒 Requer código</span>
                                     )}
                                 </div>
                                 <div className="acoesCartaoIngressoInfoSemac">
@@ -886,6 +898,28 @@ export default function InformacoesSemac() {
                             escolhe modelagem e tamanho uma única vez e recebe todas iguais.
                         </p>
                     </div>
+                    <div className="campoFormularioFinancas">
+                        <label className="rotuloCampoFinancas" htmlFor="campoCodigoIngresso">
+                            Código de acesso (opcional)
+                        </label>
+                        <input
+                            id="campoCodigoIngresso"
+                            className="entradaFormularioFinancas"
+                            placeholder={formulario.codigoDefinido ? 'Já configurado — deixe em branco para manter' : 'ex.: COMISSAO2026'}
+                            value={formulario.codigo}
+                            onInput={(e) => setFormulario({
+                                ...formulario,
+                                codigo: e.currentTarget.value,
+                                codigoAlterado: true,
+                            })}
+                        />
+                        <p className="ajudaCampoInfoSemac">
+                            Quem escolher este ingresso no cadastro público só consegue avançar
+                            informando este código exatamente. Deixe em branco (sem editar o campo
+                            de um ingresso já configurado) para manter o código atual, ou apague o
+                            texto para remover a exigência.
+                        </p>
+                    </div>
 
                     <label className="campoCheckboxInfoSemac">
                         <input
@@ -920,6 +954,8 @@ export default function InformacoesSemac() {
                             </p>
                         </div>
                     )}
+
+
 
                     <label className="campoCheckboxInfoSemac">
                         <input

@@ -126,6 +126,14 @@ export default function BoxInscricao() {
     const [camisetasExtras,    setCamisetasExtras]    = useState([])
     const [precoCamisetaExtra, setPrecoCamisetaExtra] = useState(0)
 
+    /* Código de acesso do ingresso (etapa 2) — só existe pra ingressos com
+       codigoDefinido=true (ex.: comissão). Verificado contra o backend
+       antes de liberar o avanço; a validação de verdade acontece de novo
+       no envio final (POST /api/inscricao), esta é só UX. */
+    const [codigoIngresso,      setCodigoIngresso]      = useState('')
+    const [verificandoCodigo,   setVerificandoCodigo]   = useState(false)
+    const [erroCodigoIngresso,  setErroCodigoIngresso]  = useState('')
+
     const [arquivoComprovante, setArquivoComprovante] = useState(null)
     const [previewComprovante, setPreviewComprovante] = useState(null)
     const [copiado,            setCopiado]            = useState(false)
@@ -301,6 +309,39 @@ export default function BoxInscricao() {
         setDias(1)
         setCamisetasExtras([])
         setCamisetaGratis(CAMISETA_PADRAO)
+        setCodigoIngresso('')
+        setErroCodigoIngresso('')
+    }
+
+    /* Verifica o código antes de avançar da etapa 2, quando o ingresso
+       escolhido exige um (codigoDefinido). Nunca revela o código real —
+       só se bateu ou não; a validação de verdade se repete no envio final. */
+    async function avancarDoIngresso() {
+        if (!ingresso?.codigoDefinido) {
+            setFeedback(null)
+            setEtapa(3)
+            return
+        }
+        setVerificandoCodigo(true)
+        setErroCodigoIngresso('')
+        try {
+            const resposta = await apiFetch(`${API_URL}/api/tipo-inscricao/${ingresso.id}/verificar-codigo`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ codigo: codigoIngresso }),
+            })
+            const corpo = await resposta.json().catch(() => null)
+            if (resposta.ok && corpo?.valido) {
+                setFeedback(null)
+                setEtapa(3)
+            } else {
+                setErroCodigoIngresso('Código de acesso inválido para este ingresso.')
+            }
+        } catch {
+            setErroCodigoIngresso('Não foi possível verificar o código agora. Tente novamente.')
+        } finally {
+            setVerificandoCodigo(false)
+        }
     }
 
     function voltarEtapa() {
@@ -412,6 +453,7 @@ export default function BoxInscricao() {
                 email:           form.email,
                 senha:           form.senha,
                 ehUnesp:         form.ehUnesp,
+                codigoIngresso:  ingresso.codigoDefinido ? codigoIngresso.trim() : null,
                 tipoInscricaoId: ingresso.id,
                 dias:            ingresso.porDia ? dias : null,
                 camisetas,
@@ -671,6 +713,22 @@ export default function BoxInscricao() {
                                     </div>
                                 )}
 
+                                {ingresso?.codigoDefinido && (
+                                    <div class="campoInscricao">
+                                        <label class="rotuloCampoInscricao">Código de acesso</label>
+                                        <input
+                                            class="inputCampoInscricao"
+                                            type="text"
+                                            value={codigoIngresso}
+                                            onInput={e => { setCodigoIngresso(e.target.value); setErroCodigoIngresso('') }}
+                                            required
+                                        />
+                                        {erroCodigoIngresso && (
+                                            <Feedback feedback={{ tipo: 'erro', msg: erroCodigoIngresso }} />
+                                        )}
+                                    </div>
+                                )}
+
                                 {feedback && <Feedback feedback={feedback} />}
 
                                 <div class="acoesEtapaInscricao">
@@ -680,10 +738,10 @@ export default function BoxInscricao() {
                                     <button
                                         type="button"
                                         class="botaoConfirmarInscricao"
-                                        disabled={!ingresso}
-                                        onClick={() => { setFeedback(null); setEtapa(3) }}
+                                        disabled={!ingresso || (ingresso.codigoDefinido && !codigoIngresso.trim()) || verificandoCodigo}
+                                        onClick={avancarDoIngresso}
                                     >
-                                        Próxima etapa
+                                        {verificandoCodigo ? 'Verificando...' : 'Próxima etapa'}
                                     </button>
                                 </div>
                             </div>
