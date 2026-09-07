@@ -596,7 +596,7 @@ export default function BoxInscricao() {
                                         checked={form.ehUnesp}
                                         onInput={e => setField('ehUnesp', e.currentTarget.checked)}
                                     />
-                                    <span>Sou estudante da UNESP</span>
+                                    <span>Sou da UNESP</span>
                                 </label>
                                 <button type="submit" class="botaoConfirmarInscricao" disabled={!identificacaoValida}>
                                     Próxima etapa
