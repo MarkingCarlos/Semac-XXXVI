@@ -7,6 +7,7 @@ import { carregarMercadoPago } from './lib/carregarMercadoPago.js'
 import './boxInscricao.css'
 import logoRaios from '../../assets/logoSemacRaios.png'
 import qrCodePix from '../../assets/qr.png'
+import qrCodePixInsc from '../../assets/Insc.png'
 
 const MERCADOPAGO_PUBLIC_KEY = import.meta.env.MERCADOPAGOKEY
 
@@ -904,7 +905,7 @@ export default function BoxInscricao() {
                                         <div class="blocoPixInscricao">
                                             <span class="rotuloChavePixInscricao">QR Code PIX</span>
                                             <div class="wrapperQrInscricao">
-                                                <img src={qrCodePix} alt="QR Code PIX" class="imagemQrInscricao" />
+                                                <img src={qrCodePixInsc} alt="QR Code PIX" class="imagemQrInscricao" />
                                             </div>
                                             <div class="linhaChavePixInscricao">
                                                 <span class="valorChavePixInscricao">{CHAVE_PIX}</span>
