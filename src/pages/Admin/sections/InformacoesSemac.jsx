@@ -59,6 +59,7 @@ const FORMULARIO_VAZIO = {
     codigoDefinido: false,
     codigo: '',
     codigoAlterado: false,
+    restritoUnesp: false,
 };
 
 /* Rótulo do direito a camiseta exibido no card do ingresso — é o que o
@@ -325,6 +326,7 @@ export default function InformacoesSemac() {
             codigoDefinido: tipo.codigoDefinido ?? false,
             codigo: '',
             codigoAlterado: false,
+            restritoUnesp: tipo.restritoUnesp ?? false,
         });
         setIdEmEdicao(tipo.id);
         setPainelAberto(true);
@@ -508,7 +510,10 @@ export default function InformacoesSemac() {
                                         </span>
                                     )}
                                     {tipo.codigoDefinido && (
-                                        <span className="etiquetaIngressoInfoSemac">🔒 Requer código</span>
+                                        <span className="etiquetaIngressoInfoSemac">Requer código</span>
+                                    )}
+                                    {tipo.restritoUnesp && (
+                                        <span className="etiquetaIngressoInfoSemac">Exclusivo UNESP</span>
                                     )}
                                 </div>
                                 <div className="acoesCartaoIngressoInfoSemac">
@@ -929,6 +934,21 @@ export default function InformacoesSemac() {
                         />
                         <span>Cobrar por diária (o valor acima passa a valer por dia)</span>
                     </label>
+
+                    <label className="campoCheckboxInfoSemac">
+                        <input
+                            type="checkbox"
+                            checked={formulario.restritoUnesp}
+                            onInput={(e) => setFormulario({ ...formulario, restritoUnesp: e.currentTarget.checked })}
+                        />
+                        <span>Exclusivo para alunos da UNESP</span>
+                    </label>
+                    {formulario.restritoUnesp && (
+                        <p className="ajudaCampoInfoSemac">
+                            Só aparece no cadastro público para quem marcar "Sou da UNESP" na
+                            etapa de identificação. Ex.: desconto de permanência, comissão.
+                        </p>
+                    )}
 
                     {formulario.porDia && (
                         <div className="campoFormularioFinancas">

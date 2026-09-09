@@ -249,6 +249,26 @@ export default function BoxInscricao() {
         }
     }, [etapa, formaPagamento])
 
+    /* Ingressos restritoUnesp (ex.: desconto de permanência, comissão) só
+       aparecem pra quem já marcou "Sou da UNESP" na etapa 1 — a barreira
+       real fica no backend (InscricaoService.validarRestricaoUnesp), isto
+       aqui é só pra não oferecer uma opção que vai ser recusada no envio. */
+    const ingressosVisiveis = ingressos.filter(tipo => !tipo.restritoUnesp || form.ehUnesp)
+
+    // Se a pessoa desmarcar "Sou da UNESP" depois de já ter escolhido um
+    // ingresso restrito, a seleção fica inválida — limpa pra não submeter
+    // escondido algo que nem aparece mais na lista.
+    useEffect(() => {
+        if (ingresso?.restritoUnesp && !form.ehUnesp) {
+            setIngresso(null)
+            setDias(1)
+            setCamisetasExtras([])
+            setCamisetaGratis(CAMISETA_PADRAO)
+            setCodigoIngresso('')
+            setErroCodigoIngresso('')
+        }
+    }, [form.ehUnesp])
+
     /* ── Valores ─────────────────────────────────────────────────── */
 
     const camisetasInclusas = ingresso?.camisetasGratis ?? 0
@@ -694,13 +714,13 @@ export default function BoxInscricao() {
 
                                 {carregandoIngressos ? (
                                     <p class="carregandoIngressosInscricao">Carregando ingressos…</p>
-                                ) : ingressos.length === 0 ? (
+                                ) : ingressosVisiveis.length === 0 ? (
                                     <p class="carregandoIngressosInscricao">
                                         Nenhum ingresso disponível no momento.
                                     </p>
                                 ) : (
                                     <div class="listaCardsIngressoInscricao" role="radiogroup" aria-label="Tipo de ingresso">
-                                        {ingressos.map(tipo => (
+                                        {ingressosVisiveis.map(tipo => (
                                             <CardIngresso
                                                 key={tipo.id}
                                                 tipo={tipo}

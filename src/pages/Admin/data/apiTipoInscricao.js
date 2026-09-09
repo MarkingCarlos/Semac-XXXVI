@@ -32,6 +32,7 @@ function deResposta(tipo) {
         codigoDefinido: tipo.codigoDefinido ?? false,
         codigo: '',
         codigoAlterado: false,
+        restritoUnesp: tipo.restritoUnesp ?? false,
     };
 }
 
@@ -51,6 +52,7 @@ function paraRequisicao(tipo) {
         maxDias: tipo.porDia ? Number(tipo.maxDias) || 1 : null,
         codigo: tipo.codigo || '',
         alterarCodigo: !!tipo.codigoAlterado,
+        restritoUnesp: !!tipo.restritoUnesp,
     };
 }
 
