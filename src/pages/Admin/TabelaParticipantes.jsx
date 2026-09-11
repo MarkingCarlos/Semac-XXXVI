@@ -188,6 +188,7 @@ function LinhaParticipante({
 
 export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcluir }) {
     const [busca, setBusca] = useState('')
+    const [ordenarPorDataInscricao, setOrdenarPorDataInscricao] = useState(false)
     const [participanteEmConfirmacao, setParticipanteEmConfirmacao] = useState(null)
     const [participanteEditandoCamisetas, setParticipanteEditandoCamisetas] = useState(null)
     const [idConfirmandoExcluir, setIdConfirmandoExcluir] = useState(null)
@@ -198,13 +199,22 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
     const [erroDesconfirmar, setErroDesconfirmar] = useState('')
     const podeEditarCamisetas = temAcessoFinanceiro()
 
-    const filtrados = useMemo(() =>
-        participantes.filter(participante =>
+    // Com o switch desligado, ordem alfabética (padrão). Ligado, mais
+    // recentes primeiro por inscritoEm — cadastros antigos sem essa data
+    // (anteriores à coluna) vão para o final, nos dois casos.
+    const filtrados = useMemo(() => {
+        const resultado = participantes.filter(participante =>
             participante.nome.toLowerCase().includes(busca.toLowerCase()) ||
             participante.email.toLowerCase().includes(busca.toLowerCase())
-        ),
-        [participantes, busca]
-    )
+        )
+        return ordenarPorDataInscricao
+            ? resultado.sort((a, b) => {
+                if (!a.inscritoEm) return 1
+                if (!b.inscritoEm) return -1
+                return new Date(b.inscritoEm) - new Date(a.inscritoEm)
+            })
+            : resultado.sort((a, b) => a.nome.localeCompare(b.nome))
+    }, [participantes, busca, ordenarPorDataInscricao])
 
     // Exclusão definitiva: exige 2 cliques. O backend recusa (409) quem
     // organizou sorteios ou mexeu no caixa do Fundunesp.
@@ -250,13 +260,27 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
         <div class="conteinerTabelaAdmin">
             <div class="topoTabelaAdmin">
                 <h2 class="tituloTabelaAdmin">Participantes</h2>
-                <input
-                    class="inputBuscaAdmin"
-                    type="text"
-                    placeholder="Buscar por nome ou e-mail..."
-                    value={busca}
-                    onInput={e => setBusca(e.target.value)}
-                />
+                <div class="controlesTabelaAdmin">
+                    <button
+                        type="button"
+                        role="switch"
+                        aria-checked={ordenarPorDataInscricao}
+                        class={`switchOrdenacaoTabelaAdmin ${ordenarPorDataInscricao ? 'switchOrdenacaoAtivoTabelaAdmin' : ''}`}
+                        onClick={() => setOrdenarPorDataInscricao(anterior => !anterior)}
+                    >
+                        <span class="trilhoSwitchOrdenacaoTabelaAdmin">
+                            <span class="bolinhaSwitchOrdenacaoTabelaAdmin" />
+                        </span>
+                        <span class="rotuloSwitchOrdenacaoTabelaAdmin">Ordenar por data de inscrição</span>
+                    </button>
+                    <input
+                        class="inputBuscaAdmin"
+                        type="text"
+                        placeholder="Buscar por nome ou e-mail..."
+                        value={busca}
+                        onInput={e => setBusca(e.target.value)}
+                    />
+                </div>
             </div>
 
             {erroExclusao && <p class="avisoErroModalParticipantesAdmin">{erroExclusao}</p>}

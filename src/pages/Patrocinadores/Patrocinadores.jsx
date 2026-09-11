@@ -1,4 +1,4 @@
-import BoxPatrocinadores from "../../components/BoxPatrocinadores/boxPatrocinadores.jsx";
+import BoxPatrocinadores from "../../components/boxPatrocinadores/boxPatrocinadores.jsx";
 import './patrocinadores.css';
 
 const Patrocinadores = () =>{

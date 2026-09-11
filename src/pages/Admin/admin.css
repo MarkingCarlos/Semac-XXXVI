@@ -543,6 +543,86 @@
 .inputBuscaAdmin::placeholder { color: rgba(255, 255, 255, 0.35); }
 .inputBuscaAdmin:focus { border-color: rgba(255, 255, 255, 0.45); }
 
+.controlesTabelaAdmin {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    flex-wrap: wrap;
+}
+
+/* Switch "ordenar por data de inscrição" — desligado: ordem alfabética
+   (padrão); ligado: mais recentes primeiro. */
+.switchOrdenacaoTabelaAdmin {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    background: none;
+    border: none;
+    padding: 2px;
+    margin: -2px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.switchOrdenacaoTabelaAdmin:focus-visible {
+    outline: 2px solid #E79839;
+    outline-offset: 2px;
+}
+
+.trilhoSwitchOrdenacaoTabelaAdmin {
+    position: relative;
+    width: 38px;
+    height: 22px;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    transition: background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.switchOrdenacaoTabelaAdmin:hover .trilhoSwitchOrdenacaoTabelaAdmin {
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.switchOrdenacaoAtivoTabelaAdmin .trilhoSwitchOrdenacaoTabelaAdmin {
+    background-color: var(--AmareloAuxApoio);
+    border-color: var(--AmareloAuxApoio);
+}
+
+.switchOrdenacaoAtivoTabelaAdmin:hover .trilhoSwitchOrdenacaoTabelaAdmin {
+    filter: brightness(1.08);
+}
+
+.bolinhaSwitchOrdenacaoTabelaAdmin {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--Branco);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.switchOrdenacaoAtivoTabelaAdmin .bolinhaSwitchOrdenacaoTabelaAdmin {
+    transform: translateX(16px);
+}
+
+.rotuloSwitchOrdenacaoTabelaAdmin {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(237, 236, 236, 0.75);
+    white-space: nowrap;
+    transition: color 0.2s ease;
+}
+
+.switchOrdenacaoAtivoTabelaAdmin .rotuloSwitchOrdenacaoTabelaAdmin {
+    color: var(--Branco);
+}
+
 .scrollTabelaAdmin { overflow-x: auto; }
 
 .tabelaAdmin {
@@ -1234,6 +1314,11 @@
     .itemNavFlutuanteAdmin,
     .indicadorNavFlutuanteAdmin,
     .linkVoltarAdmin {
+        transition: none;
+    }
+
+    .trilhoSwitchOrdenacaoTabelaAdmin,
+    .bolinhaSwitchOrdenacaoTabelaAdmin {
         transition: none;
     }
 }
