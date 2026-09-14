@@ -1,14 +1,15 @@
 import { useState } from 'preact/hooks';
 import { Link } from 'wouter';
 import { formatarCentavos, formatarData } from '../utils/moeda.js';
-import { atualizarCaixaFundunesp } from '../data/apiCaixaFundunesp.js';
+import { atualizarCaixa, CONTAS, ROTULO_CONTA } from '../data/apiCaixa.js';
 import CampoMoeda from '../components/CampoMoeda.jsx';
 import './resumo.css';
 
 /* Resumo do saldo — extrato em forma de livro-razão.
    Saldo operacional = patrocínios recebidos + inscrições + doações − compras.
-   Caixa anterior (FundoUnesp) vem da tabela `caixa_fundunesp` e é exibido em
-   card separado, editável no próprio card — não entra no saldo.
+   Caixa anterior vem da tabela `caixa` (uma linha por conta: Comissão e
+   FUNDUNESP) e é exibido em card separado, editável conta a conta — não
+   entra no saldo operacional.
    Patrocínios A_RECEBER aparecem à parte e não entram no saldo.
    Doações são cadastradas no /admin e contabilizadas aqui no caixa. */
 export default function Resumo({
@@ -16,9 +17,9 @@ export default function Resumo({
     compras,
     inscricoes,
     doadores = [],
-    caixaFundunesp,
-    setCaixaFundunesp,
-    erroCaixaFundunesp = '',
+    caixas = [],
+    setCaixas,
+    erroCaixas = '',
 }) {
     const totalPatrociniosRecebidos = patrocinadores
         .filter((patrocinador) => patrocinador.statusPagamento === 'RECEBIDO')
@@ -41,32 +42,38 @@ export default function Resumo({
         { rotulo: 'Compras', valor: totalCompras, tipo: 'saida' },
     ];
 
-    /* ── Edição inline do caixa da FundoUnesp ────────────────── */
-    const [editandoCaixa, setEditandoCaixa] = useState(false);
+    /* ── Edição inline do caixa, por conta ───────────────────── */
+    /* Guarda QUAL conta está em edição (não um booleano): os dois cards
+       compartilham os mesmos handlers e só um fica aberto por vez. */
+    const [contaEmEdicao, setContaEmEdicao] = useState(null);
     const [valorEditadoCaixa, setValorEditadoCaixa] = useState(0);
     const [salvandoCaixa, setSalvandoCaixa] = useState(false);
     const [erroSalvarCaixa, setErroSalvarCaixa] = useState('');
 
-    function abrirEdicaoCaixa() {
-        setValorEditadoCaixa(caixaFundunesp?.valor ?? 0);
+    const buscarCaixa = (conta) => caixas.find((caixa) => caixa.conta === conta) ?? null;
+
+    function abrirEdicaoCaixa(conta) {
+        setValorEditadoCaixa(buscarCaixa(conta)?.valor ?? 0);
         setErroSalvarCaixa('');
-        setEditandoCaixa(true);
+        setContaEmEdicao(conta);
     }
 
     // Esc descarta a alteração e volta ao valor que veio do banco.
     function cancelarEdicaoCaixa() {
-        setEditandoCaixa(false);
+        setContaEmEdicao(null);
         setErroSalvarCaixa('');
     }
 
     // Em caso de falha permanece em edição, preservando o que foi digitado.
-    async function salvarCaixa() {
+    async function salvarCaixa(conta) {
         setSalvandoCaixa(true);
         setErroSalvarCaixa('');
         try {
-            const atualizado = await atualizarCaixaFundunesp(valorEditadoCaixa);
-            setCaixaFundunesp(atualizado);
-            setEditandoCaixa(false);
+            const atualizado = await atualizarCaixa(conta, valorEditadoCaixa);
+            setCaixas(caixas.some((caixa) => caixa.conta === conta)
+                ? caixas.map((caixa) => (caixa.conta === conta ? atualizado : caixa))
+                : [...caixas, atualizado]);
+            setContaEmEdicao(null);
         } catch (e) {
             setErroSalvarCaixa(e.message);
         } finally {
@@ -74,10 +81,10 @@ export default function Resumo({
         }
     }
 
-    function aoTeclarCaixa(evento) {
+    function aoTeclarCaixa(evento, conta) {
         if (evento.key === 'Enter') {
             evento.preventDefault();
-            salvarCaixa();
+            salvarCaixa(conta);
         } else if (evento.key === 'Escape') {
             evento.preventDefault();
             cancelarEdicaoCaixa();
@@ -86,11 +93,15 @@ export default function Resumo({
 
     /* Sem registro carregado (falha ou ainda carregando) não se afirma nada
        sobre a data — só depois de ter o dado em mãos. */
-    const notaCaixaFundunesp = !caixaFundunesp
-        ? 'Saldo FundoUnesp'
-        : caixaFundunesp.dataAtualizacao
-          ? `Saldo FundoUnesp — atualizado em ${formatarData(caixaFundunesp.dataAtualizacao)}`
-          : 'Saldo FundoUnesp — nunca atualizado';
+    function notaCaixa(caixa, conta) {
+        const rotulo = `Saldo ${ROTULO_CONTA[conta]}`;
+        if (!caixa) return rotulo;
+        return caixa.dataAtualizacao
+            ? `${rotulo} — atualizado em ${formatarData(caixa.dataAtualizacao)}`
+            : `${rotulo} — nunca atualizado`;
+    }
+
+    const totalCaixaAnterior = caixas.reduce((soma, caixa) => soma + caixa.valor, 0);
 
     return (
         <div className="conteudoResumoFinancas">
@@ -149,59 +160,81 @@ export default function Resumo({
                         </span>
                     </section>
 
-                    <section className="blocoCaixaAnteriorResumo" aria-label="Caixa anterior FundoUnesp">
+                    <section className="blocoCaixaAnteriorResumo" aria-label="Caixa anterior por conta">
                         <span className="rotuloBlocoResumo">Caixa anterior</span>
+                        <strong className="valorCaixaAnteriorResumo">
+                            {caixas.length ? formatarCentavos(totalCaixaAnterior) : '—'}
+                        </strong>
 
-                        <div className="linhaValorCaixaAnteriorResumo">
-                            {editandoCaixa ? (
-                                <CampoMoeda
-                                    valorCentavos={valorEditadoCaixa}
-                                    aoMudar={setValorEditadoCaixa}
-                                    desabilitado={salvandoCaixa}
-                                    classeExtra="entradaCaixaAnteriorResumo"
-                                    aoTeclar={aoTeclarCaixa}
-                                    rotuloAcessivel="Valor do caixa da FundoUnesp"
-                                    autoFoco
-                                />
-                            ) : (
-                                <strong className="valorCaixaAnteriorResumo">
-                                    {caixaFundunesp ? formatarCentavos(caixaFundunesp.valor) : '—'}
-                                </strong>
-                            )}
+                        {/* Uma linha por conta — a SEMAC movimenta as duas, e
+                            misturá-las é o que tornava o balanço da planilha
+                            impossível de fechar. */}
+                        <ul className="listaContasCaixaAnteriorResumo">
+                            {CONTAS.map((conta) => {
+                                const caixa = buscarCaixa(conta);
+                                const emEdicao = contaEmEdicao === conta;
+                                return (
+                                    <li key={conta} className="linhaContaCaixaAnteriorResumo">
+                                        <span className="rotuloContaCaixaAnteriorResumo">
+                                            {ROTULO_CONTA[conta]}
+                                        </span>
 
-                            <button
-                                type="button"
-                                className={
-                                    editandoCaixa
-                                        ? 'botaoAcaoLinhaFinancas botaoEditarCaixaAnteriorResumo botaoSalvarCaixaAnteriorResumo'
-                                        : 'botaoAcaoLinhaFinancas botaoEditarCaixaAnteriorResumo'
-                                }
-                                aria-label={
-                                    editandoCaixa
-                                        ? 'Salvar caixa da FundoUnesp'
-                                        : 'Editar caixa da FundoUnesp'
-                                }
-                                title={editandoCaixa ? 'Salvar' : 'Editar'}
-                                disabled={!caixaFundunesp || salvandoCaixa}
-                                onClick={editandoCaixa ? salvarCaixa : abrirEdicaoCaixa}
-                            >
-                                {editandoCaixa ? (
-                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="20 6 9 17 4 12" />
-                                    </svg>
-                                ) : (
-                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                                    </svg>
-                                )}
-                            </button>
-                        </div>
+                                        <div className="linhaValorCaixaAnteriorResumo">
+                                            {emEdicao ? (
+                                                <CampoMoeda
+                                                    valorCentavos={valorEditadoCaixa}
+                                                    aoMudar={setValorEditadoCaixa}
+                                                    desabilitado={salvandoCaixa}
+                                                    classeExtra="entradaCaixaAnteriorResumo"
+                                                    aoTeclar={(evento) => aoTeclarCaixa(evento, conta)}
+                                                    rotuloAcessivel={`Valor do caixa ${ROTULO_CONTA[conta]}`}
+                                                    autoFoco
+                                                />
+                                            ) : (
+                                                <strong className="valorContaCaixaAnteriorResumo">
+                                                    {caixa ? formatarCentavos(caixa.valor) : '—'}
+                                                </strong>
+                                            )}
 
-                        <span className="notaSaldoResumo">{notaCaixaFundunesp}</span>
+                                            <button
+                                                type="button"
+                                                className={
+                                                    emEdicao
+                                                        ? 'botaoAcaoLinhaFinancas botaoEditarCaixaAnteriorResumo botaoSalvarCaixaAnteriorResumo'
+                                                        : 'botaoAcaoLinhaFinancas botaoEditarCaixaAnteriorResumo'
+                                                }
+                                                aria-label={
+                                                    emEdicao
+                                                        ? `Salvar caixa ${ROTULO_CONTA[conta]}`
+                                                        : `Editar caixa ${ROTULO_CONTA[conta]}`
+                                                }
+                                                title={emEdicao ? 'Salvar' : 'Editar'}
+                                                disabled={salvandoCaixa}
+                                                onClick={() =>
+                                                    emEdicao ? salvarCaixa(conta) : abrirEdicaoCaixa(conta)
+                                                }
+                                            >
+                                                {emEdicao ? (
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <polyline points="20 6 9 17 4 12" />
+                                                    </svg>
+                                                ) : (
+                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                                    </svg>
+                                                )}
+                                            </button>
+                                        </div>
 
-                        {(erroCaixaFundunesp || erroSalvarCaixa) && (
+                                        <span className="notaSaldoResumo">{notaCaixa(caixa, conta)}</span>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+
+                        {(erroCaixas || erroSalvarCaixa) && (
                             <p className="avisoErroCaixaAnteriorResumo" role="alert">
-                                {erroSalvarCaixa || erroCaixaFundunesp}
+                                {erroSalvarCaixa || erroCaixas}
                             </p>
                         )}
                     </section>

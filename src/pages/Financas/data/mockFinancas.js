@@ -10,9 +10,9 @@
    - inscrições confirmadas → GET /api/pessoa/inscricoes (ver data/apiInscricoes.js)
    por isso não há mais mock deles aqui. */
 
-/* O caixa da FundoUnesp agora vem da API real (tabela `caixa_fundunesp`,
-   ver data/apiCaixaFundunesp.js) — registro único, editável no card do
-   Resumo. Por isso não há mais mock dele aqui. */
+/* O caixa agora vem da API real (tabela `caixa`, ver data/apiCaixa.js) —
+   uma linha por conta (Comissão e FUNDUNESP), editável no card do Resumo.
+   Por isso não há mais mock dele aqui. */
 
 /* Patrocinadores agora vêm da API real (ver data/apiPatrocinios.js) —
    por isso não há mais mock deles aqui. As COTAS acima seguem servindo

@@ -1,0 +1,408 @@
+/* ══════════════════════════════════════════════════════════════
+   PREVISÃO DE GASTOS — indicadores, gráficos e tabela
+   Mesma identidade do módulo: crimson de fundo, âmbar como voz de
+   ação, superfícies por sobreposição clara em vez de sombra.
+   ══════════════════════════════════════════════════════════════ */
+
+.conteudoPrevisaoFinancas {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.avisoErroPrevisao {
+    margin: 0;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(220, 70, 70, 0.14);
+    border: 1px solid rgba(220, 70, 70, 0.32);
+    color: #ffc9c9;
+    font-size: 0.82rem;
+}
+
+/* ── Indicadores ─────────────────────────────────────────────── */
+
+.gradeIndicadoresPrevisao {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px;
+}
+
+.cartaoIndicadorPrevisao {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 16px 18px;
+    border-radius: 14px;
+    background: rgba(252, 248, 245, 0.05);
+    border: 1px solid rgba(252, 248, 245, 0.08);
+}
+
+/* Estouro do teto não vira cor sozinha: o rótulo do card já muda de
+   "Margem até o teto" para "Estouro do teto". */
+.cartaoIndicadorEstouroPrevisao {
+    background: rgba(220, 70, 70, 0.12);
+    border-color: rgba(220, 70, 70, 0.35);
+}
+
+.rotuloIndicadorPrevisao {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: rgba(237, 236, 236, 0.55);
+}
+
+.valorIndicadorPrevisao {
+    font-size: 1.45rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #edecec;
+}
+
+.notaIndicadorPrevisao {
+    font-size: 0.7rem;
+    line-height: 1.35;
+    color: rgba(237, 236, 236, 0.45);
+}
+
+/* ── Consumo do teto ─────────────────────────────────────────── */
+
+.blocoConsumoTetoPrevisao {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 18px 20px;
+    border-radius: 14px;
+    background: rgba(252, 248, 245, 0.05);
+    border: 1px solid rgba(252, 248, 245, 0.08);
+}
+
+.cabecalhoConsumoTetoPrevisao {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.rotuloBlocoPrevisao {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: rgba(237, 236, 236, 0.55);
+}
+
+.percentualConsumoTetoPrevisao {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #edecec;
+}
+
+/* O gap de 2px entre as faixas é o "spacer" de superfície: sem ele o
+   realizado e o previsto se fundem numa barra só. */
+.trilhoConsumoTetoPrevisao {
+    display: flex;
+    gap: 2px;
+    width: 100%;
+    height: 10px;
+    border-radius: 9999px;
+    background: rgba(252, 248, 245, 0.09);
+    overflow: hidden;
+}
+
+.faixaRealizadoConsumoTetoPrevisao {
+    background: #0097ce;
+    border-radius: 9999px;
+    transition: width 220ms ease;
+}
+
+.faixaPrevistoConsumoTetoPrevisao {
+    background: #cb7f00;
+    border-radius: 9999px;
+    transition: width 220ms ease;
+}
+
+.legendaConsumoTetoPrevisao {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.itemLegendaPrevisao {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.72rem;
+    color: rgba(237, 236, 236, 0.72);
+}
+
+.marcadorLegendaPrevisao {
+    width: 9px;
+    height: 9px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+/* ── Gráficos ────────────────────────────────────────────────── */
+
+.gradeGraficosPrevisao {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 14px;
+}
+
+.cartaoGraficoPrevisao {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 18px 20px;
+    border-radius: 14px;
+    background: rgba(252, 248, 245, 0.05);
+    border: 1px solid rgba(252, 248, 245, 0.08);
+    min-width: 0;
+}
+
+/* O gráfico por categoria tem mais linhas e precisa da largura inteira. */
+.cartaoGraficoLargoPrevisao {
+    grid-column: 1 / -1;
+}
+
+.tituloGraficoPrevisao {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #edecec;
+}
+
+.notaGraficoPrevisao {
+    margin: 0 0 10px;
+    font-size: 0.7rem;
+    line-height: 1.4;
+    color: rgba(237, 236, 236, 0.45);
+}
+
+.areaGraficoPrevisao {
+    width: 100%;
+    height: 250px;
+    min-width: 0;
+}
+
+.vazioGraficoPrevisao {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin: 0;
+    font-size: 0.78rem;
+    color: rgba(237, 236, 236, 0.4);
+}
+
+.tooltipGraficoPrevisao {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    background: #3D0118;
+    border: 1px solid rgba(252, 248, 245, 0.14);
+    font-size: 0.74rem;
+    color: #edecec;
+}
+
+.tituloTooltipGraficoPrevisao {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    color: rgba(237, 236, 236, 0.7);
+}
+
+.linhaTooltipGraficoPrevisao {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.marcadorTooltipGraficoPrevisao {
+    width: 9px;
+    height: 9px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+/* ── Filtros e avisos ────────────────────────────────────────── */
+
+.linhaFiltrosPrevisao {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+/* A pendência de conta é acionável: clicar filtra a tabela por ela. */
+.avisoSemContaPrevisao {
+    margin: 0;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(231, 152, 57, 0.12);
+    border: 1px solid rgba(231, 152, 57, 0.3);
+    color: #f0c48a;
+    font-family: inherit;
+    font-size: 0.76rem;
+    line-height: 1.45;
+    text-align: left;
+    cursor: pointer;
+}
+
+.avisoSemContaPrevisao:hover {
+    background: rgba(231, 152, 57, 0.18);
+}
+
+.avisoSemContaPrevisao:focus-visible {
+    outline: 2px solid #E79839;
+    outline-offset: 2px;
+}
+
+/* ── Tabela ──────────────────────────────────────────────────── */
+
+.celulaItemPrevisao {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.nomeItemPrevisao {
+    font-weight: 600;
+    color: #edecec;
+}
+
+.seloCategoriaPrevisao,
+.seloStatusPrevisao {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.observacaoItemPrevisao {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 320px;
+    font-size: 0.68rem;
+    line-height: 1.35;
+    color: rgba(237, 236, 236, 0.42);
+}
+
+.celulaCalculoPrevisao {
+    font-size: 0.74rem;
+    color: rgba(237, 236, 236, 0.66);
+    white-space: nowrap;
+}
+
+.fatorEscalaPrevisao {
+    display: block;
+    font-size: 0.68rem;
+    color: #E79839;
+}
+
+.celulaValorTotalPrevisao {
+    font-weight: 700;
+    color: #edecec;
+}
+
+.semContaPrevisao {
+    font-size: 0.72rem;
+    font-style: italic;
+    color: rgba(240, 196, 138, 0.75);
+}
+
+/* Item já convertido em compra: some do foco sem sumir da tabela. */
+.linhaConvertidaPrevisao {
+    opacity: 0.55;
+}
+
+.botaoConfirmarConversaoPrevisao {
+    background: rgba(32, 160, 78, 0.22);
+    border-color: rgba(32, 160, 78, 0.5);
+    color: #8ee0ab;
+}
+
+.rotuloTotalPrevisao {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: rgba(237, 236, 236, 0.5);
+}
+
+/* ── Painéis ─────────────────────────────────────────────────── */
+
+.textoAjudaPainelPrevisao {
+    margin: 0 0 4px;
+    font-size: 0.76rem;
+    line-height: 1.5;
+    color: rgba(237, 236, 236, 0.55);
+}
+
+.ajudaCampoPrevisao {
+    font-size: 0.68rem;
+    line-height: 1.4;
+    color: rgba(237, 236, 236, 0.42);
+}
+
+.blocoNovoFornecedorPrevisao {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 12px;
+    background: rgba(252, 248, 245, 0.04);
+    border: 1px solid rgba(252, 248, 245, 0.08);
+}
+
+/* ── Telas estreitas ─────────────────────────────────────────── */
+
+@media (max-width: 720px) {
+    .gradeGraficosPrevisao {
+        grid-template-columns: 1fr;
+    }
+
+    .linhaFiltrosPrevisao > * {
+        flex: 1 1 100%;
+    }
+
+    .observacaoItemPrevisao {
+        max-width: 200px;
+    }
+}
+
+/* Estágio único: enquanto não há o que comparar, o número substitui a
+   rosca em vez de virar um anel cheio. */
+.estagioUnicoGraficoPrevisao {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 8px;
+    height: 100%;
+    padding: 0 4px;
+}
+
+.valorEstagioUnicoPrevisao {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #edecec;
+}
+
+.notaEstagioUnicoPrevisao {
+    font-size: 0.74rem;
+    line-height: 1.45;
+    color: rgba(237, 236, 236, 0.5);
+}

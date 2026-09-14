@@ -8,17 +8,19 @@ import Cotacoes from './sections/Cotacoes.jsx';
 import Fornecedores from './sections/Fornecedores.jsx';
 import Inscricoes from './sections/Inscricoes.jsx';
 import Doacoes from './sections/Doacoes.jsx';
+import Previsao from './sections/Previsao.jsx';
 import { listarDoadores } from './data/apiDoacoes.js';
 import { listarPatrocinadores } from './data/apiPatrocinios.js';
 import { listarFornecedores } from './data/apiFornecedores.js';
 import { listarInscricoes } from './data/apiInscricoes.js';
 import { listarCompras } from './data/apiCompras.js';
 import { listarCotacoes } from './data/apiCotacoes.js';
-import { lerCaixaFundunesp } from './data/apiCaixaFundunesp.js';
+import { listarCaixas } from './data/apiCaixa.js';
 import './financas.css';
 
 const SECOES = [
     { id: 'resumo', rotulo: 'Resumo' },
+    { id: 'previsao', rotulo: 'Previsão' },
     { id: 'patrocinios', rotulo: 'Patrocínios' },
     { id: 'compras', rotulo: 'Compras' },
     { id: 'cotacoes', rotulo: 'Cotação' },
@@ -93,12 +95,12 @@ export default function Financas() {
     const [carregandoCotacoes, setCarregandoCotacoes] = useState(true);
     const [erroCotacoes, setErroCotacoes] = useState('');
 
-    // Caixa da FundoUnesp: registro único, editável no card do Resumo.
-    // Exibido à parte — não entra no saldo operacional. Diferente das
-    // demais seções não há flag de carregando: o card usa o próprio
-    // registro (null enquanto não chega) como estado de espera.
-    const [caixaFundunesp, setCaixaFundunesp] = useState(null);
-    const [erroCaixaFundunesp, setErroCaixaFundunesp] = useState('');
+    // Caixa: uma linha por conta (COMISSAO e FUNDUNESP), editável no card
+    // do Resumo. Exibido à parte — não entra no saldo operacional.
+    // Diferente das demais seções não há flag de carregando: o card usa a
+    // própria lista (vazia enquanto não chega) como estado de espera.
+    const [caixas, setCaixas] = useState([]);
+    const [erroCaixas, setErroCaixas] = useState('');
 
     useEffect(() => {
         let ativo = true;
@@ -162,12 +164,12 @@ export default function Financas() {
             .finally(() => {
                 if (ativo) setCarregandoCotacoes(false);
             });
-        lerCaixaFundunesp()
-            .then((caixa) => {
-                if (ativo) setCaixaFundunesp(caixa);
+        listarCaixas()
+            .then((lista) => {
+                if (ativo) setCaixas(lista);
             })
             .catch((e) => {
-                if (ativo) setErroCaixaFundunesp(e.message);
+                if (ativo) setErroCaixas(e.message);
             });
         return () => {
             ativo = false;
@@ -190,10 +192,13 @@ export default function Financas() {
                             compras={compras}
                             inscricoes={inscricoes}
                             doadores={doadores}
-                            caixaFundunesp={caixaFundunesp}
-                            setCaixaFundunesp={setCaixaFundunesp}
-                            erroCaixaFundunesp={erroCaixaFundunesp}
+                            caixas={caixas}
+                            setCaixas={setCaixas}
+                            erroCaixas={erroCaixas}
                         />
+                    )}
+                    {secaoAtiva === 'previsao' && (
+                        <Previsao fornecedores={fornecedores} setFornecedores={setFornecedores} />
                     )}
                     {secaoAtiva === 'patrocinios' && (
                         <Patrocinios

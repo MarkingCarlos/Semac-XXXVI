@@ -278,3 +278,38 @@
         order: -1;
     }
 }
+
+/* ── Caixa anterior: uma linha por conta ─────────────────────── */
+/* O card deixou de exibir um único saldo (FundoUnesp) e passou a listar
+   as duas contas, com o total no topo e a edição inline em cada linha. */
+
+.listaContasCaixaAnteriorResumo {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.linhaContaCaixaAnteriorResumo {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(252, 248, 245, 0.08);
+}
+
+.rotuloContaCaixaAnteriorResumo {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: rgba(237, 236, 236, 0.55);
+}
+
+.valorContaCaixaAnteriorResumo {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #edecec;
+}
