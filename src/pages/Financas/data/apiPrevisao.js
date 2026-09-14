@@ -41,7 +41,6 @@ function paraRequisicao(item) {
         valorUnitario: centavosParaReais(item.valorUnitario),
         frete: centavosParaReais(item.frete),
         escala: item.escala,
-        conta: item.conta || null,
         status: item.status,
         dataPrevista: item.dataPrevista || null,
         observacao: item.observacao || null,
@@ -80,14 +79,13 @@ export async function lerResumoPrevisao() {
             totalPrevisto: reaisParaCentavos(categoria.totalPrevisto),
             totalRealizado: reaisParaCentavos(categoria.totalRealizado),
         })),
-        contas: (resumo.contas ?? []).map((conta) => ({
-            conta: conta.conta,
-            caixaInicial: reaisParaCentavos(conta.caixaInicial),
-            entradas: reaisParaCentavos(conta.entradas),
-            saidas: reaisParaCentavos(conta.saidas),
-            previsto: reaisParaCentavos(conta.previsto),
-            saldo: reaisParaCentavos(conta.saldo),
-        })),
+        entradas: {
+            patrocinios: reaisParaCentavos(resumo.entradas?.patrocinios),
+            doacoes: reaisParaCentavos(resumo.entradas?.doacoes),
+            inscricoes: reaisParaCentavos(resumo.entradas?.inscricoes),
+            total: reaisParaCentavos(resumo.entradas?.total),
+        },
+        reservaFundunesp: reaisParaCentavos(resumo.reservaFundunesp),
         orcamento: resumo.orcamento && { ...resumo.orcamento },
     };
 }

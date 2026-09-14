@@ -103,14 +103,19 @@ export default function Financas() {
     const [caixas, setCaixas] = useState([]);
     const [erroCaixas, setErroCaixas] = useState('');
 
-    // Saldo por conta: quem calcula é o backend (/api/previsao/resumo),
-    // que já cruza caixa inicial, entradas e saídas da mesma conta.
-    // Refazer a conta aqui abriria um segundo lugar para a regra divergir.
-    const [contasResumo, setContasResumo] = useState([]);
+    // O que a comissão arrecadou (patrocínios + doações + inscrições) e a
+    // reserva da FUNDUNESP vêm calculados do backend
+    // (/api/previsao/resumo). Refazer a soma aqui abriria um segundo
+    // lugar para a regra divergir.
+    const [entradasResumo, setEntradasResumo] = useState(null);
+    const [reservaFundunesp, setReservaFundunesp] = useState(0);
 
     function recarregarContas() {
         return lerResumoPrevisao()
-            .then((resumo) => setContasResumo(resumo.contas))
+            .then((resumo) => {
+                setEntradasResumo(resumo.entradas);
+                setReservaFundunesp(resumo.reservaFundunesp);
+            })
             .catch((e) => setErroCaixas(e.message));
     }
 
@@ -185,7 +190,9 @@ export default function Financas() {
             });
         lerResumoPrevisao()
             .then((resumo) => {
-                if (ativo) setContasResumo(resumo.contas);
+                if (!ativo) return;
+                setEntradasResumo(resumo.entradas);
+                setReservaFundunesp(resumo.reservaFundunesp);
             })
             .catch((e) => {
                 if (ativo) setErroCaixas(e.message);
@@ -213,7 +220,8 @@ export default function Financas() {
                             doadores={doadores}
                             caixas={caixas}
                             setCaixas={setCaixas}
-                            contasResumo={contasResumo}
+                            entradasResumo={entradasResumo}
+                            reservaFundunesp={reservaFundunesp}
                             recarregarContas={recarregarContas}
                             erroCaixas={erroCaixas}
                         />

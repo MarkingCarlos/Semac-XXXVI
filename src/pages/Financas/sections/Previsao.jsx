@@ -6,7 +6,6 @@ import {
 import PainelLateral from '../components/PainelLateral.jsx';
 import CampoMoeda from '../components/CampoMoeda.jsx';
 import { formatarCentavos, normalizar } from '../utils/moeda.js';
-import { CONTAS, ROTULO_CONTA } from '../data/apiCaixa.js';
 import {
     listarCategoriasPrevisao, criarCategoriaPrevisao,
     atualizarCategoriaPrevisao, excluirCategoriaPrevisao,
@@ -32,7 +31,6 @@ import './previsao.css';
    texto. */
 const COR_PREVISTO = '#cb7f00';
 const COR_REALIZADO = '#0097ce';
-const CORES_CONTA = { entradas: '#0097ce', previsto: '#cb7f00', saidas: '#a366cd' };
 const CORES_STATUS = {
     PREVISTO: '#0097ce',
     COTADO: '#cb7f00',
@@ -64,7 +62,6 @@ const FORMULARIO_VAZIO = {
     valorUnitario: 0,
     frete: 0,
     escala: 'FIXA',
-    conta: '',
     status: 'PREVISTO',
     dataPrevista: '',
     observacao: '',
@@ -127,7 +124,6 @@ export default function Previsao({ fornecedores, setFornecedores }) {
 
     const [filtro, setFiltro] = useState('');
     const [filtroCategoria, setFiltroCategoria] = useState('');
-    const [filtroConta, setFiltroConta] = useState('');
     const [filtroStatus, setFiltroStatus] = useState('');
 
     const [painelAberto, setPainelAberto] = useState(false);
@@ -193,18 +189,6 @@ export default function Previsao({ fornecedores, setFornecedores }) {
             }));
     }, [resumo]);
 
-    const dadosContas = useMemo(() => {
-        if (!resumo) return [];
-        return resumo.contas.map((conta) => ({
-            nome: ROTULO_CONTA[conta.conta] ?? conta.conta,
-            caixaInicial: conta.caixaInicial,
-            saldo: conta.saldo,
-            Entradas: conta.entradas,
-            Previsto: conta.previsto,
-            Saídas: conta.saidas,
-        }));
-    }, [resumo]);
-
     /* Distribuição por estágio — só itens em aberto: um item PAGO já virou
        compra e aparece no realizado, não aqui. */
     const dadosStatus = useMemo(() => {
@@ -215,8 +199,6 @@ export default function Previsao({ fornecedores, setFornecedores }) {
         return STATUS.filter((status) => status !== 'PAGO' && soma[status])
             .map((status) => ({ nome: ROTULO_STATUS[status], valor: soma[status], cor: CORES_STATUS[status] }));
     }, [itens]);
-
-    const itensSemConta = itens.filter((item) => !item.conta && item.status !== 'PAGO').length;
 
     const percentualTeto = resumo && resumo.teto > 0
         ? Math.min(100, (resumo.projecaoTotal / resumo.teto) * 100)
@@ -230,10 +212,8 @@ export default function Previsao({ fornecedores, setFornecedores }) {
     const itensFiltrados = itens.filter((item) => {
         const bateTexto = !filtro.trim() || normalizar(item.descricao).includes(normalizar(filtro));
         const bateCategoria = !filtroCategoria || String(item.categoriaId) === filtroCategoria;
-        const bateConta = !filtroConta
-            || (filtroConta === 'SEM_CONTA' ? !item.conta : item.conta === filtroConta);
         const bateStatus = !filtroStatus || item.status === filtroStatus;
-        return bateTexto && bateCategoria && bateConta && bateStatus;
+        return bateTexto && bateCategoria && bateStatus;
     });
 
     const totalFiltrado = itensFiltrados.reduce((soma, item) => soma + item.valorTotal, 0);
@@ -257,7 +237,6 @@ export default function Previsao({ fornecedores, setFornecedores }) {
             valorUnitario: item.valorUnitario,
             frete: item.frete,
             escala: item.escala,
-            conta: item.conta ?? '',
             status: item.status,
             dataPrevista: item.dataPrevista ?? '',
             observacao: item.observacao ?? '',
@@ -574,27 +553,6 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                     </article>
 
                     <article className="cartaoGraficoPrevisao">
-                        <h2 className="tituloGraficoPrevisao">Balanço por conta</h2>
-                        <p className="notaGraficoPrevisao">
-                            Entradas e saídas da mesma conta — o cruzamento que a planilha fazia errado.
-                        </p>
-                        <div className="areaGraficoPrevisao">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={dadosContas} margin={{ top: 4, right: 8, bottom: 4, left: 0 }} barCategoryGap="28%">
-                                    <CartesianGrid vertical={false} stroke="rgba(252,248,245,0.10)" />
-                                    <XAxis dataKey="nome" stroke="rgba(237,236,236,0.72)" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
-                                    <YAxis tickFormatter={formatarEixoValor} stroke="rgba(237,236,236,0.45)" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} width={46} />
-                                    <Tooltip content={<TooltipPrevisao />} cursor={{ fill: 'rgba(252,248,245,0.06)' }} />
-                                    <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} />
-                                    <Bar dataKey="Entradas" fill={CORES_CONTA.entradas} radius={[4, 4, 0, 0]} maxBarSize={22} />
-                                    <Bar dataKey="Previsto" fill={CORES_CONTA.previsto} radius={[4, 4, 0, 0]} maxBarSize={22} />
-                                    <Bar dataKey="Saídas" fill={CORES_CONTA.saidas} radius={[4, 4, 0, 0]} maxBarSize={22} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </article>
-
-                    <article className="cartaoGraficoPrevisao">
                         <h2 className="tituloGraficoPrevisao">Previsão por estágio</h2>
                         <p className="notaGraficoPrevisao">
                             Só o que está em aberto — item pago já virou compra.
@@ -670,13 +628,6 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                         <option key={categoria.id} value={String(categoria.id)}>{categoria.nome}</option>
                     ))}
                 </select>
-                <select className="selectFiltroFinancas" value={filtroConta} onChange={(e) => setFiltroConta(e.currentTarget.value)} aria-label="Filtrar por conta">
-                    <option value="">Todas as contas</option>
-                    {CONTAS.map((conta) => (
-                        <option key={conta} value={conta}>{ROTULO_CONTA[conta]}</option>
-                    ))}
-                    <option value="SEM_CONTA">Sem conta definida</option>
-                </select>
                 <select className="selectFiltroFinancas" value={filtroStatus} onChange={(e) => setFiltroStatus(e.currentTarget.value)} aria-label="Filtrar por estágio">
                     <option value="">Todos os estágios</option>
                     {STATUS.map((status) => (
@@ -684,20 +635,6 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                     ))}
                 </select>
             </div>
-
-            {/* A planilha de origem nunca preencheu a conta de origem das
-                saídas; em vez de escondê-lo, o número fica à vista. */}
-            {itensSemConta > 0 && (
-                <button
-                    type="button"
-                    className="avisoSemContaPrevisao"
-                    onClick={() => setFiltroConta('SEM_CONTA')}
-                >
-                    {itensSemConta} {itensSemConta === 1 ? 'item em aberto está' : 'itens em aberto estão'} sem
-                    conta de origem definida — o balanço por conta fica incompleto até preencher. Ver
-                    {itensSemConta === 1 ? ' o item' : ' os itens'}.
-                </button>
-            )}
 
             {/* ── Tabela ──────────────────────────────────── */}
             <div className="envelopeTabelaFinancas">
@@ -708,19 +645,18 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                             <th>Fornecedor</th>
                             <th>Cálculo</th>
                             <th>Total</th>
-                            <th>Conta</th>
                             <th>Estágio</th>
                             <th aria-label="Ações" />
                         </tr>
                     </thead>
                     <tbody>
                         {carregando && (
-                            <tr><td colSpan={7} className="celulaVaziaFinancas">Carregando previsão…</td></tr>
+                            <tr><td colSpan={6} className="celulaVaziaFinancas">Carregando previsão…</td></tr>
                         )}
                         {!carregando && itensFiltrados.length === 0 && (
                             <tr>
-                                <td colSpan={7} className="celulaVaziaFinancas">
-                                    {filtro.trim() || filtroCategoria || filtroConta || filtroStatus
+                                <td colSpan={6} className="celulaVaziaFinancas">
+                                    {filtro.trim() || filtroCategoria || filtroStatus
                                         ? 'Nenhuma previsão encontrada para esse filtro.'
                                         : categorias.length === 0
                                             ? 'Nenhuma categoria cadastrada — crie a primeira em “Categorias” para poder lançar previsões.'
@@ -758,11 +694,6 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                                 </td>
                                 <td className="celulaValorFinancas celulaValorTotalPrevisao">
                                     {formatarCentavos(item.valorTotal)}
-                                </td>
-                                <td>
-                                    {item.conta
-                                        ? ROTULO_CONTA[item.conta]
-                                        : <span className="semContaPrevisao">não definida</span>}
                                 </td>
                                 <td>
                                     <span
@@ -847,7 +778,7 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                                 <td className="celulaValorFinancas celulaValorTotalPrevisao">
                                     {formatarCentavos(totalFiltrado)}
                                 </td>
-                                <td colSpan={3} />
+                                <td colSpan={2} />
                             </tr>
                         </tfoot>
                     )}
@@ -949,38 +880,22 @@ export default function Previsao({ fornecedores, setFornecedores }) {
 
                     <h3 className="divisorFormularioFinancas">Situação</h3>
 
-                    <div className="linhaDuplaFormularioFinancas">
-                        <div className="campoFormularioFinancas">
-                            <label className="rotuloCampoFinancas" htmlFor="campoContaPrevisao">Conta de origem</label>
-                            <select
-                                id="campoContaPrevisao"
-                                className="entradaFormularioFinancas"
-                                value={formulario.conta}
-                                onChange={(e) => setFormulario({ ...formulario, conta: e.currentTarget.value })}
-                            >
-                                <option value="">Ainda não definida</option>
-                                {CONTAS.map((conta) => (
-                                    <option key={conta} value={conta}>{ROTULO_CONTA[conta]}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="campoFormularioFinancas">
-                            <label className="rotuloCampoFinancas" htmlFor="campoStatusPrevisao">Estágio *</label>
-                            <select
-                                id="campoStatusPrevisao"
-                                className="entradaFormularioFinancas"
-                                required
-                                value={formulario.status}
-                                onChange={(e) => setFormulario({ ...formulario, status: e.currentTarget.value })}
-                            >
-                                {STATUS.filter((status) => status !== 'PAGO').map((status) => (
-                                    <option key={status} value={status}>{ROTULO_STATUS[status]}</option>
-                                ))}
-                            </select>
-                            <span className="ajudaCampoPrevisao">
-                                Pago não se escolhe aqui — vem de converter em compra.
-                            </span>
-                        </div>
+                    <div className="campoFormularioFinancas">
+                        <label className="rotuloCampoFinancas" htmlFor="campoStatusPrevisao">Estágio *</label>
+                        <select
+                            id="campoStatusPrevisao"
+                            className="entradaFormularioFinancas"
+                            required
+                            value={formulario.status}
+                            onChange={(e) => setFormulario({ ...formulario, status: e.currentTarget.value })}
+                        >
+                            {STATUS.filter((status) => status !== 'PAGO').map((status) => (
+                                <option key={status} value={status}>{ROTULO_STATUS[status]}</option>
+                            ))}
+                        </select>
+                        <span className="ajudaCampoPrevisao">
+                            Pago não se escolhe aqui — vem de converter em compra.
+                        </span>
                     </div>
 
                     <div className="campoFormularioFinancas">

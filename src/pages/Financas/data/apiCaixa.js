@@ -1,11 +1,12 @@
 import { cabecalhosAuth, tratarErroAuth } from '../../../auth/sessao.js';
 import { apiFetch } from '../../../lib/apiFetch.js';
 
-/* Camada de acesso à API do caixa (tabela `caixa`).
+/* Camada de acesso à reserva da FUNDUNESP (tabela `caixa`).
 
-   Uma linha por conta — COMISSAO e FUNDUNESP —, por isso a rota é
-   endereçada pela conta e não por id. Até a V28 a tabela guardava só o
-   saldo da FUNDUNESP e se chamava `caixa_fundunesp`.
+   Desde a V32 sobrou uma linha só: a reserva de emergência da FUNDUNESP.
+   Ela não recebe entrada nem paga saída — é um valor digitado, exibido à
+   parte. A comissão não tem linha aqui: o que ela tem para gastar é
+   calculado a partir de patrocínios, doações e inscrições.
 
    A interface trabalha em CENTAVOS (inteiros); o backend usa reais
    (DECIMAL). */
@@ -13,12 +14,7 @@ import { apiFetch } from '../../../lib/apiFetch.js';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const ROTA = `${API_URL}/api/caixa`;
 
-export const CONTAS = ['COMISSAO', 'FUNDUNESP'];
-
-export const ROTULO_CONTA = {
-    COMISSAO: 'Comissão',
-    FUNDUNESP: 'FUNDUNESP',
-};
+export const CONTA_RESERVA = 'FUNDUNESP';
 
 function reaisParaCentavos(reais) {
     return Math.round(Number(reais ?? 0) * 100);
