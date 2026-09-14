@@ -88,10 +88,7 @@ export async function lerResumoPrevisao() {
             previsto: reaisParaCentavos(conta.previsto),
             saldo: reaisParaCentavos(conta.saldo),
         })),
-        orcamento: resumo.orcamento && {
-            ...resumo.orcamento,
-            teto: reaisParaCentavos(resumo.orcamento.teto),
-        },
+        orcamento: resumo.orcamento && { ...resumo.orcamento },
     };
 }
 

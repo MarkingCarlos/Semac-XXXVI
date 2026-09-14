@@ -430,7 +430,7 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                     <h1 className="tituloSecaoFinancas">Previsão de gastos</h1>
                     <p className="subtituloSecaoFinancas">
                         {resumo
-                            ? `Projeção de ${formatarCentavos(resumo.projecaoTotal)} sobre um teto de ${formatarCentavos(resumo.teto)}`
+                            ? `Projeção de ${formatarCentavos(resumo.projecaoTotal)} sobre o saldo da Comissão de ${formatarCentavos(resumo.teto)}`
                             : 'Carregando projeção…'}
                     </p>
                 </div>
@@ -483,7 +483,7 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                             {formatarCentavos(Math.abs(resumo.margem))}
                         </strong>
                         <span className="notaIndicadorPrevisao">
-                            Teto de {formatarCentavos(resumo.teto)}
+                            Saldo da Comissão: {formatarCentavos(resumo.teto)}
                         </span>
                     </article>
                 </section>
@@ -493,7 +493,7 @@ export default function Previsao({ fornecedores, setFornecedores }) {
             {resumo && resumo.teto > 0 && (
                 <section className="blocoConsumoTetoPrevisao" aria-label="Consumo do teto orçamentário">
                     <div className="cabecalhoConsumoTetoPrevisao">
-                        <span className="rotuloBlocoPrevisao">Consumo do teto</span>
+                        <span className="rotuloBlocoPrevisao">Consumo do saldo da Comissão</span>
                         <span className="percentualConsumoTetoPrevisao">
                             {percentualTeto.toFixed(1).replace('.', ',')}%
                         </span>
@@ -1221,14 +1221,15 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                             Mudar a estimativa de inscritos recalcula o kit do participante inteiro.
                         </p>
 
-                        <div className="campoFormularioFinancas">
-                            <label className="rotuloCampoFinancas" htmlFor="campoTetoOrcamento">Teto de gastos *</label>
-                            <CampoMoeda
-                                id="campoTetoOrcamento"
-                                valorCentavos={formOrcamento.teto}
-                                aoMudar={(centavos) => setFormOrcamento({ ...formOrcamento, teto: centavos })}
-                            />
-                        </div>
+                        {/* O teto não se digita: é o saldo da conta da comissão.
+                            Deixar isso explícito evita a pergunta "onde mudo o
+                            teto?" agora que o campo sumiu. */}
+                        <p className="textoAjudaPainelPrevisao">
+                            O teto de gastos não é configurado aqui — ele é o saldo da conta da
+                            Comissão{resumo ? ` (${formatarCentavos(resumo.teto)})` : ''}, e sobe
+                            sozinho a cada inscrição, patrocínio ou doação que entra. O saldo por
+                            conta fica no Resumo.
+                        </p>
 
                         <div className="campoFormularioFinancas">
                             <label className="rotuloCampoFinancas" htmlFor="campoInscritosOrcamento">Inscritos previstos *</label>
