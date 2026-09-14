@@ -37,7 +37,9 @@ export async function atualizarOrcamento(orcamento) {
         method: 'PUT',
         headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
-            inscritosPrevistos: Number(orcamento.inscritosPrevistos),
+            // inscritosPrevistos não vai no corpo: é derivado da contagem
+            // de pessoas com role PARTICIPANTE ou NULL, e volta na resposta
+            // só para leitura.
             membrosComissao: Number(orcamento.membrosComissao),
             palestrantesPrevistos: Number(orcamento.palestrantesPrevistos),
         }),

@@ -1146,17 +1146,19 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                             conta fica no Resumo.
                         </p>
 
+                        {/* Não é campo: vem da contagem de participantes.
+                            Mostrado assim mesmo porque é o multiplicador da
+                            escala "Por inscrito" — esconder faria o total do
+                            kit parecer arbitrário. */}
                         <div className="campoFormularioFinancas">
-                            <label className="rotuloCampoFinancas" htmlFor="campoInscritosOrcamento">Inscritos previstos *</label>
-                            <input
-                                id="campoInscritosOrcamento"
-                                className="entradaFormularioFinancas"
-                                type="number"
-                                min={0}
-                                required
-                                value={formOrcamento.inscritosPrevistos}
-                                onInput={(e) => setFormOrcamento({ ...formOrcamento, inscritosPrevistos: parseInt(e.currentTarget.value, 10) || 0 })}
-                            />
+                            <span className="rotuloCampoFinancas">Inscritos</span>
+                            <strong className="valorDerivadoOrcamentoPrevisao">
+                                {formOrcamento.inscritosPrevistos ?? 0}
+                            </strong>
+                            <span className="ajudaCampoPrevisao">
+                                Calculado: pessoas inscritas, confirmadas ou aguardando confirmação.
+                                Multiplica os itens com escala “Por inscrito”.
+                            </span>
                         </div>
 
                         <div className="campoFormularioFinancas">

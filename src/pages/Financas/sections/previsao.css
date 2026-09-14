@@ -334,6 +334,7 @@
 }
 
 .rotuloTotalPrevisao {
+    padding: 1rem;
     font-size: 0.68rem;
     font-weight: 700;
     letter-spacing: 1.4px;
@@ -462,4 +463,12 @@
     background: rgba(252, 248, 245, 0.06);
     border: 1px solid rgba(252, 248, 245, 0.14);
     cursor: pointer;
+}
+
+/* Contador derivado no painel de orcamento: nao e campo, mas ocupa o
+   lugar de um para a leitura nao quebrar. */
+.valorDerivadoOrcamentoPrevisao {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #edecec;
 }
