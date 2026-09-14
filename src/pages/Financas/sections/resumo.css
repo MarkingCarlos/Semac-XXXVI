@@ -313,3 +313,52 @@
     font-weight: 600;
     color: #edecec;
 }
+
+/* ── Saldo por conta: parcelas ───────────────────────────────── */
+/* O saldo e derivado; so o caixa inicial e digitado, e por isso ele
+   aparece como parcela editavel e nao como o numero principal. */
+
+.topoContaSaldoResumo {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.parcelasContaSaldoResumo {
+    list-style: none;
+    margin: 6px 0 4px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.parcelaContaSaldoResumo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 0.74rem;
+}
+
+.rotuloParcelaContaSaldoResumo {
+    color: rgba(237, 236, 236, 0.45);
+}
+
+.valorParcelaContaSaldoResumo {
+    color: rgba(237, 236, 236, 0.8);
+    white-space: nowrap;
+}
+
+.valorEdicaoParcelaResumo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.notaRodapeContasResumo {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(252, 248, 245, 0.08);
+}

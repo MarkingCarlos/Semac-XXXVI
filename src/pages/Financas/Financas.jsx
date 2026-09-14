@@ -16,6 +16,7 @@ import { listarInscricoes } from './data/apiInscricoes.js';
 import { listarCompras } from './data/apiCompras.js';
 import { listarCotacoes } from './data/apiCotacoes.js';
 import { listarCaixas } from './data/apiCaixa.js';
+import { lerResumoPrevisao } from './data/apiPrevisao.js';
 import './financas.css';
 
 const SECOES = [
@@ -102,6 +103,17 @@ export default function Financas() {
     const [caixas, setCaixas] = useState([]);
     const [erroCaixas, setErroCaixas] = useState('');
 
+    // Saldo por conta: quem calcula é o backend (/api/previsao/resumo),
+    // que já cruza caixa inicial, entradas e saídas da mesma conta.
+    // Refazer a conta aqui abriria um segundo lugar para a regra divergir.
+    const [contasResumo, setContasResumo] = useState([]);
+
+    function recarregarContas() {
+        return lerResumoPrevisao()
+            .then((resumo) => setContasResumo(resumo.contas))
+            .catch((e) => setErroCaixas(e.message));
+    }
+
     useEffect(() => {
         let ativo = true;
         listarPatrocinadores()
@@ -171,6 +183,13 @@ export default function Financas() {
             .catch((e) => {
                 if (ativo) setErroCaixas(e.message);
             });
+        lerResumoPrevisao()
+            .then((resumo) => {
+                if (ativo) setContasResumo(resumo.contas);
+            })
+            .catch((e) => {
+                if (ativo) setErroCaixas(e.message);
+            });
         return () => {
             ativo = false;
         };
@@ -194,6 +213,8 @@ export default function Financas() {
                             doadores={doadores}
                             caixas={caixas}
                             setCaixas={setCaixas}
+                            contasResumo={contasResumo}
+                            recarregarContas={recarregarContas}
                             erroCaixas={erroCaixas}
                         />
                     )}

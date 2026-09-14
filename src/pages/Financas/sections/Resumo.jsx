@@ -7,9 +7,9 @@ import './resumo.css';
 
 /* Resumo do saldo — extrato em forma de livro-razão.
    Saldo operacional = patrocínios recebidos + inscrições + doações − compras.
-   Caixa anterior vem da tabela `caixa` (uma linha por conta: Comissão e
-   FUNDUNESP) e é exibido em card separado, editável conta a conta — não
-   entra no saldo operacional.
+   Saldo por conta vem do backend (/api/previsao/resumo), que cruza caixa
+   inicial, entradas e saídas da MESMA conta. Só o caixa inicial é editado
+   aqui — o resto é derivado e não se digita.
    Patrocínios A_RECEBER aparecem à parte e não entram no saldo.
    Doações são cadastradas no /admin e contabilizadas aqui no caixa. */
 export default function Resumo({
@@ -19,6 +19,8 @@ export default function Resumo({
     doadores = [],
     caixas = [],
     setCaixas,
+    contasResumo = [],
+    recarregarContas,
     erroCaixas = '',
 }) {
     const totalPatrociniosRecebidos = patrocinadores
@@ -74,6 +76,8 @@ export default function Resumo({
                 ? caixas.map((caixa) => (caixa.conta === conta ? atualizado : caixa))
                 : [...caixas, atualizado]);
             setContaEmEdicao(null);
+            // O saldo da conta depende do valor inicial recém-salvo.
+            if (recarregarContas) await recarregarContas();
         } catch (e) {
             setErroSalvarCaixa(e.message);
         } finally {
@@ -101,7 +105,8 @@ export default function Resumo({
             : `${rotulo} — nunca atualizado`;
     }
 
-    const totalCaixaAnterior = caixas.reduce((soma, caixa) => soma + caixa.valor, 0);
+    const buscarContaResumo = (conta) => contasResumo.find((linha) => linha.conta === conta) ?? null;
+    const totalSaldoContas = contasResumo.reduce((soma, linha) => soma + linha.saldo, 0);
 
     return (
         <div className="conteudoResumoFinancas">
@@ -160,77 +165,104 @@ export default function Resumo({
                         </span>
                     </section>
 
-                    <section className="blocoCaixaAnteriorResumo" aria-label="Caixa anterior por conta">
-                        <span className="rotuloBlocoResumo">Caixa anterior</span>
+                    <section className="blocoCaixaAnteriorResumo" aria-label="Saldo por conta">
+                        <span className="rotuloBlocoResumo">Saldo por conta</span>
                         <strong className="valorCaixaAnteriorResumo">
-                            {caixas.length ? formatarCentavos(totalCaixaAnterior) : '—'}
+                            {contasResumo.length ? formatarCentavos(totalSaldoContas) : '—'}
                         </strong>
 
-                        {/* Uma linha por conta — a SEMAC movimenta as duas, e
-                            misturá-las é o que tornava o balanço da planilha
-                            impossível de fechar. */}
+                        {/* Uma linha por conta. O saldo é derivado; só o caixa
+                            inicial (remanescente de edições anteriores, que não
+                            dá para calcular) continua sendo digitado. */}
                         <ul className="listaContasCaixaAnteriorResumo">
                             {CONTAS.map((conta) => {
                                 const caixa = buscarCaixa(conta);
+                                const linha = buscarContaResumo(conta);
                                 const emEdicao = contaEmEdicao === conta;
                                 return (
                                     <li key={conta} className="linhaContaCaixaAnteriorResumo">
-                                        <span className="rotuloContaCaixaAnteriorResumo">
-                                            {ROTULO_CONTA[conta]}
-                                        </span>
-
-                                        <div className="linhaValorCaixaAnteriorResumo">
-                                            {emEdicao ? (
-                                                <CampoMoeda
-                                                    valorCentavos={valorEditadoCaixa}
-                                                    aoMudar={setValorEditadoCaixa}
-                                                    desabilitado={salvandoCaixa}
-                                                    classeExtra="entradaCaixaAnteriorResumo"
-                                                    aoTeclar={(evento) => aoTeclarCaixa(evento, conta)}
-                                                    rotuloAcessivel={`Valor do caixa ${ROTULO_CONTA[conta]}`}
-                                                    autoFoco
-                                                />
-                                            ) : (
-                                                <strong className="valorContaCaixaAnteriorResumo">
-                                                    {caixa ? formatarCentavos(caixa.valor) : '—'}
-                                                </strong>
-                                            )}
-
-                                            <button
-                                                type="button"
-                                                className={
-                                                    emEdicao
-                                                        ? 'botaoAcaoLinhaFinancas botaoEditarCaixaAnteriorResumo botaoSalvarCaixaAnteriorResumo'
-                                                        : 'botaoAcaoLinhaFinancas botaoEditarCaixaAnteriorResumo'
-                                                }
-                                                aria-label={
-                                                    emEdicao
-                                                        ? `Salvar caixa ${ROTULO_CONTA[conta]}`
-                                                        : `Editar caixa ${ROTULO_CONTA[conta]}`
-                                                }
-                                                title={emEdicao ? 'Salvar' : 'Editar'}
-                                                disabled={salvandoCaixa}
-                                                onClick={() =>
-                                                    emEdicao ? salvarCaixa(conta) : abrirEdicaoCaixa(conta)
-                                                }
-                                            >
-                                                {emEdicao ? (
-                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                        <polyline points="20 6 9 17 4 12" />
-                                                    </svg>
-                                                ) : (
-                                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                                                    </svg>
-                                                )}
-                                            </button>
+                                        <div className="topoContaSaldoResumo">
+                                            <span className="rotuloContaCaixaAnteriorResumo">
+                                                {ROTULO_CONTA[conta]}
+                                            </span>
+                                            <strong className="valorContaCaixaAnteriorResumo">
+                                                {linha ? formatarCentavos(linha.saldo) : '—'}
+                                            </strong>
                                         </div>
+
+                                        <ul className="parcelasContaSaldoResumo">
+                                            <li className="parcelaContaSaldoResumo">
+                                                <span className="rotuloParcelaContaSaldoResumo">Caixa inicial</span>
+                                                <span className="valorEdicaoParcelaResumo">
+                                                    {emEdicao ? (
+                                                        <CampoMoeda
+                                                            valorCentavos={valorEditadoCaixa}
+                                                            aoMudar={setValorEditadoCaixa}
+                                                            desabilitado={salvandoCaixa}
+                                                            classeExtra="entradaCaixaAnteriorResumo"
+                                                            aoTeclar={(evento) => aoTeclarCaixa(evento, conta)}
+                                                            rotuloAcessivel={`Caixa inicial da conta ${ROTULO_CONTA[conta]}`}
+                                                            autoFoco
+                                                        />
+                                                    ) : (
+                                                        <span className="valorParcelaContaSaldoResumo">
+                                                            {caixa ? formatarCentavos(caixa.valor) : '—'}
+                                                        </span>
+                                                    )}
+                                                    <button
+                                                        type="button"
+                                                        className={
+                                                            emEdicao
+                                                                ? 'botaoAcaoLinhaFinancas botaoEditarCaixaAnteriorResumo botaoSalvarCaixaAnteriorResumo'
+                                                                : 'botaoAcaoLinhaFinancas botaoEditarCaixaAnteriorResumo'
+                                                        }
+                                                        aria-label={
+                                                            emEdicao
+                                                                ? `Salvar caixa inicial da conta ${ROTULO_CONTA[conta]}`
+                                                                : `Editar caixa inicial da conta ${ROTULO_CONTA[conta]}`
+                                                        }
+                                                        title={emEdicao ? 'Salvar' : 'Editar'}
+                                                        disabled={salvandoCaixa}
+                                                        onClick={() =>
+                                                            emEdicao ? salvarCaixa(conta) : abrirEdicaoCaixa(conta)
+                                                        }
+                                                    >
+                                                        {emEdicao ? (
+                                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="20 6 9 17 4 12" />
+                                                            </svg>
+                                                        ) : (
+                                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                                            </svg>
+                                                        )}
+                                                    </button>
+                                                </span>
+                                            </li>
+                                            <li className="parcelaContaSaldoResumo">
+                                                <span className="rotuloParcelaContaSaldoResumo">Entradas</span>
+                                                <span className="valorParcelaContaSaldoResumo valorEntradaResumo">
+                                                    + {formatarCentavos(linha?.entradas ?? 0)}
+                                                </span>
+                                            </li>
+                                            <li className="parcelaContaSaldoResumo">
+                                                <span className="rotuloParcelaContaSaldoResumo">Saídas</span>
+                                                <span className="valorParcelaContaSaldoResumo valorSaidaResumo">
+                                                    − {formatarCentavos(linha?.saidas ?? 0)}
+                                                </span>
+                                            </li>
+                                        </ul>
 
                                         <span className="notaSaldoResumo">{notaCaixa(caixa, conta)}</span>
                                     </li>
                                 );
                             })}
                         </ul>
+
+                        <span className="notaSaldoResumo notaRodapeContasResumo">
+                            Entradas da conta: patrocínios recebidos e doações destinadas a ela.
+                            As inscrições entram todas na conta da Comissão.
+                        </span>
 
                         {(erroCaixas || erroSalvarCaixa) && (
                             <p className="avisoErroCaixaAnteriorResumo" role="alert">
