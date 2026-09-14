@@ -7,7 +7,10 @@ import PainelLateral from '../components/PainelLateral.jsx';
 import CampoMoeda from '../components/CampoMoeda.jsx';
 import { formatarCentavos, normalizar } from '../utils/moeda.js';
 import { CONTAS, ROTULO_CONTA } from '../data/apiCaixa.js';
-import { listarCategoriasPrevisao } from '../data/apiPrevisaoCategorias.js';
+import {
+    listarCategoriasPrevisao, criarCategoriaPrevisao,
+    atualizarCategoriaPrevisao, excluirCategoriaPrevisao,
+} from '../data/apiPrevisaoCategorias.js';
 import { lerOrcamento, atualizarOrcamento } from '../data/apiOrcamento.js';
 import {
     listarPrevisoes, lerResumoPrevisao, criarPrevisao, atualizarPrevisao,
@@ -69,6 +72,11 @@ const FORMULARIO_VAZIO = {
 
 const NOVO_FORNECEDOR_VAZIO = { nome: '', contato: '', observacao: '' };
 
+/* Cor de partida de uma categoria nova. Fica dentro da banda de
+   luminosidade validada para a superfície do módulo — quem trocar pelo
+   seletor assume a escolha. */
+const CATEGORIA_VAZIA = { nome: '', cor: '#0097ce', teto: 0, ordem: 0 };
+
 /* Eixo de valor: rótulo curto, senão "R$ 19.196,60" empilhado em cada
    tick estoura a largura do gráfico. */
 const formatarEixoValor = (centavos) => {
@@ -127,6 +135,12 @@ export default function Previsao({ fornecedores, setFornecedores }) {
     const [novoFornecedor, setNovoFornecedor] = useState(NOVO_FORNECEDOR_VAZIO);
     const [idEmEdicao, setIdEmEdicao] = useState(null);
     const [salvando, setSalvando] = useState(false);
+
+    const [painelCategoriasAberto, setPainelCategoriasAberto] = useState(false);
+    const [formCategoria, setFormCategoria] = useState(CATEGORIA_VAZIA);
+    const [idCategoriaEmEdicao, setIdCategoriaEmEdicao] = useState(null);
+    const [salvandoCategoria, setSalvandoCategoria] = useState(false);
+    const [idCategoriaConfirmandoExclusao, setIdCategoriaConfirmandoExclusao] = useState(null);
 
     const [painelOrcamentoAberto, setPainelOrcamentoAberto] = useState(false);
     const [formOrcamento, setFormOrcamento] = useState(null);
@@ -321,6 +335,68 @@ export default function Previsao({ fornecedores, setFornecedores }) {
         }
     };
 
+    /* ── Categorias ──────────────────────────────────────────
+       Sem nenhuma categoria não há como lançar previsão: o item exige
+       uma. Por isso a criação vive aqui dentro da própria aba, e não
+       só na API. */
+    const abrirCategorias = () => {
+        setFormCategoria(CATEGORIA_VAZIA);
+        setIdCategoriaEmEdicao(null);
+        setErroAcao('');
+        setPainelCategoriasAberto(true);
+    };
+
+    const editarCategoria = (categoria) => {
+        setFormCategoria({
+            nome: categoria.nome,
+            cor: categoria.cor,
+            teto: categoria.teto ?? 0,
+            ordem: categoria.ordem ?? 0,
+        });
+        setIdCategoriaEmEdicao(categoria.id);
+        setErroAcao('');
+    };
+
+    const salvarCategoria = async (evento) => {
+        evento.preventDefault();
+        setSalvandoCategoria(true);
+        setErroAcao('');
+        try {
+            if (idCategoriaEmEdicao !== null) {
+                await atualizarCategoriaPrevisao(idCategoriaEmEdicao, formCategoria);
+            } else {
+                await criarCategoriaPrevisao(formCategoria);
+            }
+            setCategorias(await listarCategoriasPrevisao());
+            await recarregar();
+            setFormCategoria(CATEGORIA_VAZIA);
+            setIdCategoriaEmEdicao(null);
+        } catch (e) {
+            setErroAcao(e.message);
+        } finally {
+            setSalvandoCategoria(false);
+        }
+    };
+
+    /* O backend recusa com 409 categoria que tenha itens; a mensagem
+       dele é o que aparece para quem clicou. */
+    const removerCategoria = async (id) => {
+        if (idCategoriaConfirmandoExclusao !== id) {
+            setIdCategoriaConfirmandoExclusao(id);
+            return;
+        }
+        setErroAcao('');
+        try {
+            await excluirCategoriaPrevisao(id);
+            setCategorias(await listarCategoriasPrevisao());
+            await recarregar();
+        } catch (e) {
+            setErroAcao(e.message);
+        } finally {
+            setIdCategoriaConfirmandoExclusao(null);
+        }
+    };
+
     const abrirOrcamento = () => {
         setFormOrcamento({ ...orcamento });
         setErroAcao('');
@@ -359,10 +435,19 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                     </p>
                 </div>
                 <div className="controlesCabecalhoFinancas">
+                    <button type="button" className="botaoFantasmaFinancas" onClick={abrirCategorias}>
+                        Categorias
+                    </button>
                     <button type="button" className="botaoFantasmaFinancas" onClick={abrirOrcamento} disabled={!orcamento}>
                         Orçamento
                     </button>
-                    <button type="button" className="botaoPrimarioFinancas" onClick={abrirNovaPrevisao}>
+                    <button
+                        type="button"
+                        className="botaoPrimarioFinancas"
+                        onClick={abrirNovaPrevisao}
+                        disabled={categorias.length === 0}
+                        title={categorias.length === 0 ? 'Crie uma categoria antes de lançar a primeira previsão' : undefined}
+                    >
                         + Nova previsão
                     </button>
                 </div>
@@ -637,7 +722,9 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                                 <td colSpan={7} className="celulaVaziaFinancas">
                                     {filtro.trim() || filtroCategoria || filtroConta || filtroStatus
                                         ? 'Nenhuma previsão encontrada para esse filtro.'
-                                        : 'Nenhuma previsão registrada ainda.'}
+                                        : categorias.length === 0
+                                            ? 'Nenhuma categoria cadastrada — crie a primeira em “Categorias” para poder lançar previsões.'
+                                            : 'Nenhuma previsão registrada ainda.'}
                                 </td>
                             </tr>
                         )}
@@ -973,6 +1060,149 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                         </button>
                         <button type="submit" className="botaoPrimarioFinancas" disabled={salvando}>
                             {salvando ? 'Salvando…' : idEmEdicao !== null ? 'Salvar alterações' : 'Registrar previsão'}
+                        </button>
+                    </div>
+                </form>
+            </PainelLateral>
+
+            {/* ── Categorias ──────────────────────────────── */}
+            <PainelLateral
+                aberto={painelCategoriasAberto}
+                titulo="Categorias de gasto"
+                aoFechar={() => setPainelCategoriasAberto(false)}
+            >
+                <p className="textoAjudaPainelPrevisao">
+                    Cada categoria agrupa um tipo de gasto e dá a cor do selo na tabela.
+                    O teto por categoria é opcional — sem ele, vale só o teto geral do orçamento.
+                </p>
+
+                <ul className="listaCategoriasPrevisao">
+                    {categorias.length === 0 && (
+                        <li className="vazioListaCategoriasPrevisao">Nenhuma categoria cadastrada ainda.</li>
+                    )}
+                    {categorias.map((categoria) => (
+                        <li key={categoria.id} className="itemListaCategoriasPrevisao">
+                            <span
+                                className="amostraCorCategoriaPrevisao"
+                                style={{ background: categoria.cor }}
+                                aria-hidden="true"
+                            />
+                            <span className="nomeCategoriaListaPrevisao">{categoria.nome}</span>
+                            {categoria.teto > 0 && (
+                                <span className="tetoCategoriaListaPrevisao">
+                                    teto {formatarCentavos(categoria.teto)}
+                                </span>
+                            )}
+                            <div className="grupoAcoesLinhaFinancas">
+                                <button
+                                    type="button"
+                                    className="botaoAcaoLinhaFinancas"
+                                    aria-label={`Editar categoria ${categoria.nome}`}
+                                    title="Editar"
+                                    onClick={() => editarCategoria(categoria)}
+                                >
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                    </svg>
+                                </button>
+                                <button
+                                    type="button"
+                                    className={
+                                        idCategoriaConfirmandoExclusao === categoria.id
+                                            ? 'botaoAcaoLinhaFinancas botaoConfirmarExclusaoFinancas'
+                                            : 'botaoAcaoLinhaFinancas'
+                                    }
+                                    aria-label={
+                                        idCategoriaConfirmandoExclusao === categoria.id
+                                            ? `Confirmar exclusão da categoria ${categoria.nome}`
+                                            : `Excluir categoria ${categoria.nome}`
+                                    }
+                                    title={
+                                        idCategoriaConfirmandoExclusao === categoria.id
+                                            ? 'Clique novamente para confirmar'
+                                            : 'Excluir'
+                                    }
+                                    onClick={() => removerCategoria(categoria.id)}
+                                >
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+
+                <form className="formularioFinancas" onSubmit={salvarCategoria}>
+                    <h3 className="divisorFormularioFinancas">
+                        {idCategoriaEmEdicao !== null ? 'Editar categoria' : 'Nova categoria'}
+                    </h3>
+
+                    <div className="campoFormularioFinancas">
+                        <label className="rotuloCampoFinancas" htmlFor="campoNomeCategoriaPrevisao">Nome *</label>
+                        <input
+                            id="campoNomeCategoriaPrevisao"
+                            className="entradaFormularioFinancas"
+                            required
+                            maxLength={80}
+                            placeholder="Ex: Coffee Break, Kit do Participante…"
+                            value={formCategoria.nome}
+                            onInput={(e) => setFormCategoria({ ...formCategoria, nome: e.currentTarget.value })}
+                        />
+                    </div>
+
+                    <div className="linhaDuplaFormularioFinancas">
+                        <div className="campoFormularioFinancas">
+                            <label className="rotuloCampoFinancas" htmlFor="campoCorCategoriaPrevisao">Cor *</label>
+                            <input
+                                id="campoCorCategoriaPrevisao"
+                                className="entradaCorCategoriaPrevisao"
+                                type="color"
+                                required
+                                value={formCategoria.cor}
+                                onInput={(e) => setFormCategoria({ ...formCategoria, cor: e.currentTarget.value })}
+                            />
+                            <span className="ajudaCampoPrevisao">
+                                Tons médios leem melhor sobre o fundo escuro do módulo.
+                            </span>
+                        </div>
+                        <div className="campoFormularioFinancas">
+                            <label className="rotuloCampoFinancas" htmlFor="campoOrdemCategoriaPrevisao">Ordem</label>
+                            <input
+                                id="campoOrdemCategoriaPrevisao"
+                                className="entradaFormularioFinancas"
+                                type="number"
+                                min={0}
+                                value={formCategoria.ordem}
+                                onInput={(e) => setFormCategoria({ ...formCategoria, ordem: parseInt(e.currentTarget.value, 10) || 0 })}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="campoFormularioFinancas">
+                        <label className="rotuloCampoFinancas" htmlFor="campoTetoCategoriaPrevisao">Teto da categoria</label>
+                        <CampoMoeda
+                            id="campoTetoCategoriaPrevisao"
+                            valorCentavos={formCategoria.teto}
+                            aoMudar={(centavos) => setFormCategoria({ ...formCategoria, teto: centavos })}
+                        />
+                        <span className="ajudaCampoPrevisao">Deixe zerado para não ter limite próprio.</span>
+                    </div>
+
+                    <div className="rodapeFormularioFinancas">
+                        {idCategoriaEmEdicao !== null && (
+                            <button
+                                type="button"
+                                className="botaoFantasmaFinancas"
+                                onClick={() => { setFormCategoria(CATEGORIA_VAZIA); setIdCategoriaEmEdicao(null); }}
+                            >
+                                Cancelar edição
+                            </button>
+                        )}
+                        <button type="submit" className="botaoPrimarioFinancas" disabled={salvandoCategoria}>
+                            {salvandoCategoria
+                                ? 'Salvando…'
+                                : idCategoriaEmEdicao !== null ? 'Salvar categoria' : 'Adicionar categoria'}
                         </button>
                     </div>
                 </form>

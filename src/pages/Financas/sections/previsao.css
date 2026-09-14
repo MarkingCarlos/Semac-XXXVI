@@ -406,3 +406,60 @@
     line-height: 1.45;
     color: rgba(237, 236, 236, 0.5);
 }
+
+/* ── Painel de categorias ────────────────────────────────────── */
+
+.listaCategoriasPrevisao {
+    list-style: none;
+    margin: 0 0 22px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.itemListaCategoriasPrevisao {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 10px;
+    background: rgba(252, 248, 245, 0.04);
+}
+
+.vazioListaCategoriasPrevisao {
+    padding: 12px 10px;
+    font-size: 0.78rem;
+    color: rgba(237, 236, 236, 0.42);
+}
+
+.amostraCorCategoriaPrevisao {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.nomeCategoriaListaPrevisao {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #edecec;
+}
+
+.tetoCategoriaListaPrevisao {
+    font-size: 0.68rem;
+    white-space: nowrap;
+    color: rgba(237, 236, 236, 0.45);
+}
+
+.entradaCorCategoriaPrevisao {
+    width: 100%;
+    height: 40px;
+    padding: 3px;
+    border-radius: 10px;
+    background: rgba(252, 248, 245, 0.06);
+    border: 1px solid rgba(252, 248, 245, 0.14);
+    cursor: pointer;
+}
