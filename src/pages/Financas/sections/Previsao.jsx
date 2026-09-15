@@ -473,12 +473,6 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                         <span className="notaIndicadorPrevisao">
                             Teto de gasto: {formatarCentavos(resumo.teto)}
                         </span>
-                        <span className="notaIndicadorPrevisao">
-                            {formatarCentavos(resumo.entradas?.total ?? 0)} em caixa
-                            {resumo.patrociniosAReceber > 0
-                                ? ` + ${formatarCentavos(resumo.patrociniosAReceber)} de patrocínio a receber`
-                                : ''}
-                        </span>
                     </article>
                 </section>
             )}
