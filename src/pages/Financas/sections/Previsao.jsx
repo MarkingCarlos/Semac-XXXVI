@@ -132,6 +132,11 @@ export default function Previsao({ fornecedores, setFornecedores }) {
     const [idEmEdicao, setIdEmEdicao] = useState(null);
     const [salvando, setSalvando] = useState(false);
 
+    /* Detalhe de uma categoria, aberto pelo gráfico. Guarda o NOME e não
+       o id: é o que o recharts devolve no clique (activeLabel), e o nome
+       é único por categoria no banco. */
+    const [nomeCategoriaDetalhe, setNomeCategoriaDetalhe] = useState(null);
+
     const [painelCategoriasAberto, setPainelCategoriasAberto] = useState(false);
     const [formCategoria, setFormCategoria] = useState(CATEGORIA_VAZIA);
     const [idCategoriaEmEdicao, setIdCategoriaEmEdicao] = useState(null);
@@ -199,6 +204,27 @@ export default function Previsao({ fornecedores, setFornecedores }) {
         return STATUS.filter((status) => status !== 'PAGO' && soma[status])
             .map((status) => ({ nome: ROTULO_STATUS[status], valor: soma[status], cor: CORES_STATUS[status] }));
     }, [itens]);
+
+    /* Tudo que o painel mostra sai do que já está em memória: a linha da
+       categoria no resumo (previsto/realizado/teto) e os itens filtrados
+       por ela. Nenhuma busca nova. */
+    const detalheCategoria = useMemo(() => {
+        if (!nomeCategoriaDetalhe || !resumo) return null;
+        const linha = resumo.categorias.find((c) => c.nome === nomeCategoriaDetalhe);
+        if (!linha) return null;
+        const itensDaCategoria = itens.filter((item) => item.categoriaId === linha.id);
+        const projecao = linha.totalPrevisto + linha.totalRealizado;
+        return {
+            ...linha,
+            itens: itensDaCategoria,
+            projecao,
+            // Sem teto próprio a margem não existe: a categoria responde
+            // só ao saldo da Comissão, e inventar um número aqui seria
+            // pior que não mostrar nada.
+            margem: linha.teto ? linha.teto - projecao : null,
+            percentual: linha.teto ? Math.min(100, (projecao / linha.teto) * 100) : null,
+        };
+    }, [nomeCategoriaDetalhe, resumo, itens]);
 
     const percentualTeto = resumo && resumo.teto > 0
         ? Math.min(100, (resumo.projecaoTotal / resumo.teto) * 100)
@@ -516,6 +542,7 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                         <h2 className="tituloGraficoPrevisao">Previsto × realizado por categoria</h2>
                         <p className="notaGraficoPrevisao">
                             Cada linha é uma categoria; o comprimento é o valor.
+                            Clique numa categoria para ver o detalhe.
                         </p>
                         <div className="areaGraficoPrevisao" style={{ height: `${Math.max(240, dadosCategorias.length * 42)}px` }}>
                             <ResponsiveContainer width="100%" height="100%">
@@ -524,6 +551,14 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                                     layout="vertical"
                                     margin={{ top: 4, right: 16, bottom: 4, left: 8 }}
                                     barCategoryGap="22%"
+                                    className="graficoClicavelPrevisao"
+                                    /* O clique é na linha inteira, não só na
+                                       barra: alvo maior e funciona também nas
+                                       categorias de valor baixo, cuja barra é
+                                       curta demais para acertar. */
+                                    onClick={(estado) => {
+                                        if (estado?.activeLabel) setNomeCategoriaDetalhe(estado.activeLabel);
+                                    }}
                                 >
                                     <CartesianGrid horizontal={false} stroke="rgba(252,248,245,0.10)" />
                                     <XAxis
@@ -978,6 +1013,147 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                         </button>
                     </div>
                 </form>
+            </PainelLateral>
+
+            {/* ── Detalhe de uma categoria ────────────────── */}
+            <PainelLateral
+                aberto={Boolean(detalheCategoria)}
+                titulo={detalheCategoria ? detalheCategoria.nome : 'Categoria'}
+                aoFechar={() => setNomeCategoriaDetalhe(null)}
+            >
+                {detalheCategoria && (
+                    <div className="detalheCategoriaPrevisao">
+                        <ul className="listaNumerosDetalheCategoriaPrevisao">
+                            <li className="numeroDetalheCategoriaPrevisao">
+                                <span className="rotuloNumeroDetalhePrevisao">Já gastou</span>
+                                <strong className="valorNumeroDetalhePrevisao">
+                                    {formatarCentavos(detalheCategoria.totalRealizado)}
+                                </strong>
+                                <span className="notaNumeroDetalhePrevisao">Compras registradas</span>
+                            </li>
+                            <li className="numeroDetalheCategoriaPrevisao">
+                                <span className="rotuloNumeroDetalhePrevisao">Previsto em aberto</span>
+                                <strong className="valorNumeroDetalhePrevisao">
+                                    {formatarCentavos(detalheCategoria.totalPrevisto)}
+                                </strong>
+                                <span className="notaNumeroDetalhePrevisao">Ainda não pago</span>
+                            </li>
+                            <li className="numeroDetalheCategoriaPrevisao">
+                                <span className="rotuloNumeroDetalhePrevisao">Teto da categoria</span>
+                                <strong className="valorNumeroDetalhePrevisao">
+                                    {detalheCategoria.teto ? formatarCentavos(detalheCategoria.teto) : '—'}
+                                </strong>
+                                <span className="notaNumeroDetalhePrevisao">
+                                    {detalheCategoria.teto
+                                        ? 'Limite próprio desta categoria'
+                                        : 'Sem teto próprio — responde só ao saldo da Comissão'}
+                                </span>
+                            </li>
+                            <li className="numeroDetalheCategoriaPrevisao">
+                                <span className="rotuloNumeroDetalhePrevisao">
+                                    {detalheCategoria.margem !== null && detalheCategoria.margem < 0
+                                        ? 'Passou do teto em'
+                                        : 'Falta para o teto'}
+                                </span>
+                                <strong
+                                    className={
+                                        detalheCategoria.margem !== null && detalheCategoria.margem < 0
+                                            ? 'valorNumeroDetalhePrevisao valorEstouroDetalhePrevisao'
+                                            : 'valorNumeroDetalhePrevisao'
+                                    }
+                                >
+                                    {detalheCategoria.margem === null
+                                        ? '—'
+                                        : formatarCentavos(Math.abs(detalheCategoria.margem))}
+                                </strong>
+                                <span className="notaNumeroDetalhePrevisao">
+                                    {detalheCategoria.margem === null
+                                        ? 'Defina um teto em “Categorias” para acompanhar'
+                                        : `Teto menos a projeção de ${formatarCentavos(detalheCategoria.projecao)}`}
+                                </span>
+                            </li>
+                        </ul>
+
+                        {/* A barra só aparece com teto: sem ele não há
+                            proporção a mostrar. */}
+                        {detalheCategoria.percentual !== null && (
+                            <div className="consumoDetalheCategoriaPrevisao">
+                                <div className="cabecalhoConsumoTetoPrevisao">
+                                    <span className="rotuloBlocoPrevisao">Consumo do teto</span>
+                                    <span className="percentualConsumoTetoPrevisao">
+                                        {detalheCategoria.percentual.toFixed(1).replace('.', ',')}%
+                                    </span>
+                                </div>
+                                <div
+                                    className="trilhoConsumoTetoPrevisao"
+                                    role="progressbar"
+                                    aria-valuenow={Math.round(detalheCategoria.percentual)}
+                                    aria-valuemin={0}
+                                    aria-valuemax={100}
+                                    aria-label={`Percentual do teto de ${detalheCategoria.nome} já comprometido`}
+                                >
+                                    <div
+                                        className="faixaRealizadoConsumoTetoPrevisao"
+                                        style={{ width: `${(detalheCategoria.totalRealizado / Math.max(detalheCategoria.teto, detalheCategoria.projecao)) * 100}%` }}
+                                    />
+                                    <div
+                                        className="faixaPrevistoConsumoTetoPrevisao"
+                                        style={{ width: `${(detalheCategoria.totalPrevisto / Math.max(detalheCategoria.teto, detalheCategoria.projecao)) * 100}%` }}
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                        <h3 className="divisorFormularioFinancas">
+                            Itens cadastrados ({detalheCategoria.itens.length})
+                        </h3>
+
+                        {detalheCategoria.itens.length === 0 ? (
+                            <p className="vazioItensDetalhePrevisao">
+                                Nenhum item nesta categoria ainda.
+                            </p>
+                        ) : (
+                            <ul className="listaItensDetalheCategoriaPrevisao">
+                                {detalheCategoria.itens.map((item) => (
+                                    <li key={item.id} className="itemDetalheCategoriaPrevisao">
+                                        <div className="topoItemDetalhePrevisao">
+                                            <span className="nomeItemDetalhePrevisao">{item.descricao}</span>
+                                            <strong className="valorItemDetalhePrevisao">
+                                                {formatarCentavos(item.valorTotal)}
+                                            </strong>
+                                        </div>
+                                        <div className="baseItemDetalhePrevisao">
+                                            <span
+                                                className="seloStatusPrevisao"
+                                                style={{ background: `${CORES_STATUS[item.status]}26`, color: CORES_STATUS[item.status] }}
+                                            >
+                                                {ROTULO_STATUS[item.status]}
+                                            </span>
+                                            <span className="calculoItemDetalhePrevisao">
+                                                {formatarCentavos(item.valorUnitario)} × {item.quantidade}
+                                                {item.fator !== 1 && ` × ${item.fator}`}
+                                                {item.fornecedorNome && ` · ${item.fornecedorNome}`}
+                                            </span>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+
+                        <div className="rodapeFormularioFinancas">
+                            <button
+                                type="button"
+                                className="botaoFantasmaFinancas"
+                                onClick={() => {
+                                    setFiltroCategoria(String(detalheCategoria.id));
+                                    setNomeCategoriaDetalhe(null);
+                                }}
+                            >
+                                Filtrar a tabela por esta categoria
+                            </button>
+                        </div>
+                    </div>
+                )}
             </PainelLateral>
 
             {/* ── Categorias ──────────────────────────────── */}

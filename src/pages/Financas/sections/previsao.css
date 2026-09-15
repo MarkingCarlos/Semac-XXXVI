@@ -472,3 +472,129 @@
     font-weight: 700;
     color: #edecec;
 }
+
+/* ── Detalhe de categoria (aberto pelo gráfico) ──────────────── */
+
+.graficoClicavelPrevisao {
+    cursor: pointer;
+}
+
+.detalheCategoriaPrevisao {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.listaNumerosDetalheCategoriaPrevisao {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.numeroDetalheCategoriaPrevisao {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 13px 14px;
+    border-radius: 12px;
+    background: rgba(252, 248, 245, 0.05);
+    border: 1px solid rgba(252, 248, 245, 0.08);
+}
+
+.rotuloNumeroDetalhePrevisao {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: rgba(237, 236, 236, 0.5);
+}
+
+.valorNumeroDetalhePrevisao {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.15;
+    color: #edecec;
+}
+
+/* Estouro ganha cor, mas o rótulo do card já muda para "Passou do teto
+   em" — a cor reforça, não carrega sozinha a informação. */
+.valorEstouroDetalhePrevisao {
+    color: #ff9d9d;
+}
+
+.notaNumeroDetalhePrevisao {
+    font-size: 0.66rem;
+    line-height: 1.35;
+    color: rgba(237, 236, 236, 0.42);
+}
+
+.consumoDetalheCategoriaPrevisao {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.listaItensDetalheCategoriaPrevisao {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.itemDetalheCategoriaPrevisao {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(252, 248, 245, 0.04);
+}
+
+.topoItemDetalhePrevisao {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.nomeItemDetalhePrevisao {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #edecec;
+}
+
+.valorItemDetalhePrevisao {
+    font-size: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
+    color: #edecec;
+}
+
+.baseItemDetalhePrevisao {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.calculoItemDetalhePrevisao {
+    font-size: 0.68rem;
+    color: rgba(237, 236, 236, 0.45);
+}
+
+.vazioItensDetalhePrevisao {
+    margin: 0;
+    font-size: 0.78rem;
+    color: rgba(237, 236, 236, 0.42);
+}
+
+@media (max-width: 520px) {
+    .listaNumerosDetalheCategoriaPrevisao {
+        grid-template-columns: 1fr;
+    }
+}
