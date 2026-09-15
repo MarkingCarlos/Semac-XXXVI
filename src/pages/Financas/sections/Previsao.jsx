@@ -414,7 +414,7 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                     <h1 className="tituloSecaoFinancas">Previsão de gastos</h1>
                     <p className="subtituloSecaoFinancas">
                         {resumo
-                            ? `Projeção de ${formatarCentavos(resumo.projecaoTotal)} sobre o saldo da Comissão de ${formatarCentavos(resumo.teto)}`
+                            ? `Projeção de ${formatarCentavos(resumo.projecaoTotal)} sobre o teto de gasto de ${formatarCentavos(resumo.teto)}`
                             : 'Carregando projeção…'}
                     </p>
                 </div>
@@ -466,8 +466,18 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                         <strong className="valorIndicadorPrevisao">
                             {formatarCentavos(Math.abs(resumo.margem))}
                         </strong>
+                        {/* O teto não é o saldo: soma o que está em caixa com os
+                            patrocínios de contrato assinado ainda não pagos. Abrir
+                            as duas parcelas evita a leitura de que há mais dinheiro
+                            disponível do que realmente há. */}
                         <span className="notaIndicadorPrevisao">
-                            Saldo da Comissão: {formatarCentavos(resumo.teto)}
+                            Teto de gasto: {formatarCentavos(resumo.teto)}
+                        </span>
+                        <span className="notaIndicadorPrevisao">
+                            {formatarCentavos(resumo.entradas?.total ?? 0)} em caixa
+                            {resumo.patrociniosAReceber > 0
+                                ? ` + ${formatarCentavos(resumo.patrociniosAReceber)} de patrocínio a receber`
+                                : ''}
                         </span>
                     </article>
                 </section>
@@ -477,7 +487,7 @@ export default function Previsao({ fornecedores, setFornecedores }) {
             {resumo && resumo.teto > 0 && (
                 <section className="blocoConsumoTetoPrevisao" aria-label="Consumo do teto orçamentário">
                     <div className="cabecalhoConsumoTetoPrevisao">
-                        <span className="rotuloBlocoPrevisao">Consumo do saldo da Comissão</span>
+                        <span className="rotuloBlocoPrevisao">Consumo do teto de gasto</span>
                         <span className="percentualConsumoTetoPrevisao">
                             {percentualTeto.toFixed(1).replace('.', ',')}%
                         </span>

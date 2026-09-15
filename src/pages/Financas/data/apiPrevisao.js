@@ -73,6 +73,7 @@ export async function lerResumoPrevisao() {
         projecaoTotal: reaisParaCentavos(resumo.projecaoTotal),
         teto: reaisParaCentavos(resumo.teto),
         margem: reaisParaCentavos(resumo.margem),
+        patrociniosAReceber: reaisParaCentavos(resumo.patrociniosAReceber),
         categorias: (resumo.categorias ?? []).map((categoria) => ({
             ...categoria,
             teto: categoria.teto == null ? null : reaisParaCentavos(categoria.teto),
@@ -83,6 +84,8 @@ export async function lerResumoPrevisao() {
             patrocinios: reaisParaCentavos(resumo.entradas?.patrocinios),
             doacoes: reaisParaCentavos(resumo.entradas?.doacoes),
             inscricoes: reaisParaCentavos(resumo.entradas?.inscricoes),
+            inscricoesConfirmadas: reaisParaCentavos(resumo.entradas?.inscricoesConfirmadas),
+            inscricoesPendentes: reaisParaCentavos(resumo.entradas?.inscricoesPendentes),
             total: reaisParaCentavos(resumo.entradas?.total),
         },
         reservaFundunesp: reaisParaCentavos(resumo.reservaFundunesp),

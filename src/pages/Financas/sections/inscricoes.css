@@ -81,6 +81,37 @@
     color: #52ABB1;
 }
 
+/* Situação: confirmada pelo organizador x pagamento recebido esperando
+   confirmação. As duas contam no saldo — o selo diz só onde a inscrição
+   está na fila do /admin. */
+.seloSituacaoInscricoes {
+    display: inline-flex;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    color: #52ABB1;
+    border: 1px solid rgba(82, 171, 177, 0.45);
+    background: rgba(82, 171, 177, 0.08);
+}
+
+.seloSituacaoPendenteInscricoes {
+    color: #E79839;
+    border-color: rgba(231, 152, 57, 0.45);
+    background: rgba(231, 152, 57, 0.08);
+}
+
+.celulaFormaPagamentoInscricoes {
+    color: rgba(252, 248, 245, 0.7);
+    font-size: 0.85rem;
+}
+
+.celulaTaxaCartaoInscricoes,
+.valorTaxaCartaoInscricoes {
+    color: #E79839;
+}
+
 /* ── Responsivo ──────────────────────────────────────────────── */
 
 @media (max-width: 700px) {

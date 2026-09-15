@@ -10,9 +10,17 @@ function reaisParaCentavos(reais) {
     return Math.round(Number(reais) * 100);
 }
 
-
+/* Três valores por inscrição: o que a pessoa pagou (bruto), o que a
+   maquininha reteve (taxa, zero fora do cartão) e o que sobrou para a
+   comissão (líquido). É o líquido que entra no saldo — quem soma aqui
+   deve usar `valorLiquido`, nunca o bruto. */
 function deResposta(inscricao) {
-    return { ...inscricao, valor: reaisParaCentavos(inscricao.valor) };
+    return {
+        ...inscricao,
+        valorBruto: reaisParaCentavos(inscricao.valorBruto),
+        taxaCartao: reaisParaCentavos(inscricao.taxaCartao),
+        valorLiquido: reaisParaCentavos(inscricao.valorLiquido),
+    };
 }
 
 export async function listarInscricoes() {

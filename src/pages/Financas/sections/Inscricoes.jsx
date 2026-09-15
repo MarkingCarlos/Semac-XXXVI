@@ -2,16 +2,34 @@ import { useState } from 'preact/hooks';
 import { formatarCentavos, normalizar } from '../utils/moeda.js';
 import './inscricoes.css';
 
-/* Inscrições — somente leitura. Cada linha é um participante confirmado
-   (role = PARTICIPANTE) com o tipo de ingresso e o valor reais vindos do
-   banco. Os dados são carregados em Financas.jsx. */
+/* Inscrições — somente leitura. Cada linha é uma pessoa cujo dinheiro já
+   entrou: confirmada pelo organizador ou ainda pendente, mas com
+   comprovante Pix anexado ou cartão aprovado (o filtro é do backend, em
+   PessoaService.listarInscricoes).
+
+   Três colunas de dinheiro porque o cartão não entrega o que cobra: a
+   maquininha retém 5%, e é o líquido — não o bruto — que a comissão tem
+   para gastar. Os dados são carregados em Financas.jsx. */
 export default function Inscricoes({ inscricoes, carregando, erro }) {
     const [filtro, setFiltro] = useState('');
 
-    const totalArrecadado = inscricoes.reduce((soma, inscricao) => soma + inscricao.valor, 0);
+    const totalLiquidoInscricoes = inscricoes.reduce((soma, inscricao) => soma + inscricao.valorLiquido, 0);
+    const totalBrutoInscricoes = inscricoes.reduce((soma, inscricao) => soma + inscricao.valorBruto, 0);
+    const totalTaxaCartaoInscricoes = inscricoes.reduce((soma, inscricao) => soma + inscricao.taxaCartao, 0);
+    const quantidadeConfirmadasInscricoes = inscricoes.filter((inscricao) => inscricao.confirmada).length;
+    const quantidadePendentesInscricoes = inscricoes.length - quantidadeConfirmadasInscricoes;
+
     const inscricoesFiltradas = filtro.trim()
         ? inscricoes.filter((inscricao) => normalizar(inscricao.nomePessoa).includes(normalizar(filtro)))
         : inscricoes;
+
+    // Sem forma registrada é a confirmação manual do /admin (dinheiro,
+    // cortesia): não passou por Pix nem por maquininha.
+    const rotuloFormaPagamento = (forma) => {
+        if (forma === 'CARTAO') return 'Cartão';
+        if (forma === 'PIX') return 'Pix';
+        return 'Não registrada';
+    };
 
     return (
         <div className="conteudoInscricoesFinancas">
@@ -19,7 +37,8 @@ export default function Inscricoes({ inscricoes, carregando, erro }) {
                 <div>
                     <h1 className="tituloSecaoFinancas">Inscrições</h1>
                     <p className="subtituloSecaoFinancas">
-                        Participantes confirmados — tipo de ingresso e valor pagos
+                        Inscrições pagas — confirmadas e aguardando confirmação, já
+                        descontada a taxa do cartão
                     </p>
                 </div>
                 <div className="filtroTabelaFinancas">
@@ -44,14 +63,30 @@ export default function Inscricoes({ inscricoes, carregando, erro }) {
             {/* ── Faixa de totais ─────────────────────────── */}
             <div className="faixaResumoInscricoes">
                 <div className="itemResumoInscricoes">
-                    <span className="rotuloItemResumoInscricoes">Total arrecadado</span>
+                    <span className="rotuloItemResumoInscricoes">Entrou no caixa</span>
                     <strong className="valorItemResumoInscricoes valorDestaqueInscricoes">
-                        {formatarCentavos(totalArrecadado)}
+                        {formatarCentavos(totalLiquidoInscricoes)}
                     </strong>
                 </div>
                 <div className="itemResumoInscricoes">
-                    <span className="rotuloItemResumoInscricoes">Inscritos</span>
-                    <strong className="valorItemResumoInscricoes">{inscricoes.length}</strong>
+                    <span className="rotuloItemResumoInscricoes">Valor bruto</span>
+                    <strong className="valorItemResumoInscricoes">
+                        {formatarCentavos(totalBrutoInscricoes)}
+                    </strong>
+                </div>
+                <div className="itemResumoInscricoes">
+                    <span className="rotuloItemResumoInscricoes">Taxa do cartão</span>
+                    <strong className="valorItemResumoInscricoes valorTaxaCartaoInscricoes">
+                        − {formatarCentavos(totalTaxaCartaoInscricoes)}
+                    </strong>
+                </div>
+                <div className="itemResumoInscricoes">
+                    <span className="rotuloItemResumoInscricoes">Confirmadas</span>
+                    <strong className="valorItemResumoInscricoes">{quantidadeConfirmadasInscricoes}</strong>
+                </div>
+                <div className="itemResumoInscricoes">
+                    <span className="rotuloItemResumoInscricoes">Aguardando</span>
+                    <strong className="valorItemResumoInscricoes">{quantidadePendentesInscricoes}</strong>
                 </div>
             </div>
 
@@ -61,23 +96,27 @@ export default function Inscricoes({ inscricoes, carregando, erro }) {
                         <tr>
                             <th>Participante</th>
                             <th>Tipo de inscrição</th>
-                            <th>Valor</th>
+                            <th>Situação</th>
+                            <th>Pagamento</th>
+                            <th>Bruto</th>
+                            <th>Taxa</th>
+                            <th>Líquido</th>
                         </tr>
                     </thead>
                     <tbody>
                         {carregando && (
                             <tr>
-                                <td colSpan={3} className="celulaVaziaFinancas">
+                                <td colSpan={7} className="celulaVaziaFinancas">
                                     Carregando inscrições…
                                 </td>
                             </tr>
                         )}
                         {!carregando && inscricoesFiltradas.length === 0 && (
                             <tr>
-                                <td colSpan={3} className="celulaVaziaFinancas">
+                                <td colSpan={7} className="celulaVaziaFinancas">
                                     {filtro.trim()
                                         ? 'Nenhum participante encontrado para esse filtro.'
-                                        : 'Nenhuma inscrição confirmada ainda.'}
+                                        : 'Nenhuma inscrição paga ainda.'}
                                 </td>
                             </tr>
                         )}
@@ -93,8 +132,30 @@ export default function Inscricoes({ inscricoes, carregando, erro }) {
                                         {inscricao.tipoInscricao}
                                     </span>
                                 </td>
+                                <td>
+                                    <span
+                                        className={
+                                            inscricao.confirmada
+                                                ? 'seloSituacaoInscricoes'
+                                                : 'seloSituacaoInscricoes seloSituacaoPendenteInscricoes'
+                                        }
+                                    >
+                                        {inscricao.confirmada ? 'Confirmada' : 'Aguardando'}
+                                    </span>
+                                </td>
+                                <td className="celulaFormaPagamentoInscricoes">
+                                    {rotuloFormaPagamento(inscricao.formaPagamento)}
+                                </td>
+                                <td className="celulaValorFinancas">
+                                    {formatarCentavos(inscricao.valorBruto)}
+                                </td>
+                                <td className="celulaValorFinancas celulaTaxaCartaoInscricoes">
+                                    {inscricao.taxaCartao > 0
+                                        ? `− ${formatarCentavos(inscricao.taxaCartao)}`
+                                        : '—'}
+                                </td>
                                 <td className="celulaValorFinancas celulaValorEntradaInscricoes">
-                                    {formatarCentavos(inscricao.valor)}
+                                    {formatarCentavos(inscricao.valorLiquido)}
                                 </td>
                             </tr>
                         ))}

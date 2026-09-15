@@ -9,6 +9,12 @@ import './resumo.css';
    Saldo operacional = patrocínios recebidos + inscrições + doações − compras.
    O que a comissão tem para gastar vem do backend (/api/previsao/resumo):
    patrocínios recebidos + doações + inscrições. Não se digita.
+
+   Inscrições entram LÍQUIDAS (a maquininha retém 5% do que foi pago no
+   cartão) e em duas parcelas: as confirmadas pelo organizador e as que
+   ainda aguardam confirmação mas já foram pagas — o dinheiro delas está
+   na conta do mesmo jeito. Quem se cadastrou sem pagar não aparece em
+   nenhuma das duas (filtro em PessoaService.listarInscricoes).
    A reserva da FUNDUNESP é um valor fixo de emergência, editado aqui e
    fora de qualquer cálculo.
    Patrocínios A_RECEBER aparecem à parte e não entram no saldo.
@@ -33,15 +39,38 @@ export default function Resumo({
         .filter((patrocinador) => patrocinador.statusPagamento === 'A_RECEBER')
         .reduce((soma, patrocinador) => soma + patrocinador.valorFinal, 0);
 
-    const totalInscricoes = inscricoes.reduce((soma, inscricao) => soma + inscricao.valor, 0);
+    const inscricoesConfirmadas = inscricoes.filter((inscricao) => inscricao.confirmada);
+    const inscricoesAguardando = inscricoes.filter((inscricao) => !inscricao.confirmada);
+
+    const somarLiquidoInscricoes = (lista) =>
+        lista.reduce((soma, inscricao) => soma + inscricao.valorLiquido, 0);
+
+    const totalInscricoesConfirmadas = somarLiquidoInscricoes(inscricoesConfirmadas);
+    const totalInscricoesAguardando = somarLiquidoInscricoes(inscricoesAguardando);
+    const totalInscricoes = totalInscricoesConfirmadas + totalInscricoesAguardando;
+    const totalTaxaCartaoInscricoes = inscricoes.reduce((soma, inscricao) => soma + inscricao.taxaCartao, 0);
+
     const totalDoacoes = doadores.reduce((soma, doador) => soma + doador.valor, 0);
     const totalCompras = compras.reduce((soma, compra) => soma + compra.valorTotal, 0);
 
     const saldoAtual = totalPatrociniosRecebidos + totalInscricoes + totalDoacoes - totalCompras;
 
+    /* As inscrições vêm em duas linhas de propósito: juntas escondiam
+       quanto do saldo ainda depende de o organizador conferir comprovante. */
     const lancamentos = [
         { rotulo: 'Patrocínios recebidos', valor: totalPatrociniosRecebidos, tipo: 'entrada' },
-        { rotulo: 'Inscrições', valor: totalInscricoes, tipo: 'entrada' },
+        {
+            rotulo: 'Inscrições confirmadas',
+            valor: totalInscricoesConfirmadas,
+            tipo: 'entrada',
+            nota: `${inscricoesConfirmadas.length} inscrição(ões), já descontada a taxa do cartão`,
+        },
+        {
+            rotulo: 'Inscrições aguardando confirmação',
+            valor: totalInscricoesAguardando,
+            tipo: 'entrada',
+            nota: `${inscricoesAguardando.length} pagamento(s) recebido(s), pendente(s) de confirmação no /admin`,
+        },
         { rotulo: 'Doações', valor: totalDoacoes, tipo: 'entrada' },
         { rotulo: 'Compras', valor: totalCompras, tipo: 'saida' },
     ];
@@ -159,6 +188,12 @@ export default function Resumo({
                         <span className="notaSaldoResumo">
                             Patrocínios, inscrições e doações recebidos menos compras registradas
                         </span>
+                        {totalTaxaCartaoInscricoes > 0 && (
+                            <span className="notaSaldoResumo notaTaxaCartaoResumo">
+                                Já fora {formatarCentavos(totalTaxaCartaoInscricoes)} retidos pela
+                                maquininha nas inscrições pagas no cartão
+                            </span>
+                        )}
                     </section>
 
                     <section className="blocoCaixaAnteriorResumo" aria-label="Arrecadação da Comissão">
@@ -184,16 +219,25 @@ export default function Resumo({
                                 </span>
                             </li>
                             <li className="parcelaContaSaldoResumo">
-                                <span className="rotuloParcelaContaSaldoResumo">Inscrições</span>
+                                <span className="rotuloParcelaContaSaldoResumo">Inscrições confirmadas</span>
                                 <span className="valorParcelaContaSaldoResumo">
-                                    {formatarCentavos(entradasResumo?.inscricoes ?? 0)}
+                                    {formatarCentavos(entradasResumo?.inscricoesConfirmadas ?? 0)}
+                                </span>
+                            </li>
+                            <li className="parcelaContaSaldoResumo">
+                                <span className="rotuloParcelaContaSaldoResumo">Inscrições aguardando confirmação</span>
+                                <span className="valorParcelaContaSaldoResumo">
+                                    {formatarCentavos(entradasResumo?.inscricoesPendentes ?? 0)}
                                 </span>
                             </li>
                         </ul>
 
                         <span className="notaSaldoResumo notaRodapeContasResumo">
-                            É o teto da previsão de gastos. Sobe sozinho a cada patrocínio,
-                            doação ou inscrição que entra.
+                            É o dinheiro que já está em caixa. Sobe sozinho a cada patrocínio,
+                            doação ou inscrição paga que entra — a inscrição conta assim que
+                            o pagamento chega, líquida da taxa do cartão, sem esperar a
+                            confirmação. O teto da previsão de gastos é maior: soma a este
+                            valor os patrocínios a receber.
                         </span>
                     </section>
 
@@ -264,6 +308,10 @@ export default function Resumo({
                         </strong>
                         <span className="notaSaldoResumo">
                             Patrocínios com contrato assinado aguardando pagamento
+                        </span>
+                        <span className="notaSaldoResumo">
+                            Entra no teto da previsão de gastos, não no saldo — dá lastro
+                            para planejar, mas ainda não é dinheiro sacável.
                         </span>
                     </section>
                 </div>

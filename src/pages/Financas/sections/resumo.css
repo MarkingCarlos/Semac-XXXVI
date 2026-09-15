@@ -362,3 +362,10 @@
     padding-top: 10px;
     border-top: 1px solid rgba(252, 248, 245, 0.08);
 }
+
+/* Quanto a maquininha reteve — no mesmo tom de saída usado no extrato,
+   para ler como desconto e não como mais uma entrada. */
+.notaTaxaCartaoResumo {
+    margin-top: 6px;
+    color: rgba(231, 152, 57, 0.75);
+}
