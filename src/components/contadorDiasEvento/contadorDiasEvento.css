@@ -62,7 +62,8 @@
     color: var(--AmareloAuxApoio);
 }
 
-.rotuloDiasContadorDias {
+.rotuloDiasContadorDias,
+.textoChamadaContadorDias {
     font-family: var(--fonteTituloBungee), cursive;
     font-size: clamp(18px, 2.4vw, 32px);
     color: var(--Branco);
@@ -97,7 +98,10 @@
     flex: 0 0 auto;
 }
 
-.textoDataLocalContadorDias {
+.textoDataLocalContadorDias,
+.textoDataEventoContadorDias,
+.separadorDataLocalContadorDias,
+.textoLocalEventoContadorDias {
     font-family: var(--fonteCorpoMontserrat), sans-serif;
     font-size: clamp(14px, 1.4vw, 17px);
     color: var(--Branco);
@@ -109,4 +113,80 @@
     letter-spacing: 0.12em;
     color: rgba(237, 236, 236, 0.75);
     margin: 0;
+}
+
+@media (max-width: 768px) {
+    .ondaTopoContadorDias,
+    .ondaBaseContadorDias {
+        height: 26px;
+    }
+
+    .gradienteContadorDias {
+        background: radial-gradient(120% 150% at 8% 0%, rgba(161, 5, 53, 0.9), rgba(133, 7, 53, 0) 66%);
+    }
+
+    .blobDecorativoContadorDias {
+        right: -52px;
+        bottom: -64px;
+        width: 170px;
+        height: 170px;
+    }
+
+    .conteudoContadorDias {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        padding: 28px 24px 32px;
+        text-align: center;
+    }
+
+    .colunaTextoContadorDias {
+        display: none;
+    }
+
+    .blocoNumeroContadorDias {
+        align-items: center;
+        gap: 14px;
+        width: 100%;
+    }
+
+    .numeroDiasContadorDias {
+        font-size: 82px;
+    }
+
+    .rotuloDiasContadorDias {
+        font-size: 20px;
+        margin-left: 10px;
+    }
+
+    .textoChamadaContadorDias {
+        display: block;
+        font-size: 17px;
+        line-height: 1.25;
+        letter-spacing: 0.04em;
+        margin-top: 14px;
+    }
+
+    .linhaDataLocalContadorDias {
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .textoDataLocalContadorDias {
+        display: flex;
+        flex-direction: column;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .textoDataEventoContadorDias,
+    .textoLocalEventoContadorDias {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .separadorDataLocalContadorDias {
+        display: none;
+    }
 }
