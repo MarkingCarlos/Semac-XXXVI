@@ -1,0 +1,209 @@
+/* Faixa do tema da edição — fica entre a Home e o Sobre.
+   Usa o mesmo --vermelhoAuxDiretoria da onda inferior da Home e do Sobre,
+   para que a transição continue sem costura: a faixa lê como o respiro
+   antes do conteúdo começar, não como uma seção nova. */
+.containerFaixaTemaEvento {
+    position: relative;
+    overflow: hidden;
+    background: var(--vermelhoAuxDiretoria);
+    padding: 56px 56px;
+
+    /* Tamanho-mestre da frase: as aspas e os espaçamentos derivam dele,
+       então a composição inteira escala junto com a tipografia. */
+    --tamanhoFraseTemaEvento: clamp(1.55rem, 4.2vw, 3.25rem);
+}
+
+.containerFaixaTemaEvento ::selection {
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoEscuro);
+}
+
+.brilhoFundoTemaEvento {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.conteudoTemaEvento {
+    position: relative;
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+/* A coluna de texto encolhe até a largura da linha mais longa e é essa
+   coluna que fica centrada no eixo da página — o mesmo eixo do título
+   "Sobre a SEMAC" logo abaixo. As aspas saem do fluxo para não empurrar
+   a coluna para o lado. */
+.blocoFraseTemaEvento {
+    position: relative;
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
+    text-align: left;
+}
+
+/* Aspas desenhadas à mão (não glifo de fonte), no mesmo vocabulário de
+   blocos arredondados do resto do site. Penduradas fora da coluna, como
+   pontuação pendente, alinhadas ao topo das maiúsculas da primeira linha. */
+.aspasDecorativasTemaEvento {
+    position: absolute;
+    top: calc(var(--tamanhoFraseTemaEvento) * 0.2);
+    right: 100%;
+    margin-right: calc(var(--tamanhoFraseTemaEvento) * 0.42);
+    width: calc(var(--tamanhoFraseTemaEvento) * 1.55);
+    height: auto;
+    fill: rgba(237, 236, 236, 0.15);
+}
+
+.fraseTemaEvento {
+    font-family: var(--fonteCorpoMontserrat), sans-serif;
+    font-size: var(--tamanhoFraseTemaEvento);
+    font-weight: 500;
+    line-height: 1.18;
+    letter-spacing: -0.018em;
+    color: var(--Branco);
+    /* Medida calibrada na linha mais longa ("Tecnologia com Responsabilidade:",
+       17.88em em Montserrat) com ~0.07em de folga. A caixa abraça o texto, então
+       centralizá-la centraliza o que se vê — no eixo do título "Sobre a SEMAC".
+       Ajustar junto se a frase do tema mudar. */
+    max-width: 17.95em;
+}
+
+/* Cada trecho é uma linha-bloco própria: o título do tema nunca divide
+   linha com o complemento, então não sobra artigo órfão no fim da linha
+   em nenhuma largura de tela. */
+.trechoFraseTemaEvento {
+    display: block;
+    text-wrap: balance;
+}
+
+.trechoFraseTemaEvento + .trechoFraseTemaEvento {
+    margin-top: 0.1em;
+}
+
+/* Cada palavra é um inline-block para poder ser animada (transform e filter
+   não se aplicam a inline puro). O espaço entre elas vem do nó de texto do
+   JSX, para o texto continuar copiável e legível por leitor de tela. */
+.palavraFraseTemaEvento {
+    display: inline-block;
+}
+
+.destaqueFraseTemaEvento {
+    font-weight: 800;
+    color: var(--AmareloAuxApoio);
+}
+
+.linhaAtribuicaoTemaEvento {
+    display: flex;
+    /* Quem define a largura da coluna é a frase, não a atribuição: com width: 0
+       ela não entra no cálculo do fit-content, e min-width: 100% a devolve à
+       largura já resolvida da coluna. Sem isso, no mobile a atribuição era o
+       elemento mais largo e desalinhava o texto do eixo. */
+    width: 0;
+    min-width: 100%;
+    /* flex-start (e não center) para o traço continuar ancorado na primeira
+       linha quando a atribuição quebra em duas, como acontece no mobile. */
+    align-items: flex-start;
+    gap: 12px;
+    font-family: var(--fonteCorpoMontserrat), sans-serif;
+    font-size: clamp(13px, 1.3vw, 16px);
+}
+
+.tracoAmareloTemaEvento {
+    width: 44px;
+    height: 4px;
+    border-radius: 8px;
+    background: var(--AmareloAuxApoio);
+    flex: 0 0 auto;
+    margin-top: 0.62em;
+}
+
+.textoAtribuicaoTemaEvento {
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.45;
+    letter-spacing: 0.01em;
+    color: rgba(237, 236, 236, 0.72);
+    /* No mobile a atribuição quebra em duas linhas; balanceada ela não
+       deixa "Computação" sozinha na segunda. */
+    text-wrap: balance;
+}
+
+/* ── Revelação no scroll ───────────────────────────────────────────
+   Palavra a palavra, saindo de desfocado para nítido. Só existe quando
+   o usuário não pediu menos movimento; no modo reduzido tudo já nasce
+   no estado final. */
+@media (prefers-reduced-motion: no-preference) {
+    .aspasDecorativasTemaEvento {
+        opacity: 0;
+        transform: translateY(14px) scale(0.94);
+        transform-origin: left top;
+        transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+                    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .palavraFraseTemaEvento {
+        opacity: 0;
+        filter: blur(10px);
+        transform: translateY(0.3em);
+        transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--atrasoPalavraTemaEvento, 0ms),
+                    filter 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--atrasoPalavraTemaEvento, 0ms),
+                    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--atrasoPalavraTemaEvento, 0ms);
+    }
+
+    .linhaAtribuicaoTemaEvento {
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) 620ms,
+                    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 620ms;
+    }
+
+    .faixaTemaEventoRevelada .aspasDecorativasTemaEvento,
+    .faixaTemaEventoRevelada .linhaAtribuicaoTemaEvento {
+        opacity: 1;
+        transform: none;
+    }
+
+    .faixaTemaEventoRevelada .palavraFraseTemaEvento {
+        opacity: 1;
+        filter: blur(0);
+        transform: none;
+    }
+}
+
+@media (max-width: 768px) {
+    /* No mobile a faixa ocupa a tela inteira e o tema fica centrado nela —
+       um momento próprio entre a Home e o Sobre, em vez de uma tira estreita
+       espremida contra o título da seção seguinte. svh (e não vh) para a
+       altura não pular quando a barra do navegador recolhe. */
+    .containerFaixaTemaEvento {
+        display: flex;
+        align-items: center;
+        padding: clamp(40px, 10vw, 72px) 24px;
+        --tamanhoFraseTemaEvento: clamp(1.45rem, 6.4vw, 2rem);
+    }
+
+    .conteudoTemaEvento {
+        width: 100%;
+    }
+
+    /* Sem espaço lateral para pendurar as aspas: elas voltam ao fluxo,
+       empilhadas acima do texto e alinhadas à esquerda da coluna. */
+    .aspasDecorativasTemaEvento {
+        position: static;
+        display: block;
+        margin: 0 0 clamp(14px, 3vw, 22px);
+        width: calc(var(--tamanhoFraseTemaEvento) * 1.7);
+    }
+
+    /* Mesma calibragem para as quebras do mobile, onde a linha mais longa
+       passa a ser "de TI na sociedade digital" (12.4em). */
+    .fraseTemaEvento {
+        max-width: 12.6em;
+    }
+
+    .tracoAmareloTemaEvento {
+        width: 32px;
+        height: 3px;
+    }
+}

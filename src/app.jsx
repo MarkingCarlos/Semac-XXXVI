@@ -14,6 +14,7 @@ import ContagemRegressiva from "./components/contagemRegressiva/contagemRegressi
 import {PaginaContagem} from "./pages/page/PaginaContagem.jsx";
 import Termo from "./pages/Termo/Termo.jsx";
 import ContadorDiasEvento from "./components/contadorDiasEvento/contadorDiasEvento.jsx";
+import TemaEvento from "./components/temaEvento/temaEvento.jsx";
 
 
 export function App() {
@@ -29,10 +30,13 @@ export function App() {
         <div style={{position: 'sticky'}}>
             <Home/>
         </div>
-        <ContadorDiasEvento/>
+
+        <TemaEvento/>
+
         <div>
             <Sobre/>
         </div>
+        <ContadorDiasEvento/>
         {/*<div>*/}
         {/*    <CronogramaBreve/>*/}
         {/*</div>*/}
