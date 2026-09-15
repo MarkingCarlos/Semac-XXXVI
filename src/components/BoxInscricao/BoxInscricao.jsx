@@ -46,7 +46,7 @@ function destinoPosLogin(rotaRetorno) {
 }
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
-const CHAVE_PIX = 'semacsrjp@gmail.com'
+const CHAVE_PIX = 'apoio@semac.cc'
 
 /* Mesma edição usada pelo /admin ao cadastrar os ingressos. */
 const ANO_EDICAO = new Date().getFullYear()
