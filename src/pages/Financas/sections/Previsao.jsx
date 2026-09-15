@@ -10,7 +10,7 @@ import {
     listarCategoriasPrevisao, criarCategoriaPrevisao,
     atualizarCategoriaPrevisao, excluirCategoriaPrevisao,
 } from '../data/apiPrevisaoCategorias.js';
-import { lerOrcamento, atualizarOrcamento } from '../data/apiOrcamento.js';
+import { lerOrcamento } from '../data/apiOrcamento.js';
 import {
     listarPrevisoes, lerResumoPrevisao, criarPrevisao, atualizarPrevisao,
     excluirPrevisao as excluirPrevisaoApi, converterPrevisaoEmCompra,
@@ -144,8 +144,6 @@ export default function Previsao({ fornecedores, setFornecedores }) {
     const [idCategoriaConfirmandoExclusao, setIdCategoriaConfirmandoExclusao] = useState(null);
 
     const [painelOrcamentoAberto, setPainelOrcamentoAberto] = useState(false);
-    const [formOrcamento, setFormOrcamento] = useState(null);
-    const [salvandoOrcamento, setSalvandoOrcamento] = useState(false);
 
     const [idConfirmandoExclusao, setIdConfirmandoExclusao] = useState(null);
     const [idConfirmandoConversao, setIdConfirmandoConversao] = useState(null);
@@ -403,27 +401,8 @@ export default function Previsao({ fornecedores, setFornecedores }) {
     };
 
     const abrirOrcamento = () => {
-        setFormOrcamento({ ...orcamento });
         setErroAcao('');
         setPainelOrcamentoAberto(true);
-    };
-
-    /* Mudar os contadores recalcula todo item com escala — por isso o
-       resumo é recarregado junto. */
-    const salvarOrcamento = async (evento) => {
-        evento.preventDefault();
-        setSalvandoOrcamento(true);
-        setErroAcao('');
-        try {
-            const atualizado = await atualizarOrcamento(formOrcamento);
-            setOrcamento(atualizado);
-            await recarregar();
-            setPainelOrcamentoAberto(false);
-        } catch (e) {
-            setErroAcao(e.message);
-        } finally {
-            setSalvandoOrcamento(false);
-        }
     };
 
     const buscarCategoria = (id) => categorias.find((categoria) => categoria.id === id);
@@ -1299,79 +1278,67 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                 </form>
             </PainelLateral>
 
-            {/* ── Formulário do orçamento ─────────────────── */}
+            {/* ── Parâmetros do orçamento (leitura) ───────── */}
             <PainelLateral
                 aberto={painelOrcamentoAberto}
-                titulo="Orçamento da edição"
+                titulo="Parâmetros do orçamento"
                 aoFechar={() => setPainelOrcamentoAberto(false)}
             >
-                {formOrcamento && (
-                    <form className="formularioFinancas" onSubmit={salvarOrcamento}>
-                        <p className="textoAjudaPainelPrevisao">
-                            Os contadores abaixo multiplicam os itens com escala por cabeça.
-                            Mudar a estimativa de inscritos recalcula o kit do participante inteiro.
-                        </p>
+                <p className="textoAjudaPainelPrevisao">
+                    Nenhum destes números é digitado — todos saem do banco. Um valor à
+                    parte ficaria defasado sem ninguém notar, que foi o que aconteceu
+                    enquanto eram campos.
+                </p>
 
-                        {/* O teto não se digita: é o saldo da conta da comissão.
-                            Deixar isso explícito evita a pergunta "onde mudo o
-                            teto?" agora que o campo sumiu. */}
-                        <p className="textoAjudaPainelPrevisao">
-                            O teto de gastos não é configurado aqui — ele é o saldo da conta da
-                            Comissão{resumo ? ` (${formatarCentavos(resumo.teto)})` : ''}, e sobe
-                            sozinho a cada inscrição, patrocínio ou doação que entra. O saldo por
-                            conta fica no Resumo.
-                        </p>
+                <ul className="listaParametrosOrcamentoPrevisao">
+                    <li className="parametroOrcamentoPrevisao">
+                        <span className="rotuloParametroOrcamentoPrevisao">Teto de gastos</span>
+                        <strong className="valorParametroOrcamentoPrevisao">
+                            {resumo ? formatarCentavos(resumo.teto) : '—'}
+                        </strong>
+                        <span className="ajudaCampoPrevisao">
+                            O que a Comissão arrecadou: patrocínios recebidos, doações e
+                            inscrições. Sobe a cada entrada nova.
+                        </span>
+                    </li>
+                    <li className="parametroOrcamentoPrevisao">
+                        <span className="rotuloParametroOrcamentoPrevisao">Inscritos</span>
+                        <strong className="valorParametroOrcamentoPrevisao">
+                            {orcamento?.inscritosPrevistos ?? 0}
+                        </strong>
+                        <span className="ajudaCampoPrevisao">
+                            Pessoas inscritas, confirmadas ou aguardando confirmação.
+                            Multiplica os itens com escala “Por inscrito”.
+                        </span>
+                    </li>
+                    <li className="parametroOrcamentoPrevisao">
+                        <span className="rotuloParametroOrcamentoPrevisao">Membros da comissão</span>
+                        <strong className="valorParametroOrcamentoPrevisao">
+                            {orcamento?.membrosComissao ?? 0}
+                        </strong>
+                        <span className="ajudaCampoPrevisao">
+                            Pessoas da comissão organizadora — todo papel que não seja
+                            participante. Multiplica a escala “Por membro da comissão”.
+                        </span>
+                    </li>
+                    <li className="parametroOrcamentoPrevisao">
+                        <span className="rotuloParametroOrcamentoPrevisao">Palestrantes</span>
+                        <strong className="valorParametroOrcamentoPrevisao">
+                            {orcamento?.palestrantesPrevistos ?? 0}
+                        </strong>
+                        <span className="ajudaCampoPrevisao">
+                            Palestrantes cadastrados. Multiplica a escala “Por palestrante”.
+                        </span>
+                    </li>
+                </ul>
 
-                        {/* Não é campo: vem da contagem de participantes.
-                            Mostrado assim mesmo porque é o multiplicador da
-                            escala "Por inscrito" — esconder faria o total do
-                            kit parecer arbitrário. */}
-                        <div className="campoFormularioFinancas">
-                            <span className="rotuloCampoFinancas">Inscritos</span>
-                            <strong className="valorDerivadoOrcamentoPrevisao">
-                                {formOrcamento.inscritosPrevistos ?? 0}
-                            </strong>
-                            <span className="ajudaCampoPrevisao">
-                                Calculado: pessoas inscritas, confirmadas ou aguardando confirmação.
-                                Multiplica os itens com escala “Por inscrito”.
-                            </span>
-                        </div>
-
-                        <div className="campoFormularioFinancas">
-                            <label className="rotuloCampoFinancas" htmlFor="campoMembrosOrcamento">Membros da comissão *</label>
-                            <input
-                                id="campoMembrosOrcamento"
-                                className="entradaFormularioFinancas"
-                                type="number"
-                                min={0}
-                                required
-                                value={formOrcamento.membrosComissao}
-                                onInput={(e) => setFormOrcamento({ ...formOrcamento, membrosComissao: parseInt(e.currentTarget.value, 10) || 0 })}
-                            />
-                        </div>
-
-                        <div className="campoFormularioFinancas">
-                            <label className="rotuloCampoFinancas" htmlFor="campoPalestrantesOrcamento">Palestrantes previstos *</label>
-                            <input
-                                id="campoPalestrantesOrcamento"
-                                className="entradaFormularioFinancas"
-                                type="number"
-                                min={0}
-                                required
-                                value={formOrcamento.palestrantesPrevistos}
-                                onInput={(e) => setFormOrcamento({ ...formOrcamento, palestrantesPrevistos: parseInt(e.currentTarget.value, 10) || 0 })}
-                            />
-                        </div>
-
-                        <div className="rodapeFormularioFinancas">
-                            <button type="button" className="botaoFantasmaFinancas" onClick={() => setPainelOrcamentoAberto(false)}>
-                                Cancelar
-                            </button>
-                            <button type="submit" className="botaoPrimarioFinancas" disabled={salvandoOrcamento}>
-                                {salvandoOrcamento ? 'Salvando…' : 'Salvar orçamento'}
-                            </button>
-                        </div>
-                    </form>
+                {/* Escala por cabeça com contador em zero dá total R$ 0,00.
+                    Antes isso acontecia em silêncio; agora o painel diz. */}
+                {orcamento && (orcamento.membrosComissao === 0 || orcamento.palestrantesPrevistos === 0 || orcamento.inscritosPrevistos === 0) && (
+                    <p className="avisoParametroZeradoPrevisao" role="status">
+                        Contador em zero faz os itens daquela escala valerem R$ 0,00.
+                        Cadastre as pessoas correspondentes, ou use “Valor fechado” no item.
+                    </p>
                 )}
             </PainelLateral>
         </div>

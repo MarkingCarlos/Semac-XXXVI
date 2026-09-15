@@ -1,12 +1,10 @@
-/* Camada de acesso ao orçamento da edição (tabela `orcamento`).
+/* Parâmetros do orçamento da edição — SOMENTE LEITURA.
 
-   Guarda os contadores que alimentam a escala das previsões — os mesmos
-   que a planilha tratava como constantes soltas nas notas ("estimativa
-   total: 140 pessoas", "comissão: 39 membros"). Mudar
-   `inscritosPrevistos` aqui recalcula todo item POR_INSCRITO.
-
-   O teto NÃO vive aqui: é derivado do saldo da conta da comissão e vem
-   pronto em lerResumoPrevisao(). */
+   Nada aqui é digitado. Os três multiplicadores de escala vêm de
+   contagens no banco (inscritos, membros da comissão e palestrantes) e o
+   teto vem do saldo da comissão, em lerResumoPrevisao(). Por isso não há
+   função de atualizar: a rota só serve para a interface mostrar de onde
+   cada número sai. */
 
 import { cabecalhosAuth, tratarErroAuth } from '../../../auth/sessao.js';
 import { apiFetch } from '../../../lib/apiFetch.js';
@@ -30,19 +28,4 @@ async function lerOuFalhar(resposta, mensagemPadrao) {
 export async function lerOrcamento() {
     const resposta = await apiFetch(ROTA, { headers: cabecalhosAuth() });
     return deResposta(await lerOuFalhar(resposta, 'Falha ao carregar o orçamento.'));
-}
-
-export async function atualizarOrcamento(orcamento) {
-    const resposta = await apiFetch(ROTA, {
-        method: 'PUT',
-        headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({
-            // inscritosPrevistos não vai no corpo: é derivado da contagem
-            // de pessoas com role PARTICIPANTE ou NULL, e volta na resposta
-            // só para leitura.
-            membrosComissao: Number(orcamento.membrosComissao),
-            palestrantesPrevistos: Number(orcamento.palestrantesPrevistos),
-        }),
-    });
-    return deResposta(await lerOuFalhar(resposta, 'Falha ao atualizar o orçamento.'));
 }
