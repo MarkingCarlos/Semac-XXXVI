@@ -118,11 +118,22 @@ export async function excluirPrevisao(id) {
 }
 
 /* Converte a previsão em compra: cria a compra correspondente e marca o
-   item como PAGO. Caminho de mão única — não há desconversão. */
+   item como PAGO. */
 export async function converterPrevisaoEmCompra(id) {
     const resposta = await apiFetch(`${ROTA}/${id}/converter`, {
         method: 'POST',
         headers: cabecalhosAuth(),
     });
     return deResposta(await lerOuFalhar(resposta, 'Falha ao converter a previsão em compra.'));
+}
+
+/* Desfaz a conversão: apaga a compra criada e devolve o item para
+   PREVISTO. A compra é apagada de propósito — mantê-la somaria o mesmo
+   valor duas vezes, uma como realizado e outra como previsto. */
+export async function reverterPrevisao(id) {
+    const resposta = await apiFetch(`${ROTA}/${id}/reverter`, {
+        method: 'POST',
+        headers: cabecalhosAuth(),
+    });
+    return deResposta(await lerOuFalhar(resposta, 'Falha ao reverter a previsão.'));
 }

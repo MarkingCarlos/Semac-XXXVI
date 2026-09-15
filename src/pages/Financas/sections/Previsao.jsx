@@ -1284,11 +1284,6 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                 titulo="Parâmetros do orçamento"
                 aoFechar={() => setPainelOrcamentoAberto(false)}
             >
-                <p className="textoAjudaPainelPrevisao">
-                    Nenhum destes números é digitado — todos saem do banco. Um valor à
-                    parte ficaria defasado sem ninguém notar, que foi o que aconteceu
-                    enquanto eram campos.
-                </p>
 
                 <ul className="listaParametrosOrcamentoPrevisao">
                     <li className="parametroOrcamentoPrevisao">
