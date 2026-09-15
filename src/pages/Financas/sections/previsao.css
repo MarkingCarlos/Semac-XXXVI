@@ -352,7 +352,8 @@
 }
 
 .ajudaCampoPrevisao {
-    font-size: 0.68rem;
+    font-family: 'Montserrat', 'sans-serif';
+    font-size: 0.8rem;
     line-height: 1.4;
     color: rgba(237, 236, 236, 0.42);
 }

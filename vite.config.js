@@ -9,7 +9,13 @@ export default defineConfig({
   // ao bundle do cliente (import.meta.env), igual VITE_ já fica por padrão.
   envPrefix: ['VITE_', 'MERCADOPAGOKEY'],
   server: {
-    allowedHosts: true
+    allowedHosts: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true
+      }
+    }
   }
 
 })
