@@ -231,14 +231,7 @@ export default function Resumo({
                                 </span>
                             </li>
                         </ul>
-
-                        <span className="notaSaldoResumo notaRodapeContasResumo">
-                            É o dinheiro que já está em caixa. Sobe sozinho a cada patrocínio,
-                            doação ou inscrição paga que entra — a inscrição conta assim que
-                            o pagamento chega, líquida da taxa do cartão, sem esperar a
-                            confirmação. O teto da previsão de gastos é maior: soma a este
-                            valor os patrocínios a receber.
-                        </span>
+                        
                     </section>
 
                     <section className="blocoCaixaAnteriorResumo" aria-label="Reserva da FUNDUNESP">

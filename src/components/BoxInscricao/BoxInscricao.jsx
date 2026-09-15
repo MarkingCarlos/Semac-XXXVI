@@ -7,7 +7,7 @@ import { carregarMercadoPago } from './lib/carregarMercadoPago.js'
 import './boxInscricao.css'
 import logoRaios from '../../assets/logoSemacRaios.png'
 import qrCodePix from '../../assets/qr.png'
-import qrCodePixInsc from '../../assets/Insc.png'
+import qrCodePixInsc from '../../assets/qr.png'
 
 const MERCADOPAGO_PUBLIC_KEY = import.meta.env.MERCADOPAGOKEY
 
