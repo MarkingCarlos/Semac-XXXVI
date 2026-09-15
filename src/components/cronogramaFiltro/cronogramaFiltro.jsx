@@ -16,7 +16,7 @@ export default function CronogramaFiltro({
   return (
     <div className="wrapperCronograma">
       <div className="cartaoCronograma">
-        <h1 className="tituloCronograma tituloSecao">
+        <h1 className="" style={{marginBottom: '0px'}}>
           <SplitText
             key={selectedDay}
             tag="span"

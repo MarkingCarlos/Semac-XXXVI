@@ -22,7 +22,6 @@ export default function SecaoPerfilParticipantes({
                     <div className="avatarSecaoPerfilParticipantes">{iniciais}</div>
                     <div className="identidadeSecaoPerfilParticipantes">
                         <span className="nomeSecaoPerfilParticipantes">{nome.toUpperCase()}</span>
-                        <span className="cursoSecaoPerfilParticipantes">{perfil.curso}</span>
                         {nivel && (
                             <span className="seloNivelSecaoPerfilParticipantes">{nivel.nome} · {nivel.xp} XP</span>
                         )}

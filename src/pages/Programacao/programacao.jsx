@@ -95,7 +95,8 @@ export default function CronogramaContainer() {
   }
 
   return (
-    <>
+    <section id="Cronograma">
+      <h1 className="tituloCronograma tituloSecao" style={{marginBottom: '0px', marginTop:'1em'}} >Programação</h1>
       <CronogramaFiltro
         dias={dias}
         categorias={trilhas}
@@ -105,6 +106,6 @@ export default function CronogramaContainer() {
         setSelectedFilter={setSelectedFilter}
       />
       <Cronograma eventos={eventos} selectedDay={selectedDay} selectedFilter={selectedFilter} />
-    </>
+    </section>
   );
 }

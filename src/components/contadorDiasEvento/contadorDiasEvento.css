@@ -1,0 +1,112 @@
+.containerFaixaContadorDias {
+    position: relative;
+    overflow: hidden;
+    background: var(--vermelhoAux2Diretoria);
+}
+
+.ondaTopoContadorDias {
+    height: 44px;
+    background: var(--vermelhoAuxDiretoria);
+    mask: url(../../assets/waveCima.svg) bottom center / 100% 100% no-repeat;
+    -webkit-mask: url(../../assets/waveCima.svg) bottom center / 100% 100% no-repeat;
+}
+
+.ondaBaseContadorDias {
+    height: 44px;
+    background: var(--vermelhoAuxDiretoria);
+    mask: url(../../assets/waveBaixoFaixaContador.svg) top center / 100% 100% no-repeat;
+    -webkit-mask: url(../../assets/waveBaixoFaixaContador.svg) top center / 100% 100% no-repeat;
+}
+
+.gradienteContadorDias {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(110% 170% at 10% 0%, rgba(161, 5, 53, 0.9), rgba(133, 7, 53, 0) 62%);
+    pointer-events: none;
+}
+
+.blobDecorativoContadorDias {
+    position: absolute;
+    right: -70px;
+    bottom: -90px;
+    width: 260px;
+    height: 260px;
+    border-radius: 30px;
+    background: var(--vermelhoAuxDiretoria);
+    transform: rotate(20deg);
+    pointer-events: none;
+}
+
+.conteudoContadorDias {
+    position: relative;
+    background: var(--vermelhoAuxDiretoria);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 10px;
+    padding: clamp(32px, 5vw, 50px) clamp(24px, 5vw, 72px);
+}
+
+.blocoNumeroContadorDias {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-end;
+}
+
+.numeroDiasContadorDias {
+    font-family: var(--fonteTituloBungee), cursive;
+    font-size: clamp(72px, 11vw, 152px);
+    line-height: 0.78;
+    color: var(--AmareloAuxApoio);
+}
+
+.rotuloDiasContadorDias {
+    font-family: var(--fonteTituloBungee), cursive;
+    font-size: clamp(18px, 2.4vw, 32px);
+    color: var(--Branco);
+}
+
+.colunaTextoContadorDias {
+
+    gap: clamp(8px, 1vw, 14px);
+
+}
+
+.tituloContadorDias {
+    font-family: var(--fonteTituloBungee), cursive;
+    font-size: clamp(18px, 2.4vw, 30px);
+    line-height: 1.15;
+    letter-spacing: 0.04em;
+    color: var(--Branco);
+    margin: 0;
+}
+
+.linhaDataLocalContadorDias {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.tracoAmareloContadorDias {
+    width: 44px;
+    height: 4px;
+    border-radius: 8px;
+    background: var(--AmareloAuxApoio);
+    flex: 0 0 auto;
+}
+
+.textoDataLocalContadorDias {
+    font-family: var(--fonteCorpoMontserrat), sans-serif;
+    font-size: clamp(14px, 1.4vw, 17px);
+    color: var(--Branco);
+}
+
+.textoTempoRestanteContadorDias {
+    font-family: var(--fonteTituloBungee), cursive;
+    font-size: clamp(11px, 1.1vw, 13px);
+    letter-spacing: 0.12em;
+    color: rgba(237, 236, 236, 0.75);
+    margin: 0;
+}

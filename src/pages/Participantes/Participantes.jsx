@@ -361,14 +361,14 @@ export default function Participantes() {
             {qrAberto && (
                 <div className="sobreposicaoQrParticipantes" onClick={() => setQrAberto(false)}>
                     <div className="modalQrParticipantes" onClick={(evento) => evento.stopPropagation()}>
-                        <button
-                            type="button"
-                            className="botaoFecharModalQrParticipantes"
-                            onClick={() => setQrAberto(false)}
-                            aria-label="Fechar"
-                        >
-                            ×
-                        </button>
+                        {/*<button*/}
+                        {/*    type="button"*/}
+                        {/*    className="botaoFecharModalQrParticipantes"*/}
+                        {/*    onClick={() => setQrAberto(false)}*/}
+                        {/*    aria-label="Fechar"*/}
+                        {/*>*/}
+                        {/*    ×*/}
+                        {/*</button>*/}
                         <div className="cabecalhoModalQrParticipantes">
                             <div className="textoCabecalhoModalQrParticipantes">
                                 <span className="tituloModalQrParticipantes">MEU CRACHÁ</span>
@@ -382,19 +382,20 @@ export default function Participantes() {
                             <span className="nomeModalQrParticipantes">{nomeParticipante.toUpperCase()}</span>
                             <span className="inscricaoModalQrParticipantes">{perfilMockParticipante.numeroInscricao}</span>
                         </div>
-                        {(atividadeAtual || atividadeSeguinte) && (
-                            <div className="avisoAgoraModalQrParticipantes">
-                                <span className="tagAgoraModalQrParticipantes">
-                                    {atividadeAtual ? 'AGORA' : 'A SEGUIR'}
-                                </span>
-                                <span className="textoAgoraModalQrParticipantes">
-                                    {(atividadeAtual ?? atividadeSeguinte).dia} ·{' '}
-                                    {(atividadeAtual ?? atividadeSeguinte).horario} ·{' '}
-                                    {(atividadeAtual ?? atividadeSeguinte).local} —{' '}
-                                    {(atividadeAtual ?? atividadeSeguinte).titulo}
-                                </span>
-                            </div>
-                        )}
+                        {/*{(atividadeAtual || atividadeSeguinte) && (*/}
+                        {/*    <div className="avisoAgoraModalQrParticipantes">*/}
+                        {/*        /!*<span className="tagAgoraModalQrParticipantes">*!/*/}
+                        {/*        /!*    {atividadeAtual ? 'AGORA' : 'A SEGUIR'}*!/*/}
+                        {/*        /!*</span>*!/*/}
+                        {/*        <span className="textoAgoraModalQrParticipantes">*/}
+                        {/*            {(atividadeAtual ?? atividadeSeguinte).dia} ·{' '}*/}
+                        {/*            {(atividadeAtual ?? atividadeSeguinte).horario} ·{' '}*/}
+                        {/*            {(atividadeAtual ?? atividadeSeguinte).local} {' '}*/}
+                        {/*            <br/>*/}
+                        {/*            {(atividadeAtual ?? atividadeSeguinte).titulo}*/}
+                        {/*        </span>*/}
+                        {/*    </div>*/}
+                        {/*)}*/}
                         <span className="rodapeModalQrParticipantes">
                             Funciona sem internet. O código é pessoal e não deve ser compartilhado.
                         </span>

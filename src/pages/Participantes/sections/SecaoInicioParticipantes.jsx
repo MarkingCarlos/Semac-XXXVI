@@ -63,7 +63,7 @@ export default function SecaoInicioParticipantes({
                                 </div>
                                 <span className="textoProgressoCardNivelInicioParticipantes">
                                     {nivel.proximoNivelNome
-                                        ? <>Faltam <strong>{nivel.xpFaltanteProximoNivel} XP</strong> para {nivel.proximoNivelNome}</>
+                                        ? <>Faltam <strong>{nivel.xpFaltanteProximoNivel} XP</strong> para se tornar {nivel.proximoNivelNome}</>
                                         : 'Você alcançou o nível máximo!'}
                                 </span>
                             </div>
