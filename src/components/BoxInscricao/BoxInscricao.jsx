@@ -13,12 +13,14 @@ const MERCADOPAGO_PUBLIC_KEY = import.meta.env.MERCADOPAGOKEY
 
 /* Cadastro em quatro etapas. O ingresso escolhido na etapa 2 governa o
    resto do fluxo: ele diz quantas camisetas vêm inclusas e quanto há a
-   pagar. Quando o total fecha em zero (ingresso gratuito, sem camiseta
-   avulsa) a etapa de pagamento é pulada e o rótulo do passo 4 passa a
-   ser "Confirmação".
+   pagar. Quando o total fecha em zero (ingresso gratuito) a etapa de
+   pagamento é pulada e o rótulo do passo 4 passa a ser "Confirmação".
 
-   Ingressos, camisetas inclusas e preço da camiseta avulsa vêm todos do
-   /admin (seção "Informações SEMAC") — nada disso é fixo aqui. */
+   Camiseta avulsa não é vendida aqui — só o /admin pode registrar uma,
+   manualmente, na confirmação da inscrição ou no check-in.
+
+   Ingressos e camisetas inclusas vêm do /admin (seção "Informações
+   SEMAC") — nada disso é fixo aqui. */
 
 function lerParametrosNavegacao() {
     const params = new URLSearchParams(window.location.search)
@@ -122,10 +124,10 @@ export default function BoxInscricao() {
     const [dias,                setDias]                = useState(1)
 
     /* Uma única escolha de camiseta grátis, replicada na hora de enviar:
-       quem tem direito a mais de uma recebe todas iguais. */
-    const [camisetaGratis,     setCamisetaGratis]     = useState(CAMISETA_PADRAO)
-    const [camisetasExtras,    setCamisetasExtras]    = useState([])
-    const [precoCamisetaExtra, setPrecoCamisetaExtra] = useState(0)
+       quem tem direito a mais de uma recebe todas iguais. Camiseta avulsa
+       não é mais oferecida na inscrição (só o /admin pode registrar uma,
+       na confirmação ou no check-in). */
+    const [camisetaGratis, setCamisetaGratis] = useState(CAMISETA_PADRAO)
 
     /* Código de acesso do ingresso (etapa 2) — só existe pra ingressos com
        codigoDefinido=true (ex.: comissão). Verificado contra o backend
@@ -187,19 +189,13 @@ export default function BoxInscricao() {
         return () => clearTimeout(id)
     }, [emailUnespInvalido])
 
-    /* Ingressos e preço da camiseta avulsa são carregados juntos ao entrar
-       na etapa 2: a etapa 3 já precisa do preço para montar a oferta. */
+    /* Ingressos são carregados ao entrar na etapa 2. */
     useEffect(() => {
         if (aba !== 'inscricao' || etapa !== 2 || ingressos.length > 0) return
         setCarregandoIngressos(true)
-        Promise.all([
-            apiFetch(`${API_URL}/api/tipo-inscricao?ano=${ANO_EDICAO}`)
-                .then(r => r.ok ? r.json() : Promise.reject())
-                .then(lista => setIngressos(lista.filter(tipo => tipo.ativo))),
-            apiFetch(`${API_URL}/api/camiseta-extra?ano=${ANO_EDICAO}`)
-                .then(r => r.ok ? r.json() : Promise.reject())
-                .then(preco => setPrecoCamisetaExtra(Number(preco.valor) || 0)),
-        ])
+        apiFetch(`${API_URL}/api/tipo-inscricao?ano=${ANO_EDICAO}`)
+            .then(r => r.ok ? r.json() : Promise.reject())
+            .then(lista => setIngressos(lista.filter(tipo => tipo.ativo)))
             .catch(() => setFeedback({ tipo: 'erro', msg: 'Não foi possível carregar os ingressos.' }))
             .finally(() => setCarregandoIngressos(false))
     }, [aba, etapa, ingressos.length])
@@ -263,7 +259,6 @@ export default function BoxInscricao() {
         if (ingresso?.restritoUnesp && !form.ehUnesp) {
             setIngresso(null)
             setDias(1)
-            setCamisetasExtras([])
             setCamisetaGratis(CAMISETA_PADRAO)
             setCodigoIngresso('')
             setErroCodigoIngresso('')
@@ -276,8 +271,7 @@ export default function BoxInscricao() {
 
     const valorIngresso = !ingresso ? 0
         : ingresso.porDia ? Number(ingresso.valor) * dias : Number(ingresso.valor)
-    const valorExtras = camisetasExtras.length * precoCamisetaExtra
-    const total = valorIngresso + valorExtras
+    const total = valorIngresso
 
     /* Linhas do resumo — as mesmas no pagamento e na confirmação. */
     function linhasResumo() {
@@ -299,11 +293,6 @@ export default function BoxInscricao() {
                 inclusa: true,
             })
         }
-        camisetasExtras.forEach(camiseta => linhas.push({
-            rotulo: `Camiseta avulsa · ${LABEL_MODELO[camiseta.modelo]} ${camiseta.tamanho}`,
-            valor: formatarMoeda(precoCamisetaExtra),
-            inclusa: false,
-        }))
         return linhas
     }
 
@@ -328,7 +317,6 @@ export default function BoxInscricao() {
         if (ingresso?.id === tipo.id) return
         setIngresso(tipo)
         setDias(1)
-        setCamisetasExtras([])
         setCamisetaGratis(CAMISETA_PADRAO)
         setCodigoIngresso('')
         setErroCodigoIngresso('')
@@ -380,20 +368,6 @@ export default function BoxInscricao() {
             return
         }
         finalizarInscricao()
-    }
-
-    function adicionarCamisetaExtra() {
-        setCamisetasExtras(atuais => [...atuais, { ...CAMISETA_PADRAO }])
-    }
-
-    function removerCamisetaExtra(indice) {
-        setCamisetasExtras(atuais => atuais.filter((_, i) => i !== indice))
-    }
-
-    function alterarCamisetaExtra(indice, mudanca) {
-        setCamisetasExtras(atuais => atuais.map(
-            (camiseta, i) => i === indice ? { ...camiseta, ...mudanca } : camiseta
-        ))
     }
 
     function copiarChavePix() {
@@ -458,10 +432,7 @@ export default function BoxInscricao() {
     async function garantirPessoaCriada() {
         if (uuidCriado) return uuidCriado
 
-        const camisetas = [
-            ...Array.from({ length: camisetasInclusas }, () => ({ ...camisetaGratis })),
-            ...camisetasExtras,
-        ]
+        const camisetas = Array.from({ length: camisetasInclusas }, () => ({ ...camisetaGratis }))
 
         const respostaInscricao = await apiFetch(`${API_URL}/api/inscricao`, {
             method: 'POST',
@@ -775,16 +746,16 @@ export default function BoxInscricao() {
                                     <h2 class="tituloEtapaInscricao">Camiseta</h2>
                                     <p class="subtituloEtapaInscricao">
                                         {camisetasInclusas === 0
-                                            ? 'Seu ingresso não inclui camiseta — comprar é opcional.'
+                                            ? 'Seu ingresso não inclui camiseta.'
                                             : camisetasInclusas === 1
                                                 ? 'Escolha a modelagem e o tamanho da sua camiseta grátis.'
                                                 : `Você recebe ${camisetasInclusas} camisetas iguais: escolha modelagem e tamanho uma vez só.`}
                                     </p>
                                 </div>
 
-                                <div class="gradeCamisetaInscricao">
-                                    <div class="colunaEditoresCamisetaInscricao">
-                                        {camisetasInclusas > 0 && (
+                                {camisetasInclusas > 0 && (
+                                    <div class="gradeCamisetaInscricao">
+                                        <div class="colunaEditoresCamisetaInscricao">
                                             <EditorCamiseta
                                                 etiqueta={camisetasInclusas === 1
                                                     ? 'Camiseta grátis'
@@ -793,46 +764,11 @@ export default function BoxInscricao() {
                                                 camiseta={camisetaGratis}
                                                 aoMudar={mudanca => setCamisetaGratis(atual => ({ ...atual, ...mudanca }))}
                                             />
-                                        )}
-
-                                        {camisetasExtras.map((camiseta, indice) => (
-                                            <EditorCamiseta
-                                                key={indice}
-                                                etiqueta={`Camiseta avulsa · ${formatarMoeda(precoCamisetaExtra)}`}
-                                                camiseta={camiseta}
-                                                aoMudar={mudanca => alterarCamisetaExtra(indice, mudanca)}
-                                                aoRemover={() => removerCamisetaExtra(indice)}
-                                            />
-                                        ))}
-
-                                        <div class="blocoOfertaCamisetaExtraInscricao">
-                                            <span class="tituloOfertaCamisetaExtraInscricao">
-                                                {camisetasInclusas === 0 ? 'Leve a camiseta oficial' : 'Quer mais uma?'}
-                                            </span>
-                                            <span class="textoOfertaCamisetaExtraInscricao">
-                                                {camisetasInclusas === 0
-                                                    ? `A camiseta oficial da SEMAC XXXVI sai por ${formatarMoeda(precoCamisetaExtra)}.`
-                                                    : `Camisetas adicionais custam ${formatarMoeda(precoCamisetaExtra)} cada.`}
-                                            </span>
-                                            <button
-                                                type="button"
-                                                class="botaoAdicionarCamisetaInscricao"
-                                                onClick={adicionarCamisetaExtra}
-                                            >
-                                                + Adicionar camiseta
-                                            </button>
                                         </div>
+
+                                        <TabelaMedidasCamiseta />
                                     </div>
-
-                                    <TabelaMedidasCamiseta />
-                                </div>
-
-                                <div class="linhaTotalCamisetaInscricao">
-                                    <span class="rotuloTotalInscricao">Total</span>
-                                    <span class="valorTotalInscricao">
-                                        {total > 0 ? formatarMoeda(total) : 'Gratuito'}
-                                    </span>
-                                </div>
+                                )}
 
                                 {feedback && <Feedback feedback={feedback} />}
 
@@ -1004,7 +940,7 @@ export default function BoxInscricao() {
                                     </p>
                                 )}
                                 <p class="subtituloComemoracaoInscricao">
-                                    {camisetasInclusas > 0 || camisetasExtras.length > 0
+                                    {camisetasInclusas > 0
                                         ? 'Sua camiseta chega junto com o kit SEMAC no primeiro dia do evento. \n Em breve iremos liberar seu acesso à plataforma.'
                                         : 'Confirmaremos os dados em breve e você receberá um e-mail.'}
                                 </p>
@@ -1103,21 +1039,15 @@ function CardIngresso({ tipo, selecionado, dias, aoSelecionar, aoEscolherDias })
     )
 }
 
-/* Editor de uma camiseta: modelagem, tamanho e a medida do tamanho ativo.
-   `destacada` marca a que veio inclusa no ingresso; `aoRemover` só existe
-   nas avulsas. */
-function EditorCamiseta({ etiqueta, destacada, camiseta, aoMudar, aoRemover }) {
+/* Editor da camiseta grátis: modelagem, tamanho e a medida do tamanho
+   ativo. */
+function EditorCamiseta({ etiqueta, destacada, camiseta, aoMudar }) {
     return (
         <div class={`editorCamisetaInscricao ${destacada ? 'editorCamisetaGratisInscricao' : ''}`}>
             <div class="topoEditorCamisetaInscricao">
                 <span class={`etiquetaEditorCamisetaInscricao ${destacada ? 'etiquetaCamisetaGratisInscricao' : ''}`}>
                     {etiqueta}
                 </span>
-                {aoRemover && (
-                    <button type="button" class="botaoRemoverCamisetaInscricao" onClick={aoRemover}>
-                        Remover
-                    </button>
-                )}
             </div>
 
             <span class="rotuloOpcaoCamisetaInscricao">Modelagem</span>

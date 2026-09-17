@@ -554,24 +554,6 @@
     color: var(--AmareloAuxApoio);
 }
 
-.botaoRemoverCamisetaInscricao {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: rgba(252, 248, 245, 0.7);
-    background: transparent;
-    border: 1px solid rgba(252, 248, 245, 0.25);
-    border-radius: 8px;
-    padding: 0.4rem 0.6rem;
-    cursor: pointer;
-    transition: color 0.2s, border-color 0.2s;
-}
-
-.botaoRemoverCamisetaInscricao:hover {
-    color: var(--Branco);
-    border-color: var(--Branco);
-}
-
 .rotuloOpcaoCamisetaInscricao {
     font-size: 0.72rem;
     font-weight: 700;
@@ -640,50 +622,6 @@
     font-size: 0.74rem;
     color: rgba(252, 248, 245, 0.6);
 }
-
-/* Oferta de camiseta avulsa */
-
-.blocoOfertaCamisetaExtraInscricao {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: center;
-    padding: 1rem;
-    border: 1.5px dashed rgba(231, 152, 57, 0.55);
-    background: rgba(231, 152, 57, 0.09);
-    border-radius: 16px;
-}
-
-.tituloOfertaCamisetaExtraInscricao {
-    font-family: 'Bungee', sans-serif;
-    font-size: 0.72rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--AmareloAuxApoio);
-}
-
-.textoOfertaCamisetaExtraInscricao {
-    font-size: 0.82rem;
-    line-height: 1.5;
-    color: rgba(252, 248, 245, 0.8);
-}
-
-.botaoAdicionarCamisetaInscricao {
-    min-height: 46px;
-    padding: 0.75rem 1.1rem;
-    border: none;
-    border-radius: 8px;
-    background: var(--AmareloAuxApoio);
-    color: var(--vermelhoAuxDiretoria);
-    font-family: 'Bungee', sans-serif;
-    font-size: 0.72rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: filter 0.2s;
-}
-
-.botaoAdicionarCamisetaInscricao:hover { filter: brightness(1.08); }
 
 /* Tabela de medidas do fornecedor */
 
