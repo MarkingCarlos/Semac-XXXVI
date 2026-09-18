@@ -11,10 +11,11 @@ import qrCodePixInsc from '../../assets/qr.png'
 
 const MERCADOPAGO_PUBLIC_KEY = import.meta.env.MERCADOPAGOKEY
 
-/* Cadastro em quatro etapas. O ingresso escolhido na etapa 2 governa o
+/* Cadastro em até quatro etapas. O ingresso escolhido na etapa 2 governa o
    resto do fluxo: ele diz quantas camisetas vêm inclusas e quanto há a
-   pagar. Quando o total fecha em zero (ingresso gratuito) a etapa de
-   pagamento é pulada e o rótulo do passo 4 passa a ser "Confirmação".
+   pagar. Sem camiseta inclusa, a etapa 3 é pulada. Quando o total fecha em
+   zero (ingresso gratuito) a etapa de pagamento também é pulada e o rótulo
+   do passo 4 passa a ser "Confirmação".
 
    Camiseta avulsa não é vendida aqui — só o /admin pode registrar uma,
    manualmente, na confirmação da inscrição ou no check-in.
@@ -327,8 +328,7 @@ export default function BoxInscricao() {
        só se bateu ou não; a validação de verdade se repete no envio final. */
     async function avancarDoIngresso() {
         if (!ingresso?.codigoDefinido) {
-            setFeedback(null)
-            setEtapa(3)
+            avancarAposIngresso()
             return
         }
         setVerificandoCodigo(true)
@@ -341,8 +341,7 @@ export default function BoxInscricao() {
             })
             const corpo = await resposta.json().catch(() => null)
             if (resposta.ok && corpo?.valido) {
-                setFeedback(null)
-                setEtapa(3)
+                avancarAposIngresso()
             } else {
                 setErroCodigoIngresso('Código de acesso inválido para este ingresso.')
             }
@@ -353,11 +352,26 @@ export default function BoxInscricao() {
         }
     }
 
+    /* Etapa 3 (Camiseta) só existe quando o ingresso escolhido inclui
+       camiseta grátis. Sem isso, vai direto pra onde a etapa 3 mandaria. */
+    function avancarAposIngresso() {
+        setFeedback(null)
+        if (camisetasInclusas > 0) {
+            setEtapa(3)
+            return
+        }
+        avancarDaCamiseta()
+    }
+
     function voltarEtapa() {
         setFeedback(null)
         // Voltando da etapa 2, a etapa 1 reabre na última tela vista.
         setSubEtapaDados('acesso')
-        setEtapa(atual => Math.max(1, atual - 1))
+        setEtapa(atual => {
+            // Da etapa 4, sem camiseta inclusa a etapa 3 nunca existiu.
+            if (atual === 4 && camisetasInclusas === 0) return 2
+            return Math.max(1, atual - 1)
+        })
     }
 
     /* Sem nada a pagar, a etapa 4 não existe: a inscrição fecha aqui. */
@@ -535,7 +549,7 @@ export default function BoxInscricao() {
     const etapas = [
         { numero: 1, nome: 'Seus dados' },
         { numero: 2, nome: 'Ingresso' },
-        { numero: 3, nome: 'Camiseta' },
+        ...(camisetasInclusas > 0 ? [{ numero: 3, nome: 'Camiseta' }] : []),
         { numero: 4, nome: total > 0 || !ingresso ? 'Pagamento' : 'Confirmação' },
     ]
 
@@ -745,30 +759,26 @@ export default function BoxInscricao() {
                                 <div class="cabecalhoEtapaInscricao">
                                     <h2 class="tituloEtapaInscricao">Camiseta</h2>
                                     <p class="subtituloEtapaInscricao">
-                                        {camisetasInclusas === 0
-                                            ? 'Seu ingresso não inclui camiseta.'
-                                            : camisetasInclusas === 1
-                                                ? 'Escolha a modelagem e o tamanho da sua camiseta grátis.'
-                                                : `Você recebe ${camisetasInclusas} camisetas iguais: escolha modelagem e tamanho uma vez só.`}
+                                        {camisetasInclusas === 1
+                                            ? 'Escolha a modelagem e o tamanho da sua camiseta grátis.'
+                                            : `Você recebe ${camisetasInclusas} camisetas iguais: escolha modelagem e tamanho uma vez só.`}
                                     </p>
                                 </div>
 
-                                {camisetasInclusas > 0 && (
-                                    <div class="gradeCamisetaInscricao">
-                                        <div class="colunaEditoresCamisetaInscricao">
-                                            <EditorCamiseta
-                                                etiqueta={camisetasInclusas === 1
-                                                    ? 'Camiseta grátis'
-                                                    : `${camisetasInclusas} camisetas grátis · mesmo modelo`}
-                                                destacada
-                                                camiseta={camisetaGratis}
-                                                aoMudar={mudanca => setCamisetaGratis(atual => ({ ...atual, ...mudanca }))}
-                                            />
-                                        </div>
-
-                                        <TabelaMedidasCamiseta />
+                                <div class="gradeCamisetaInscricao">
+                                    <div class="colunaEditoresCamisetaInscricao">
+                                        <EditorCamiseta
+                                            etiqueta={camisetasInclusas === 1
+                                                ? 'Camiseta grátis'
+                                                : `${camisetasInclusas} camisetas grátis · mesmo modelo`}
+                                            destacada
+                                            camiseta={camisetaGratis}
+                                            aoMudar={mudanca => setCamisetaGratis(atual => ({ ...atual, ...mudanca }))}
+                                        />
                                     </div>
-                                )}
+
+                                    <TabelaMedidasCamiseta />
+                                </div>
 
                                 {feedback && <Feedback feedback={feedback} />}
 
