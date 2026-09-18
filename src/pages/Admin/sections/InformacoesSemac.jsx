@@ -32,6 +32,14 @@ import {
     lerConfiguracaoInscricao,
     salvarConfiguracaoInscricao,
 } from '../data/apiConfiguracaoInscricao.js';
+import {
+    listarConquistas,
+    atualizarConquista,
+    alterarAtivaConquista,
+    enviarImagemConquista,
+    urlImagemConquista,
+    reavaliarConquistas,
+} from '../data/apiConquistas.js';
 
 /* Informações SEMAC — seis blocos:
    1. Inscrições abertas (tabela `configuracao_inscricao`), liga/desliga
@@ -40,7 +48,10 @@ import {
    3. Preço da camiseta avulsa (tabela `camiseta_extra`), um por edição;
    4. Meta de doação (tabela `meta_doacao`), um por edição;
    5. Níveis de participante (tabela `nivel`), nome + xp mínimo;
-   6. Cotas de patrocínio (tabela `cota`), nível + valor.
+   6. Cotas de patrocínio (tabela `cota`), nível + valor;
+   7. Conquistas (tabela `conquista`) — só edição: cada conquista nasce de
+      uma regra em código (CatalogoConquistas, no backend) e é criada no
+      boot. Aqui se define como ela aparece e se já vale.
    Valores de ingresso/cota/meta em centavos na interface, convertidos na
    borda da API. Xp mínimo do nível é inteiro puro, sem conversão.
 
@@ -84,6 +95,23 @@ const rotuloDoNivel = (nivel) =>
     NIVEIS_PATROCINIO.find((n) => n.valor === nivel)?.rotulo ?? nivel;
 
 const porValorCrescente = (a, b) => a.valor - b.valor;
+
+/* Conquista automática o sistema concede sozinho; manual alguém da
+   diretoria concede lendo o QR do crachá em /checkin. Espelha o enum
+   TipoValidacaoConquista do backend — o valor vem do código e não é
+   editável aqui. */
+const ROTULOS_VALIDACAO_CONQUISTA = {
+    AUTOMATICA: 'Automática',
+    MANUAL: 'Validada pela comissão',
+};
+
+const FORMULARIO_CONQUISTA_VAZIO = {
+    nome: '',
+    descricao: '',
+    pontosBase: 0,
+    raridade: 1,
+    ordem: 0,
+};
 
 export default function InformacoesSemac() {
     const [tipos, setTipos] = useState([]);
@@ -142,6 +170,20 @@ export default function InformacoesSemac() {
     const [idNivelParticipanteEmEdicao, setIdNivelParticipanteEmEdicao] = useState(null);
     const [idNivelParticipanteConfirmandoExclusao, setIdNivelParticipanteConfirmandoExclusao] = useState(null);
 
+    /* ── Conquistas ───────────────────────────────────────────── */
+    const [conquistas, setConquistas] = useState([]);
+    const [carregandoConquistas, setCarregandoConquistas] = useState(true);
+    const [erroConquistas, setErroConquistas] = useState('');
+    const [painelConquistaAberto, setPainelConquistaAberto] = useState(false);
+    const [formularioConquista, setFormularioConquista] = useState(FORMULARIO_CONQUISTA_VAZIO);
+    const [idConquistaEmEdicao, setIdConquistaEmEdicao] = useState(null);
+    const [salvandoConquista, setSalvandoConquista] = useState(false);
+    /* Id da conquista cuja imagem ou interruptor está em trânsito — trava
+       só aquele card, não o bloco inteiro. */
+    const [idConquistaEmEspera, setIdConquistaEmEspera] = useState(null);
+    const [reavaliando, setReavaliando] = useState(false);
+    const [avisoReavaliacao, setAvisoReavaliacao] = useState('');
+
     const porXpMinimoCrescente = (a, b) => a.xpMinimo - b.xpMinimo;
 
     useEffect(() => {
@@ -167,6 +209,10 @@ export default function InformacoesSemac() {
             .then((lista) => { if (ativo) setNiveisParticipante([...lista].sort(porXpMinimoCrescente)); })
             .catch((e) => { if (ativo) setErroNiveisParticipante(e.message); })
             .finally(() => { if (ativo) setCarregandoNiveisParticipante(false); });
+        listarConquistas()
+            .then((lista) => { if (ativo) setConquistas(lista ?? []); })
+            .catch((e) => { if (ativo) setErroConquistas(e.message); })
+            .finally(() => { if (ativo) setCarregandoConquistas(false); });
         return () => { ativo = false; };
     }, []);
 
@@ -236,6 +282,88 @@ export default function InformacoesSemac() {
             setErroNiveisParticipante(e.message);
         } finally {
             setIdNivelParticipanteConfirmandoExclusao(null);
+        }
+    };
+
+    /* ── Conquistas ───────────────────────────────────────────── */
+
+    /* Substitui a conquista na lista pelo que o backend devolveu — toda
+       resposta de escrita traz o registro inteiro, então não há estado
+       local a recalcular. */
+    const trocarConquista = (atualizada) =>
+        setConquistas((lista) => lista.map((c) => (c.id === atualizada.id ? atualizada : c)));
+
+    const abrirEdicaoConquista = (conquista) => {
+        setFormularioConquista({
+            nome: conquista.nome ?? '',
+            descricao: conquista.descricao ?? '',
+            pontosBase: conquista.pontosBase ?? 0,
+            raridade: conquista.raridade ?? 1,
+            ordem: conquista.ordem ?? 0,
+        });
+        setIdConquistaEmEdicao(conquista.id);
+        setErroConquistas('');
+        setPainelConquistaAberto(true);
+    };
+
+    const salvarConquista = async (evento) => {
+        evento.preventDefault();
+        setSalvandoConquista(true);
+        setErroConquistas('');
+        try {
+            trocarConquista(await atualizarConquista(idConquistaEmEdicao, formularioConquista));
+            setPainelConquistaAberto(false);
+        } catch (e) {
+            setErroConquistas(e.message);
+        } finally {
+            setSalvandoConquista(false);
+        }
+    };
+
+    /* O backend recusa com 409 e explica o motivo: ativar sem imagem, ou
+       desativar com participantes que já a têm. A mensagem já vem pronta
+       para exibir, então basta repassá-la. */
+    const alternarAtivaConquista = async (conquista, novoValor) => {
+        setIdConquistaEmEspera(conquista.id);
+        setErroConquistas('');
+        try {
+            trocarConquista(await alterarAtivaConquista(conquista.id, novoValor));
+        } catch (e) {
+            setErroConquistas(e.message);
+        } finally {
+            setIdConquistaEmEspera(null);
+        }
+    };
+
+    /* As regras automáticas também rodam a cada check-in e no boot; este
+       botão existe para o caso que nenhum dos dois cobre — uma conquista
+       ativada depois que gente já cumpriu a regra. Recarrega o catálogo
+       ao terminar porque `totalConquistado` de cada card muda. */
+    const executarReavaliacao = async () => {
+        setReavaliando(true);
+        setErroConquistas('');
+        setAvisoReavaliacao('');
+        try {
+            const resultado = await reavaliarConquistas();
+            setAvisoReavaliacao(`${resultado?.participantesAvaliados ?? 0} participante(s) reavaliado(s).`);
+            setConquistas(await listarConquistas());
+        } catch (e) {
+            setErroConquistas(e.message);
+        } finally {
+            setReavaliando(false);
+        }
+    };
+
+    const trocarImagemConquista = async (conquista, arquivo) => {
+        if (!arquivo) return;
+        setIdConquistaEmEspera(conquista.id);
+        setErroConquistas('');
+        try {
+            trocarConquista(await enviarImagemConquista(conquista.id, arquivo));
+        } catch (e) {
+            setErroConquistas(e.message);
+        } finally {
+            setIdConquistaEmEspera(null);
         }
     };
 
@@ -765,6 +893,126 @@ export default function InformacoesSemac() {
                 )}
             </section>
 
+            {/* ── Conquistas ──────────────────────────────────── */}
+            <section className="blocoInfoSemac" aria-label="Conquistas">
+                <div className="cabecalhoBlocoInfoSemac">
+                    <div>
+                        <h2 className="tituloBlocoInfoSemac">Conquistas</h2>
+                        <p className="notaBlocoInfoSemac">
+                            Cada conquista já existe no sistema com sua regra — aqui se define nome,
+                            pontos, imagem e descrição, e se ela já vale. Só conquista ativa aparece
+                            para os participantes; a imagem fica em preto e branco até ser conquistada.
+                        </p>
+                    </div>
+                    <button
+                        type="button"
+                        className="botaoFantasmaFinancas"
+                        disabled={reavaliando}
+                        title="Aplica as regras automáticas a todos os participantes agora"
+                        onClick={executarReavaliacao}
+                    >
+                        {reavaliando ? 'Reavaliando…' : 'Reavaliar conquistas'}
+                    </button>
+                </div>
+
+                {erroConquistas && <p className="avisoErroAdmin" role="alert">{erroConquistas}</p>}
+                {avisoReavaliacao && <p className="notaBlocoInfoSemac">{avisoReavaliacao}</p>}
+
+                {carregandoConquistas ? (
+                    <p className="estadoCarregandoParticipantesAdmin">Carregando conquistas…</p>
+                ) : conquistas.length === 0 ? (
+                    <div className="vazioInfoSemac">
+                        Nenhuma conquista no catálogo. Elas são criadas automaticamente quando a API sobe.
+                    </div>
+                ) : (
+                    <div className="gradeConquistasInfoSemac">
+                        {conquistas.map((conquista) => {
+                            const emEspera = idConquistaEmEspera === conquista.id;
+                            const urlImagem = urlImagemConquista(conquista.id, conquista.imagemVersao);
+                            return (
+                                <div
+                                    className={
+                                        conquista.ativa
+                                            ? 'cartaoConquistaInfoSemac cartaoConquistaAtivaInfoSemac'
+                                            : 'cartaoConquistaInfoSemac'
+                                    }
+                                    key={conquista.id}
+                                >
+                                    <div className="topoCartaoConquistaInfoSemac">
+                                        <div className="molduraImagemConquistaInfoSemac">
+                                            {urlImagem ? (
+                                                <img
+                                                    className="imagemConquistaInfoSemac"
+                                                    src={urlImagem}
+                                                    alt={`Imagem da conquista ${conquista.nome}`}
+                                                />
+                                            ) : (
+                                                <span className="semImagemConquistaInfoSemac">sem<br />imagem</span>
+                                            )}
+                                        </div>
+
+                                        <div className="textoCartaoConquistaInfoSemac">
+                                            <span className="nomeConquistaInfoSemac">{conquista.nome}</span>
+                                            <span className="metaConquistaInfoSemac">
+                                                {conquista.pontosBase} pontos · raridade {conquista.raridade}
+                                            </span>
+                                            <span className="seloValidacaoConquistaInfoSemac">
+                                                {ROTULOS_VALIDACAO_CONQUISTA[conquista.tipoValidacao] ?? conquista.tipoValidacao}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <p className="descricaoConquistaInfoSemac">
+                                        {conquista.descricao || 'Sem descrição — o participante não saberá como conseguir.'}
+                                    </p>
+
+                                    {conquista.totalConquistado > 0 && (
+                                        <span className="contagemConquistaInfoSemac">
+                                            {conquista.totalConquistado === 1
+                                                ? '1 participante já conquistou'
+                                                : `${conquista.totalConquistado} participantes já conquistaram`}
+                                        </span>
+                                    )}
+
+                                    <div className="acoesCartaoConquistaInfoSemac">
+                                        <button
+                                            type="button"
+                                            className="botaoFantasmaFinancas"
+                                            onClick={() => abrirEdicaoConquista(conquista)}
+                                        >
+                                            Editar
+                                        </button>
+
+                                        <label className="botaoFantasmaFinancas rotuloUploadConquistaInfoSemac">
+                                            {conquista.imagemVersao ? 'Trocar imagem' : 'Enviar imagem'}
+                                            <input
+                                                type="file"
+                                                accept="image/png"
+                                                disabled={emEspera}
+                                                onChange={(e) => {
+                                                    trocarImagemConquista(conquista, e.currentTarget.files?.[0]);
+                                                    e.currentTarget.value = '';
+                                                }}
+                                            />
+                                        </label>
+                                    </div>
+
+                                    <label className="campoCheckboxInfoSemac">
+                                        <input
+                                            type="checkbox"
+                                            checked={conquista.ativa}
+                                            disabled={emEspera}
+                                            onInput={(e) => alternarAtivaConquista(conquista, e.currentTarget.checked)}
+                                        />
+                                        <span>{conquista.ativa ? 'Ativa para os participantes' : 'Inativa'}</span>
+                                    </label>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+            </section>
+
             {/* ── Cotas de patrocínio ─────────────────────────── */}
             <section className="blocoInfoSemac" aria-label="Cotas de patrocínio">
                 <div className="cabecalhoBlocoInfoSemac">
@@ -1131,6 +1379,129 @@ export default function InformacoesSemac() {
                                 : idNivelParticipanteEmEdicao !== null
                                     ? 'Salvar alterações'
                                     : 'Adicionar nível'}
+                        </button>
+                    </div>
+                </form>
+            </PainelLateral>
+
+            <PainelLateral
+                aberto={painelConquistaAberto}
+                titulo="Editar conquista"
+                aoFechar={() => setPainelConquistaAberto(false)}
+            >
+                <form className="formularioFinancas" onSubmit={salvarConquista}>
+                    <p className="notaBlocoInfoSemac">
+                        A regra que concede esta conquista fica no código e não muda aqui.
+                        A imagem se envia pelo card, e a ativação pelo interruptor.
+                    </p>
+
+                    <div className="campoFormularioFinancas">
+                        <label className="rotuloCampoFinancas" htmlFor="campoNomeConquista">
+                            Nome da conquista *
+                        </label>
+                        <input
+                            id="campoNomeConquista"
+                            className="entradaFormularioFinancas"
+                            required
+                            maxLength={255}
+                            placeholder="ex.: Presença Total"
+                            value={formularioConquista.nome}
+                            onInput={(e) =>
+                                setFormularioConquista({ ...formularioConquista, nome: e.currentTarget.value })
+                            }
+                        />
+                    </div>
+
+                    <div className="campoFormularioFinancas">
+                        <label className="rotuloCampoFinancas" htmlFor="campoDescricaoConquista">
+                            Como conseguir
+                        </label>
+                        <textarea
+                            id="campoDescricaoConquista"
+                            className="entradaFormularioFinancas areaTextoConquistaInfoSemac"
+                            rows={4}
+                            maxLength={500}
+                            placeholder="Texto que o participante lê no card, inclusive antes de conquistar."
+                            value={formularioConquista.descricao}
+                            onInput={(e) =>
+                                setFormularioConquista({ ...formularioConquista, descricao: e.currentTarget.value })
+                            }
+                        />
+                    </div>
+
+                    <div className="campoFormularioFinancas">
+                        <label className="rotuloCampoFinancas" htmlFor="campoPontosConquista">
+                            Pontos *
+                        </label>
+                        <input
+                            id="campoPontosConquista"
+                            type="number"
+                            min="0"
+                            max="10000"
+                            step="1"
+                            className="entradaFormularioFinancas"
+                            required
+                            value={formularioConquista.pontosBase}
+                            onInput={(e) =>
+                                setFormularioConquista({ ...formularioConquista, pontosBase: e.currentTarget.value })
+                            }
+                        />
+                        <span className="notaBlocoInfoSemac">
+                            Creditados no XP do participante quando ele conquistar — é este número exato.
+                        </span>
+                    </div>
+
+                    <div className="campoFormularioFinancas">
+                        <label className="rotuloCampoFinancas" htmlFor="campoRaridadeConquista">
+                            Raridade *
+                        </label>
+                        <select
+                            id="campoRaridadeConquista"
+                            className="entradaFormularioFinancas"
+                            value={formularioConquista.raridade}
+                            onChange={(e) =>
+                                setFormularioConquista({ ...formularioConquista, raridade: e.currentTarget.value })
+                            }
+                        >
+                            <option value={1}>1 · Comum</option>
+                            <option value={2}>2 · Incomum</option>
+                            <option value={3}>3 · Rara</option>
+                            <option value={4}>4 · Épica</option>
+                            <option value={5}>5 · Lendária</option>
+                        </select>
+                        <span className="notaBlocoInfoSemac">
+                            Só muda o visual do card. Não multiplica os pontos.
+                        </span>
+                    </div>
+
+                    <div className="campoFormularioFinancas">
+                        <label className="rotuloCampoFinancas" htmlFor="campoOrdemConquista">
+                            Ordem na grade *
+                        </label>
+                        <input
+                            id="campoOrdemConquista"
+                            type="number"
+                            min="0"
+                            step="1"
+                            className="entradaFormularioFinancas"
+                            required
+                            value={formularioConquista.ordem}
+                            onInput={(e) =>
+                                setFormularioConquista({ ...formularioConquista, ordem: e.currentTarget.value })
+                            }
+                        />
+                    </div>
+
+                    <div className="rodapeFormularioFinancas">
+                        <button
+                            type="button"
+                            className="botaoFantasmaFinancas"
+                            onClick={() => setPainelConquistaAberto(false)}
+                        >
+                            Cancelar
+                        </button>
+                        <button type="submit" className="botaoPrimarioFinancas" disabled={salvandoConquista}>
+                            {salvandoConquista ? 'Salvando…' : 'Salvar alterações'}
                         </button>
                     </div>
                 </form>

@@ -70,14 +70,6 @@ export default function ModalEscolhaMinicursos({
                                 : 'Nenhum minicurso disponível'}
                         </span>
                     </div>
-                    <button
-                        type="button"
-                        className="botaoFecharModalMinicursosParticipantes"
-                        onClick={onFechar}
-                        aria-label="Fechar"
-                    >
-                        ×
-                    </button>
                 </div>
 
                 {diasComMinicurso.length > 1 && (

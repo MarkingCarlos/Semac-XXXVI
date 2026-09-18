@@ -1,0 +1,190 @@
+/* Detalhe da conquista (ver ModalConquista.jsx). Cores são os tokens do
+   design system: vinho #730835/#850735, âmbar #E79839, texto #FCF8F5. */
+
+.sobreposicaoModalConquista {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 16px;
+    background: rgba(89, 6, 41, 0.86);
+    backdrop-filter: blur(3px);
+    animation: surgirSobreposicaoModalConquista 0.2s ease-out both;
+}
+
+.painelModalConquista {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    gap: 20px;
+    width: 100%;
+    max-width: 520px;
+    padding: 26px 24px;
+    border-radius: var(--radius-lg, 25px);
+    background: var(--vermelhoAux2Participantes, #850735);
+    border: 1px solid rgba(252, 248, 245, 0.14);
+    box-shadow: 0 20px 60px rgba(11, 11, 11, 0.5);
+    animation: surgirPainelModalConquista 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+    /* O modal vai para o body por portal, ou seja, fora de
+       .paginaParticipantes — que é quem aplica Montserrat. Sem declarar
+       aqui, o texto corrido herda a fonte de título e sai em caixa alta. */
+    font-family: var(--fonteCorpoMontserrat, 'Montserrat', sans-serif);
+}
+
+/* Conquistada ganha a mesma borda âmbar do card em repouso. */
+.painelDesbloqueadaModalConquista {
+    border-color: rgba(231, 152, 57, 0.55);
+    box-shadow: 0 20px 60px rgba(11, 11, 11, 0.5), 0 0 22px rgba(231, 152, 57, 0.18);
+}
+
+.botaoFecharModalConquista {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    /* 44px de alvo de toque, mas visualmente discreto. */
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: 0;
+    border-radius: 999px;
+    color: rgba(252, 248, 245, 0.55);
+    cursor: pointer;
+}
+.botaoFecharModalConquista:hover { color: var(--Branco, #FCF8F5); }
+.botaoFecharModalConquista:focus-visible {
+    outline: 2px solid var(--AmareloAuxApoio, #E79839);
+    outline-offset: -4px;
+}
+
+/* ── Coluna da esquerda: selo, nome e pontos ──────────────── */
+.colunaSeloModalConquista {
+    flex: 0 0 132px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+}
+
+.molduraSeloModalConquista {
+    width: 132px;
+    height: 132px;
+    display: grid;
+    place-items: center;
+}
+
+/* A metáfora do produto: preto e branco enquanto não foi conquistada,
+   cor cheia depois. Mesmos valores do CardConquista, para o modal não
+   parecer outra coisa. */
+.molduraSeloBloqueadaModalConquista .imagemSeloModalConquista {
+    filter: grayscale(1) contrast(0.85);
+    opacity: 0.45;
+}
+
+.imagemSeloModalConquista {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.marcadorSemImagemModalConquista {
+    font-family: var(--fonteTituloBungee, 'Bungee', sans-serif);
+    font-size: 44px;
+    color: rgba(252, 248, 245, 0.35);
+}
+
+.nomeModalConquista {
+    font-family: var(--fonteTituloBungee, 'Bungee', sans-serif);
+    font-size: 15px;
+    line-height: 1.15;
+    color: var(--Branco, #FCF8F5);
+}
+
+.pontosModalConquista {
+    font-family: var(--fonteTituloBungee, 'Bungee', sans-serif);
+    font-size: 17px;
+    color: var(--AmareloAuxApoio, #E79839);
+}
+
+/* Bloqueada: o número continua legível, mas não compete com o de quem
+   já conquistou. */
+.painelModalConquista:not(.painelDesbloqueadaModalConquista) .nomeModalConquista {
+    color: rgba(252, 248, 245, 0.75);
+}
+.painelModalConquista:not(.painelDesbloqueadaModalConquista) .pontosModalConquista {
+    color: rgba(231, 152, 57, 0.7);
+}
+
+/* ── Coluna da direita: como conseguir ────────────────────── */
+.colunaDescricaoModalConquista {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    /* Alinha com o topo do selo, não com o centro do painel. */
+    padding-top: 4px;
+}
+
+.rotuloDescricaoModalConquista {
+    font-family: var(--fonteTituloBungee, 'Bungee', sans-serif);
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    color: var(--AmareloAuxApoio, #E79839);
+}
+
+@media (max-width: 768px) {
+    .rotuloDescricaoModalConquista {
+        font-size: 10px;
+    }
+    .textoDescricaoModalConquista {
+        font-size: 13px;
+    }
+}
+
+.textoDescricaoModalConquista {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(252, 248, 245, 0.78);
+    text-wrap: pretty;
+}
+
+@keyframes surgirSobreposicaoModalConquista {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes surgirPainelModalConquista {
+    from { opacity: 0; transform: translateY(12px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Em telas estreitas as duas colunas espremeriam a descrição a ~20
+   caracteres por linha. Abaixo desse ponto ela vai para baixo do selo,
+   com o texto centralizado junto. */
+@media (max-width: 420px) {
+    .painelModalConquista {
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        padding: 24px 20px;
+    }
+    .colunaSeloModalConquista { flex: none; }
+    .colunaDescricaoModalConquista {
+        align-items: center;
+        text-align: center;
+        padding-top: 0;
+    }
+    .molduraSeloModalConquista { width: 112px; height: 112px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sobreposicaoModalConquista,
+    .painelModalConquista { animation: none; }
+}

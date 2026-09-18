@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'preact/hooks';
-import { buscarParticipantesPorTermo, registrarPresencaManual } from './data/apiCheckin.js';
+import { buscarParticipantesPorTermo } from './data/apiCheckin.js';
 import './ModalBuscaManualPresenca.css';
 
-export default function ModalBuscaManualPresenca({ eventoId, onFechar, onConfirmado, onErro }) {
+/* Busca por nome/e-mail, para quando a leitura do QR falha.
+
+   Não sabe o que está sendo confirmado: quem chama passa `aoConfirmar`,
+   que recebe o id do participante escolhido e faz a chamada certa —
+   marcar presença ou conceder conquista. Assim a mesma tela serve aos
+   dois modos do /checkin. */
+export default function ModalBuscaManualPresenca({ aoConfirmar, onFechar, onConfirmado, onErro }) {
     const [termo, setTermo] = useState('');
     const [resultados, setResultados] = useState([]);
     const [carregando, setCarregando] = useState(true);
@@ -34,7 +40,7 @@ export default function ModalBuscaManualPresenca({ eventoId, onFechar, onConfirm
     async function confirmarParticipante(participante) {
         setParticipanteIdConfirmando(participante.id);
         try {
-            const dto = await registrarPresencaManual(eventoId, participante.id);
+            const dto = await aoConfirmar(participante.id);
             onConfirmado(dto);
         } catch (erro) {
             onErro(erro.message);

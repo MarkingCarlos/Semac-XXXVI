@@ -1,0 +1,202 @@
+/* Celebração de conquista desbloqueada — variante 1A do protótipo.
+   Valores vindos do design; cores são os tokens do design system da SEMAC
+   (--color-yellow #E79839, --color-red-dark #730835, #590629 no véu).
+
+   O que se move é controlado por GSAP (ver ConquistaDesbloqueada.jsx) —
+   aqui ficam só o repouso e o layout. */
+
+.sobreposicaoConquistaDesbloqueada {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    padding: 28px 20px;
+    background: rgba(89, 6, 41, 0.94);
+    cursor: pointer;
+
+    /* Portalada para o body, fora de .paginaParticipantes: sem isto o
+       texto corrido herdaria a fonte de título. */
+    font-family: var(--fonteCorpoMontserrat, 'Montserrat', sans-serif);
+
+    /* Tudo do selo deriva destes tokens, para o anel e os raios não
+       saírem de proporção quando o tamanho muda. */
+    --tamanhoSeloConquista: 140px;
+    --raioSeloConquista: 44px;
+    --folgaAnelConquista: -12px;
+    --raioAnelConquista: 52px;
+    --nomeSeloConquista: 28px;
+    --raridadeSeloConquista: 18px;
+    --pontosSeloConquista: 24px;
+    --respiroSeloConquista: 18px;
+    /* O toque fecha em qualquer ponto, então o texto não deve virar
+       seleção acidental no meio do gesto. */
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.brilhoConquistaDesbloqueada {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(231, 152, 57, 0.35) 0%, rgba(231, 152, 57, 0) 68%);
+    pointer-events: none;
+}
+
+.tituloConquistaDesbloqueada {
+    position: relative;
+    font-family: var(--fonteTituloBungee, 'Bungee', sans-serif);
+    font-size: 17px;
+    line-height: 1.2;
+    text-align: center;
+    color: var(--Branco, #FCF8F5);
+}
+
+.listaConquistaDesbloqueada {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--respiroSeloConquista);
+    width: 100%;
+}
+
+.itemConquistaDesbloqueada {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--respiroSeloConquista);
+    width: 100%;
+    text-align: center;
+}
+
+/* Três selos no tamanho cheio não cabem numa tela de 844 px (dá ~940).
+   Com a fila lotada eles encolhem — seguem bem maiores do que eram, e é
+   melhor do que o último vazar para fora da viewport. */
+.sobreposicaoConquistaDesbloqueadaFilaCheia {
+    --tamanhoSeloConquista: 100px;
+    --raioSeloConquista: 32px;
+    --folgaAnelConquista: -9px;
+    --raioAnelConquista: 38px;
+    --nomeSeloConquista: 20px;
+    --raridadeSeloConquista: 13px;
+    --pontosSeloConquista: 17px;
+    --respiroSeloConquista: 14px;
+}
+
+.molduraSeloConquistaDesbloqueada {
+    position: relative;
+    width: var(--tamanhoSeloConquista);
+    height: var(--tamanhoSeloConquista);
+    flex: none;
+    display: grid;
+    place-items: center;
+}
+
+/* O anel que rompe na virada. Quanto mais rara a conquista, mais longe
+   ele se abre — a escala final vem do GSAP. */
+.anelSeloConquistaDesbloqueada {
+    position: absolute;
+    inset: var(--folgaAnelConquista);
+    border-radius: var(--raioAnelConquista);
+    border: 3px solid var(--AmareloAuxApoio, #E79839);
+    pointer-events: none;
+}
+
+.seloConquistaDesbloqueada {
+    width: var(--tamanhoSeloConquista);
+    height: var(--tamanhoSeloConquista);
+    border-radius: var(--raioSeloConquista);
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    box-shadow: inset 0 0 0 3px rgba(252, 248, 245, 0.22);
+}
+
+.imagemSeloConquistaDesbloqueada {
+    width: 80%;
+    object-fit: contain;
+}
+
+/* Só aparece se a conquista não tiver imagem — o backend recusa ativar
+   sem uma, então é rede de segurança, não caso normal. */
+.iniciaisSeloConquistaDesbloqueada {
+    font-family: var(--fonteTituloBungee, 'Bungee', sans-serif);
+    font-size: calc(var(--tamanhoSeloConquista) * 0.37);
+    color: var(--Branco, #FCF8F5);
+}
+
+.textoConquistaDesbloqueada {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+.nomeConquistaDesbloqueada {
+    font-family: var(--fonteTituloBungee, 'Bungee', sans-serif);
+    font-size: var(--nomeSeloConquista);
+    line-height: 1.15;
+    color: var(--Branco, #FCF8F5);
+}
+
+.raridadeConquistaDesbloqueada {
+    font-family: var(--fonteTituloBungee, 'Bungee', sans-serif);
+    font-size: var(--raridadeSeloConquista);
+    letter-spacing: 0.1em;
+    color: var(--AmareloAuxApoio, #E79839);
+}
+
+/* Fila acima do teto: as excedentes não ganham celebração própria. */
+.excedentesConquistaDesbloqueada {
+    position: relative;
+    font-size: 11px;
+    color: rgba(252, 248, 245, 0.6);
+}
+
+.totalConquistaDesbloqueada {
+    position: relative;
+    font-family: var(--fonteTituloBungee, 'Bungee', sans-serif);
+    font-size: 15px;
+    padding: 7px 16px;
+    border-radius: 8px;
+    background: var(--AmareloAuxApoio, #E79839);
+    color: var(--vermelhoAuxDiretoria, #730835);
+}
+
+.dicaConquistaDesbloqueada {
+    position: relative;
+    font-size: 11px;
+    color: rgba(252, 248, 245, 0.6);
+}
+
+/* Telas curtas (celular pequeno, aparelho deitado): aperta os tokens em
+   vez de deixar a pilha vazar da viewport. */
+@media (max-height: 680px) {
+    .sobreposicaoConquistaDesbloqueada {
+        gap: 14px;
+        --tamanhoSeloConquista: 96px;
+        --raioSeloConquista: 30px;
+        --folgaAnelConquista: -8px;
+        --raioAnelConquista: 36px;
+        --nomeSeloConquista: 19px;
+        --raridadeSeloConquista: 12px;
+        --pontosSeloConquista: 16px;
+        --respiroSeloConquista: 12px;
+    }
+    .sobreposicaoConquistaDesbloqueadaFilaCheia {
+        --tamanhoSeloConquista: 72px;
+        --raioSeloConquista: 23px;
+        --folgaAnelConquista: -6px;
+        --raioAnelConquista: 28px;
+        --nomeSeloConquista: 15px;
+        --raridadeSeloConquista: 10px;
+        --pontosSeloConquista: 13px;
+        --respiroSeloConquista: 9px;
+    }
+}

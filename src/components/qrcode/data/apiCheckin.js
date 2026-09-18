@@ -73,3 +73,38 @@ export async function buscarParticipantesPorTermo(termo) {
         (p) => p.nome.toLowerCase().includes(alvo) || p.email.toLowerCase().includes(alvo)
     );
 }
+
+/* ── Conquistas manuais ──────────────────────────────────────────
+   O /checkin tem dois modos: marcar presença (acima) e conceder
+   conquista (aqui). A câmera e a busca manual são as mesmas; só muda
+   o que acontece quando o participante é identificado.
+
+   Conceder é restrito a diretores e presidência no backend — MEMBRO
+   recebe 403. A interface esconde o modo com temAcessoDiretoria(). */
+
+/* Só as conquistas MANUAIS e já ativas: as automáticas o sistema concede
+   sozinho, e as inativas ainda não valem. */
+export async function listarConquistasManuaisCheckin() {
+    const resposta = await apiFetch(`${API_URL}/api/conquista`, { headers: cabecalhosAuth() });
+    if (!resposta.ok) throw new Error('Falha ao carregar as conquistas.');
+    const conquistas = await resposta.json();
+    return conquistas.filter((c) => c.tipoValidacao === 'MANUAL' && c.ativa);
+}
+
+export async function concederConquistaPorQrCode(conquistaId, uuid) {
+    const resposta = await apiFetch(`${API_URL}/api/conquista/${conquistaId}/conceder`, {
+        method: 'POST',
+        headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ uuid }),
+    });
+    return lerErroOuFalhar(resposta, 'Não foi possível conceder a conquista.');
+}
+
+export async function concederConquistaManual(conquistaId, participanteId) {
+    const resposta = await apiFetch(`${API_URL}/api/conquista/${conquistaId}/conceder`, {
+        method: 'POST',
+        headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ participanteId }),
+    });
+    return lerErroOuFalhar(resposta, 'Não foi possível conceder a conquista.');
+}

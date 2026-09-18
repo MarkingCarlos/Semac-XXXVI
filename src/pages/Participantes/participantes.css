@@ -29,6 +29,8 @@
 /* ── Cabeçalho ────────────────────────────────────────────── */
 .cabecalhoParticipantes {
   flex: none;
+  position: relative;
+  z-index: 5;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -84,6 +86,96 @@
   flex: none;
 }
 
+/* ── Menu da conta (avatar do cabeçalho) ─────────────────── */
+.containerMenuPerfilCabecalhoParticipantes { position: relative; flex: none; }
+
+/* Reaproveita .avatarCabecalhoParticipantes pro visual; aqui só zera o que
+   o browser põe por conta de virar <button>. */
+.botaoAvatarMenuPerfilCabecalhoParticipantes {
+  border: none;
+  padding: 0;
+  font: inherit;
+  font-family: var(--fonteTituloBungee);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.botaoAvatarMenuPerfilCabecalhoParticipantes:focus-visible {
+  outline: 2px solid var(--AmareloAuxApoio);
+  outline-offset: 2px;
+}
+
+.painelMenuPerfilCabecalhoParticipantes {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 6;
+  min-width: 200px;
+  max-width: calc(100vw - 40px);
+  display: flex;
+  flex-direction: column;
+  background: var(--vermelhoAux2Participantes);
+  border: 1px solid rgba(252, 248, 245, 0.18);
+  border-radius: var(--radius-sm, 8px);
+  box-shadow: 0 14px 32px rgba(10, 10, 10, 0.35);
+  overflow: hidden;
+  animation: entradaPainelMenuPerfilCabecalhoParticipantes 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes entradaPainelMenuPerfilCabecalhoParticipantes {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .painelMenuPerfilCabecalhoParticipantes { animation: none; }
+}
+
+.identidadeMenuPerfilCabecalhoParticipantes {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(252, 248, 245, 0.15);
+}
+
+.nomeIdentidadeMenuPerfilCabecalhoParticipantes {
+  text-align: right;
+  font-family: var(--fonteTituloBungee);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--brancoQuenteParticipantes);
+}
+
+.emailIdentidadeMenuPerfilCabecalhoParticipantes {
+  text-align: right;
+  font-size: 11px;
+  color: rgba(252, 248, 245, 0.6);
+  overflow-wrap: anywhere;
+}
+
+.itemSairMenuPerfilCabecalhoParticipantes {
+  width: 100%;
+  text-align: right;
+  background: none;
+  border: none;
+  padding: 12px 14px;
+  font-family: var(--fonteTituloBungee);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: rgba(252, 248, 245, 0.7);
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.itemSairMenuPerfilCabecalhoParticipantes:hover,
+.itemSairMenuPerfilCabecalhoParticipantes:focus-visible {
+  background: rgba(252, 248, 245, 0.07);
+  color: #e9897b;
+  outline: none;
+}
+
 @media (min-width: 860px) {
   .cabecalhoParticipantes { padding: 20px 40px; }
   .navDesktopParticipantes { display: flex; gap: 24px; margin-right: auto; margin-left: 32px; }
@@ -101,6 +193,7 @@
   .botaoQrCabecalhoParticipantes { display: block; }
   .nomeCabecalhoParticipantes { display: none; }
   .avatarCabecalhoParticipantes { width: 36px; height: 36px; font-size: 13px; }
+  .botaoAvatarMenuPerfilCabecalhoParticipantes { font-size: 13px; }
 }
 
 /* ── Conteúdo ─────────────────────────────────────────────── */
@@ -360,7 +453,7 @@
   max-height: 88vh;
   overflow-y: auto;
   box-sizing: border-box;
-  background: var(--brancoQuenteParticipantes);
+  background: var(--vermelhoAux2Participantes);
   border-radius: var(--radius-lg, 25px);
   padding: 22px;
   display: flex;
@@ -371,8 +464,8 @@
 
 .cabecalhoModalMinicursosParticipantes {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
   gap: 12px;
 }
 
@@ -381,10 +474,13 @@
 .tituloModalMinicursosParticipantes {
   font-family: var(--fonteTituloBungee);
   font-size: 16px;
-  color: var(--vermelhoAuxDiretoria);
+  color: var(--brancoQuenteParticipantes);
 }
 
-.subtituloModalMinicursosParticipantes { font-size: 11px; color: rgba(115, 8, 53, 0.75); }
+.subtituloModalMinicursosParticipantes {
+  font-size: 11px;
+  color: var(--brancoQuenteParticipantes);
+}
 
 .botaoFecharModalMinicursosParticipantes {
   width: 34px;
@@ -409,11 +505,15 @@
   flex: 1;
   height: 4px;
   border-radius: 9999px;
-  background: rgba(115, 8, 53, 0.18);
+  background: rgb(218 111 156 / 0.18);
 }
 
-.passoAtivoModalMinicursosParticipantes { background: var(--vermelhoAuxDiretoria); }
-.passoConcluidoModalMinicursosParticipantes { background: var(--azulConteudo); }
+.passoAtivoModalMinicursosParticipantes {
+  background: var(--brancoQuenteParticipantes);
+}
+.passoConcluidoModalMinicursosParticipantes {
+  background: var(--AmareloAuxApoio);
+}
 
 .identidadeDiaModalMinicursosParticipantes { display: flex; flex-direction: column; gap: 2px; }
 
@@ -421,16 +521,19 @@
   font-family: var(--fonteTituloBungee);
   font-size: 20px;
   line-height: 1.1;
-  color: var(--vermelhoAuxDiretoria);
+  color: var(--brancoQuenteParticipantes);
 }
 
 .dataDiaModalMinicursosParticipantes {
   font-family: var(--fonteTituloBungee);
   font-size: 12px;
-  color: var(--rosaMarketing);
+  color: var(--AmareloAuxApoio);
 }
 
-.instrucaoDiaModalMinicursosParticipantes { font-size: 11px; color: rgba(115, 8, 53, 0.75); line-height: 1.45; }
+.instrucaoDiaModalMinicursosParticipantes {
+  font-size: 11px;
+  color: var(--Branco);
+  line-height: 1.45; }
 
 .avisoVazioModalMinicursosParticipantes { font-size: 12px; line-height: 1.45; color: rgba(115, 8, 53, 0.75); }
 
@@ -459,14 +562,16 @@
   .cardOpcaoModalMinicursosParticipantes { padding: 18px 20px; gap: 10px; }
 }
 
-.cardOpcaoEscolhidaModalMinicursosParticipantes { border-color: var(--AmareloAuxApoio); }
+.cardOpcaoEscolhidaModalMinicursosParticipantes {
+  border-color: var(--AmareloAuxApoio);
+}
 
 .professorCardOpcaoModalMinicursosParticipantes { font-size: 9px; font-weight: 800; letter-spacing: 0.1em; color: rgba(252, 248, 245, 0.85); }
 .tituloCardOpcaoModalMinicursosParticipantes { font-family: var(--fonteTituloBungee); font-size: 14px; line-height: 1.15; }
 .horarioCardOpcaoModalMinicursosParticipantes { font-size: 10px; line-height: 1.4; opacity: 0.9; }
 
 .vagasCardOpcaoModalMinicursosParticipantes {
-  align-self: flex-start;
+  align-self: center;
   font-size: 10px;
   font-weight: 700;
   background: rgba(11, 11, 11, 0.18);
@@ -515,7 +620,7 @@
   font-family: var(--fonteTituloBungee);
   font-size: 10px;
   padding: 7px 11px;
-  border-radius: 9999px;
+  border-radius: 8px;
 }
 
 .etiquetaEscolhidaCardOpcaoModalMinicursosParticipantes {
@@ -547,17 +652,19 @@
 .botaoVoltarModalMinicursosParticipantes {
   border: none;
   background: none;
-  color: rgba(115, 8, 53, 0.75);
+  color: var(--Branco);
 }
 
 .botaoAvancarModalMinicursosParticipantes {
-  border: 2px solid var(--vermelhoAuxDiretoria);
+  border: 2px solid var(--AmareloAuxApoio);
   background: none;
-  color: var(--vermelhoAuxDiretoria);
+  color: var(--brancoQuenteParticipantes);
 }
 
 /* ── Cores compartilhadas (minicursos / conquistas) ─────── */
-.corMinicursoAzulParticipantes { background: var(--azulConteudo); }
+.corMinicursoAzulParticipantes {
+  background: #94499E;
+}
 .corMinicursoRosaParticipantes { background: var(--rosaMarketing); }
 .corMinicursoVermelhoParticipantes { background: var(--vermelhoDiretoria); }
 
@@ -750,7 +857,7 @@
 .rodapeCardMinicursoInicioParticipantes {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 10px;
   margin-top: auto;
   font-size: 11px;
@@ -790,6 +897,11 @@
   align-items: center;
   min-width: 52px;
   flex: none;
+}
+@media (max-width: 768px) {
+  .horarioItemMeuDiaInicioParticipantes {
+    min-width: 90px;
+  }
 }
 
 .valorHorarioItemMeuDiaInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 14px; }
@@ -846,7 +958,11 @@
 
 /* conquistas */
 .grelhaConquistasInicioParticipantes,
-.grelhaConquistasSecaoPerfilParticipantes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.grelhaConquistasSecaoPerfilParticipantes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
 
 .grelhaConquistasBarraLateralInicioParticipantes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 
@@ -1157,8 +1273,9 @@
   flex: 2;
 }
 
-@media (min-width: 860px) {
+@media (max-width: 768px) {
   .secaoPerfilParticipantes {
+    flex-direction: column;
   }
 }
 
@@ -1267,12 +1384,4 @@
   border-radius: 8px;
   cursor: pointer;
   flex: none;
-}
-
-.botaoSairSecaoPerfilParticipantes {
-  font-family: var(--fonteTituloBungee);
-  font-size: 11px;
-  color: rgba(252, 248, 245, 0.55);
-  letter-spacing: 0.06em;
-  cursor: pointer;
 }

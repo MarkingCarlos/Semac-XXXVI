@@ -1,7 +1,12 @@
 /* Aba "Perfil": dados da inscrição, conquistas e certificados (quando
-   liberados). Nome/e-mail e nível/xp vêm de dados reais; o resto (curso,
-   inscrição, conquistas, certificados) ainda é mock. `nivel` vem null
-   enquanto carrega ou quando a pessoa ainda não tem xp atribuído. */
+   liberados). Nome/e-mail, nível/xp e conquistas vêm de dados reais; o
+   resto (curso, inscrição, certificados) ainda é mock. `nivel` vem null
+   enquanto carrega ou quando a pessoa ainda não tem xp atribuído.
+
+   Só chegam aqui as conquistas ativas (ver GET /api/conquista/minhas) —
+   o que a presidência ainda não liberou não existe para o participante. */
+
+import CardConquista from '../../../components/CardConquista/CardConquista.jsx';
 
 export default function SecaoPerfilParticipantes({
     nome,
@@ -13,7 +18,6 @@ export default function SecaoPerfilParticipantes({
     certificados,
     certificadosLiberados,
     onAbrirQr,
-    onSair,
 }) {
     return (
         <div className="secaoPerfilParticipantes">
@@ -53,6 +57,7 @@ export default function SecaoPerfilParticipantes({
                     </div>
                 </div>
             </div>
+            {conquistas.length > 0 && (
             <div className="blocoConquistasSecaoPerfilParticipantes">
                 <div className="cabecalhoBlocoSecaoPerfilParticipantes">
                     <span className="rotuloBlocoSecaoPerfilParticipantes">CONQUISTAS</span>
@@ -62,20 +67,11 @@ export default function SecaoPerfilParticipantes({
                 </div>
                 <div className="grelhaConquistasSecaoPerfilParticipantes">
                     {conquistas.map((conquista) => (
-                        <div
-                            key={conquista.id}
-                            className={
-                                conquista.desbloqueada
-                                    ? `itemConquistaSecaoPerfilParticipantes corConquista${capitalizar(conquista.cor)}Participantes`
-                                    : 'itemConquistaSecaoPerfilParticipantes itemConquistaBloqueadaSecaoPerfilParticipantes'
-                            }
-                        >
-                            <span className="valorItemConquistaSecaoPerfilParticipantes">{conquista.valorExibido}</span>
-                            <span className="rotuloItemConquistaSecaoPerfilParticipantes">{conquista.rotulo}</span>
-                        </div>
+                        <CardConquista key={conquista.id} conquista={conquista} />
                     ))}
                 </div>
             </div>
+            )}
 
             {certificadosLiberados && (
                 <div className="blocoCertificadosSecaoPerfilParticipantes">
@@ -93,13 +89,6 @@ export default function SecaoPerfilParticipantes({
                     ))}
                 </div>
             )}
-
-            <span className="botaoSairSecaoPerfilParticipantes" onClick={onSair}>SAIR DA CONTA</span>
         </div>
     );
-}
-
-function capitalizar(texto) {
-    if (!texto) return '';
-    return texto.charAt(0).toUpperCase() + texto.slice(1);
 }

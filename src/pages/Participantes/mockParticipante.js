@@ -1,6 +1,9 @@
-/* Dados mockados da Área do Participante (conquistas, perfil e
-   certificados). Nenhum endpoint de API expõe isso ainda — nome e e-mail
-   reais vêm da sessão (ver Participantes.jsx).
+/* Dados mockados da Área do Participante (perfil e certificados).
+   Nenhum endpoint de API expõe isso ainda — nome e e-mail reais vêm da
+   sessão (ver Participantes.jsx).
+
+   Conquistas NÃO estão mais aqui: são reais, vindas de
+   data/apiConquistasParticipante.js (GET /api/conquista/minhas).
 
    Nível/xp NÃO está mais aqui: é real, vindo de
    data/apiPerfilParticipante.js (GET /api/pessoa/me).
@@ -11,17 +14,6 @@
    Programação, agenda e minicursos NÃO estão aqui: são reais, vindos de
    /api/evento e /api/evento/meus (ver data/apiEventosParticipantes.js e
    data/agendaParticipantes.js). */
-
-export const conquistasMockParticipante = [
-    { id: 'chegou-cedo', rotulo: 'CHEGOU CEDO', valorExibido: '1º', desbloqueada: true, cor: 'amarelo' },
-    { id: 'maratona', rotulo: 'MARATONA', valorExibido: '×3', desbloqueada: true, cor: 'azul' },
-    { id: 'perguntou', rotulo: 'PERGUNTOU', valorExibido: 'QA', desbloqueada: true, cor: 'rosa' },
-    { id: '4-dias', rotulo: '4 DIAS', valorExibido: '?', desbloqueada: false },
-    { id: 'minicurso', rotulo: 'MINICURSO', valorExibido: '?', desbloqueada: false },
-    { id: 'doador', rotulo: 'DOADOR', valorExibido: '?', desbloqueada: false },
-    { id: 'feedback', rotulo: 'FEEDBACK', valorExibido: '?', desbloqueada: false },
-    { id: 'secreta', rotulo: 'SECRETA', valorExibido: '?', desbloqueada: false },
-];
 
 export const comoGanharXpMockParticipante = [
     { acao: 'Presença em palestra', valor: 50 },

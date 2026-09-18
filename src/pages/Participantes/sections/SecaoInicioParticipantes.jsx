@@ -6,8 +6,11 @@
 
    Nível/XP é real (data/apiPerfilParticipante.js). `nivel` vem null
    enquanto carrega ou quando a pessoa ainda não tem xp atribuído (ex.:
-   inscrição não confirmada). Ranking (lista ao lado) e conquistas ainda
-   vêm de mockParticipante.js; o resto é a programação real da API. */
+   inscrição não confirmada). Conquistas também são reais e só trazem as
+   ativas (data/apiConquistasParticipante.js) — por isso os dois blocos
+   somem quando a lista está vazia, em vez de mostrar uma grade oca. */
+
+import CardConquista from '../../../components/CardConquista/CardConquista.jsx';
 
 export default function SecaoInicioParticipantes({
     nivel,
@@ -209,6 +212,7 @@ export default function SecaoInicioParticipantes({
                     </div>
                 </div>
 
+                {conquistas.length > 0 && (
                 <div className="blocoConquistasInicioParticipantes soMobileParticipantes">
                     <div className="cabecalhoBlocoInicioParticipantes">
                         <span className="rotuloBlocoInicioParticipantes">CONQUISTAS</span>
@@ -218,20 +222,11 @@ export default function SecaoInicioParticipantes({
                     </div>
                     <div className="grelhaConquistasInicioParticipantes">
                         {conquistas.map((conquista) => (
-                            <div
-                                key={conquista.id}
-                                className={
-                                    conquista.desbloqueada
-                                        ? `itemConquistaInicioParticipantes corConquista${capitalizar(conquista.cor)}Participantes`
-                                        : 'itemConquistaInicioParticipantes itemConquistaBloqueadaInicioParticipantes'
-                                }
-                            >
-                                <span className="valorItemConquistaInicioParticipantes">{conquista.valorExibido}</span>
-                                <span className="rotuloItemConquistaInicioParticipantes">{conquista.rotulo}</span>
-                            </div>
+                            <CardConquista key={conquista.id} conquista={conquista} compacto />
                         ))}
                     </div>
                 </div>
+                )}
             </div>
 
             <aside className="barraLateralInicioParticipantes soDesktopParticipantes">
@@ -254,6 +249,7 @@ export default function SecaoInicioParticipantes({
                     </div>
                 </div>
 
+                {conquistas.length > 0 && (
                 <div className="cardBarraLateralInicioParticipantes">
                     <div className="cabecalhoBlocoInicioParticipantes">
                         <span className="rotuloBlocoInicioParticipantes">CONQUISTAS</span>
@@ -263,20 +259,11 @@ export default function SecaoInicioParticipantes({
                     </div>
                     <div className="grelhaConquistasBarraLateralInicioParticipantes">
                         {conquistas.map((conquista) => (
-                            <div
-                                key={conquista.id}
-                                className={
-                                    conquista.desbloqueada
-                                        ? `itemConquistaInicioParticipantes corConquista${capitalizar(conquista.cor)}Participantes`
-                                        : 'itemConquistaInicioParticipantes itemConquistaBloqueadaInicioParticipantes'
-                                }
-                            >
-                                <span className="valorItemConquistaInicioParticipantes">{conquista.valorExibido}</span>
-                                <span className="rotuloItemConquistaInicioParticipantes">{conquista.rotulo}</span>
-                            </div>
+                            <CardConquista key={conquista.id} conquista={conquista} compacto />
                         ))}
                     </div>
                 </div>
+                )}
             </aside>
         </div>
     );

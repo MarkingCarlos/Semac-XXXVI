@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { useLeitorQrCodeCamera } from './hooks/useLeitorQrCodeCamera.js';
-import { registrarPresencaPorQrCode } from './data/apiCheckin.js';
 import ModalSucessoPresenca from './ModalSucessoPresenca.jsx';
 import ModalErroPresenca from './ModalErroPresenca.jsx';
 import ModalBuscaManualPresenca from './ModalBuscaManualPresenca.jsx';
@@ -8,7 +7,15 @@ import './TelaCameraCheckin.css';
 
 const DURACAO_MODAL_SUCESSO_MS = 2200;
 
-export default function TelaCameraCheckin({ evento, onVoltar }) {
+/* Leitura contínua de QR code, usada pelos dois modos do /checkin.
+
+   Não sabe o que está fazendo com o código lido: recebe uma `operacao`
+   com o que mostrar na barra do topo e o que chamar quando identifica um
+   participante — por uuid (câmera) ou por id (busca manual). Marcar
+   presença e conceder conquista entram por aqui do mesmo jeito.
+
+   operacao = { titulo, subtitulo, porUuid, porId, normalizar } */
+export default function TelaCameraCheckin({ operacao, onVoltar }) {
     const [modal, setModal] = useState(null); // null | 'sucesso' | 'erro'
     const [buscaAberta, setBuscaAberta] = useState(false);
     const [participanteConfirmado, setParticipanteConfirmado] = useState(null);
@@ -24,8 +31,8 @@ export default function TelaCameraCheckin({ evento, onVoltar }) {
         processandoRef.current = true;
         setProcessando(true);
         try {
-            const dto = await registrarPresencaPorQrCode(evento.id, uuid);
-            setParticipanteConfirmado(dto);
+            const dto = await operacao.porUuid(uuid);
+            setParticipanteConfirmado(operacao.normalizar(dto));
             setLidos((valor) => valor + 1);
             setModal('sucesso');
             timeoutFechamentoRef.current = setTimeout(fecharModal, DURACAO_MODAL_SUCESSO_MS);
@@ -66,7 +73,7 @@ export default function TelaCameraCheckin({ evento, onVoltar }) {
 
     function confirmadoNaBusca(dto) {
         setBuscaAberta(false);
-        setParticipanteConfirmado(dto);
+        setParticipanteConfirmado(operacao.normalizar(dto));
         setLidos((valor) => valor + 1);
         setModal('sucesso');
         timeoutFechamentoRef.current = setTimeout(fecharModal, DURACAO_MODAL_SUCESSO_MS);
@@ -82,10 +89,8 @@ export default function TelaCameraCheckin({ evento, onVoltar }) {
         <div className="containerTelaCameraCheckin">
             <div className="barraEventoTelaCameraCheckin">
                 <div className="infoEventoTelaCameraCheckin">
-                    <div className="dataEventoTelaCameraCheckin">
-                        {evento.data.split('-').reverse().slice(0, 2).join('/')} · {evento.hora}
-                    </div>
-                    <div className="nomeEventoTelaCameraCheckin">{evento.nome}</div>
+                    <div className="dataEventoTelaCameraCheckin">{operacao.titulo}</div>
+                    <div className="nomeEventoTelaCameraCheckin">{operacao.subtitulo}</div>
                 </div>
                 <button type="button" onClick={onVoltar} className="botaoTrocarTelaCameraCheckin">
                     TROCAR
@@ -126,14 +131,14 @@ export default function TelaCameraCheckin({ evento, onVoltar }) {
             </div>
 
             {modal === 'sucesso' && participanteConfirmado && (
-                <ModalSucessoPresenca participante={participanteConfirmado} onFechar={fecharModal} />
+                <ModalSucessoPresenca resultado={participanteConfirmado} onFechar={fecharModal} />
             )}
             {modal === 'erro' && (
                 <ModalErroPresenca mensagem={mensagemErro} onBuscarManualmente={abrirBusca} onFechar={fecharModal} />
             )}
             {buscaAberta && (
                 <ModalBuscaManualPresenca
-                    eventoId={evento.id}
+                    aoConfirmar={operacao.porId}
                     onFechar={fecharBusca}
                     onConfirmado={confirmadoNaBusca}
                     onErro={erroNaBusca}

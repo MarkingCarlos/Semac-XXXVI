@@ -1,0 +1,137 @@
+/* Card de conquista da área do participante (ver CardConquista.jsx).
+
+   O efeito central: a imagem sai em preto e branco enquanto a conquista
+   não foi obtida e ganha cor ao ser conquistada. É `filter: grayscale()`
+   em vez de duas imagens, então a presidência sobe um PNG só. */
+
+/* É um <button>: abre o detalhe da conquista e precisa funcionar por
+   teclado. Os resets existem porque o botão herdaria fonte, cor e borda
+   do agente do usuário. */
+.cardConquista {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 10px;
+    border-radius: var(--radius-md, 16px);
+    text-align: center;
+    background: rgba(252, 248, 245, 0.06);
+    border: 1px solid rgba(252, 248, 245, 0.14);
+    transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+
+    width: 100%;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.cardConquista:hover {
+    background: rgba(252, 248, 245, 0.12);
+    transform: translateY(-2px);
+}
+
+.cardConquista:focus-visible {
+    outline: 2px solid var(--AmareloAuxApoio, #E79839);
+    outline-offset: 2px;
+}
+
+.cardConquista:active { transform: translateY(0); }
+
+.molduraImagemCardConquista {
+    width: 100%;
+    max-width: 72px;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.imagemCardConquista {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* A transição vale para quem já está com a página aberta quando a
+       conquista cai: o card vira colorido em vez de trocar de repente. */
+    transition: filter 0.5s ease, opacity 0.5s ease;
+}
+
+/* Marcador de conquista sem imagem. A ativação exige imagem (o backend
+   devolve 409), então isto é só uma rede — não deve aparecer em uso
+   normal. */
+.marcadorSemImagemCardConquista {
+    font-family: var(--fonteTituloBungee);
+    font-size: 24px;
+    color: rgba(252, 248, 245, 0.35);
+}
+
+.nomeCardConquista {
+    font-family: var(--fonteTituloBungee);
+    font-size: 11px;
+    line-height: 1.15;
+    color: var(--brancoQuenteParticipantes);
+}
+
+.descricaoCardConquista {
+    font-size: 10px;
+    line-height: 1.35;
+    color: rgba(252, 248, 245, 0.6);
+}
+
+.pontosCardConquista {
+    margin-top: auto;
+    padding-top: 4px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--AmareloAuxApoio);
+}
+
+/* ── Bloqueada ────────────────────────────────────────────── */
+.cardConquistaBloqueada .imagemCardConquista {
+    filter: grayscale(1) contrast(0.85);
+    opacity: 0.45;
+}
+
+.cardConquistaBloqueada .nomeCardConquista {
+    color: rgba(252, 248, 245, 0.55);
+}
+
+.cardConquistaBloqueada .pontosCardConquista {
+    color: rgba(252, 248, 245, 0.4);
+}
+
+/* ── Conquistada ──────────────────────────────────────────── */
+.cardConquistaDesbloqueada {
+    background: rgba(252, 248, 245, 0.1);
+    border-color: rgba(231, 152, 57, 0.5);
+}
+
+.cardConquistaDesbloqueada .imagemCardConquista {
+    filter: none;
+    opacity: 1;
+}
+
+/* Raridade é só tier visual — não entra no cálculo de pontos. Quanto mais
+   rara, mais forte o halo do card já conquistado. */
+.cardConquistaDesbloqueada.cardConquistaRaridade3 { box-shadow: 0 0 12px rgba(231, 152, 57, 0.16); }
+.cardConquistaDesbloqueada.cardConquistaRaridade4 { box-shadow: 0 0 16px rgba(231, 152, 57, 0.26); }
+.cardConquistaDesbloqueada.cardConquistaRaridade5 {
+    box-shadow: 0 0 22px rgba(231, 152, 57, 0.36);
+    border-color: rgba(231, 152, 57, 0.8);
+}
+
+/* ── Variante compacta (mobile e barra lateral) ───────────── */
+.cardConquistaCompacto {
+    gap: 4px;
+    padding: 8px 6px;
+}
+
+.cardConquistaCompacto .molduraImagemCardConquista { max-width: 44px; }
+.cardConquistaCompacto .nomeCardConquista { font-size: 8px; font-weight: 800; }
+
+@media (prefers-reduced-motion: reduce) {
+    .cardConquista,
+    .imagemCardConquista { transition: none; }
+    .cardConquista:hover { transform: none; }
+}

@@ -1,6 +1,10 @@
 import './ModalSucessoPresenca.css';
 
-export default function ModalSucessoPresenca({ participante, onFechar }) {
+/* Tela de sucesso dos dois modos do /checkin. Recebe um `resultado` já
+   normalizado por quem chamou — presença e conquista têm DTOs diferentes,
+   e a normalização fica no chamador para esta tela não precisar saber de
+   qual operação veio. */
+export default function ModalSucessoPresenca({ resultado, onFechar }) {
     return (
         <div className="sobreposicaoModalSucessoPresenca">
             <div className="cartaoModalSucessoPresenca">
@@ -11,24 +15,22 @@ export default function ModalSucessoPresenca({ participante, onFechar }) {
                             <path d="M4 12.5l5.2 5.2L20 6.5" />
                         </svg>
                     </div>
-                    <div className="tituloModalSucessoPresenca">PRESENÇA CONFIRMADA</div>
-                    <div className="nomeParticipanteModalSucessoPresenca">{participante.nome}</div>
-                    {participante.infoAdicional && (
-                        <div className="infoParticipanteModalSucessoPresenca">{participante.infoAdicional}</div>
+                    <div className="tituloModalSucessoPresenca">{resultado.titulo}</div>
+                    <div className="nomeParticipanteModalSucessoPresenca">{resultado.nome}</div>
+                    {resultado.info && (
+                        <div className="infoParticipanteModalSucessoPresenca">{resultado.info}</div>
                     )}
-                    {participante.xpGanho != null && (
+                    {resultado.xpTexto && (
                         <div
                             className={
-                                participante.xpGanho > 0
-                                    ? 'xpModalSucessoPresenca'
-                                    : 'xpModalSucessoPresenca xpZeradoModalSucessoPresenca'
+                                resultado.xpZerado
+                                    ? 'xpModalSucessoPresenca xpZeradoModalSucessoPresenca'
+                                    : 'xpModalSucessoPresenca'
                             }
                         >
-                            {participante.xpGanho > 0 ? `+${participante.xpGanho} XP` : 'Sem XP (atraso)'}
-                            {participante.atrasoMinutos > 0 && (
-                                <span className="atrasoModalSucessoPresenca">
-                                    {' '}· atraso de {participante.atrasoMinutos} min
-                                </span>
+                            {resultado.xpTexto}
+                            {resultado.detalhe && (
+                                <span className="atrasoModalSucessoPresenca"> · {resultado.detalhe}</span>
                             )}
                         </div>
                     )}

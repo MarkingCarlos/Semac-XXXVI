@@ -16,6 +16,13 @@ const PAPEIS_FINANCEIRO = ['DIRETOR_SITE', 'PRESIDENTE'];
 /* Papéis com acesso ao módulo de administração (/admin). */
 const PAPEIS_ADMIN = ['MEMBRO', 'DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'];
 
+/* Diretoria: todos os diretores mais a presidência — ou seja, comissão
+   exceto MEMBRO. Espelha PAPEIS_ADMIN_SEM_MEMBRO do backend
+   (SecurityConfig), usado por brindes, relatórios e pela concessão de
+   conquistas. Derivado de PAPEIS_ADMIN para que um papel novo lá já entre
+   aqui automaticamente. */
+const PAPEIS_DIRETORIA = PAPEIS_ADMIN.filter((papel) => papel !== 'MEMBRO');
+
 /* Papel com acesso à área do participante (/participantes) — atribuído
    pelo admin quando a inscrição é confirmada (ver apiParticipantes.js). */
 const PAPEIS_PARTICIPANTE = ['PARTICIPANTE'];
@@ -73,6 +80,15 @@ export function temAcessoFinanceiro() {
 export function temAcessoAdmin() {
     const sessao = lerSessao();
     return !!sessao && PAPEIS_ADMIN.includes(sessao.role) && !sessaoExpirada();
+}
+
+/* Usado para esconder o que só a diretoria pode fazer — hoje, conceder e
+   revogar conquista. Sem isso um MEMBRO veria o botão e só descobriria a
+   restrição pelo 403. A checagem de verdade é no backend; esta é de
+   interface. */
+export function temAcessoDiretoria() {
+    const sessao = lerSessao();
+    return !!sessao && PAPEIS_DIRETORIA.includes(sessao.role) && !sessaoExpirada();
 }
 
 export function temAcessoParticipante() {

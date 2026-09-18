@@ -10,7 +10,10 @@
    InscricaoEventoService.marcarPresente no backend) e lido de
    data/apiPerfilParticipante.js. Ranking também é real, vindo de
    GET /api/pessoa/ranking (data/apiRankingParticipante.js) e fatiado em
-   pódio/lista por data/rankingParticipantes.js. Conquistas, perfil
+   pódio/lista por data/rankingParticipantes.js.
+
+   Conquistas também são reais (GET /api/conquista/minhas): vêm só as
+   ativas, cada uma marcada como desbloqueada ou não. Perfil
    (curso/inscrição/minicursos/presenças) e certificados seguem em
    mockParticipante.js — nenhum endpoint expõe esses outros dados ainda.
    Nome e e-mail exibidos são os reais, tirados da sessão. */
@@ -22,6 +25,7 @@ import './participantes.css';
 
 import QrCrachaParticipantes from './QrCrachaParticipantes.jsx';
 import ModalEscolhaMinicursos from './ModalEscolhaMinicursos.jsx';
+import MenuPerfilParticipantes from './MenuPerfilParticipantes.jsx';
 import SecaoInicioParticipantes from './sections/SecaoInicioParticipantes.jsx';
 import SecaoAgendaParticipantes from './sections/SecaoAgendaParticipantes.jsx';
 import SecaoRankingParticipantes from './sections/SecaoRankingParticipantes.jsx';
@@ -35,6 +39,8 @@ import {
 } from './data/apiEventosParticipantes.js';
 import { buscarNivelParticipante } from './data/apiPerfilParticipante.js';
 import { buscarRankingParticipante } from './data/apiRankingParticipante.js';
+import { listarMinhasConquistas, marcarConquistaComoVista } from './data/apiConquistasParticipante.js';
+import ConquistaDesbloqueada, { MODO_TESTE_CONQUISTA } from '../../components/ConquistaDesbloqueada/ConquistaDesbloqueada.jsx';
 import { montarRankingExibicao } from './data/rankingParticipantes.js';
 import {
     montarDiasDaSemana,
@@ -48,7 +54,6 @@ import {
 } from './data/agendaParticipantes.js';
 
 import {
-    conquistasMockParticipante,
     comoGanharXpMockParticipante,
     perfilMockParticipante,
     certificadosMockParticipante,
@@ -95,6 +100,11 @@ export default function Participantes() {
     const [nivel, setNivel] = useState(null);
     const [carregandoNivel, setCarregandoNivel] = useState(true);
     const [ranking, setRanking] = useState(RANKING_VAZIO_PARTICIPANTES);
+    const [conquistas, setConquistas] = useState([]);
+    /* Fila da celebração: as conquistas que o participante ganhou e ainda
+       não viu a animação. Capturada uma vez, ao carregar — o backend marca
+       cada uma como vista, então um recarregamento não a repõe. */
+    const [conquistasACelebrar, setConquistasACelebrar] = useState([]);
     const [diaSelecionado, setDiaSelecionado] = useState('');
     const [erroMinicurso, setErroMinicurso] = useState('');
     const [minicursoEmEspera, setMinicursoEmEspera] = useState(null);
@@ -130,6 +140,30 @@ export default function Participantes() {
         let ativo = true;
         buscarRankingParticipante()
             .then((resposta) => { if (ativo && resposta) setRanking(montarRankingExibicao(resposta)); })
+            .catch(() => {});
+        return () => { ativo = false; };
+    }, []);
+
+    /* Conquistas reais. Falham em silêncio como o ranking: a lista vazia
+       simplesmente esconde os blocos, e um erro aqui não deve derrubar a
+       agenda nem o resto da página. */
+    useEffect(() => {
+        let ativo = true;
+        listarMinhasConquistas()
+            .then((lista) => {
+                if (!ativo) return;
+                setConquistas(lista ?? []);
+                /* Da mais comum para a mais rara: a melhor fecha a fila.
+                   No modo de teste entram todas as já conquistadas, e não
+                   só as ainda não celebradas — é o que faz a animação
+                   reaparecer a cada recarregamento (ver
+                   MODO_TESTE_CONQUISTA). */
+                setConquistasACelebrar(
+                    (lista ?? [])
+                        .filter((c) => (MODO_TESTE_CONQUISTA ? c.desbloqueada : c.celebrar))
+                        .sort((a, b) => (a.raridade ?? 1) - (b.raridade ?? 1)),
+                );
+            })
             .catch(() => {});
         return () => { ativo = false; };
     }, []);
@@ -274,7 +308,12 @@ export default function Participantes() {
                         MEU QR CODE
                     </button>
                     <span className="nomeCabecalhoParticipantes">{nomeParticipante.split(' ')[0]}</span>
-                    <div className="avatarCabecalhoParticipantes">{iniciais}</div>
+                    <MenuPerfilParticipantes
+                        nome={nomeParticipante}
+                        email={emailParticipante}
+                        iniciais={iniciais}
+                        onSair={sair}
+                    />
                 </div>
             </header>
 
@@ -291,7 +330,7 @@ export default function Participantes() {
                         atividadeSeguinte={atividadeSeguinte}
                         meuDia={meuDia}
                         palestrasDoDia={palestrasDoDiaSelecionado}
-                        conquistas={conquistasMockParticipante}
+                        conquistas={conquistas}
                         meusMinicursos={meusMinicursos}
                         totalMinicursos={totalMinicursos}
                         ranking={rankingWidgetInicio}
@@ -321,11 +360,10 @@ export default function Participantes() {
                         iniciais={iniciais}
                         nivel={nivel}
                         perfil={perfilMockParticipante}
-                        conquistas={conquistasMockParticipante}
+                        conquistas={conquistas}
                         certificados={certificadosMockParticipante}
                         certificadosLiberados={CERTIFICADOS_LIBERADOS_PARTICIPANTES}
                         onAbrirQr={() => setQrAberto(true)}
-                        onSair={sair}
                     />
                 )}
             </main>
@@ -355,6 +393,21 @@ export default function Participantes() {
                     onEscolher={escolherMinicurso}
                     onSair={sairDoMinicurso}
                     onFechar={() => setEscolhaMinicursosAberta(false)}
+                />
+            )}
+
+            {conquistasACelebrar.length > 0 && (
+                <ConquistaDesbloqueada
+                    conquistas={conquistasACelebrar}
+                    /* No modo de teste não confirma nada: se marcasse, a
+                       animação não voltaria no próximo recarregamento. */
+                    onCelebrada={MODO_TESTE_CONQUISTA ? undefined : marcarConquistaComoVista}
+                    onConcluir={() => {
+                        setConquistasACelebrar([]);
+                        /* O xp e o nível da página foram creditados antes de
+                           ela abrir, então já estão certos; o que muda é só
+                           a marcação de vista, que não afeta a tela. */
+                    }}
                 />
             )}
 

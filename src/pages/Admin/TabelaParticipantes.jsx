@@ -15,8 +15,9 @@ import { createPortal } from 'preact/compat'
 import { atribuirRole, desconfirmarParticipante, excluirParticipante, buscarComprovante } from './data/apiParticipantes.js'
 import { listarTiposInscricao } from './data/apiTipoInscricao.js'
 import { formatarCentavos } from '../Financas/utils/moeda.js'
-import { temAcessoFinanceiro } from '../../auth/sessao.js'
+import { temAcessoFinanceiro, temAcessoDiretoria } from '../../auth/sessao.js'
 import ModalEditarCamisetas from './ModalEditarCamisetas.jsx'
+import ModalConquistasParticipante from './ModalConquistasParticipante.jsx'
 
 const ANO_ATUAL = new Date().getFullYear()
 
@@ -84,6 +85,7 @@ function LinhaParticipante({
     participante, aoAbrirConfirmacao, aoExcluir, confirmandoExcluir, processandoExcluir,
     aoDesconfirmar, confirmandoDesconfirmar, processandoDesconfirmar,
     podeEditarCamisetas, aoEditarCamisetas,
+    podeVerConquistas, aoVerConquistas,
 }) {
     const confirmado = participante.role === 'PARTICIPANTE'
 
@@ -151,6 +153,20 @@ function LinhaParticipante({
                             </svg>
                         </button>
                     )}
+                    {podeVerConquistas && confirmado && (
+                        <button
+                            type="button"
+                            class="botaoAcaoLinhaFinancas"
+                            aria-label={`Ver conquistas de ${participante.nome}`}
+                            title="Conquistas"
+                            onClick={() => aoVerConquistas(participante)}
+                        >
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="8" r="6" />
+                                <path d="M8.21 13.89 7 22l5-3 5 3-1.21-8.11" />
+                            </svg>
+                        </button>
+                    )}
                     {podeEditarCamisetas && (
                         <button
                             type="button"
@@ -191,6 +207,7 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
     const [ordenarPorDataInscricao, setOrdenarPorDataInscricao] = useState(false)
     const [participanteEmConfirmacao, setParticipanteEmConfirmacao] = useState(null)
     const [participanteEditandoCamisetas, setParticipanteEditandoCamisetas] = useState(null)
+    const [participanteVendoConquistas, setParticipanteVendoConquistas] = useState(null)
     const [idConfirmandoExcluir, setIdConfirmandoExcluir] = useState(null)
     const [idProcessandoExcluir, setIdProcessandoExcluir] = useState(null)
     const [erroExclusao, setErroExclusao] = useState('')
@@ -198,6 +215,9 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
     const [idProcessandoDesconfirmar, setIdProcessandoDesconfirmar] = useState(null)
     const [erroDesconfirmar, setErroDesconfirmar] = useState('')
     const podeEditarCamisetas = temAcessoFinanceiro()
+    /* Ver e revogar conquista fica com diretores e presidência — revogar
+       mexe no xp e no ranking (ver SecurityConfig). */
+    const podeVerConquistas = temAcessoDiretoria()
 
     // Com o switch desligado, ordem alfabética (padrão). Ligado, mais
     // recentes primeiro por inscritoEm — cadastros antigos sem essa data
@@ -320,6 +340,8 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
                                 processandoDesconfirmar={idProcessandoDesconfirmar === participante.id}
                                 podeEditarCamisetas={podeEditarCamisetas}
                                 aoEditarCamisetas={setParticipanteEditandoCamisetas}
+                                podeVerConquistas={podeVerConquistas}
+                                aoVerConquistas={setParticipanteVendoConquistas}
                             />
                         ))}
                     </tbody>
@@ -335,6 +357,13 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
                     pessoa={participanteEditandoCamisetas}
                     aoFechar={() => setParticipanteEditandoCamisetas(null)}
                     aoAtualizado={aoConfirmar}
+                />
+            )}
+
+            {participanteVendoConquistas && (
+                <ModalConquistasParticipante
+                    participante={participanteVendoConquistas}
+                    aoFechar={() => setParticipanteVendoConquistas(null)}
                 />
             )}
 

@@ -1,0 +1,83 @@
+/* Telas de escolha do /checkin: o modo (presença x conquista) e, no modo
+   conquista, qual delas. Mesmo visual das duas, por isso um CSS só. */
+
+.containerTelaSelecaoModoCheckin {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px 18px;
+}
+
+.tituloTelaSelecaoModoCheckin {
+    margin: 0;
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    color: var(--Branco, #edecec);
+}
+
+.cabecalhoVoltarTelaSelecaoModoCheckin {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.botaoVoltarTelaSelecaoModoCheckin {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: rgba(237, 236, 236, 0.85);
+    cursor: pointer;
+}
+
+/* Alvo de toque generoso: isto é usado em pé, numa fila, no celular. */
+.cartaoModoCheckin {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    padding: 18px 16px;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.cartaoModoCheckin:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(231, 152, 57, 0.5);
+}
+
+.cartaoModoCheckin:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.tituloCartaoModoCheckin {
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.85rem;
+    color: var(--Branco, #edecec);
+}
+
+.descricaoCartaoModoCheckin {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.72rem;
+    line-height: 1.4;
+    color: rgba(237, 236, 236, 0.6);
+}
+
+.pontosCartaoModoCheckin {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--AmareloAuxApoio, #f7c948);
+}

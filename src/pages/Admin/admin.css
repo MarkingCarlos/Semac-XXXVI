@@ -1322,3 +1322,201 @@
         transition: none;
     }
 }
+
+/* ── Conquistas (Informações SEMAC) ─────────────────────────────
+   Cards um pouco mais largos que os de ingresso: cada um carrega
+   miniatura da imagem, descrição e o interruptor de ativação. */
+.gradeConquistasInfoSemac {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.cartaoConquistaInfoSemac {
+    background-color: rgba(0, 0, 0, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Conquista ativa já está visível para os participantes — a borda
+   amarela é o que diferencia à distância de uma ainda em preparo. */
+.cartaoConquistaAtivaInfoSemac {
+    border-color: rgba(231, 152, 57, 0.55);
+    background-color: rgba(231, 152, 57, 0.06);
+}
+
+.topoCartaoConquistaInfoSemac {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+}
+
+/* Quadrada e com fundo xadrez discreto: PNG de conquista tem fundo
+   transparente, e sem isso não dá para conferir se veio transparente
+   mesmo ou com um fundo branco chapado. */
+.molduraImagemConquistaInfoSemac {
+    flex-shrink: 0;
+    width: 68px;
+    height: 68px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.04);
+    background-image:
+        linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.05) 75%);
+    background-size: 12px 12px;
+    background-position: 0 0, 0 6px, 6px -6px, -6px 0;
+}
+
+.imagemConquistaInfoSemac {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.semImagemConquistaInfoSemac {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.6rem;
+    line-height: 1.25;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: rgba(237, 236, 236, 0.4);
+}
+
+.textoCartaoConquistaInfoSemac {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.nomeConquistaInfoSemac {
+    font-weight: 700;
+    color: var(--Branco);
+}
+
+.metaConquistaInfoSemac {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    color: var(--AmareloAuxApoio);
+}
+
+/* Automática x validada pela comissão — vem do código, não se edita
+   aqui, então é um selo e não um campo. */
+.seloValidacaoConquistaInfoSemac {
+    align-self: flex-start;
+    margin-top: 0.15rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(237, 236, 236, 0.65);
+}
+
+.descricaoConquistaInfoSemac {
+    margin: 0;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: rgba(237, 236, 236, 0.6);
+}
+
+.contagemConquistaInfoSemac {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.72rem;
+    color: rgba(237, 236, 236, 0.45);
+}
+
+.acoesCartaoConquistaInfoSemac {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: auto;
+}
+
+/* O <input type="file"> some e o <label> vira o botão, para o upload
+   ficar com a mesma cara dos outros botões do painel. */
+.rotuloUploadConquistaInfoSemac {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+}
+.rotuloUploadConquistaInfoSemac input[type="file"] {
+    display: none;
+}
+
+.areaTextoConquistaInfoSemac {
+    resize: vertical;
+    min-height: 88px;
+    font-family: 'Montserrat', sans-serif;
+    line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+    .gradeConquistasInfoSemac { grid-template-columns: 1fr; }
+}
+
+/* ── Conquistas de um participante (modal de revogação) ─────────── */
+.tituloModalConquistasAdmin {
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.25;
+    color: var(--Branco);
+    margin: 0 0 1rem;
+}
+
+.listaConquistasParticipanteAdmin {
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.itemConquistaParticipanteAdmin {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.7rem 0.9rem;
+    background-color: rgba(0, 0, 0, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.textoItemConquistaParticipanteAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+
+.nomeItemConquistaParticipanteAdmin {
+    font-weight: 700;
+    color: var(--Branco);
+    font-size: 0.85rem;
+}
+
+/* Deixa visível quanto xp será estornado e quem concedeu — é o que a
+   pessoa precisa saber antes de confirmar a revogação. */
+.detalheItemConquistaParticipanteAdmin {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    color: rgba(237, 236, 236, 0.5);
+}

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { listarEventosCheckin } from './data/apiCheckin.js';
 import './TelaSelecaoEventoCheckin.css';
+import './TelaSelecaoModoCheckin.css';
 
 const NOMES_DIA_SEMANA = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
@@ -16,7 +17,9 @@ function formatarDia(dataIso) {
     };
 }
 
-export default function TelaSelecaoEventoCheckin({ onIniciar }) {
+/* `onVoltar` devolve à escolha de modo do /checkin (presença x conquista)
+   — ver ModalQrCode. */
+export default function TelaSelecaoEventoCheckin({ onIniciar, onVoltar }) {
     const [eventos, setEventos] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erroCarregamento, setErroCarregamento] = useState('');
@@ -67,6 +70,11 @@ export default function TelaSelecaoEventoCheckin({ onIniciar }) {
         <div className="containerTelaSelecaoCheckin">
             <div className="cabecalhoTituloTelaSelecaoCheckin">
                 <h1 className="tituloTelaSelecaoCheckin">SELECIONE O EVENTO</h1>
+                {onVoltar && (
+                    <button type="button" onClick={onVoltar} className="botaoVoltarTelaSelecaoModoCheckin">
+                        VOLTAR
+                    </button>
+                )}
             </div>
 
             {carregando && <p className="mensagemEstadoTelaSelecaoCheckin">Carregando eventos...</p>}
