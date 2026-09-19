@@ -1,10 +1,12 @@
 // Relatório de camisetas: quantas precisamos comprar no total, divididas
 // entre as inclusas no kit (ingresso) e as compradas à parte. A divisão é
-// por pessoa, feita no backend — soma-se o que cada uma já pediu no
-// cadastro e compara com o camisetasGratis do ingresso dela; quem é da
-// comissão perdeu esse vínculo ao ser confirmado (o ingresso é zerado em
-// PessoaService.atribuirRole), então tudo que ela já pediu conta como
-// inclusa, já que a comissão não paga por camiseta.
+// feita no backend (RelatorioService.relatorioCamisetas) a partir do campo
+// `avulsa` de cada pedido, editável no /admin.
+//
+// Na seção "Por perfil", camiseta da comissão é só a inclusa no ingresso
+// dela — toda avulsa é do modelo de participante, mesmo quando quem compra
+// é da comissão, então avulsa sempre entra em "participantes". Inscritos
+// ainda não confirmados no /admin também contam, como participantes.
 //
 // Dados vêm de GET /api/relatorio/camisetas.
 
@@ -202,10 +204,18 @@ export default function RelatorioCamisetas() {
                     <div class="cartaoEstatisticaAdmin cartaoComissaoRelatorioCamisetas">
                         <span class="numeroEstatisticaAdmin">{totalComissao}</span>
                         <span class="rotuloEstatisticaAdmin">Camisetas da comissão</span>
+                        <span class="descricaoCartaoComissaoRelatorioCamisetas">
+                            Só as inclusas no ingresso da comissão
+                        </span>
                     </div>
                     <div class="cartaoEstatisticaAdmin cartaoParticipantesRelatorioCamisetas">
                         <span class="numeroEstatisticaAdmin">{totalParticipantes}</span>
                         <span class="rotuloEstatisticaAdmin">Camisetas de participantes</span>
+                        <span class="descricaoCartaoParticipantesRelatorioCamisetas">
+                            Inclusas no kit de participante + todas as avulsas
+                            (inclusive as compradas pela comissão). Conta
+                            inscritos ainda não confirmados
+                        </span>
                     </div>
                 </div>
             </div>

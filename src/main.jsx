@@ -13,7 +13,7 @@ const Admin = lazy(() => import('./pages/Admin/Admin.jsx'));
 const Inscricao = lazy(() => import('./pages/Inscricao/Inscricao.jsx'));
 const PaginaCotas = lazy(() => import('./pages/PaginaCotas/PaginaCotas.jsx'));
 const Checkin = lazy(() => import('./components/qrcode/ModalQrCode.jsx'));
-const Termo = lazy(() => import('./pages/Termo/Termo.jsx'));
+const Termo = lazy(() => import('./pages/Termo/termo.jsx'));
 const Sorteio = lazy(() => import('./pages/Sorteio/sorteio.jsx'));
 const Financas = lazy(() => import('./pages/Financas/Financas.jsx'));
 const ConjuntosCotacao = lazy(() => import('./pages/Financas/conjuntos/ConjuntosCotacao.jsx'));

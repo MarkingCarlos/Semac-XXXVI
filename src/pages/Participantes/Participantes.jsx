@@ -74,6 +74,14 @@ const ABAS_PARTICIPANTES = [
 
 const CERTIFICADOS_LIBERADOS_PARTICIPANTES = false;
 
+/* Aba de entrada pela URL: `/participantes?tab=desafios`. Mesmo nome de
+   parâmetro que o /inscricoes usa. Quem volta do Termo cai direto nos
+   desafios em vez de no início; valor desconhecido cai no padrão. */
+function abaInicialParticipantes() {
+    const pedida = new URLSearchParams(window.location.search).get('tab');
+    return ABAS_PARTICIPANTES.some((aba) => aba.id === pedida) ? pedida : 'inicio';
+}
+
 /* Quanto o conteúdo leva pra sumir antes de a aba trocar de fato. Casa com
    a transição de saída de .conteudoAbaParticipantes no css: a aba só é
    substituída depois que a anterior já saiu de vista. */
@@ -98,7 +106,7 @@ export default function Participantes() {
     const emailParticipante = sessao?.email ?? '';
     const iniciais = iniciaisNomeParticipante(nomeParticipante);
 
-    const [abaAtiva, setAbaAtiva] = useState('inicio');
+    const [abaAtiva, setAbaAtiva] = useState(abaInicialParticipantes);
     const [trocandoAba, setTrocandoAba] = useState(false);
     const temporizadorTrocaAbaRef = useRef(null);
     const [qrAberto, setQrAberto] = useState(false);
@@ -129,6 +137,13 @@ export default function Participantes() {
     const [desafiosCarregados, setDesafiosCarregados] = useState(false);
 
     const [agora, setAgora] = useState(() => new Date());
+
+    /* O `?tab=` já foi lido na montagem; tirá-lo da URL evita que um F5
+       depois de trocar de aba na mão devolva a pessoa à aba de entrada. */
+    useEffect(() => {
+        if (!window.location.search) return;
+        window.history.replaceState(null, '', window.location.pathname);
+    }, []);
 
     useEffect(() => {
         if (abaAtiva !== 'desafios' || desafiosCarregados) return;

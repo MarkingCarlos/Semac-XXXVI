@@ -17,7 +17,7 @@
 
 export const comoGanharXpMockParticipante = [
     { acao: 'Presença em palestra', valor: 50 },
-    { acao: 'Encontro de minicurso', valor: 50 },
+    { acao: 'Presença em minicurso', valor: 50 },
     { acao: 'Dia completo sem faltas', valor: 25 },
     { acao: 'Avaliar uma palestra', valor: 10 },
     /* Único valor real desta lista: vem de TermoService.XP_VITORIA, no

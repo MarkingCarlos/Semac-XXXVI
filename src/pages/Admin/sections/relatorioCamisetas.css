@@ -56,6 +56,15 @@
 .cartaoComissaoRelatorioCamisetas .numeroEstatisticaAdmin { color: var(--rosaMarketing); }
 .cartaoParticipantesRelatorioCamisetas .numeroEstatisticaAdmin { color: var(--AmareloAuxApoio); }
 
+/* Explica de onde sai cada número: as avulsas contam como camiseta de
+   participante mesmo quando quem compra é da comissão. */
+.descricaoCartaoComissaoRelatorioCamisetas,
+.descricaoCartaoParticipantesRelatorioCamisetas {
+    font-size: 0.75rem;
+    line-height: 1.35;
+    opacity: 0.5;
+}
+
 .cartaoReceitaRelatorioCamisetas .numeroEstatisticaAdmin { color: var(--Branco); }
 .cartaoCustoRelatorioCamisetas .numeroEstatisticaAdmin { color: var(--rosaMarketing); }
 .cartaoLucroRelatorioCamisetas .numeroEstatisticaAdmin { color: var(--AmareloAuxApoio); }

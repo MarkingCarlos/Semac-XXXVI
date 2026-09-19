@@ -30,6 +30,10 @@ export const SITUACAO_INDISPONIVEL_DESAFIOS = 'indisponivel';
 
 const TOTAL_TENTATIVAS_TERMO = 6;
 
+/* O `?treino=1` faz /termo abrir já na rodada de treino, sem passar pela
+   tela de fim — quem clica no card concluído já sabe que acertou. */
+const ROTA_TREINO_TERMO = '/termo?treino=1';
+
 /* Traduz GET /api/termo/hoje para o estado que o card entende. A palavra
    secreta não entra aqui em momento nenhum — a API só a devolve com o
    jogo encerrado, e nem nesse caso o card precisa dela. */
@@ -59,6 +63,12 @@ async function carregarEstadoTermo() {
                 situacao: SITUACAO_CONCLUIDO_DESAFIOS,
                 detalhe: proximaPalavra,
                 xpGanho: estado.xpGanho ?? 0,
+                /* Quem acertou pode repetir a mesma palavra no modo
+                   treino, que roda no navegador e não credita XP de novo
+                   — por isso o card concluído continua clicável, só que
+                   para outra rota. Quem perdeu não treina: o card fica
+                   sem botão, como antes. */
+                rota: ROTA_TREINO_TERMO,
             }
             : {
                 situacao: SITUACAO_ENCERRADO_DESAFIOS,

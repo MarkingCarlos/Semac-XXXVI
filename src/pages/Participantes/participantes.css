@@ -37,7 +37,7 @@
   justify-content: space-between;
   gap: 16px;
   padding: 18px 20px 12px;
-  background: var(--vermelhoAux2Participantes);
+  background: #730835;
 }
 
 .logoCabecalhoParticipantes {
@@ -386,21 +386,39 @@
   transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease;
 }
 
-/* O "+" girando 135° vira o "×" de fechar. */
 .botaoFabAbertoMenuParticipantes {
   background: var(--brancoQuenteParticipantes);
-  transform: rotate(135deg);
 }
 
-.barraHorizontalBotaoFabParticipantes,
-.barraVerticalBotaoFabParticipantes {
+/* Três riscos empilhados a partir do centro do botão. */
+.barraTopoBotaoFabParticipantes,
+.barraMeioBotaoFabParticipantes,
+.barraBaseBotaoFabParticipantes {
   position: absolute;
+  width: 26px;
+  height: 3px;
   border-radius: 2px;
   background: var(--vermelhoAuxDiretoria);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
 }
 
-.barraHorizontalBotaoFabParticipantes { width: 26px; height: 4px; }
-.barraVerticalBotaoFabParticipantes { width: 4px; height: 26px; }
+.barraTopoBotaoFabParticipantes { transform: translateY(-8px); }
+.barraMeioBotaoFabParticipantes { transform: translateY(0); }
+.barraBaseBotaoFabParticipantes { transform: translateY(8px); }
+
+/* Aberto, os riscos de cima e de baixo se cruzam no "×" e o do meio some. */
+.botaoFabAbertoMenuParticipantes .barraTopoBotaoFabParticipantes {
+  transform: translateY(0) rotate(45deg);
+}
+
+.botaoFabAbertoMenuParticipantes .barraMeioBotaoFabParticipantes {
+  opacity: 0;
+  transform: translateY(0) scaleX(0);
+}
+
+.botaoFabAbertoMenuParticipantes .barraBaseBotaoFabParticipantes {
+  transform: translateY(0) rotate(-45deg);
+}
 
 @media (min-width: 860px) {
   .fundoEscuroMenuFabParticipantes,
@@ -418,8 +436,14 @@
   }
 
   .itemMenuFabParticipantes { transform: none; }
-  .botaoFabAbertoMenuParticipantes { transform: none; }
   .conteudoAbaSaindoParticipantes { transform: none; }
+
+  .barraTopoBotaoFabParticipantes,
+  .barraMeioBotaoFabParticipantes,
+  .barraBaseBotaoFabParticipantes { transition: none; }
+
+  .botaoFabAbertoMenuParticipantes .barraTopoBotaoFabParticipantes { transform: translateY(-8px); }
+  .botaoFabAbertoMenuParticipantes .barraBaseBotaoFabParticipantes { transform: translateY(8px); }
 }
 
 /* ── Troca de aba ───────────────────────────────────────────
@@ -1296,8 +1320,14 @@
 @media (min-width: 860px) { .secaoRankingParticipantes { max-width: none; width: 100%; } }
 
 .cabecalhoSecaoRankingParticipantes { display: flex; flex-direction: column; gap: 4px; }
-.tituloSecaoRankingParticipantes { font-family: var(--fonteTituloBungee); font-size: 20px; }
-.subtituloSecaoRankingParticipantes { font-size: 12px; color: rgba(252, 248, 245, 0.7); }
+.tituloSecaoRankingParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 40px;
+}
+.subtituloSecaoRankingParticipantes {
+  font-size: 15px;
+  color: rgba(252, 248, 245, 0.7);
+}
 
 .corpoSecaoRankingParticipantes {
   display: flex;
@@ -1546,12 +1576,6 @@
     max-width: none;
     width: 100%;
   }
-  .desafios{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 10px;
-  }
 }
 @media (max-width: 768px) {
 
@@ -1566,8 +1590,14 @@
   flex-direction: column;
   gap: 4px;
 }
-.tituloSecaoDesafiosParticipantes { font-family: var(--fonteTituloBungee); font-size: 20px; }
-.subtituloSecaoDesafiosParticipantes { font-size: 12px; color: rgba(252, 248, 245, 0.7); }
+.tituloSecaoDesafiosParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 40px;
+}
+.subtituloSecaoDesafiosParticipantes {
+  font-size: 15px;
+  color: rgba(252, 248, 245, 0.7);
+}
 
 .avisoErroDesafiosParticipantes {
   margin: 0;
@@ -1594,11 +1624,14 @@
 
 .tituloBlocoDesafiosParticipantes {
   font-family: var(--fonteTituloBungee);
-  font-size: 14px;
+  font-size: 20px;
   color: var(--AmareloAuxApoio);
 }
 
-.subtituloBlocoDesafiosParticipantes { font-size: 11px; color: rgba(252, 248, 245, 0.6); }
+.subtituloBlocoDesafiosParticipantes {
+  font-size: 15px;
+  color: rgba(252, 248, 245, 0.6);
+}
 
 /* Cards em coluna no celular; a partir de 720px cabem lado a lado, e a
    lista cresce sozinha conforme novos desafios entram no catálogo. */
@@ -1638,7 +1671,9 @@
 }
 
 /* Já creditado: muda de cor para o card não parecer uma promessa. */
-.xpGanhoCartaoDesafioParticipantes { color: var(--azulConteudo); }
+.xpGanhoCartaoDesafioParticipantes {
+  color: #E79839;
+}
 
 .descricaoCartaoDesafioParticipantes {
   margin: 0;

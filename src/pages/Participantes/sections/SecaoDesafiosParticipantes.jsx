@@ -16,11 +16,14 @@ import {
 } from '../data/desafiosParticipantes.js';
 
 /* Etiqueta e rótulo do botão por situação. Só quem tem `acao` vira card
-   clicável — concluído e indisponível não levam a lugar nenhum. */
+   clicável — encerrado e indisponível não levam a lugar nenhum.
+
+   Concluído tem botão, mas não é uma segunda chance: o XP já foi
+   creditado e a rota de `estado.rota` leva a uma rodada de treino. */
 const APRESENTACAO_SITUACAO_DESAFIOS = {
     [SITUACAO_DISPONIVEL_DESAFIOS]: { etiqueta: 'Disponível', acao: 'JOGAR', classe: 'etiquetaDisponivelDesafiosParticipantes' },
     [SITUACAO_EM_ANDAMENTO_DESAFIOS]: { etiqueta: 'Em andamento', acao: 'CONTINUAR', classe: 'etiquetaEmAndamentoDesafiosParticipantes' },
-    [SITUACAO_CONCLUIDO_DESAFIOS]: { etiqueta: 'Concluído', acao: null, classe: 'etiquetaConcluidoDesafiosParticipantes' },
+    [SITUACAO_CONCLUIDO_DESAFIOS]: { etiqueta: 'Concluído', acao: 'JOGAR DE NOVO', classe: 'etiquetaConcluidoDesafiosParticipantes' },
     [SITUACAO_ENCERRADO_DESAFIOS]: { etiqueta: 'Encerrado hoje', acao: null, classe: 'etiquetaEncerradoDesafiosParticipantes' },
     [SITUACAO_INDISPONIVEL_DESAFIOS]: { etiqueta: 'Indisponível', acao: null, classe: 'etiquetaIndisponivelDesafiosParticipantes' },
 };
@@ -54,7 +57,7 @@ function CartaoDesafioParticipantes({ desafio, onAbrir }) {
                     <button
                         type="button"
                         className="botaoCartaoDesafioParticipantes"
-                        onClick={() => onAbrir(desafio.rota)}
+                        onClick={() => onAbrir(estado.rota ?? desafio.rota)}
                     >
                         {apresentacao.acao}
                     </button>
@@ -97,7 +100,7 @@ export default function SecaoDesafiosParticipantes({ desafios, carregando, erro,
             <div className="cabecalhoSecaoDesafiosParticipantes">
                 <span className="tituloSecaoDesafiosParticipantes">DESAFIOS</span>
                 <span className="subtituloSecaoDesafiosParticipantes">
-                    Complete os desafios para ganahr pontos
+                    Complete os desafios para ganhar pontos
                 </span>
             </div>
             <div className="desafios" >

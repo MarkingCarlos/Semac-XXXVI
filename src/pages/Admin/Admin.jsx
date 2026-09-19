@@ -1,18 +1,3 @@
-// Página de administração — acessível em /admin.
-// Autenticação não implementada ainda (a ser adicionada futuramente).
-//
-// Mesmo shell do módulo financeiro (sidebar + abas + painel lateral).
-// Reaproveita PainelLateral, CampoMoeda e os estilos de tabela/formulário
-// do Financeiro (financas.css) para manter a identidade visual.
-//
-// Abas:
-//   Doações        → tabela `doador` (nome, valor, data)
-//   Conteúdo       → eventos (`evento` + `palestrante`)
-//   Participantes  → StatsGrid + tabela (visão existente, preservada)
-//
-// Patrocinadores são gerenciados no módulo financeiro (/financeiro).
-// Estado local apenas (mock); a integração com a API virá depois.
-
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { Link, useLocation } from 'wouter';
 import { lerSessao, limparSessao, temAcessoFinanceiro } from '../../auth/sessao.js';
@@ -25,7 +10,7 @@ import Doacoes from './sections/Doacoes.jsx';
 import Conteudo from './sections/Conteudo.jsx';
 import Brindes from './sections/Brindes.jsx';
 import InformacoesSemac from './sections/InformacoesSemac.jsx';
-import Termo from './sections/Termo.jsx';
+import Termo from './sections/TermoAdmin.jsx';
 import Relatorios from './sections/Relatorios.jsx';
 import StatsGrid from './StatsGrid.jsx';
 import TabelaParticipantes from './TabelaParticipantes.jsx';

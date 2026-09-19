@@ -116,8 +116,9 @@ export default function MenuFabParticipantes({ abas, abaAtiva, onIrPara }) {
                 aria-label={aberto ? 'Fechar menu' : 'Abrir menu'}
                 onClick={() => setAberto((estavaAberto) => !estavaAberto)}
             >
-                <span className="barraHorizontalBotaoFabParticipantes" />
-                <span className="barraVerticalBotaoFabParticipantes" />
+                <span className="barraTopoBotaoFabParticipantes" />
+                <span className="barraMeioBotaoFabParticipantes" />
+                <span className="barraBaseBotaoFabParticipantes" />
             </button>
         </>
     );

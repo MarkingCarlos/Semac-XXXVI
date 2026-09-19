@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'preact/hooks';
 import { listarPalavrasTermo, salvarPalavraTermo } from '../data/apiTermo.js';
-import './termo.css';
+import './termoAdmin.css';
 
 /* Termo — as quatro palavras do jogo em /termo, uma por dia do evento
    (tabela `termo_palavra`). Restrito a DIRETOR_SITE/PRESIDENTE.
@@ -34,7 +34,7 @@ const formatarData = (data) => {
     return `${dia}/${mes}/${ano}`;
 };
 
-export default function Termo() {
+export default function TermoAdmin() {
     const [dias, setDias] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState('');

@@ -1,4 +1,4 @@
-/* Seção Termo do /admin — as quatro palavras do jogo, uma por dia.
+/* Seção TermoAdmin do /admin — as quatro palavras do jogo, uma por dia.
    Aproveita a tipografia e os campos do financeiro (financas.css); aqui só
    o que é próprio da lista de dias. */
 
@@ -22,9 +22,9 @@
     flex-direction: column;
     gap: 14px;
     padding: 18px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--AmareloAuxApoio);
     border-radius: 14px;
-    background: var(--Branco, #fff);
+    background: var(--vermelhoAux2Participantes);
 }
 
 .cabecalhoDiaTermoAdmin {
@@ -50,8 +50,8 @@
 }
 
 .etiquetaDefinidaTermoAdmin {
-    background: rgba(46, 160, 67, 0.15);
-    color: #1a7f37;
+    background: rgb(218 111 156 / 0.18);
+    color: #ffffff;
     opacity: 1;
 }
 
@@ -81,5 +81,5 @@
 .avisoSalvoTermoAdmin {
     font-family: var(--fonteCorpoMontserrat);
     font-size: 0.75rem;
-    color: #1a7f37;
+    color: #ffffff;
 }
