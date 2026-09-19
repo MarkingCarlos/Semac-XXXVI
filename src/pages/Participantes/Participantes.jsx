@@ -10,7 +10,9 @@
    InscricaoEventoService.marcarPresente no backend) e lido de
    data/apiPerfilParticipante.js. Ranking também é real, vindo de
    GET /api/pessoa/ranking (data/apiRankingParticipante.js) e fatiado em
-   pódio/lista por data/rankingParticipantes.js.
+   pódio/lista por data/rankingParticipantes.js. As regras de XP do card
+   "COMO GANHAR XP" também são reais (GET /api/regra-xp, ver
+   data/apiRegrasXpParticipante.js) e editáveis em /admin.
 
    Conquistas também são reais (GET /api/conquista/minhas): vêm só as
    ativas, cada uma marcada como desbloqueada ou não. Perfil
@@ -41,6 +43,7 @@ import {
 } from './data/apiEventosParticipantes.js';
 import { buscarNivelParticipante } from './data/apiPerfilParticipante.js';
 import { buscarRankingParticipante } from './data/apiRankingParticipante.js';
+import { buscarRegrasXpParticipante } from './data/apiRegrasXpParticipante.js';
 import { listarMinhasConquistas, marcarConquistaComoVista } from './data/apiConquistasParticipante.js';
 import { carregarDesafiosParticipantes } from './data/desafiosParticipantes.js';
 import ConquistaDesbloqueada, { MODO_TESTE_CONQUISTA } from '../../components/ConquistaDesbloqueada/ConquistaDesbloqueada.jsx';
@@ -57,7 +60,6 @@ import {
 } from './data/agendaParticipantes.js';
 
 import {
-    comoGanharXpMockParticipante,
     perfilMockParticipante,
     certificadosMockParticipante,
 } from './mockParticipante.js';
@@ -119,6 +121,7 @@ export default function Participantes() {
     const [nivel, setNivel] = useState(null);
     const [carregandoNivel, setCarregandoNivel] = useState(true);
     const [ranking, setRanking] = useState(RANKING_VAZIO_PARTICIPANTES);
+    const [regrasXp, setRegrasXp] = useState([]);
     const [conquistas, setConquistas] = useState([]);
     /* Fila da celebração: as conquistas que o participante ganhou e ainda
        não viu a animação. Capturada uma vez, ao carregar — o backend marca
@@ -190,6 +193,16 @@ export default function Participantes() {
         let ativo = true;
         buscarRankingParticipante()
             .then((resposta) => { if (ativo && resposta) setRanking(montarRankingExibicao(resposta)); })
+            .catch(() => {});
+        return () => { ativo = false; };
+    }, []);
+
+    /* Regras de XP reais. Falham em silêncio: sem elas o card "COMO
+       GANHAR XP" simplesmente não aparece, e o resto da aba continua. */
+    useEffect(() => {
+        let ativo = true;
+        buscarRegrasXpParticipante()
+            .then((lista) => { if (ativo && lista) setRegrasXp(lista); })
             .catch(() => {});
         return () => { ativo = false; };
     }, []);
@@ -428,7 +441,7 @@ export default function Participantes() {
                         />
                     )}
                     {abaAtiva === 'ranking' && (
-                        <SecaoRankingParticipantes ranking={ranking} comoGanharXp={comoGanharXpMockParticipante} />
+                        <SecaoRankingParticipantes ranking={ranking} regrasXp={regrasXp} />
                     )}
                     {abaAtiva === 'perfil' && (
                         <SecaoPerfilParticipantes
@@ -500,7 +513,6 @@ export default function Participantes() {
                         <QrCrachaParticipantes tamanho={200} uuidParticipante={sessao?.uuid} />
                         <div className="identidadeModalQrParticipantes">
                             <span className="nomeModalQrParticipantes">{nomeParticipante.toUpperCase()}</span>
-                            <span className="inscricaoModalQrParticipantes">{perfilMockParticipante.numeroInscricao}</span>
                         </div>
                         {/*{(atividadeAtual || atividadeSeguinte) && (*/}
                         {/*    <div className="avisoAgoraModalQrParticipantes">*/}

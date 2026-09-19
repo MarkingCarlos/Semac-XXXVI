@@ -8,6 +8,10 @@
    Nível/xp NÃO está mais aqui: é real, vindo de
    data/apiPerfilParticipante.js (GET /api/pessoa/me).
 
+   As regras de "como ganhar xp" NÃO estão mais aqui: são reais, vindas de
+   data/apiRegrasXpParticipante.js (GET /api/regra-xp) e editáveis em
+   /admin -> Informações SEMAC.
+
    Ranking NÃO está mais aqui: é real, vindo de
    data/apiRankingParticipante.js (GET /api/pessoa/ranking).
 
@@ -15,20 +19,8 @@
    /api/evento e /api/evento/meus (ver data/apiEventosParticipantes.js e
    data/agendaParticipantes.js). */
 
-export const comoGanharXpMockParticipante = [
-    { acao: 'Presença em palestra', valor: 50 },
-    { acao: 'Presença em minicurso', valor: 50 },
-    { acao: 'Dia completo sem faltas', valor: 25 },
-    { acao: 'Avaliar uma palestra', valor: 10 },
-    /* Único valor real desta lista: vem de TermoService.XP_VITORIA, no
-       backend. Os de cima ainda são chute — trocar quando as regras de
-       xp de presença forem conferidas. */
-    { acao: 'Acertar o Termo do dia', valor: 5 },
-];
-
 export const perfilMockParticipante = {
     curso: 'Ciência da Computação · 3º ano',
-    numeroInscricao: '#SM-2026-0187',
     minicursosUsados: 3,
     minicursosTotais: 4,
     presencas: 3,

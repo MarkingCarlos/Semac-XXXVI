@@ -1,6 +1,6 @@
 /* Aba "Perfil": dados da inscrição, conquistas e certificados (quando
    liberados). Nome/e-mail, nível/xp e conquistas vêm de dados reais; o
-   resto (curso, inscrição, certificados) ainda é mock. `nivel` vem null
+   resto (curso, minicursos, presenças, certificados) ainda é mock. `nivel` vem null
    enquanto carrega ou quando a pessoa ainda não tem xp atribuído.
 
    Só chegam aqui as conquistas ativas (ver GET /api/conquista/minhas) —
@@ -34,7 +34,6 @@ export default function SecaoPerfilParticipantes({
 
                 <div className="botoesSecaoPerfilParticipantes">
                     <button type="button" className="botaoQrSecaoPerfilParticipantes" onClick={onAbrirQr}>MEU QR CODE</button>
-                    <button type="button" className="botaoEditarSecaoPerfilParticipantes">EDITAR DADOS</button>
                 </div>
 
                 <div className="cardDadosInscricaoSecaoPerfilParticipantes">
@@ -42,10 +41,6 @@ export default function SecaoPerfilParticipantes({
                     <div className="linhaCardDadosInscricaoSecaoPerfilParticipantes">
                         <span className="rotuloLinhaCardDadosInscricaoSecaoPerfilParticipantes">E-mail</span>
                         <span>{email || '—'}</span>
-                    </div>
-                    <div className="linhaCardDadosInscricaoSecaoPerfilParticipantes">
-                        <span className="rotuloLinhaCardDadosInscricaoSecaoPerfilParticipantes">Inscrição</span>
-                        <span>{perfil.numeroInscricao}</span>
                     </div>
                     <div className="linhaCardDadosInscricaoSecaoPerfilParticipantes">
                         <span className="rotuloLinhaCardDadosInscricaoSecaoPerfilParticipantes">Minicursos</span>

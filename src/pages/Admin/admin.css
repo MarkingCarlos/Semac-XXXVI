@@ -1195,6 +1195,27 @@
     color: var(--AmareloAuxApoio);
 }
 
+/* Bloco "Regras de XP": texto de apoio acima da grade e o selo que
+   marca as regras que vêm de um tipo de evento. */
+.ajudaBlocoRegrasXpInfoSemac {
+    margin: 0 0 1rem;
+    max-width: 70ch;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: rgba(237, 236, 236, 0.6);
+}
+
+.seloRegraXpInfoSemac {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 0.65rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(237, 236, 236, 0.75);
+    white-space: nowrap;
+}
+
 .acoesCartaoIngressoInfoSemac {
     display: flex;
     align-items: center;
@@ -1519,4 +1540,48 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 0.7rem;
     color: rgba(237, 236, 236, 0.5);
+}
+
+/* ── Sub-navegação de seção ──────────────────────────────────────────
+   Usada por seções que reúnem mais de uma tela numa entrada só da navbar
+   (Mensagens e Pessoas), para a barra de cima não crescer sem parar.
+
+   Pílulas, deliberadamente diferentes das abas da navbar principal: deixa
+   claro que são um nível abaixo, e não uma segunda navegação concorrente. */
+.containerSecaoComSubabasAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.listaSubabasAdmin {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.3rem;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.25);
+    align-self: flex-start;
+}
+
+.botaoSubabaAdmin {
+    padding: 0.45rem 1.1rem;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: rgba(237, 236, 236, 0.7);
+    font-family: var(--fonteCorpoMontserrat), sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.botaoSubabaAdmin:hover {
+    color: var(--Branco);
+}
+
+.botaoSubabaAdminAtivo {
+    background: var(--vermelhoDiretoria);
+    color: var(--Branco);
 }

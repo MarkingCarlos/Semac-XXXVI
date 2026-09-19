@@ -1,0 +1,301 @@
+/* Sub-aba "Automáticas" de /admin -> Mensagens: editor à esquerda, prévia
+   à direita; empilha no celular.
+   O estilo das sub-abas em si mora no admin.css (listaSubabasAdmin), por
+   ser compartilhado com a seção Pessoas. */
+
+.containerSecaoMensagens {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.listaAbasMensagens {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.botaoAbaMensagens {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--Branco);
+    font-family: var(--fonteCorpoMontserrat), sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.botaoAbaMensagens:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.botaoAbaMensagensAtivo {
+    background: var(--vermelhoDiretoria);
+    border-color: var(--vermelhoDiretoria);
+}
+
+.marcadorDesligadoMensagens {
+    padding: 0.1rem 0.4rem;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.35);
+    color: var(--AmareloAuxApoio);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+}
+
+.textoDescricaoMensagens {
+    margin: 0;
+    color: rgba(237, 236, 236, 0.75);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.gradeEditorMensagens {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.colunaEditorMensagens,
+.colunaPreviaMensagens {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    min-width: 0;
+}
+
+.rotuloCampoMensagens {
+    color: var(--AmareloAuxApoio);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.campoAssuntoMensagens,
+.campoCorpoMensagens {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.25);
+    color: var(--Branco);
+    font-family: var(--fonteCorpoMontserrat), sans-serif;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+.campoCorpoMensagens {
+    font-family: 'Courier New', monospace;
+    line-height: 1.6;
+    resize: vertical;
+}
+
+.campoAssuntoMensagens:focus,
+.campoCorpoMensagens:focus {
+    outline: 2px solid var(--AmareloAuxApoio);
+    outline-offset: 1px;
+}
+
+.blocoVariaveisMensagens {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.rotuloVariaveisMensagens {
+    color: rgba(237, 236, 236, 0.65);
+    font-size: 0.8rem;
+}
+
+.listaVariaveisMensagens {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.botaoVariavelMensagens {
+    padding: 0.3rem 0.6rem;
+    border: 1px dashed var(--AmareloAuxApoio);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--AmareloAuxApoio);
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.botaoVariavelMensagens:hover {
+    background: rgba(231, 152, 57, 0.15);
+}
+
+.blocoAjudaMensagens {
+    padding: 0.6rem 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    color: rgba(237, 236, 236, 0.8);
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+.blocoAjudaMensagens summary {
+    cursor: pointer;
+    color: var(--AmareloAuxApoio);
+}
+
+.blocoAjudaMensagens ul {
+    margin: 0.6rem 0 0;
+    padding-left: 1.2rem;
+}
+
+.blocoAjudaMensagens code {
+    padding: 0.05rem 0.3rem;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 0.8rem;
+}
+
+.rotuloAtivoMensagens {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(237, 236, 236, 0.8);
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.linhaBotoesMensagens {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.3rem;
+}
+
+.botaoSalvarMensagens,
+.botaoDesfazerMensagens,
+.botaoEnviarTesteMensagens {
+    padding: 0.6rem 1.1rem;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--fonteCorpoMontserrat), sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.botaoSalvarMensagens {
+    background: var(--vermelhoDiretoria);
+    color: var(--Branco);
+}
+
+.botaoDesfazerMensagens {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--Branco);
+}
+
+.botaoEnviarTesteMensagens {
+    background: var(--AmareloAuxApoio);
+    color: var(--Preto);
+}
+
+.botaoSalvarMensagens:disabled,
+.botaoDesfazerMensagens:disabled,
+.botaoEnviarTesteMensagens:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.avisoErroMensagens,
+.avisoSucessoMensagens,
+.avisoCarregandoMensagens,
+.avisoVazioMensagens {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+.avisoErroMensagens {
+    color: #ff9c9c;
+}
+
+.avisoSucessoMensagens {
+    color: #9ce4a8;
+}
+
+.avisoCarregandoMensagens,
+.avisoVazioMensagens,
+.textoAuditoriaMensagens {
+    color: rgba(237, 236, 236, 0.6);
+}
+
+.textoAuditoriaMensagens {
+    margin: 0;
+    font-size: 0.8rem;
+}
+
+.cabecalhoPreviaMensagens {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.rotuloPreviaMensagens {
+    color: var(--AmareloAuxApoio);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.alternadorLarguraPrevia {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.botaoLarguraPrevia {
+    padding: 0.3rem 0.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 6px;
+    background: transparent;
+    color: rgba(237, 236, 236, 0.7);
+    font-size: 0.78rem;
+    cursor: pointer;
+}
+
+.botaoLarguraPreviaAtivo {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--Branco);
+}
+
+.textoAssuntoPrevia {
+    margin: 0;
+    color: rgba(237, 236, 236, 0.8);
+    font-size: 0.85rem;
+    word-break: break-word;
+}
+
+/* Fundo claro de propósito: é a cor real do e-mail, não do /admin. */
+.iframePreviaMensagens {
+    height: 620px;
+    max-width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    background: #f4f4f4;
+}
+
+@media (max-width: 900px) {
+    .gradeEditorMensagens {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .iframePreviaMensagens {
+        height: 460px;
+        width: 100% !important;
+    }
+}

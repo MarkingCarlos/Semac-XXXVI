@@ -1,6 +1,11 @@
 /* Aba "Ranking": pódio dos 3 primeiros, lista com a posição do
    participante e a tabela de como ganhar XP.
 
+   `regrasXp` é real (GET /api/regra-xp, ver data/apiRegrasXpParticipante.js):
+   as regras em PONTOS viram as linhas "+N" do card e as em MINUTOS viram a
+   nota de atraso embaixo dele. Tudo editável em /admin -> Informações SEMAC,
+   então o card se monta a partir do que vier — bloco some se vier vazio.
+
    `ranking` já vem fatiado por data/rankingParticipantes.js a partir da
    resposta real de GET /api/pessoa/ranking — pódio na ordem 2º-1º-3º e a
    lista com o 4º/5º colocados + a vizinhança de quem está logado. Itens
@@ -14,7 +19,22 @@ function classeItemLista(pessoa) {
     return 'itemListaRankingParticipantes';
 }
 
-export default function SecaoRankingParticipantes({ ranking, comoGanharXp }) {
+const CHAVE_ATRASO_METADE = 'ATRASO_METADE_MINUTOS';
+const CHAVE_ATRASO_ZERO = 'ATRASO_ZERO_MINUTOS';
+
+/* "Atrasou 20 min: metade do XP · 30 min: sem XP" — só com as duas
+   regras em mãos, porque uma sozinha não descreve a escada. */
+function notaAtraso(regrasXp) {
+    const metade = regrasXp.find((regra) => regra.chave === CHAVE_ATRASO_METADE);
+    const zero = regrasXp.find((regra) => regra.chave === CHAVE_ATRASO_ZERO);
+    if (!metade || !zero) return null;
+    return `Chegou ${metade.valor} min atrasado: metade do XP · ${zero.valor} min: sem XP`;
+}
+
+export default function SecaoRankingParticipantes({ ranking, regrasXp }) {
+    const regrasEmPontos = regrasXp.filter((regra) => regra.unidade === 'PONTOS');
+    const avisoAtraso = notaAtraso(regrasXp);
+
     return (
         <div className="secaoRankingParticipantes">
             <div className="cabecalhoSecaoRankingParticipantes">
@@ -56,17 +76,22 @@ export default function SecaoRankingParticipantes({ ranking, comoGanharXp }) {
                     </div>
                 </div>
 
-                <aside className="barraLateralRankingParticipantes">
-                    <div className="blocoComoGanharXpRankingParticipantes">
-                        <span className="tituloBlocoComoGanharXpRankingParticipantes">COMO GANHAR XP</span>
-                        {comoGanharXp.map((item) => (
-                            <div key={item.acao} className="linhaComoGanharXpRankingParticipantes">
-                                <span>{item.acao}</span>
-                                <strong className="valorComoGanharXpRankingParticipantes">+{item.valor}</strong>
-                            </div>
-                        ))}
-                    </div>
-                </aside>
+                {regrasEmPontos.length > 0 && (
+                    <aside className="barraLateralRankingParticipantes">
+                        <div className="blocoComoGanharXpRankingParticipantes">
+                            <span className="tituloBlocoComoGanharXpRankingParticipantes">COMO GANHAR XP</span>
+                            {regrasEmPontos.map((regra) => (
+                                <div key={regra.chave} className="linhaComoGanharXpRankingParticipantes">
+                                    <span>{regra.rotulo}</span>
+                                    <strong className="valorComoGanharXpRankingParticipantes">+{regra.valor}</strong>
+                                </div>
+                            ))}
+                            {avisoAtraso && (
+                                <span className="notaAtrasoComoGanharXpRankingParticipantes">{avisoAtraso}</span>
+                            )}
+                        </div>
+                    </aside>
+                )}
             </div>
         </div>
     );

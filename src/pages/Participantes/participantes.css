@@ -549,11 +549,6 @@
   font-size: 14px;
   color: var(--Branco);
 }
-.inscricaoModalQrParticipantes {
-  font-family: var(--fonteTituloBungee);
-  font-size: 12px;
-  color: var(--AmareloAuxApoio);
-}
 
 .avisoAgoraModalQrParticipantes {
   width: 100%;
@@ -1428,6 +1423,16 @@
 
 .valorComoGanharXpRankingParticipantes { color: var(--AmareloAuxApoio); }
 
+/* Nota dos cortes de atraso: fica abaixo das linhas de pontos, separada
+   por um filete, porque é penalidade e não ganho. */
+.notaAtrasoComoGanharXpRankingParticipantes {
+  border-top: 1px solid rgba(252, 248, 245, 0.2);
+  padding-top: 10px;
+  font-size: 10px;
+  line-height: 1.4;
+  color: rgba(252, 248, 245, 0.7);
+}
+
 /* ============================================================
    Aba Perfil
    ============================================================ */
@@ -1485,8 +1490,7 @@
 
 .botoesSecaoPerfilParticipantes { display: flex; gap: 8px; }
 
-.botaoQrSecaoPerfilParticipantes,
-.botaoEditarSecaoPerfilParticipantes {
+.botaoQrSecaoPerfilParticipantes {
   flex: 1;
   font-family: var(--fonteTituloBungee);
   font-size: 12px;
@@ -1494,10 +1498,9 @@
   border-radius: 8px;
   cursor: pointer;
   border: none;
+  background: var(--AmareloAuxApoio);
+  color: var(--vermelhoAuxDiretoria);
 }
-
-.botaoQrSecaoPerfilParticipantes { background: var(--AmareloAuxApoio); color: var(--vermelhoAuxDiretoria); }
-.botaoEditarSecaoPerfilParticipantes { background: transparent; border: 2px solid rgba(252, 248, 245, 0.55); color: var(--brancoQuenteParticipantes); }
 
 .cardDadosInscricaoSecaoPerfilParticipantes {
   background: var(--vermelhoAux2Participantes);
@@ -1508,13 +1511,17 @@
   gap: 12px;
 }
 
-.tituloCardDadosInscricaoSecaoPerfilParticipantes { font-family: var(--fonteTituloBungee); font-size: 12px; letter-spacing: 0.06em; }
+.tituloCardDadosInscricaoSecaoPerfilParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 15px;
+  letter-spacing: 0.06em;
+}
 
 .linhaCardDadosInscricaoSecaoPerfilParticipantes {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  font-size: 11px;
+  font-size: 13px;
   color: rgba(252, 248, 245, 0.85);
 }
 

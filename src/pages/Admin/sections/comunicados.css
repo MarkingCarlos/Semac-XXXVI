@@ -1,0 +1,310 @@
+/* Aba "Comunicados" do /admin: composição e disparo de mensagem avulsa.
+   Editor à esquerda, prévia à direita, histórico embaixo. */
+
+.containerSecaoComunicados {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.gradeEditorComunicados {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.colunaEditorComunicados,
+.colunaPreviaComunicados {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    min-width: 0;
+}
+
+.rotuloCampoComunicados {
+    color: var(--AmareloAuxApoio);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.campoSelecaoComunicados,
+.campoAssuntoComunicados,
+.campoCorpoComunicados {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.25);
+    color: var(--Branco);
+    font-family: var(--fonteCorpoMontserrat), sans-serif;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+.campoCorpoComunicados {
+    font-family: 'Courier New', monospace;
+    line-height: 1.6;
+    resize: vertical;
+}
+
+.campoSelecaoComunicados:focus,
+.campoAssuntoComunicados:focus,
+.campoCorpoComunicados:focus {
+    outline: 2px solid var(--AmareloAuxApoio);
+    outline-offset: 1px;
+}
+
+/* A contagem é o dado mais importante da tela: é o que a pessoa lê antes
+   de confirmar um envio sem volta. */
+.resumoDestinatariosComunicados {
+    margin: 0;
+    padding: 0.7rem 0.9rem;
+    border-left: 3px solid var(--azulConteudo);
+    border-radius: 6px;
+    background: rgba(82, 171, 177, 0.12);
+    color: var(--Branco);
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+.resumoDestinatariosAlerta {
+    border-left-color: var(--AmareloAuxApoio);
+    background: rgba(231, 152, 57, 0.15);
+}
+
+.textoAlertaLimiteComunicados {
+    display: block;
+    margin-top: 0.4rem;
+    color: var(--AmareloAuxApoio);
+    font-weight: 600;
+}
+
+.blocoVariaveisComunicados {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.rotuloVariaveisComunicados {
+    color: rgba(237, 236, 236, 0.65);
+    font-size: 0.8rem;
+}
+
+.listaVariaveisComunicados {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.botaoVariavelComunicados {
+    padding: 0.3rem 0.6rem;
+    border: 1px dashed var(--AmareloAuxApoio);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--AmareloAuxApoio);
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.botaoVariavelComunicados:hover {
+    background: rgba(231, 152, 57, 0.15);
+}
+
+.linhaBotoesComunicados {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.3rem;
+}
+
+.botaoEnviarTesteComunicados,
+.botaoDispararComunicados,
+.botaoConfirmarDisparoComunicados,
+.botaoCancelarDisparoComunicados,
+.botaoAtualizarHistorico {
+    padding: 0.6rem 1.1rem;
+    border: none;
+    border-radius: 8px;
+    font-family: var(--fonteCorpoMontserrat), sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.botaoEnviarTesteComunicados {
+    background: var(--AmareloAuxApoio);
+    color: var(--Preto);
+}
+
+.botaoDispararComunicados,
+.botaoConfirmarDisparoComunicados {
+    background: var(--vermelhoDiretoria);
+    color: var(--Branco);
+}
+
+.botaoCancelarDisparoComunicados,
+.botaoAtualizarHistorico {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--Branco);
+}
+
+.botaoEnviarTesteComunicados:disabled,
+.botaoDispararComunicados:disabled,
+.botaoConfirmarDisparoComunicados:disabled,
+.botaoCancelarDisparoComunicados:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* Segundo passo do disparo: some o botão único e aparece a confirmação
+   com o número, para o clique final ser deliberado. */
+.blocoConfirmacaoComunicados {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--vermelhoDiretoria);
+    border-radius: 8px;
+    background: rgba(161, 5, 53, 0.15);
+}
+
+.textoConfirmacaoComunicados {
+    flex: 1 1 100%;
+    margin: 0;
+    color: var(--Branco);
+    font-size: 0.9rem;
+}
+
+.avisoErroComunicados,
+.avisoSucessoComunicados,
+.avisoCarregandoComunicados,
+.avisoVazioComunicados {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+.avisoErroComunicados {
+    color: #ff9c9c;
+}
+
+.avisoSucessoComunicados {
+    color: #9ce4a8;
+}
+
+.avisoCarregandoComunicados,
+.avisoVazioComunicados {
+    color: rgba(237, 236, 236, 0.6);
+}
+
+.rotuloPreviaComunicados {
+    color: var(--AmareloAuxApoio);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.textoAssuntoPreviaComunicados {
+    margin: 0;
+    color: rgba(237, 236, 236, 0.8);
+    font-size: 0.85rem;
+    word-break: break-word;
+}
+
+/* Fundo claro de propósito: é a cor real do e-mail, não do /admin. */
+.iframePreviaComunicados {
+    width: 100%;
+    height: 560px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    background: #f4f4f4;
+}
+
+.blocoHistoricoComunicados {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.cabecalhoHistoricoComunicados {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.tituloHistoricoComunicados {
+    margin: 0;
+    color: var(--Branco);
+    font-size: 1.05rem;
+}
+
+.tabelaHistoricoComunicados {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.tabelaHistoricoComunicados th,
+.tabelaHistoricoComunicados td {
+    padding: 0.6rem 0.7rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--Branco);
+    text-align: left;
+    vertical-align: top;
+}
+
+.tabelaHistoricoComunicados th {
+    color: var(--AmareloAuxApoio);
+    font-weight: 600;
+}
+
+.marcadorStatusComunicados {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+}
+
+.marcadorStatusEM_ANDAMENTO {
+    background: rgba(82, 171, 177, 0.25);
+    color: var(--azulConteudo);
+}
+
+.marcadorStatusCONCLUIDO {
+    background: rgba(156, 228, 168, 0.2);
+    color: #9ce4a8;
+}
+
+/* Lote com falha precisa saltar aos olhos, não se esconder num "pronto". */
+.marcadorStatusCONCLUIDO_COM_FALHAS {
+    background: rgba(231, 152, 57, 0.25);
+    color: var(--AmareloAuxApoio);
+}
+
+.textoContagemComunicados {
+    display: block;
+    margin-top: 0.25rem;
+    color: rgba(237, 236, 236, 0.65);
+    font-size: 0.78rem;
+}
+
+@media (max-width: 900px) {
+    .gradeEditorComunicados {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .iframePreviaComunicados {
+        height: 420px;
+    }
+
+    .tabelaHistoricoComunicados {
+        display: block;
+        overflow-x: auto;
+    }
+}

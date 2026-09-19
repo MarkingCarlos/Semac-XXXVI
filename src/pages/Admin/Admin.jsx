@@ -11,10 +11,9 @@ import Conteudo from './sections/Conteudo.jsx';
 import Brindes from './sections/Brindes.jsx';
 import InformacoesSemac from './sections/InformacoesSemac.jsx';
 import Termo from './sections/TermoAdmin.jsx';
+import Mensagens from './sections/Mensagens.jsx';
 import Relatorios from './sections/Relatorios.jsx';
-import StatsGrid from './StatsGrid.jsx';
-import TabelaParticipantes from './TabelaParticipantes.jsx';
-import TabelaComissao from './TabelaComissao.jsx';
+import Pessoas from './sections/Pessoas.jsx';
 
 import { listarParticipantes, listarComissao } from './data/apiParticipantes.js';
 import { listarEventos } from './data/apiEventos.js';
@@ -26,10 +25,10 @@ const SECOES = [
     { id: 'conteudo', rotulo: 'Conteúdo', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO']  },
     { id: 'brindes', rotulo: 'Brindes', papeis: ['DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'] },
     { id: 'relatorios', rotulo: 'Relatórios', papeis: ['DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'] },
-    { id: 'participantes', rotulo: 'Participantes', papeis: ['DIRETOR_SITE', 'PRESIDENTE']  },
-    { id: 'comissao', rotulo: 'Comissão',papeis: ['DIRETOR_SITE', 'PRESIDENTE']  },
+    { id: 'pessoas', rotulo: 'Pessoas', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
     { id: 'informacoes', rotulo: 'Informações SEMAC', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
     { id: 'termo', rotulo: 'Termo', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
+    { id: 'mensagens', rotulo: 'Mensagens', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
 ];
 
 export default function Admin() {
@@ -161,55 +160,21 @@ export default function Admin() {
                     )}
                     {secaoAtiva === 'brindes' && <Brindes />}
                     {secaoAtiva === 'relatorios' && <Relatorios />}
-                    {secaoAtiva === 'participantes' && (
-                        <div className="conteudoParticipantesAdmin">
-                            <header className="cabecalhoSecaoFinancas">
-                                <div>
-                                    <h1 className="tituloSecaoFinancas">Participantes</h1>
-                                    <p className="subtituloSecaoFinancas">
-                                        Inscritos confirmados e presença por evento
-                                    </p>
-                                </div>
-                            </header>
-                            {erroParticipantes && (
-                                <p className="avisoErroAdmin">{erroParticipantes}</p>
-                            )}
-                            {carregandoParticipantes ? (
-                                <p className="estadoCarregandoParticipantesAdmin">Carregando participantes...</p>
-                            ) : (
-                                <>
-                                    <StatsGrid participantes={participantes} />
-                                    <TabelaParticipantes
-                                        participantes={participantes}
-                                        aoConfirmar={aoAtualizarPessoa}
-                                        aoExcluir={aoExcluirPessoa}
-                                    />
-                                </>
-                            )}
-                        </div>
-                    )}
-                    {secaoAtiva === 'comissao' && (
-                        <div className="conteudoParticipantesAdmin">
-                            <header className="cabecalhoSecaoFinancas">
-                                <div>
-                                    <h1 className="tituloSecaoFinancas">Comissão</h1>
-                                    <p className="subtituloSecaoFinancas">
-                                        Membros e diretorias da organização
-                                    </p>
-                                </div>
-                            </header>
-                            {erroComissao && (
-                                <p className="avisoErroAdmin">{erroComissao}</p>
-                            )}
-                            {carregandoComissao ? (
-                                <p className="estadoCarregandoParticipantesAdmin">Carregando comissão...</p>
-                            ) : (
-                                <TabelaComissao comissao={comissao} aoAtualizar={aoAtualizarPessoa} aoExcluir={aoExcluirPessoa} />
-                            )}
-                        </div>
+                    {secaoAtiva === 'pessoas' && (
+                        <Pessoas
+                            participantes={participantes}
+                            carregandoParticipantes={carregandoParticipantes}
+                            erroParticipantes={erroParticipantes}
+                            comissao={comissao}
+                            carregandoComissao={carregandoComissao}
+                            erroComissao={erroComissao}
+                            aoAtualizarPessoa={aoAtualizarPessoa}
+                            aoExcluirPessoa={aoExcluirPessoa}
+                        />
                     )}
                     {secaoAtiva === 'informacoes' && <InformacoesSemac />}
                     {secaoAtiva === 'termo' && <Termo />}
+                    {secaoAtiva === 'mensagens' && <Mensagens />}
                 </section>
             </main>
 

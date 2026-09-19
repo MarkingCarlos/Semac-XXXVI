@@ -21,6 +21,10 @@ import {
     excluirNivel,
 } from '../data/apiNivel.js';
 import {
+    listarRegrasXp,
+    atualizarRegraXp,
+} from '../data/apiRegrasXp.js';
+import {
     lerCamisetaExtra,
     salvarCamisetaExtra,
 } from '../data/apiCamisetaExtra.js';
@@ -48,6 +52,10 @@ import {
    3. Preço da camiseta avulsa (tabela `camiseta_extra`), um por edição;
    4. Meta de doação (tabela `meta_doacao`), um por edição;
    5. Níveis de participante (tabela `nivel`), nome + xp mínimo;
+   5b. Regras de XP — quanto vale cada presença (`tipo_evento`.`pontos`),
+      o acerto do Termo e os dois cortes de atraso do check-in
+      (`regra_xp`). Só edição: o conjunto de regras é fixo, porque cada
+      uma tem código que a lê (ver RegraXpService no backend);
    6. Cotas de patrocínio (tabela `cota`), nível + valor;
    7. Conquistas (tabela `conquista`) — só edição: cada conquista nasce de
       uma regra em código (CatalogoConquistas, no backend) e é criada no
@@ -91,6 +99,11 @@ const NIVEIS_PATROCINIO = [
     { valor: 'ESPECIAL', rotulo: 'Especial' },
 ];
 
+/* PONTOS soma xp; MINUTOS é corte de atraso do check-in. O mesmo campo
+   `valor` serve aos dois, então o sufixo é o que diz qual é qual. */
+const rotuloValorRegraXp = (regra) =>
+    regra.unidade === 'PONTOS' ? `+${regra.valor} xp` : `${regra.valor} min`;
+
 const rotuloDoNivel = (nivel) =>
     NIVEIS_PATROCINIO.find((n) => n.valor === nivel)?.rotulo ?? nivel;
 
@@ -112,6 +125,11 @@ const FORMULARIO_CONQUISTA_VAZIO = {
     raridade: 1,
     ordem: 0,
 };
+
+const SUBABAS = [
+    { id: 'gamificacao', rotulo: 'Gamificação' },
+    { id: 'financeiras', rotulo: 'Configurações financeiras' },
+];
 
 export default function InformacoesSemac() {
     const [tipos, setTipos] = useState([]);
@@ -154,6 +172,12 @@ export default function InformacoesSemac() {
     const [idCotaEmEdicao, setIdCotaEmEdicao] = useState(null);
     const [idCotaConfirmandoExclusao, setIdCotaConfirmandoExclusao] = useState(null);
 
+    /* Divide os sete blocos em dois grupos, para a tela não ser uma
+       rolagem única de configurações sem relação entre si. Mesmo padrão
+       visual de Mensagens e Pessoas (listaSubabasAdmin, no admin.css).
+       Padrão é o financeiro: é onde fica o interruptor das inscrições. */
+    const [subabaAtiva, setSubabaAtiva] = useState('financeiras');
+
     /* Níveis ainda sem cota — em dev a lista nasce vazia (os 6 já existem). */
     const niveisDisponiveis = NIVEIS_PATROCINIO.filter(
         (nivel) => !cotas.some((cota) => cota.nivel === nivel.valor)
@@ -169,6 +193,15 @@ export default function InformacoesSemac() {
     const [formularioNivelParticipante, setFormularioNivelParticipante] = useState({ nome: '', xpMinimo: 0 });
     const [idNivelParticipanteEmEdicao, setIdNivelParticipanteEmEdicao] = useState(null);
     const [idNivelParticipanteConfirmandoExclusao, setIdNivelParticipanteConfirmandoExclusao] = useState(null);
+
+    /* ── Regras de XP ─────────────────────────────────────────── */
+    const [regrasXp, setRegrasXp] = useState([]);
+    const [carregandoRegrasXp, setCarregandoRegrasXp] = useState(true);
+    const [erroRegrasXp, setErroRegrasXp] = useState('');
+    const [salvandoRegraXp, setSalvandoRegraXp] = useState(false);
+
+    const [painelRegraXpAberto, setPainelRegraXpAberto] = useState(false);
+    const [formularioRegraXp, setFormularioRegraXp] = useState({ chave: '', nome: '', valor: 0, unidade: 'PONTOS' });
 
     /* ── Conquistas ───────────────────────────────────────────── */
     const [conquistas, setConquistas] = useState([]);
@@ -209,6 +242,10 @@ export default function InformacoesSemac() {
             .then((lista) => { if (ativo) setNiveisParticipante([...lista].sort(porXpMinimoCrescente)); })
             .catch((e) => { if (ativo) setErroNiveisParticipante(e.message); })
             .finally(() => { if (ativo) setCarregandoNiveisParticipante(false); });
+        listarRegrasXp()
+            .then((lista) => { if (ativo) setRegrasXp(lista ?? []); })
+            .catch((e) => { if (ativo) setErroRegrasXp(e.message); })
+            .finally(() => { if (ativo) setCarregandoRegrasXp(false); });
         listarConquistas()
             .then((lista) => { if (ativo) setConquistas(lista ?? []); })
             .catch((e) => { if (ativo) setErroConquistas(e.message); })
@@ -228,6 +265,36 @@ export default function InformacoesSemac() {
             setErroInscricoesAbertas(e.message);
         } finally {
             setSalvandoInscricoesAbertas(false);
+        }
+    };
+
+    /* ── Regras de XP ─────────────────────────────────────────── */
+
+    const abrirEdicaoRegraXp = (regra) => {
+        setFormularioRegraXp({
+            chave: regra.chave,
+            nome: regra.nome,
+            valor: regra.valor,
+            unidade: regra.unidade,
+        });
+        setErroRegrasXp('');
+        setPainelRegraXpAberto(true);
+    };
+
+    const salvarRegraXp = async (evento) => {
+        evento.preventDefault();
+        setSalvandoRegraXp(true);
+        setErroRegrasXp('');
+        try {
+            const atualizada = await atualizarRegraXp(formularioRegraXp.chave, formularioRegraXp);
+            setRegrasXp((atuais) =>
+                atuais.map((regra) => (regra.chave === atualizada.chave ? atualizada : regra))
+            );
+            setPainelRegraXpAberto(false);
+        } catch (e) {
+            setErroRegrasXp(e.message);
+        } finally {
+            setSalvandoRegraXp(false);
         }
     };
 
@@ -559,17 +626,41 @@ export default function InformacoesSemac() {
         }
     };
 
+    /* Sub-abas desta seção. "Inscrições" abre o grupo financeiro, colado
+       em "Tipos de ingresso": os dois tratam do mesmo assunto — se dá para
+       se inscrever e por qual ingresso. */
+    const emGamificacao = subabaAtiva === 'gamificacao';
+    const emFinanceiras = subabaAtiva === 'financeiras';
+
     return (
         <div className="conteudoInfoSemac">
             <header className="cabecalhoSecaoFinancas">
                 <div>
                     <h1 className="tituloSecaoFinancas">Informações SEMAC</h1>
-                    <p className="subtituloSecaoFinancas">
-                        Ingressos e cotas de patrocínio — edição {ANO_ATUAL}
-                    </p>
                 </div>
             </header>
 
+            <div className="listaSubabasAdmin" role="tablist">
+                {SUBABAS.map((subaba) => (
+                    <button
+                        key={subaba.id}
+                        type="button"
+                        role="tab"
+                        aria-selected={subabaAtiva === subaba.id}
+                        className={`botaoSubabaAdmin${subabaAtiva === subaba.id ? ' botaoSubabaAdminAtivo' : ''}`}
+                        onClick={() => setSubabaAtiva(subaba.id)}
+                    >
+                        {subaba.rotulo}
+                    </button>
+                ))}
+            </div>
+
+            {/* ══ Sub-aba: Configurações financeiras (parte 1) ══════════
+                Dividida em duas partes porque o bloco de Cotas está no fim
+                do arquivo, depois dos de gamificação. Como só uma sub-aba
+                renderiza por vez, a ordem na tela sai correta sem precisar
+                mover centenas de linhas de JSX de lugar. */}
+            {emFinanceiras && (<>
             {/* ── Inscrições abertas ───────────────────────────── */}
             <section className="blocoInfoSemac" aria-label="Inscrições abertas">
                 <div className="cabecalhoBlocoInfoSemac">
@@ -824,6 +915,60 @@ export default function InformacoesSemac() {
                     )}
                 </div>
             </section>
+            </>)}
+
+            {/* ══ Sub-aba: Gamificação ═════════════════════════════════ */}
+            {emGamificacao && (<>
+            {/* ── Regras de XP ────────────────────────────────── */}
+            <section className="blocoInfoSemac" aria-label="Regras de XP">
+                <div className="cabecalhoBlocoInfoSemac">
+                    <h2 className="tituloBlocoInfoSemac">Regras de XP</h2>
+                </div>
+
+                <p className="ajudaBlocoRegrasXpInfoSemac">
+                    Quanto vale cada ação na área do participante. As regras de presença são os
+                    tipos de evento — mudar o nome aqui muda também na programação e no formulário
+                    de evento. Os dois cortes de atraso valem para o check-in: a partir do primeiro
+                    a presença credita metade do XP do tipo, a partir do segundo não credita nada.
+                </p>
+
+                {erroRegrasXp && <p className="avisoErroAdmin" role="alert">{erroRegrasXp}</p>}
+
+                {carregandoRegrasXp ? (
+                    <p className="estadoCarregandoParticipantesAdmin">Carregando regras…</p>
+                ) : regrasXp.length === 0 ? (
+                    <div className="vazioInfoSemac">
+                        Nenhuma regra de XP encontrada. Cadastre ao menos um tipo de evento na aba Conteúdo.
+                    </div>
+                ) : (
+                    <div className="gradeIngressosInfoSemac">
+                        {regrasXp.map((regra) => (
+                            <div className="cartaoIngressoInfoSemac" key={regra.chave}>
+                                <div className="topoCartaoIngressoInfoSemac">
+                                    <span className="nomeIngressoInfoSemac">{regra.nome}</span>
+                                    {regra.origem === 'TIPO_EVENTO' && (
+                                        <span className="seloRegraXpInfoSemac">presença</span>
+                                    )}
+                                </div>
+                                <span className="valorIngressoInfoSemac">{rotuloValorRegraXp(regra)}</span>
+                                <div className="acoesCartaoIngressoInfoSemac">
+                                    <button
+                                        type="button"
+                                        className="botaoAcaoLinhaFinancas"
+                                        aria-label={`Editar ${regra.nome}`}
+                                        title="Editar"
+                                        onClick={() => abrirEdicaoRegraXp(regra)}
+                                    >
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </section>
 
             {/* ── Níveis de participante ──────────────────────── */}
             <section className="blocoInfoSemac" aria-label="Níveis de participante">
@@ -1012,8 +1157,11 @@ export default function InformacoesSemac() {
                     </div>
                 )}
             </section>
+            </>)}
 
-            {/* ── Cotas de patrocínio ─────────────────────────── */}
+            {/* ══ Sub-aba: Configurações financeiras (parte 2) ══════════
+                ── Cotas de patrocínio ── */}
+            {emFinanceiras && (
             <section className="blocoInfoSemac" aria-label="Cotas de patrocínio">
                 <div className="cabecalhoBlocoInfoSemac">
                     <div>
@@ -1098,6 +1246,7 @@ export default function InformacoesSemac() {
                     </div>
                 )}
             </section>
+            )}
 
             <PainelLateral
                 aberto={painelAberto}
@@ -1317,6 +1466,60 @@ export default function InformacoesSemac() {
                                 : idCotaEmEdicao !== null
                                     ? 'Salvar alterações'
                                     : 'Adicionar cota'}
+                        </button>
+                    </div>
+                </form>
+            </PainelLateral>
+
+            <PainelLateral
+                aberto={painelRegraXpAberto}
+                titulo="Editar regra de XP"
+                aoFechar={() => setPainelRegraXpAberto(false)}
+            >
+                <form className="formularioFinancas" onSubmit={salvarRegraXp}>
+                    <div className="campoFormularioFinancas">
+                        <label className="rotuloCampoFinancas" htmlFor="campoNomeRegraXp">
+                            Nome *
+                        </label>
+                        <input
+                            id="campoNomeRegraXp"
+                            className="entradaFormularioFinancas"
+                            required
+                            value={formularioRegraXp.nome}
+                            onInput={(e) =>
+                                setFormularioRegraXp({ ...formularioRegraXp, nome: e.currentTarget.value })
+                            }
+                        />
+                    </div>
+
+                    <div className="campoFormularioFinancas">
+                        <label className="rotuloCampoFinancas" htmlFor="campoValorRegraXp">
+                            {formularioRegraXp.unidade === 'PONTOS' ? 'Pontos de XP *' : 'Minutos de atraso *'}
+                        </label>
+                        <input
+                            id="campoValorRegraXp"
+                            type="number"
+                            min="0"
+                            step="1"
+                            className="entradaFormularioFinancas"
+                            required
+                            value={formularioRegraXp.valor}
+                            onInput={(e) =>
+                                setFormularioRegraXp({ ...formularioRegraXp, valor: e.currentTarget.value })
+                            }
+                        />
+                    </div>
+
+                    <div className="rodapeFormularioFinancas">
+                        <button
+                            type="button"
+                            className="botaoFantasmaFinancas"
+                            onClick={() => setPainelRegraXpAberto(false)}
+                        >
+                            Cancelar
+                        </button>
+                        <button type="submit" className="botaoPrimarioFinancas" disabled={salvandoRegraXp}>
+                            {salvandoRegraXp ? 'Salvando…' : 'Salvar alterações'}
                         </button>
                     </div>
                 </form>
