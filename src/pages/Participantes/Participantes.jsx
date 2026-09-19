@@ -18,7 +18,7 @@
    mockParticipante.js — nenhum endpoint expõe esses outros dados ainda.
    Nome e e-mail exibidos são os reais, tirados da sessão. */
 
-import { useEffect, useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { useLocation } from 'wouter';
 import { lerSessao, limparSessao } from '../../auth/sessao.js';
 import './participantes.css';
@@ -26,6 +26,7 @@ import './participantes.css';
 import QrCrachaParticipantes from './QrCrachaParticipantes.jsx';
 import ModalEscolhaMinicursos from './ModalEscolhaMinicursos.jsx';
 import MenuPerfilParticipantes from './MenuPerfilParticipantes.jsx';
+import MenuFabParticipantes from './MenuFabParticipantes.jsx';
 import SecaoInicioParticipantes from './sections/SecaoInicioParticipantes.jsx';
 import SecaoAgendaParticipantes from './sections/SecaoAgendaParticipantes.jsx';
 import SecaoDesafiosParticipantes from './sections/SecaoDesafiosParticipantes.jsx';
@@ -73,6 +74,11 @@ const ABAS_PARTICIPANTES = [
 
 const CERTIFICADOS_LIBERADOS_PARTICIPANTES = false;
 
+/* Quanto o conteúdo leva pra sumir antes de a aba trocar de fato. Casa com
+   a transição de saída de .conteudoAbaParticipantes no css: a aba só é
+   substituída depois que a anterior já saiu de vista. */
+const DURACAO_SAIDA_ABA_PARTICIPANTES = 180;
+
 /* De quanto em quanto tempo o relógio da página avança — é ele que move
    um item de "a seguir" para "acontece agora". */
 const INTERVALO_RELOGIO_PARTICIPANTES = 60000;
@@ -93,6 +99,8 @@ export default function Participantes() {
     const iniciais = iniciaisNomeParticipante(nomeParticipante);
 
     const [abaAtiva, setAbaAtiva] = useState('inicio');
+    const [trocandoAba, setTrocandoAba] = useState(false);
+    const temporizadorTrocaAbaRef = useRef(null);
     const [qrAberto, setQrAberto] = useState(false);
     const [escolhaMinicursosAberta, setEscolhaMinicursosAberta] = useState(false);
 
@@ -264,10 +272,22 @@ export default function Participantes() {
         [ranking],
     );
 
+    /* Troca de aba em dois tempos: o conteúdo atual some, e só então o novo
+       entra. Sem isso a tela pisca do conteúdo antigo pro novo. Repetir a
+       aba atual não faz nada — não vale piscar a tela à toa. */
     function irPara(aba) {
-        setAbaAtiva(aba);
         setQrAberto(false);
+        if (aba === abaAtiva) return;
+
+        setTrocandoAba(true);
+        clearTimeout(temporizadorTrocaAbaRef.current);
+        temporizadorTrocaAbaRef.current = setTimeout(() => {
+            setAbaAtiva(aba);
+            setTrocandoAba(false);
+        }, DURACAO_SAIDA_ABA_PARTICIPANTES);
     }
+
+    useEffect(() => () => clearTimeout(temporizadorTrocaAbaRef.current), []);
 
     function sair() {
         limparSessao();
@@ -349,76 +369,73 @@ export default function Participantes() {
                     <p className="avisoErroAgendaParticipantes" role="alert">{erroAgenda}</p>
                 )}
 
-                {abaAtiva === 'inicio' && (
-                    <SecaoInicioParticipantes
-                        nivel={nivel}
-                        carregandoNivel={carregandoNivel}
-                        atividadeAtual={atividadeAtual}
-                        atividadeSeguinte={atividadeSeguinte}
-                        meuDia={meuDia}
-                        palestrasDoDia={palestrasDoDiaSelecionado}
-                        conquistas={conquistas}
-                        meusMinicursos={meusMinicursos}
-                        totalMinicursos={totalMinicursos}
-                        ranking={rankingWidgetInicio}
-                        carregando={carregandoAgenda}
-                        onAbrirQr={() => setQrAberto(true)}
-                        onVerRanking={() => irPara('ranking')}
-                        onVerAgenda={() => irPara('agenda')}
-                        onEscolherMinicursos={abrirEscolhaMinicursos}
-                    />
-                )}
-                {abaAtiva === 'agenda' && (
-                    <SecaoAgendaParticipantes
-                        diasSemana={diasSemana}
-                        diaSelecionado={diaSelecionado}
-                        onSelecionarDia={setDiaSelecionado}
-                        meuDia={meuDia}
-                        carregando={carregandoAgenda}
-                    />
-                )}
-                {abaAtiva === 'desafios' && (
-                    <SecaoDesafiosParticipantes
-                        desafios={desafios}
-                        carregando={carregandoDesafios}
-                        erro={erroDesafios}
-                        onAbrir={(rota) => navegar(rota)}
-                    />
-                )}
-                {abaAtiva === 'ranking' && (
-                    <SecaoRankingParticipantes ranking={ranking} comoGanharXp={comoGanharXpMockParticipante} />
-                )}
-                {abaAtiva === 'perfil' && (
-                    <SecaoPerfilParticipantes
-                        nome={nomeParticipante}
-                        email={emailParticipante}
-                        iniciais={iniciais}
-                        nivel={nivel}
-                        perfil={perfilMockParticipante}
-                        conquistas={conquistas}
-                        certificados={certificadosMockParticipante}
-                        certificadosLiberados={CERTIFICADOS_LIBERADOS_PARTICIPANTES}
-                        onAbrirQr={() => setQrAberto(true)}
-                    />
-                )}
+                <div
+                    className={
+                        trocandoAba
+                            ? 'conteudoAbaParticipantes conteudoAbaSaindoParticipantes'
+                            : 'conteudoAbaParticipantes'
+                    }
+                >
+                    {abaAtiva === 'inicio' && (
+                        <SecaoInicioParticipantes
+                            nivel={nivel}
+                            carregandoNivel={carregandoNivel}
+                            atividadeAtual={atividadeAtual}
+                            atividadeSeguinte={atividadeSeguinte}
+                            meuDia={meuDia}
+                            palestrasDoDia={palestrasDoDiaSelecionado}
+                            conquistas={conquistas}
+                            meusMinicursos={meusMinicursos}
+                            totalMinicursos={totalMinicursos}
+                            ranking={rankingWidgetInicio}
+                            carregando={carregandoAgenda}
+                            onAbrirQr={() => setQrAberto(true)}
+                            onVerRanking={() => irPara('ranking')}
+                            onVerAgenda={() => irPara('agenda')}
+                            onEscolherMinicursos={abrirEscolhaMinicursos}
+                        />
+                    )}
+                    {abaAtiva === 'agenda' && (
+                        <SecaoAgendaParticipantes
+                            diasSemana={diasSemana}
+                            diaSelecionado={diaSelecionado}
+                            onSelecionarDia={setDiaSelecionado}
+                            meuDia={meuDia}
+                            carregando={carregandoAgenda}
+                        />
+                    )}
+                    {abaAtiva === 'desafios' && (
+                        <SecaoDesafiosParticipantes
+                            desafios={desafios}
+                            carregando={carregandoDesafios}
+                            erro={erroDesafios}
+                            onAbrir={(rota) => navegar(rota)}
+                        />
+                    )}
+                    {abaAtiva === 'ranking' && (
+                        <SecaoRankingParticipantes ranking={ranking} comoGanharXp={comoGanharXpMockParticipante} />
+                    )}
+                    {abaAtiva === 'perfil' && (
+                        <SecaoPerfilParticipantes
+                            nome={nomeParticipante}
+                            email={emailParticipante}
+                            iniciais={iniciais}
+                            nivel={nivel}
+                            perfil={perfilMockParticipante}
+                            conquistas={conquistas}
+                            certificados={certificadosMockParticipante}
+                            certificadosLiberados={CERTIFICADOS_LIBERADOS_PARTICIPANTES}
+                            onAbrirQr={() => setQrAberto(true)}
+                        />
+                    )}
+                </div>
             </main>
 
-            <nav className="navInferiorParticipantes" aria-label="Navegação da área do participante">
-                {ABAS_PARTICIPANTES.map((aba) => (
-                    <button
-                        key={aba.id}
-                        type="button"
-                        className="itemNavInferiorParticipantes"
-                        aria-current={abaAtiva === aba.id ? 'page' : undefined}
-                        onClick={() => irPara(aba.id)}
-                    >
-                        <span className={abaAtiva === aba.id ? 'marcadorNavInferiorAtivoParticipantes' : 'marcadorNavInferiorParticipantes'} />
-                        <span className={abaAtiva === aba.id ? 'rotuloNavInferiorAtivoParticipantes' : 'rotuloNavInferiorParticipantes'}>
-                            {aba.rotulo.toUpperCase()}
-                        </span>
-                    </button>
-                ))}
-            </nav>
+            <MenuFabParticipantes
+                abas={ABAS_PARTICIPANTES}
+                abaAtiva={abaAtiva}
+                onIrPara={irPara}
+            />
 
             {escolhaMinicursosAberta && (
                 <ModalEscolhaMinicursos

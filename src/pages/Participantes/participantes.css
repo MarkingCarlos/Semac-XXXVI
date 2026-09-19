@@ -8,6 +8,7 @@
   --brancoQuenteParticipantes: #FCF8F5;
   --vermelhoAux2Participantes: #850735;
   --pretoParticipantes: #0A0A0A;
+  --azulAuxParticipantes: #469197;
 
   min-height: 100vh;
   display: flex;
@@ -15,7 +16,7 @@
   background: var(--vermelhoAuxDiretoria);
   color: var(--brancoQuenteParticipantes);
   font-family: var(--fonteCorpoMontserrat);
-  padding-bottom: 76px; /* espaço pra nav inferior fixa no mobile */
+  padding-bottom: calc(104px + env(safe-area-inset-bottom)); /* espaço pro menu FAB no mobile */
 }
 
 .paginaParticipantes .soDesktopParticipantes { display: none; }
@@ -252,55 +253,189 @@
   color: rgba(252, 248, 245, 0.6);
 }
 
-/* ── Nav inferior (mobile) ───────────────────────────────── */
-.navInferiorParticipantes {
+/* ── Menu FAB (mobile) ──────────────────────────────────────
+   Botão flutuante que abre as abas em leque sobre o conteúdo
+   escurecido. Some no desktop, onde a nav do cabeçalho assume.
+   ───────────────────────────────────────────────────────── */
+.fundoEscuroMenuFabParticipantes {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 4;
-  display: flex;
-  background: var(--vermelhoAux2Participantes);
-  border-top: 1px solid rgba(252, 248, 245, 0.15);
-  padding: 10px 12px 14px;
+  inset: 0;
+  z-index: 7;
+  background: rgba(30, 2, 15, 0.68);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 }
 
-@media (min-width: 860px) {
-  .navInferiorParticipantes { display: none; }
+.fundoEscuroAbertoMenuFabParticipantes {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-.itemNavInferiorParticipantes {
-  flex: 1;
-  min-height: 48px;
+.listaItensMenuFabParticipantes {
+  position: fixed;
+  right: 22px;
+  bottom: calc(108px + env(safe-area-inset-bottom));
+  z-index: 8;
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
+  gap: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.listaItensAbertaMenuFabParticipantes {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.itemMenuFabParticipantes {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
-  cursor: pointer;
+  justify-content: flex-end;
+  gap: 14px;
+  padding: 0;
   background: none;
   border: none;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(22px) scale(0.9);
+  transition: opacity 0.3s ease, transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.marcadorNavInferiorParticipantes,
-.marcadorNavInferiorAtivoParticipantes {
-  width: 20px;
-  height: 4px;
-  border-radius: 9999px;
-  background: rgba(252, 248, 245, 0.25);
+.listaItensAbertaMenuFabParticipantes .itemMenuFabParticipantes {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
-.marcadorNavInferiorAtivoParticipantes { background: var(--AmareloAuxApoio); }
-
-.rotuloNavInferiorParticipantes,
-.rotuloNavInferiorAtivoParticipantes {
+.rotuloItemMenuFabParticipantes {
   font-family: var(--fonteTituloBungee);
-  font-size: 9px;
+  font-size: 13px;
   letter-spacing: 0.06em;
-  color: rgba(252, 248, 245, 0.6);
+  color: var(--brancoQuenteParticipantes);
+  transition: color 0.25s ease;
 }
 
-.rotuloNavInferiorAtivoParticipantes { color: var(--brancoQuenteParticipantes); }
+.itemAtivoMenuFabParticipantes .rotuloItemMenuFabParticipantes {
+  color: var(--AmareloAuxApoio);
+}
+
+.marcadorItemMenuFabParticipantes {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--fonteTituloBungee);
+  font-size: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  transition: box-shadow 0.25s ease;
+}
+
+.itemAtivoMenuFabParticipantes .marcadorItemMenuFabParticipantes {
+  box-shadow: 0 0 0 3px var(--AmareloAuxApoio);
+}
+
+.marcadorInicioMenuFabParticipantes {
+  background: var(--AmareloAuxApoio);
+  color: var(--vermelhoAuxDiretoria);
+}
+
+.marcadorAgendaMenuFabParticipantes {
+  background: var(--azulConteudo);
+  color: var(--brancoQuenteParticipantes);
+}
+
+.marcadorDesafiosMenuFabParticipantes {
+  background: var(--rosaMarketing);
+  color: var(--brancoQuenteParticipantes);
+}
+
+.marcadorRankingMenuFabParticipantes {
+  background: var(--vermelhoDiretoria);
+  color: var(--brancoQuenteParticipantes);
+}
+
+.marcadorPerfilMenuFabParticipantes {
+  background: var(--azulAuxParticipantes);
+  color: var(--brancoQuenteParticipantes);
+}
+
+.botaoFabMenuParticipantes {
+  position: fixed;
+  right: 15px;
+  bottom: calc(28px + env(safe-area-inset-bottom));
+  z-index: 9;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  background: var(--AmareloAuxApoio);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease;
+}
+
+/* O "+" girando 135° vira o "×" de fechar. */
+.botaoFabAbertoMenuParticipantes {
+  background: var(--brancoQuenteParticipantes);
+  transform: rotate(135deg);
+}
+
+.barraHorizontalBotaoFabParticipantes,
+.barraVerticalBotaoFabParticipantes {
+  position: absolute;
+  border-radius: 2px;
+  background: var(--vermelhoAuxDiretoria);
+}
+
+.barraHorizontalBotaoFabParticipantes { width: 26px; height: 4px; }
+.barraVerticalBotaoFabParticipantes { width: 4px; height: 26px; }
+
+@media (min-width: 860px) {
+  .fundoEscuroMenuFabParticipantes,
+  .listaItensMenuFabParticipantes,
+  .botaoFabMenuParticipantes { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fundoEscuroMenuFabParticipantes,
+  .listaItensMenuFabParticipantes,
+  .itemMenuFabParticipantes,
+  .botaoFabMenuParticipantes,
+  .conteudoAbaParticipantes {
+    transition: none;
+  }
+
+  .itemMenuFabParticipantes { transform: none; }
+  .botaoFabAbertoMenuParticipantes { transform: none; }
+  .conteudoAbaSaindoParticipantes { transform: none; }
+}
+
+/* ── Troca de aba ───────────────────────────────────────────
+   O conteúdo desaparece antes de a aba trocar de fato (ver
+   irPara em Participantes.jsx) e volta deslizando de baixo.
+   ───────────────────────────────────────────────────────── */
+.conteudoAbaParticipantes {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.18s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.conteudoAbaSaindoParticipantes {
+  opacity: 0;
+  transform: translateY(12px);
+}
 
 /* ── Modal do crachá / QR ───────────────────────────────── */
 .sobreposicaoQrParticipantes {
