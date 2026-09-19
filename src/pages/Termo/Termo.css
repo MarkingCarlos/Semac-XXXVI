@@ -368,3 +368,39 @@
 .botaoReiniciarFimTermo {
     padding: 13px;
 }
+
+/* XP creditado pela vitória, no modal de fim. Fica acima do recado porque
+   é a novidade da tela — o resto a pessoa já sabe. */
+.divXpGanhoFimTermo {
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(1.125rem, 3vw, 1.5rem);
+    color: var(--azulConteudo);
+    margin: 0 0 12px;
+}
+
+/* Card de aviso no lugar da grade: dia sem palavra cadastrada ou falha ao
+   carregar o jogo. Mesma caixa do modal de fim, só que dentro da página. */
+.divCartaoAvisoTermo {
+    background: var(--vermelhoDiretoria);
+    border-radius: 25px;
+    padding: 28px 22px;
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
+    color: var(--Branco);
+    animation: aparecerCelulaTermo 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tituloAvisoTermo {
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(1.125rem, 3vw, 1.5rem);
+    color: var(--AmareloAuxApoio);
+    margin: 0 0 10px;
+}
+
+.textoAvisoTermo {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: clamp(0.75rem, 2vw, 0.9375rem);
+    opacity: 0.85;
+    margin: 0 0 18px;
+}

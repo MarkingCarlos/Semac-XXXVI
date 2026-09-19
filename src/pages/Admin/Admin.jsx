@@ -25,6 +25,7 @@ import Doacoes from './sections/Doacoes.jsx';
 import Conteudo from './sections/Conteudo.jsx';
 import Brindes from './sections/Brindes.jsx';
 import InformacoesSemac from './sections/InformacoesSemac.jsx';
+import Termo from './sections/Termo.jsx';
 import Relatorios from './sections/Relatorios.jsx';
 import StatsGrid from './StatsGrid.jsx';
 import TabelaParticipantes from './TabelaParticipantes.jsx';
@@ -43,6 +44,7 @@ const SECOES = [
     { id: 'participantes', rotulo: 'Participantes', papeis: ['DIRETOR_SITE', 'PRESIDENTE']  },
     { id: 'comissao', rotulo: 'Comissão',papeis: ['DIRETOR_SITE', 'PRESIDENTE']  },
     { id: 'informacoes', rotulo: 'Informações SEMAC', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
+    { id: 'termo', rotulo: 'Termo', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
 ];
 
 export default function Admin() {
@@ -222,6 +224,7 @@ export default function Admin() {
                         </div>
                     )}
                     {secaoAtiva === 'informacoes' && <InformacoesSemac />}
+                    {secaoAtiva === 'termo' && <Termo />}
                 </section>
             </main>
 

@@ -1096,7 +1096,13 @@
 .statusAtividadeConcluidoAgendaParticipantes { opacity: 0.75; }
 .statusAtividadeAtualAgendaParticipantes { background: var(--brancoQuenteParticipantes); color: var(--vermelhoAuxDiretoria); border: 2px solid var(--AmareloAuxApoio); }
 
-.horarioCardAtividadeAgendaParticipantes { display: flex; flex-direction: column; align-items: center; min-width: 52px; flex: none; }
+.horarioCardAtividadeAgendaParticipantes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 90px;
+  flex: none;
+}
 .valorHorarioCardAtividadeAgendaParticipantes { font-family: var(--fonteTituloBungee); font-size: 14px; }
 .localCardAtividadeAgendaParticipantes { font-size: 9px; font-weight: 700; opacity: 0.7; }
 
@@ -1384,4 +1390,185 @@
   border-radius: 8px;
   cursor: pointer;
   flex: none;
+}
+
+/* ── Aba Desafios ───────────────────────────────────────────────── */
+
+.secaoDesafiosParticipantes {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 640px;
+}
+.desafios{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10px;
+}
+@media (min-width: 860px) {
+  .secaoDesafiosParticipantes {
+    max-width: none;
+    width: 100%;
+  }
+  .desafios{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+  }
+}
+@media (max-width: 768px) {
+
+  .desafios{
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+.cabecalhoSecaoDesafiosParticipantes {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tituloSecaoDesafiosParticipantes { font-family: var(--fonteTituloBungee); font-size: 20px; }
+.subtituloSecaoDesafiosParticipantes { font-size: 12px; color: rgba(252, 248, 245, 0.7); }
+
+.avisoErroDesafiosParticipantes {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(252, 248, 245, 0.1);
+  font-size: 13px;
+}
+
+.estadoCarregandoDesafiosParticipantes { font-size: 13px; color: rgba(252, 248, 245, 0.7); }
+
+.blocoDesafiosParticipantes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.cabecalhoBlocoDesafiosParticipantes {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tituloBlocoDesafiosParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 14px;
+  color: var(--AmareloAuxApoio);
+}
+
+.subtituloBlocoDesafiosParticipantes { font-size: 11px; color: rgba(252, 248, 245, 0.6); }
+
+/* Cards em coluna no celular; a partir de 720px cabem lado a lado, e a
+   lista cresce sozinha conforme novos desafios entram no catálogo. */
+.listaCartoesDesafiosParticipantes { display: grid; gap: 12px; }
+
+@media (min-width: 720px) {
+  .listaCartoesDesafiosParticipantes { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+}
+
+.cartaoDesafioParticipantes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+  border-radius: var(--radius-md, 16px);
+  background: var(--vermelhoAux2Participantes);
+}
+
+.cabecalhoCartaoDesafioParticipantes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.tituloDesafio{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.nomeCartaoDesafioParticipantes { font-family: var(--fonteTituloBungee); font-size: 16px; }
+
+.xpCartaoDesafioParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 13px;
+  color: var(--AmareloAuxApoio);
+  white-space: nowrap;
+}
+
+/* Já creditado: muda de cor para o card não parecer uma promessa. */
+.xpGanhoCartaoDesafioParticipantes { color: var(--azulConteudo); }
+
+.descricaoCartaoDesafioParticipantes {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(252, 248, 245, 0.75);
+}
+
+.rodapeCartaoDesafioParticipantes {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.statusCartaoDesafioParticipantes { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+
+.etiquetaCartaoDesafioParticipantes {
+  align-self: flex-start;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 5px;
+  background: rgba(252, 248, 245, 0.12);
+}
+
+.etiquetaDisponivelDesafiosParticipantes { background: var(--AmareloAuxApoio); color: var(--vermelhoAuxDiretoria); }
+.etiquetaEmAndamentoDesafiosParticipantes { background: var(--rosaMarketing); color: var(--brancoQuenteParticipantes); }
+.etiquetaConcluidoDesafiosParticipantes { background: var(--azulConteudo); color: var(--brancoQuenteParticipantes); }
+.etiquetaEncerradoDesafiosParticipantes { background: rgba(252, 248, 245, 0.18); }
+.etiquetaIndisponivelDesafiosParticipantes { background: rgba(252, 248, 245, 0.1); color: rgba(252, 248, 245, 0.65); }
+
+.detalheCartaoDesafioParticipantes { font-size: 11px; color: rgba(252, 248, 245, 0.7); }
+
+.botaoCartaoDesafioParticipantes {
+  border: none;
+  cursor: pointer;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: var(--AmareloAuxApoio);
+  color: var(--vermelhoAuxDiretoria);
+  font-family: var(--fonteTituloBungee);
+  font-size: 12px;
+}
+
+.cartaoVazioDesafiosParticipantes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px;
+  border-radius: var(--radius-md, 16px);
+  border: 1px dashed rgba(252, 248, 245, 0.25);
+}
+
+.tituloCartaoVazioDesafiosParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 14px;
+  color: var(--AmareloAuxApoio);
+}
+
+.textoCartaoVazioDesafiosParticipantes {
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(252, 248, 245, 0.7);
 }

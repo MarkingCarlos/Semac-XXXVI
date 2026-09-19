@@ -28,6 +28,7 @@ import ModalEscolhaMinicursos from './ModalEscolhaMinicursos.jsx';
 import MenuPerfilParticipantes from './MenuPerfilParticipantes.jsx';
 import SecaoInicioParticipantes from './sections/SecaoInicioParticipantes.jsx';
 import SecaoAgendaParticipantes from './sections/SecaoAgendaParticipantes.jsx';
+import SecaoDesafiosParticipantes from './sections/SecaoDesafiosParticipantes.jsx';
 import SecaoRankingParticipantes from './sections/SecaoRankingParticipantes.jsx';
 import SecaoPerfilParticipantes from './sections/SecaoPerfilParticipantes.jsx';
 
@@ -40,6 +41,7 @@ import {
 import { buscarNivelParticipante } from './data/apiPerfilParticipante.js';
 import { buscarRankingParticipante } from './data/apiRankingParticipante.js';
 import { listarMinhasConquistas, marcarConquistaComoVista } from './data/apiConquistasParticipante.js';
+import { carregarDesafiosParticipantes } from './data/desafiosParticipantes.js';
 import ConquistaDesbloqueada, { MODO_TESTE_CONQUISTA } from '../../components/ConquistaDesbloqueada/ConquistaDesbloqueada.jsx';
 import { montarRankingExibicao } from './data/rankingParticipantes.js';
 import {
@@ -64,6 +66,7 @@ const RANKING_VAZIO_PARTICIPANTES = { totalParticipantes: 0, atualizadoEm: '', p
 const ABAS_PARTICIPANTES = [
     { id: 'inicio', rotulo: 'Início' },
     { id: 'agenda', rotulo: 'Agenda' },
+    { id: 'desafios', rotulo: 'Desafios' },
     { id: 'ranking', rotulo: 'Ranking' },
     { id: 'perfil', rotulo: 'Perfil' },
 ];
@@ -109,7 +112,31 @@ export default function Participantes() {
     const [erroMinicurso, setErroMinicurso] = useState('');
     const [minicursoEmEspera, setMinicursoEmEspera] = useState(null);
 
+    /* Desafios são carregados só quando a aba é aberta: a maioria das
+       visitas não passa por ela, e seria mais uma requisição em toda
+       entrada na área do participante. */
+    const [desafios, setDesafios] = useState([]);
+    const [carregandoDesafios, setCarregandoDesafios] = useState(false);
+    const [erroDesafios, setErroDesafios] = useState('');
+    const [desafiosCarregados, setDesafiosCarregados] = useState(false);
+
     const [agora, setAgora] = useState(() => new Date());
+
+    useEffect(() => {
+        if (abaAtiva !== 'desafios' || desafiosCarregados) return;
+        let ativo = true;
+        setCarregandoDesafios(true);
+        setErroDesafios('');
+        carregarDesafiosParticipantes()
+            .then((lista) => {
+                if (!ativo) return;
+                setDesafios(lista);
+                setDesafiosCarregados(true);
+            })
+            .catch(() => { if (ativo) setErroDesafios('Não foi possível carregar os desafios.'); })
+            .finally(() => { if (ativo) setCarregandoDesafios(false); });
+        return () => { ativo = false; };
+    }, [abaAtiva, desafiosCarregados]);
 
     useEffect(() => {
         const relogio = setInterval(() => setAgora(new Date()), INTERVALO_RELOGIO_PARTICIPANTES);
@@ -348,6 +375,14 @@ export default function Participantes() {
                         onSelecionarDia={setDiaSelecionado}
                         meuDia={meuDia}
                         carregando={carregandoAgenda}
+                    />
+                )}
+                {abaAtiva === 'desafios' && (
+                    <SecaoDesafiosParticipantes
+                        desafios={desafios}
+                        carregando={carregandoDesafios}
+                        erro={erroDesafios}
+                        onAbrir={(rota) => navegar(rota)}
                     />
                 )}
                 {abaAtiva === 'ranking' && (

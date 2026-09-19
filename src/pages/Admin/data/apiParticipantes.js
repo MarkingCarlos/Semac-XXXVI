@@ -24,6 +24,26 @@ export async function listarComissao() {
     return resposta.json();
 }
 
+/* Cadastra uma pessoa manualmente (inscrição de balcão: dinheiro,
+   cortesia, quem se inscreveu presencialmente). `dados` traz nome, cpf,
+   email, senha, ra, telefone (só dígitos em cpf/telefone), ehUnesp,
+   tipoInscricaoId, dias, camisetas:[{ modelo, tamanho, avulsa }] e
+   `confirmar` — true já cria como PARTICIPANTE confirmado, false deixa
+   aguardando confirmação. Retorna a pessoa criada no mesmo formato da
+   listagem, pronta para entrar na tabela. */
+export async function cadastrarParticipante(dados) {
+    const resposta = await apiFetch(`${API_URL}/api/pessoa`, {
+        method: 'POST',
+        headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(dados),
+    });
+    if (!resposta.ok) {
+        const corpo = await resposta.json().catch(() => null);
+        throw new Error(corpo?.mensagem || 'Não foi possível cadastrar esta pessoa.');
+    }
+    return resposta.json();
+}
+
 /* Confirma a inscrição atribuindo o papel: 'PARTICIPANTE' ou 'MEMBRO'.
    Para PARTICIPANTE, tipoInscricaoId é obrigatório (o ingresso escolhido).
    Retorna o participante atualizado. Em caso de erro, lança com a

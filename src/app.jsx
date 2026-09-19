@@ -12,7 +12,6 @@ import { NavPontos } from "./components/NavPontos/navPontos.jsx";
 import paperTexture from './assets/PAPER.png';
 import ContagemRegressiva from "./components/contagemRegressiva/contagemRegressiva.jsx";
 import {PaginaContagem} from "./pages/page/PaginaContagem.jsx";
-import Termo from "./pages/Termo/Termo.jsx";
 import ContadorDiasEvento from "./components/contadorDiasEvento/contadorDiasEvento.jsx";
 import TemaEvento from "./components/temaEvento/temaEvento.jsx";
 

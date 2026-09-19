@@ -5,9 +5,14 @@
 // A filtragem é feita no cliente — quando houver muitos participantes,
 // considerar mover para query params na API (?busca=...).
 //
+// O botão "Adicionar participante" no topo abre o cadastro manual
+// (ModalAdicionarParticipante), para quem se inscreveu no balcão e não
+// passou pelo formulário público.
+//
 // Props:
 //   participantes — array completo de participantes vindo do Admin pai
-//   aoConfirmar   — (idPessoa, novoRole) => void, chamado após confirmar
+//   aoConfirmar   — (pessoaAtualizada) => void, chamado após confirmar,
+//                   desconfirmar, editar camisetas ou cadastrar manualmente
 //   aoExcluir     — (id) => void, chamado após excluir definitivamente
 
 import { useState, useMemo, useEffect } from 'preact/hooks'
@@ -18,6 +23,7 @@ import { formatarCentavos } from '../Financas/utils/moeda.js'
 import { temAcessoFinanceiro, temAcessoDiretoria } from '../../auth/sessao.js'
 import ModalEditarCamisetas from './ModalEditarCamisetas.jsx'
 import ModalConquistasParticipante from './ModalConquistasParticipante.jsx'
+import ModalAdicionarParticipante from './ModalAdicionarParticipante.jsx'
 
 const ANO_ATUAL = new Date().getFullYear()
 
@@ -208,6 +214,7 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
     const [participanteEmConfirmacao, setParticipanteEmConfirmacao] = useState(null)
     const [participanteEditandoCamisetas, setParticipanteEditandoCamisetas] = useState(null)
     const [participanteVendoConquistas, setParticipanteVendoConquistas] = useState(null)
+    const [cadastroManualAberto, setCadastroManualAberto] = useState(false)
     const [idConfirmandoExcluir, setIdConfirmandoExcluir] = useState(null)
     const [idProcessandoExcluir, setIdProcessandoExcluir] = useState(null)
     const [erroExclusao, setErroExclusao] = useState('')
@@ -300,6 +307,13 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
                         value={busca}
                         onInput={e => setBusca(e.target.value)}
                     />
+                    <button
+                        type="button"
+                        class="botaoAbrirCadastroParticipantesAdmin"
+                        onClick={() => setCadastroManualAberto(true)}
+                    >
+                        + Adicionar participante
+                    </button>
                 </div>
             </div>
 
@@ -351,6 +365,13 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
             <div class="rodapeTabelaAdmin">
                 Exibindo {filtrados.length} de {participantes.length} participantes
             </div>
+
+            {cadastroManualAberto && (
+                <ModalAdicionarParticipante
+                    aoFechar={() => setCadastroManualAberto(false)}
+                    aoCriado={aoConfirmar}
+                />
+            )}
 
             {participanteEditandoCamisetas && (
                 <ModalEditarCamisetas

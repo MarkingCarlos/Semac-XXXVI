@@ -1,0 +1,85 @@
+/* Seção Termo do /admin — as quatro palavras do jogo, uma por dia.
+   Aproveita a tipografia e os campos do financeiro (financas.css); aqui só
+   o que é próprio da lista de dias. */
+
+.avisoSigiloTermoAdmin {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    opacity: 0.75;
+    margin: 0 0 18px;
+    max-width: 62ch;
+}
+
+.listaDiasTermoAdmin {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.cartaoDiaTermoAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 14px;
+    background: var(--Branco, #fff);
+}
+
+.cabecalhoDiaTermoAdmin {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.rotuloDiaTermoAdmin {
+    font-family: var(--fonteTituloBungee);
+    font-size: 1rem;
+}
+
+.etiquetaStatusTermoAdmin {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.07);
+    opacity: 0.8;
+}
+
+.etiquetaDefinidaTermoAdmin {
+    background: rgba(46, 160, 67, 0.15);
+    color: #1a7f37;
+    opacity: 1;
+}
+
+.camposDiaTermoAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* A palavra em caixa alta e espaçada: são 5 letras, e conferir letra a
+   letra antes de salvar importa mais aqui do que em qualquer outro campo
+   do admin — ninguém vai poder reler depois. */
+.entradaPalavraTermoAdmin {
+    text-transform: uppercase;
+    letter-spacing: 0.35em;
+    font-family: var(--fonteTituloBungee);
+}
+
+.acoesDiaTermoAdmin {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.avisoSalvoTermoAdmin {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.75rem;
+    color: #1a7f37;
+}
