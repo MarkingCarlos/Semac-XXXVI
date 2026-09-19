@@ -12,19 +12,25 @@ import {
     SITUACAO_EM_ANDAMENTO_DESAFIOS,
     SITUACAO_CONCLUIDO_DESAFIOS,
     SITUACAO_ENCERRADO_DESAFIOS,
+    SITUACAO_FINALIZADO_DESAFIOS,
     SITUACAO_INDISPONIVEL_DESAFIOS,
 } from '../data/desafiosParticipantes.js';
 
 /* Etiqueta e rótulo do botão por situação. Só quem tem `acao` vira card
-   clicável — encerrado e indisponível não levam a lugar nenhum.
+   clicável — encerrado, finalizado e indisponível não levam a lugar nenhum.
 
    Concluído tem botão, mas não é uma segunda chance: o XP já foi
-   creditado e a rota de `estado.rota` leva a uma rodada de treino. */
+   creditado e a rota de `estado.rota` leva a uma rodada de treino.
+
+   As duas etiquetas de fim dizem quem fechou a porta: "Atividade
+   encerrada" é o dia que passou, "Atividade finalizada" é a pessoa que
+   gastou as tentativas e errou. */
 const APRESENTACAO_SITUACAO_DESAFIOS = {
     [SITUACAO_DISPONIVEL_DESAFIOS]: { etiqueta: 'Disponível', acao: 'JOGAR', classe: 'etiquetaDisponivelDesafiosParticipantes' },
     [SITUACAO_EM_ANDAMENTO_DESAFIOS]: { etiqueta: 'Em andamento', acao: 'CONTINUAR', classe: 'etiquetaEmAndamentoDesafiosParticipantes' },
     [SITUACAO_CONCLUIDO_DESAFIOS]: { etiqueta: 'Concluído', acao: 'JOGAR DE NOVO', classe: 'etiquetaConcluidoDesafiosParticipantes' },
-    [SITUACAO_ENCERRADO_DESAFIOS]: { etiqueta: 'Encerrado hoje', acao: null, classe: 'etiquetaEncerradoDesafiosParticipantes' },
+    [SITUACAO_ENCERRADO_DESAFIOS]: { etiqueta: 'Atividade encerrada', acao: null, classe: 'etiquetaEncerradoDesafiosParticipantes' },
+    [SITUACAO_FINALIZADO_DESAFIOS]: { etiqueta: 'Atividade finalizada', acao: null, classe: 'etiquetaFinalizadoDesafiosParticipantes' },
     [SITUACAO_INDISPONIVEL_DESAFIOS]: { etiqueta: 'Indisponível', acao: null, classe: 'etiquetaIndisponivelDesafiosParticipantes' },
 };
 
@@ -32,15 +38,20 @@ function CartaoDesafioParticipantes({ desafio, onAbrir }) {
     const estado = desafio.estado ?? { situacao: SITUACAO_INDISPONIVEL_DESAFIOS, detalhe: '' };
     const apresentacao = APRESENTACAO_SITUACAO_DESAFIOS[estado.situacao]
         ?? APRESENTACAO_SITUACAO_DESAFIOS[SITUACAO_INDISPONIVEL_DESAFIOS];
-    const concluido = estado.situacao === SITUACAO_CONCLUIDO_DESAFIOS;
+
+    /* Partida encerrada mostra o que rendeu de fato (inclusive "+0 XP" de
+       quem errou); as outras mostram o que o desafio vale. O destaque é só
+       para xp que entrou — "+0 XP" em verde seria comemorar a derrota. */
+    const xpExibido = estado.xpGanho ?? desafio.xp;
+    const ganhouXp = estado.xpGanho > 0;
 
     return (
         <article className="cartaoDesafioParticipantes">
             <div className="cabecalhoCartaoDesafioParticipantes">
                 <div className="tituloDesafio">
                     <span className="nomeCartaoDesafioParticipantes">{desafio.nome.toUpperCase()}</span>
-                    <span className={`xpCartaoDesafioParticipantes ${concluido ? 'xpGanhoCartaoDesafioParticipantes' : ''}`}>
-                    +{concluido ? (estado.xpGanho ?? desafio.xp) : desafio.xp} XP
+                    <span className={`xpCartaoDesafioParticipantes ${ganhouXp ? 'xpGanhoCartaoDesafioParticipantes' : ''}`}>
+                    +{xpExibido} XP
                 </span>
                 </div>
 

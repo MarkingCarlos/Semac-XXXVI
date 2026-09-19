@@ -1585,3 +1585,26 @@
     background: var(--vermelhoDiretoria);
     color: var(--Branco);
 }
+
+/* ── Início real do evento (aba Conteúdo) ────────────────────── */
+
+/* Confirmação do "iniciar evento", no mesmo padrão de dois cliques da
+   exclusão. Amarelo em vez do rosa dela: as duas são irreversíveis e
+   ficam lado a lado, então precisam ser distinguíveis no susto. */
+.botaoConfirmarInicioConteudo,
+.botaoConfirmarInicioConteudo:hover {
+    color: var(--vermelhoAuxDiretoria);
+    background: var(--AmareloAuxApoio);
+    border-color: var(--AmareloAuxApoio);
+}
+
+/* Anotação sob o horário agendado, na coluna de data. Discreta de
+   propósito: informa sem competir com o horário da programação. */
+.seloEventoIniciadoConteudo {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--AmareloAuxApoio);
+    white-space: nowrap;
+}

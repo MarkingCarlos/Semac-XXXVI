@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'preact/hooks';
 import PainelLateral from '../../Financas/components/PainelLateral.jsx';
 import { normalizar } from '../../Financas/utils/moeda.js';
-import { criarEvento, atualizarEvento, excluirEvento } from '../data/apiEventos.js';
+import { criarEvento, atualizarEvento, excluirEvento, iniciarEvento } from '../data/apiEventos.js';
 import {
     listarTiposEvento,
     criarTipoEvento,
@@ -53,6 +53,7 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
     const [formulario, setFormulario] = useState(EVENTO_VAZIO);
     const [idEmEdicao, setIdEmEdicao] = useState(null);
     const [idConfirmandoExclusao, setIdConfirmandoExclusao] = useState(null);
+    const [idConfirmandoInicio, setIdConfirmandoInicio] = useState(null);
 
     // Tipos de evento (seletor do formulário + painel de gerenciamento)
     const [tiposEvento, setTiposEvento] = useState([]);
@@ -164,6 +165,28 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
             setErroAcao(e.message);
         } finally {
             setIdConfirmandoExclusao(null);
+        }
+    };
+
+    /* Marca o início real do evento. Confirmação em dois cliques, igual à
+       exclusão, porque o marco não se desfaz: uma vez gravado, ele passa a
+       valer como referência do atraso de todo mundo que fizer check-in.
+
+       A hora vem da resposta, e não de um `new Date()` local — num segundo
+       clique o backend devolve a do primeiro. */
+    const marcarEventoIniciado = async (id) => {
+        if (idConfirmandoInicio !== id) {
+            setIdConfirmandoInicio(id);
+            return;
+        }
+        setErroAcao('');
+        try {
+            const horaIniciado = await iniciarEvento(id);
+            setEventos(eventos.map((ev) => (ev.id === id ? { ...ev, horaIniciado } : ev)));
+        } catch (e) {
+            setErroAcao(e.message);
+        } finally {
+            setIdConfirmandoInicio(null);
         }
     };
 
@@ -361,6 +384,14 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                                     {evento.horaInicio && (
                                         <> · {evento.horaInicio}{evento.horaFim ? `–${evento.horaFim}` : ''}</>
                                     )}
+                                    {/* O horário agendado continua sendo o principal; o início
+                                        real entra embaixo, como anotação, porque é ele que
+                                        vale pro cálculo do atraso no check-in. */}
+                                    {evento.horaIniciado && (
+                                        <span className="seloEventoIniciadoConteudo">
+                                            iniciado {evento.horaIniciado}
+                                        </span>
+                                    )}
                                 </td>
                                 <td>{evento.capacidadeMaxima ?? '—'}</td>
                                 <td className="celulaPalestrantesConteudo">
@@ -370,6 +401,34 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                                 </td>
                                 <td>
                                     <div className="grupoAcoesLinhaFinancas">
+                                        {/* Some depois de iniciado: o marco não se desfaz, então
+                                            oferecer o clique de novo seria oferecer nada. A hora
+                                            fica visível na coluna de data. */}
+                                        {!evento.horaIniciado && (
+                                            <button
+                                                type="button"
+                                                className={
+                                                    idConfirmandoInicio === evento.id
+                                                        ? 'botaoAcaoLinhaFinancas botaoConfirmarInicioConteudo'
+                                                        : 'botaoAcaoLinhaFinancas'
+                                                }
+                                                aria-label={
+                                                    idConfirmandoInicio === evento.id
+                                                        ? `Confirmar início do evento ${evento.nome}`
+                                                        : `Iniciar evento ${evento.nome}`
+                                                }
+                                                title={
+                                                    idConfirmandoInicio === evento.id
+                                                        ? 'Clique novamente para confirmar'
+                                                        : 'Iniciar evento (marca o início real para o cálculo de atraso)'
+                                                }
+                                                onClick={() => marcarEventoIniciado(evento.id)}
+                                            >
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M6 4l12 8-12 8Z" />
+                                                </svg>
+                                            </button>
+                                        )}
                                         <button
                                             type="button"
                                             className="botaoAcaoLinhaFinancas"

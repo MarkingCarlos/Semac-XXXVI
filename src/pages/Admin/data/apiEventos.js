@@ -36,6 +36,10 @@ function deResposta(evento) {
         data: inicio.data,
         horaInicio: inicio.hora,
         horaFim: fim.hora,
+        /* Hora em que o evento realmente começou, do botão "iniciar" da
+           lista. Só a hora interessa aqui — o marco é sempre do mesmo dia
+           do evento. Vazio enquanto ninguém marcou. */
+        horaIniciado: separarDataHora(evento.iniciadoEm).hora,
         capacidadeMaxima: evento.capacidadeMaxima,
         palestrantes: (evento.palestrantes || []).map((p) => ({
             id: p.id,
@@ -96,6 +100,22 @@ export async function atualizarEvento(id, evento) {
     });
     const atualizado = await lerOuFalhar(resposta, 'Falha ao atualizar evento.');
     return deResposta(atualizado);
+}
+
+/* Marca o início real do evento: a partir daí o atraso do check-in é
+   contado daqui, e não do horário agendado — é o que evita tirar xp de
+   quem chegou na hora numa palestra que atrasou.
+
+   Idempotente no backend: clicar de novo devolve o horário do primeiro
+   clique em vez de empurrar o marco pra frente. Devolve só a hora, no
+   mesmo formato que `deResposta` usa em `horaIniciado`. */
+export async function iniciarEvento(id) {
+    const resposta = await apiFetch(`${ROTA}/${id}/iniciar`, {
+        method: 'POST',
+        headers: cabecalhosAuth(),
+    });
+    const iniciado = await lerOuFalhar(resposta, 'Falha ao iniciar evento.');
+    return separarDataHora(iniciado.iniciadoEm).hora;
 }
 
 export async function excluirEvento(id) {

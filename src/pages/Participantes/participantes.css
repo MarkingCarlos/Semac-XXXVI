@@ -156,6 +156,7 @@
   overflow-wrap: anywhere;
 }
 
+.itemPaginaPrincipalMenuPerfilCabecalhoParticipantes,
 .itemSairMenuPerfilCabecalhoParticipantes {
   width: 100%;
   text-align: right;
@@ -168,6 +169,19 @@
   color: rgba(252, 248, 245, 0.7);
   cursor: pointer;
   transition: color 0.2s ease, background 0.2s ease;
+}
+
+/* Divisória entre a volta pro site e o sair: são ações de peso bem
+   diferente, não dá pra clicar em uma achando que é a outra. */
+.itemPaginaPrincipalMenuPerfilCabecalhoParticipantes {
+  border-bottom: 1px solid rgba(252, 248, 245, 0.15);
+}
+
+.itemPaginaPrincipalMenuPerfilCabecalhoParticipantes:hover,
+.itemPaginaPrincipalMenuPerfilCabecalhoParticipantes:focus-visible {
+  background: rgba(252, 248, 245, 0.07);
+  color: var(--brancoQuenteParticipantes);
+  outline: none;
 }
 
 .itemSairMenuPerfilCabecalhoParticipantes:hover,
@@ -202,7 +216,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 20px 20px 32px;
+  padding: 5px 20px 32px;
   max-width: 1280px;
   width: 100%;
   box-sizing: border-box;
@@ -210,7 +224,7 @@
 
 @media (min-width: 860px) {
   .conteudoParticipantes {
-    padding: 32px 40px 44px;
+    padding: 5px 40px 44px;
     max-width: 1500px;
   }
 }
@@ -575,12 +589,7 @@
   font-weight: bold;
 }
 
-.rodapeModalQrParticipantes {
-  font-size: 10px;
-  color: rgb(242 242 242 / 60%);
-  text-align: center;
-  line-height: 1.45;
-}
+
 
 /* ── Modal de escolha de minicursos ─────────────────────── */
 /* Assistente com um passo por dia: as opções do dia ficam lado a lado
@@ -1100,7 +1109,12 @@
 
 .cardPalestraSemanaInicioParticipantes.statusMeuDiaAtualParticipantes { background: var(--brancoQuenteParticipantes); }
 
-.horarioCardPalestraSemanaInicioParticipantes { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: var(--AmareloAuxApoio); }
+.horarioCardPalestraSemanaInicioParticipantes {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--AmareloAuxApoio);
+}
 .cardPalestraSemanaInicioParticipantes.statusMeuDiaAtualParticipantes .horarioCardPalestraSemanaInicioParticipantes { color: var(--rosaMarketing); }
 
 .tituloCardPalestraSemanaInicioParticipantes {
@@ -1108,7 +1122,10 @@
   font-size: 12px;
   line-height: 1.15;
 }
-.detalheCardPalestraSemanaInicioParticipantes { font-size: 11px; opacity: 0.75; margin-top: auto; }
+.detalheCardPalestraSemanaInicioParticipantes {
+  font-size: 12px;
+  opacity: 0.75; margin-top: auto;
+}
 
 /* conquistas */
 .grelhaConquistasInicioParticipantes,
@@ -1657,16 +1674,22 @@
   background: var(--vermelhoAux2Participantes);
 }
 
+/* Quebra em vez de espremer: com "TERMO · DIA 1" de um lado e "ATIVIDADE
+   ENCERRADA" do outro, num card de 280px não cabe tudo numa linha — a
+   etiqueta desce inteira para a linha de baixo. */
 .cabecalhoCartaoDesafioParticipantes {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  flex-wrap: wrap;
 }
 .tituloDesafio{
   display: flex;
   gap: 10px;
   align-items: center;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 .nomeCartaoDesafioParticipantes { font-family: var(--fonteTituloBungee); font-size: 16px; }
 
@@ -1708,12 +1731,17 @@
   padding: 3px 9px;
   border-radius: 5px;
   background: rgba(252, 248, 245, 0.12);
+  white-space: nowrap;
 }
 
 .etiquetaDisponivelDesafiosParticipantes { background: var(--AmareloAuxApoio); color: var(--vermelhoAuxDiretoria); }
 .etiquetaEmAndamentoDesafiosParticipantes { background: var(--rosaMarketing); color: var(--brancoQuenteParticipantes); }
 .etiquetaConcluidoDesafiosParticipantes { background: var(--azulConteudo); color: var(--brancoQuenteParticipantes); }
+/* Os dois fins de desafio. Encerrado é o dia que passou e finalizado é a
+   tentativa gasta — ambos neutros, para não competir com quem ainda dá
+   para jogar, e distintos entre si pelo peso do fundo. */
 .etiquetaEncerradoDesafiosParticipantes { background: rgba(252, 248, 245, 0.18); }
+.etiquetaFinalizadoDesafiosParticipantes { background: rgba(252, 248, 245, 0.3); color: rgba(252, 248, 245, 0.9); }
 .etiquetaIndisponivelDesafiosParticipantes { background: rgba(252, 248, 245, 0.1); color: rgba(252, 248, 245, 0.65); }
 
 .detalheCartaoDesafioParticipantes { font-size: 11px; color: rgba(252, 248, 245, 0.7); }
@@ -1722,7 +1750,7 @@
   border: none;
   cursor: pointer;
   padding: 9px 18px;
-  border-radius: 999px;
+  border-radius: 10px;
   background: var(--AmareloAuxApoio);
   color: var(--vermelhoAuxDiretoria);
   font-family: var(--fonteTituloBungee);

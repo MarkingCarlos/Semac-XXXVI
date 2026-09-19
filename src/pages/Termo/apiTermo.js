@@ -38,6 +38,22 @@ export async function lerEstadoTermo() {
     return resposta.json();
 }
 
+/* Os dias de Termo que já aconteceram, com o que o participante fez em
+   cada um — é o que a aba "Desafios" de /participantes lista, um card por
+   dia. Dias ainda por vir não vêm, e a palavra secreta não vem em nenhum
+   deles: este resumo atravessa vários dias, e revelar a de ontem entregaria
+   a resposta de quem ainda não jogou.
+
+   Lista vazia = nenhum dia de Termo aconteceu ainda. */
+export async function listarDiasTermo() {
+    const resposta = await apiFetch(`${ROTA}/meus`, { headers: cabecalhosAuth() });
+    if (tratarErroAuth(resposta, ROTA_RETORNO)) return null;
+    if (!resposta.ok) {
+        throw new Error(await mensagemDeErro(resposta, 'Não foi possível carregar os dias do Termo.'));
+    }
+    return resposta.json();
+}
+
 export async function enviarPalpiteTermo(palpite) {
     const resposta = await apiFetch(`${ROTA}/palpite`, {
         method: 'POST',

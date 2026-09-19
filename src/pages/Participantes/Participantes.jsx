@@ -322,6 +322,12 @@ export default function Participantes() {
         navegar('/');
     }
 
+    /* Volta pro site sem mexer na sessão — quem sair por aqui continua
+       logado e reentra em /participantes sem passar pelo login. */
+    function irParaPaginaPrincipal() {
+        navegar('/');
+    }
+
     function abrirEscolhaMinicursos() {
         setErroMinicurso('');
         setEscolhaMinicursosAberta(true);
@@ -387,6 +393,7 @@ export default function Participantes() {
                         nome={nomeParticipante}
                         email={emailParticipante}
                         iniciais={iniciais}
+                        onIrParaPaginaPrincipal={irParaPaginaPrincipal}
                         onSair={sair}
                     />
                 </div>
@@ -528,9 +535,6 @@ export default function Participantes() {
                         {/*        </span>*/}
                         {/*    </div>*/}
                         {/*)}*/}
-                        <span className="rodapeModalQrParticipantes">
-                            Funciona sem internet. O código é pessoal e não deve ser compartilhado.
-                        </span>
                     </div>
                 </div>
             )}
