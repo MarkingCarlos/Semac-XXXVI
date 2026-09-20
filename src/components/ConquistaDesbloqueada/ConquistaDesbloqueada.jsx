@@ -5,34 +5,6 @@ import gsap from 'gsap';
 import { urlImagemConquista } from '../../pages/Participantes/data/apiConquistasParticipante.js';
 import './conquistaDesbloqueada.css';
 
-/* Celebração de conquista desbloqueada — variante 1A ("mobile ·
-   revelação") do protótipo feito no Claude Design.
-
-   Tela cheia sobre o vinho escuro: os selos entram em preto e branco e
-   ganham cor um a um, com um anel âmbar rompendo em cada um. O XP
-   creditado soma no fim.
-
-   Aparece UMA VEZ por conquista. Quem garante isso é o backend, não este
-   componente: `participante_conquista.vista_em` (V36). Cada conquista é
-   confirmada assim que a animação dela termina — não no fim da fila —,
-   então fechar o app no meio não perde as que faltam nem repete as já
-   vistas.
-
-   Só transform, opacity e filter são animados. */
-
-/* ⚠️ MODO DE TESTE — DESLIGAR ANTES DO DEPLOY ⚠️
-
-   Com `true`, a celebração:
-     · reaparece a cada recarregamento da página, ignorando `celebrar`;
-     · não marca nada como vista no backend (`vista_em` fica intacto);
-     · não sai sozinha — só sai no toque.
-
-   É para ajustar a animação sem precisar conceder conquista nova a cada
-   tentativa. Serve só para isso: ligado, ele desliga exatamente a regra do
-   "uma vez só" que o sistema existe para garantir, e em produção todo
-   participante veria a mesma celebração toda vez que abrisse o app.
-
-   Voltar para `false` é a única coisa a fazer — nada mais depende disto. */
 export const MODO_TESTE_CONQUISTA = false;
 
 const RARIDADES = ['COMUM', 'COMUM', 'INCOMUM', 'RARA', 'ÉPICA', 'LENDÁRIA'];

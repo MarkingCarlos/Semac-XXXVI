@@ -1,29 +1,3 @@
-/* Wrapper de fetch com instrumentação de tempo e timeout.
-
-   Objetivo de diagnóstico: descobrir se a lentidão em produção vem do servidor
-   (semac.cc) ou do código do front. Para cada chamada, mede a duração total,
-   captura o TTFB real (tempo de espera pela resposta do servidor) via Resource
-   Timing API e aborta requisições que passam do timeout — assim "servidor lento"
-   vira um erro visível em vez de um spinner infinito.
-
-   É um drop-in de fetch(): mesma assinatura, retorna a mesma Response.
-     import { apiFetch } from '<caminho>/lib/apiFetch.js';
-     const resposta = await apiFetch(url, opcoes);
-
-   Opção extra suportada: opcoes.timeout (ms) sobrescreve o timeout padrão numa
-   chamada específica (ex.: uploads grandes).
-
-   Como ler as medições:
-   - Console: cada chamada imprime "[apiFetch] MÉTODO url → status | total=Xms ttfb=Yms".
-   - window.__semacTiming: array com todas as medições da sessão, para exportar
-     (ex.: copy(JSON.stringify(window.__semacTiming)) no console).
-
-   Interpretação: ttfb alto = servidor; ttfb baixo mas total alto/muitas chamadas
-   em cascata = código/rede. Em dev (front e API em origens diferentes) o ttfb pode
-   vir "n/d" por falta do header Timing-Allow-Origin; em produção (mesma origem
-   semac.cc) ele aparece. */
-
-/* Timeout padrão (ms) de cada requisição. Sobrescrevível por chamada. */
 const TIMEOUT_PADRAO = 15000;
 
 /* Liga/desliga o log no console. Manter true durante o diagnóstico. */
@@ -43,9 +17,7 @@ function agora() {
         : Date.now();
 }
 
-/* Lê o TTFB (responseStart - requestStart) da Resource Timing API para a URL
-   dada, pegando a entrada mais recente que casa. Retorna null quando a API não
-   expõe o timing (ex.: cross-origin sem Timing-Allow-Origin). */
+
 function lerTtfb(url) {
     if (typeof performance === 'undefined' || !performance.getEntriesByType) return null;
     const entradas = performance.getEntriesByType('resource');
