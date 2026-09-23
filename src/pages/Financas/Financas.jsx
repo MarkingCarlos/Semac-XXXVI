@@ -103,8 +103,8 @@ export default function Financas() {
     const [caixas, setCaixas] = useState([]);
     const [erroCaixas, setErroCaixas] = useState('');
 
-    // O que a comissão arrecadou (patrocínios + doações + inscrições) e a
-    // reserva da FUNDUNESP vêm calculados do backend
+    // O que a comissão arrecadou (patrocínios + doações + inscrições + lucro
+    // das camisetas avulsas) e a reserva da FUNDUNESP vêm calculados do backend
     // (/api/previsao/resumo). Refazer a soma aqui abriria um segundo
     // lugar para a regra divergir.
     const [entradasResumo, setEntradasResumo] = useState(null);

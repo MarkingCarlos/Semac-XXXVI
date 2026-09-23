@@ -1296,8 +1296,8 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                             {resumo ? formatarCentavos(resumo.teto) : '—'}
                         </strong>
                         <span className="ajudaCampoPrevisao">
-                            O que a Comissão arrecadou: patrocínios recebidos, doações e
-                            inscrições. Sobe a cada entrada nova.
+                            O que a Comissão arrecadou: patrocínios recebidos, doações,
+                            inscrições e lucro das camisetas avulsas. Sobe a cada entrada nova.
                         </span>
                     </li>
                     <li className="parametroOrcamentoPrevisao">

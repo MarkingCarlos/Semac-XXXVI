@@ -6,7 +6,8 @@ import { apiFetch } from '../../../lib/apiFetch.js';
    Desde a V32 sobrou uma linha só: a reserva de emergência da FUNDUNESP.
    Ela não recebe entrada nem paga saída — é um valor digitado, exibido à
    parte. A comissão não tem linha aqui: o que ela tem para gastar é
-   calculado a partir de patrocínios, doações e inscrições.
+   calculado a partir de patrocínios, doações, inscrições e lucro das
+   camisetas avulsas.
 
    A interface trabalha em CENTAVOS (inteiros); o backend usa reais
    (DECIMAL). */

@@ -202,7 +202,7 @@ export default function Resumo({
                             {entradasResumo ? formatarCentavos(entradasResumo.total) : '—'}
                         </strong>
 
-                        {/* As três fontes abertas: é daqui que sai o teto da
+                        {/* As fontes abertas: é daqui que sai o teto da
                             aba de Previsão, então mostrar a composição evita
                             a pergunta "de onde veio esse número?". */}
                         <ul className="parcelasContaSaldoResumo">
@@ -228,6 +228,12 @@ export default function Resumo({
                                 <span className="rotuloParcelaContaSaldoResumo">Inscrições aguardando confirmação</span>
                                 <span className="valorParcelaContaSaldoResumo">
                                     {formatarCentavos(entradasResumo?.inscricoesPendentes ?? 0)}
+                                </span>
+                            </li>
+                            <li className="parcelaContaSaldoResumo">
+                                <span className="rotuloParcelaContaSaldoResumo">Lucro das camisetas avulsas</span>
+                                <span className="valorParcelaContaSaldoResumo">
+                                    {formatarCentavos(entradasResumo?.lucroCamisetas ?? 0)}
                                 </span>
                             </li>
                         </ul>

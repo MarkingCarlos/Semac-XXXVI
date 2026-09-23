@@ -86,6 +86,7 @@ export async function lerResumoPrevisao() {
             inscricoes: reaisParaCentavos(resumo.entradas?.inscricoes),
             inscricoesConfirmadas: reaisParaCentavos(resumo.entradas?.inscricoesConfirmadas),
             inscricoesPendentes: reaisParaCentavos(resumo.entradas?.inscricoesPendentes),
+            lucroCamisetas: reaisParaCentavos(resumo.entradas?.lucroCamisetas),
             total: reaisParaCentavos(resumo.entradas?.total),
         },
         reservaFundunesp: reaisParaCentavos(resumo.reservaFundunesp),
