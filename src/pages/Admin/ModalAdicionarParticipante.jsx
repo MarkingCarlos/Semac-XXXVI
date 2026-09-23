@@ -326,7 +326,7 @@ export default function ModalAdicionarParticipante({ aoFechar, aoCriado }) {
 
                 <p class="dicaConfirmarAdicionarParticipanteAdmin">
                     {formulario.confirmar
-                        ? 'Entra já como participante, com xp inicial e pré-inscrição nos eventos abertos.'
+                        ? 'Entra já como participante, com 0 de xp e pré-inscrição nos eventos abertos.'
                         : 'Entra na fila de aguardando confirmação, como quem se inscreve pelo site.'}
                 </p>
 

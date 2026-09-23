@@ -613,7 +613,7 @@
 .modalMinicursosParticipantes {
   width: 100%;
   max-width: 720px;
-  max-height: 88vh;
+  max-height: 80vh;
   overflow-y: auto;
   box-sizing: border-box;
   background: var(--vermelhoAux2Participantes);
@@ -731,6 +731,7 @@
 
 .professorCardOpcaoModalMinicursosParticipantes { font-size: 9px; font-weight: 800; letter-spacing: 0.1em; color: rgba(252, 248, 245, 0.85); }
 .tituloCardOpcaoModalMinicursosParticipantes { font-family: var(--fonteTituloBungee); font-size: 14px; line-height: 1.15; }
+.localCardOpcaoModalMinicursosParticipantes,
 .horarioCardOpcaoModalMinicursosParticipantes { font-size: 10px; line-height: 1.4; opacity: 0.9; }
 
 .vagasCardOpcaoModalMinicursosParticipantes {

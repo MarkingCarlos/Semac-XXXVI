@@ -170,7 +170,8 @@ function CardOpcaoModalMinicursos({ curso, emEspera, onEscolher, onSair }) {
         >
             <span className="professorCardOpcaoModalMinicursosParticipantes">{curso.professor}</span>
             <span className="tituloCardOpcaoModalMinicursosParticipantes">{curso.titulo}</span>
-            <span className="horarioCardOpcaoModalMinicursosParticipantes">{curso.horarioLocal}</span>
+            <span className="localCardOpcaoModalMinicursosParticipantes">{curso.local}</span>
+            <span className="horarioCardOpcaoModalMinicursosParticipantes">{curso.diaHorario}</span>
 
             {curso.vagasRestantes !== null && !curso.escolhido && (
                 <span className="vagasCardOpcaoModalMinicursosParticipantes">

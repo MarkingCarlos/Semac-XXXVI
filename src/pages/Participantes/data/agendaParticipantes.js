@@ -215,6 +215,8 @@ export function montarMinicursos(eventos, meusEventos, agora) {
                 professor: (nomesPalestrantes(evento) || 'Palestrante a confirmar').toUpperCase(),
                 cor: CORES_MINICURSO_PARTICIPANTES[indice % CORES_MINICURSO_PARTICIPANTES.length],
                 horarioLocal: `${evento.local || 'Local a definir'} · ${formatarDiaCurto(evento)} · ${formatarFaixaHorario(evento)}`,
+                local: evento.local || 'Local a definir',
+                diaHorario: `${formatarDiaCurto(evento)} · ${formatarFaixaHorario(evento)}`,
                 vagasRestantes,
                 capacidadeMaxima: evento.capacidadeMaxima,
                 escolhido,
