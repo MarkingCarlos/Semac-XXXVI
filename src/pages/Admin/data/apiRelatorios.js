@@ -23,3 +23,12 @@ export async function buscarRelatorioCamisetasComissao() {
     if (!resposta.ok) throw new Error('Não foi possível carregar o relatório de camisetas da comissão.');
     return resposta.json();
 }
+
+/* Só as camisetas do modelo de participante (kit de participante ou de
+   inscrito pendente + todas as avulsas, inclusive as da comissão), com
+   total e quantidade por modelo e tamanho. */
+export async function buscarRelatorioCamisetasParticipantes() {
+    const resposta = await apiFetch(`${API_URL}/api/relatorio/camisetas-participantes`, { headers: cabecalhosAuth() });
+    if (!resposta.ok) throw new Error('Não foi possível carregar o relatório de camisetas de participantes.');
+    return resposta.json();
+}

@@ -1,15 +1,17 @@
 // Aba "Relatórios" do /admin — ponto único para os relatórios gerenciais
-// da organização. Hoje: camisetas e camisetas da comissão; novos relatórios entram
-// na lista RELATORIOS abaixo, cada um com seu próprio componente.
+// da organização. Hoje: camisetas (geral, comissão e participantes); novos relatórios
+// entram na lista RELATORIOS abaixo, cada um com seu próprio componente.
 
 import { useState } from 'preact/hooks';
 import RelatorioCamisetas from './RelatorioCamisetas.jsx';
 import RelatorioCamisetasComissao from './RelatorioCamisetasComissao.jsx';
+import RelatorioCamisetasParticipantes from './RelatorioCamisetasParticipantes.jsx';
 import './relatorios.css';
 
 const RELATORIOS = [
     { id: 'camisetas', rotulo: 'Camisetas', Componente: RelatorioCamisetas },
     { id: 'camisetasComissao', rotulo: 'Camisetas da comissão', Componente: RelatorioCamisetasComissao },
+    { id: 'camisetasParticipantes', rotulo: 'Camisetas de participantes', Componente: RelatorioCamisetasParticipantes },
 ];
 
 export default function Relatorios() {

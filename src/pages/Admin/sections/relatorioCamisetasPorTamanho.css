@@ -1,0 +1,41 @@
+/* =================================================================
+   relatorioCamisetasPorTamanho.css — relatórios de camisetas por
+   tamanho (comissão e participantes) da aba Relatórios. Cartões
+   reaproveitam .cartaoEstatisticaAdmin e a tabela reaproveita
+   .tabelaAdmin/.conteinerTabelaAdmin (admin.css).
+   ================================================================= */
+
+.conteudoRelatorioCamisetasPorTamanho {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.gradeCartoesRelatorioCamisetasPorTamanho {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 640px) {
+    .gradeCartoesRelatorioCamisetasPorTamanho { grid-template-columns: 1fr; }
+}
+
+/* Cor do total segue o cartão "Por perfil" do relatório geral:
+   comissão em rosa, participantes em amarelo. */
+.cartaoTotalComissaoRelatorioCamisetasPorTamanho .numeroEstatisticaAdmin { color: var(--rosaMarketing); }
+.cartaoTotalParticipantesRelatorioCamisetasPorTamanho .numeroEstatisticaAdmin { color: var(--AmareloAuxApoio); }
+.cartaoNormalRelatorioCamisetasPorTamanho .numeroEstatisticaAdmin { color: var(--Branco); }
+.cartaoBabyLookRelatorioCamisetasPorTamanho .numeroEstatisticaAdmin { color: var(--azulConteudo); }
+
+.descricaoCartaoRelatorioCamisetasPorTamanho {
+    font-size: 0.75rem;
+    line-height: 1.35;
+    opacity: 0.5;
+}
+
+/* Linha de total no rodapé da tabela: destaca a soma de cada coluna. */
+.linhaTotalRelatorioCamisetasPorTamanho td {
+    font-weight: 700;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
