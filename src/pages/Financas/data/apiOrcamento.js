@@ -1,7 +1,8 @@
 /* Parâmetros do orçamento da edição — SOMENTE LEITURA.
 
-   Nada aqui é digitado. Os três multiplicadores de escala vêm de
-   contagens no banco (inscritos, membros da comissão e palestrantes) e o
+   Nada aqui é digitado. Os multiplicadores de escala vêm de contagens no
+   banco (inscritos com kit, inscritos incluindo diária, membros da
+   comissão e palestrantes) e o
    teto vem do saldo da comissão, em lerResumoPrevisao(). Por isso não há
    função de atualizar: a rota só serve para a interface mostrar de onde
    cada número sai. */

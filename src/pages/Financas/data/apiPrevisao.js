@@ -5,7 +5,9 @@
    nas bordas.
 
    `valorTotal` e `fator` vêm calculados do backend e são somente leitura:
-   dependem da escala e do orçamento vigente, não de campos do formulário. */
+   dependem das escalas e do orçamento vigente, não de campos do formulário.
+   `escalas` é uma lista (vazia = valor fechado); o fator é a soma dos
+   contadores das escalas marcadas. */
 
 import { cabecalhosAuth, tratarErroAuth } from '../../../auth/sessao.js';
 import { apiFetch } from '../../../lib/apiFetch.js';
@@ -40,7 +42,7 @@ function paraRequisicao(item) {
         quantidade: Number(item.quantidade),
         valorUnitario: centavosParaReais(item.valorUnitario),
         frete: centavosParaReais(item.frete),
-        escala: item.escala,
+        escalas: item.escalas,
         status: item.status,
         dataPrevista: item.dataPrevista || null,
         observacao: item.observacao || null,

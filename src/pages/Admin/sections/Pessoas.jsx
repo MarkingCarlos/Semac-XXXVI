@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 import StatsGrid from '../StatsGrid.jsx';
 import TabelaParticipantes from '../TabelaParticipantes.jsx';
 import TabelaComissao from '../TabelaComissao.jsx';
+import Crachas from './Crachas.jsx';
 
 /* Invólucro da aba "Pessoas" do /admin. Reúne participantes e comissão
    numa entrada só da navbar, que já estava cheia.
@@ -12,11 +13,16 @@ import TabelaComissao from '../TabelaComissao.jsx';
    `aoAtualizarPessoa` precisa mexer nas duas ao mesmo tempo, e duplicar
    esse estado aqui dentro só criaria chance de as listas divergirem.
 
-   Padrão é "Participantes": é a lista consultada no dia a dia do evento. */
+   Padrão é "Participantes": é a lista consultada no dia a dia do evento.
+
+   "Crachás" gera os crachás impressos e busca os próprios dados
+   (GET /api/cracha) — inclui palestrantes, que não estão nas outras
+   listas. */
 
 const SUBABAS = [
     { id: 'participantes', rotulo: 'Participantes' },
     { id: 'comissao', rotulo: 'Comissão' },
+    { id: 'crachas', rotulo: 'Crachás' },
 ];
 
 export default function Pessoas({
@@ -97,6 +103,8 @@ export default function Pessoas({
                     )}
                 </div>
             )}
+
+            {subabaAtiva === 'crachas' && <Crachas />}
         </div>
     );
 }

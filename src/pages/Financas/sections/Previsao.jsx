@@ -46,13 +46,30 @@ const ROTULO_STATUS = {
     PAGO: 'Pago',
 };
 
-const ESCALAS = ['FIXA', 'POR_INSCRITO', 'POR_COMISSAO', 'POR_PALESTRANTE'];
+// Escalas por cabeça, combináveis: o fator é a soma dos contadores
+// marcados. Nenhuma marcada = valor fechado (fator 1).
+const ESCALAS = ['POR_INSCRITO', 'POR_INSCRITO_TOTAL', 'POR_COMISSAO', 'POR_PALESTRANTE'];
 const ROTULO_ESCALA = {
-    FIXA: 'Valor fechado',
-    POR_INSCRITO: 'Por inscrito',
+    POR_INSCRITO: 'Por inscrito com kit',
+    POR_INSCRITO_TOTAL: 'Por inscrito (inclui diária)',
     POR_COMISSAO: 'Por membro da comissão',
     POR_PALESTRANTE: 'Por palestrante',
 };
+
+// As duas escalas de inscrito contam as mesmas pessoas: marcar uma
+// desmarca a outra (o backend também recusa as duas juntas).
+const ESCALA_INSCRITO_EXCLUDENTE = {
+    POR_INSCRITO: 'POR_INSCRITO_TOTAL',
+    POR_INSCRITO_TOTAL: 'POR_INSCRITO',
+};
+
+function alternarEscala(escalasAtuais, escala) {
+    if (escalasAtuais.includes(escala)) return escalasAtuais.filter((e) => e !== escala);
+    const excludente = ESCALA_INSCRITO_EXCLUDENTE[escala];
+    return [...escalasAtuais.filter((e) => e !== excludente), escala];
+}
+
+const descreverEscalas = (escalas) => escalas.map((escala) => ROTULO_ESCALA[escala].toLowerCase()).join(' + ');
 
 const FORMULARIO_VAZIO = {
     descricao: '',
@@ -61,7 +78,7 @@ const FORMULARIO_VAZIO = {
     quantidade: 1,
     valorUnitario: 0,
     frete: 0,
-    escala: 'FIXA',
+    escalas: [],
     status: 'PREVISTO',
     dataPrevista: '',
     observacao: '',
@@ -260,7 +277,7 @@ export default function Previsao({ fornecedores, setFornecedores }) {
             quantidade: item.quantidade,
             valorUnitario: item.valorUnitario,
             frete: item.frete,
-            escala: item.escala,
+            escalas: item.escalas ?? [],
             status: item.status,
             dataPrevista: item.dataPrevista ?? '',
             observacao: item.observacao ?? '',
@@ -704,9 +721,9 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                                 <td className="celulaCalculoPrevisao">
                                     {formatarCentavos(item.valorUnitario)} × {item.quantidade}
                                     {item.frete > 0 && ` + ${formatarCentavos(item.frete)} frete`}
-                                    {item.fator > 1 && (
+                                    {item.escalas?.length > 0 && (
                                         <span className="fatorEscalaPrevisao">
-                                            × {item.fator} ({ROTULO_ESCALA[item.escala].toLowerCase()})
+                                            × {item.fator} ({descreverEscalas(item.escalas)})
                                         </span>
                                     )}
                                 </td>
@@ -878,21 +895,32 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                     </div>
 
                     <div className="campoFormularioFinancas">
-                        <label className="rotuloCampoFinancas" htmlFor="campoEscalaPrevisao">Escala *</label>
-                        <select
-                            id="campoEscalaPrevisao"
-                            className="entradaFormularioFinancas"
-                            required
-                            value={formulario.escala}
-                            onChange={(e) => setFormulario({ ...formulario, escala: e.currentTarget.value })}
-                        >
+                        <fieldset className="grupoEscalasPrevisao">
+                            <legend className="rotuloCampoFinancas">Escala</legend>
                             {ESCALAS.map((escala) => (
-                                <option key={escala} value={escala}>{ROTULO_ESCALA[escala]}</option>
+                                <label key={escala} className="opcaoEscalaPrevisao">
+                                    <input
+                                        type="checkbox"
+                                        className="caixaEscalaPrevisao"
+                                        checked={formulario.escalas.includes(escala)}
+                                        onChange={() => setFormulario({
+                                            ...formulario,
+                                            escalas: alternarEscala(formulario.escalas, escala),
+                                        })}
+                                    />
+                                    {ROTULO_ESCALA[escala]}
+                                </label>
                             ))}
-                        </select>
+                            <span className="resumoEscalasPrevisao">
+                                {formulario.escalas.length === 0
+                                    ? 'Valor fechado — o total é o próprio valor lançado.'
+                                    : `Multiplica por: ${descreverEscalas(formulario.escalas)}.`}
+                            </span>
+                        </fieldset>
                         <span className="ajudaCampoPrevisao">
                             Escalas por cabeça multiplicam pelo contador do orçamento e se
-                            recalculam sozinhas quando a estimativa muda.
+                            recalculam sozinhas quando a estimativa muda. Marcando mais de
+                            uma, os contadores se somam (ex.: inscritos + comissão).
                         </span>
                     </div>
 
@@ -1301,13 +1329,25 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                         </span>
                     </li>
                     <li className="parametroOrcamentoPrevisao">
-                        <span className="rotuloParametroOrcamentoPrevisao">Inscritos</span>
+                        <span className="rotuloParametroOrcamentoPrevisao">Inscritos com kit</span>
                         <strong className="valorParametroOrcamentoPrevisao">
                             {orcamento?.inscritosPrevistos ?? 0}
                         </strong>
                         <span className="ajudaCampoPrevisao">
                             Pessoas inscritas, confirmadas ou aguardando confirmação.
-                            Multiplica os itens com escala “Por inscrito”.
+                            Quem comprou ingresso diário não entra, porque não ganha kit.
+                            Multiplica os itens com escala “Por inscrito com kit”.
+                        </span>
+                    </li>
+                    <li className="parametroOrcamentoPrevisao">
+                        <span className="rotuloParametroOrcamentoPrevisao">Inscritos (inclui diária)</span>
+                        <strong className="valorParametroOrcamentoPrevisao">
+                            {orcamento?.inscritosTotais ?? 0}
+                        </strong>
+                        <span className="ajudaCampoPrevisao">
+                            Todas as pessoas inscritas, confirmadas ou aguardando
+                            confirmação, inclusive quem comprou ingresso diário.
+                            Multiplica a escala “Por inscrito (inclui diária)”.
                         </span>
                     </li>
                     <li className="parametroOrcamentoPrevisao">
@@ -1333,7 +1373,8 @@ export default function Previsao({ fornecedores, setFornecedores }) {
 
                 {/* Escala por cabeça com contador em zero dá total R$ 0,00.
                     Antes isso acontecia em silêncio; agora o painel diz. */}
-                {orcamento && (orcamento.membrosComissao === 0 || orcamento.palestrantesPrevistos === 0 || orcamento.inscritosPrevistos === 0) && (
+                {orcamento && (orcamento.membrosComissao === 0 || orcamento.palestrantesPrevistos === 0
+                    || orcamento.inscritosPrevistos === 0 || orcamento.inscritosTotais === 0) && (
                     <p className="avisoParametroZeradoPrevisao" role="status">
                         Contador em zero faz os itens daquela escala valerem R$ 0,00.
                         Cadastre as pessoas correspondentes, ou use “Valor fechado” no item.

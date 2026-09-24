@@ -351,6 +351,39 @@
     color: rgba(237, 236, 236, 0.55);
 }
 
+/* Escalas combináveis do formulário: uma caixa por escala. */
+.grupoEscalasPrevisao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.opcaoEscalaPrevisao {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-family: 'Montserrat', 'sans-serif';
+    font-size: 0.9rem;
+    color: #edecec;
+    cursor: pointer;
+}
+
+.caixaEscalaPrevisao {
+    width: 1rem;
+    height: 1rem;
+    accent-color: #E79839;
+    cursor: pointer;
+}
+
+.resumoEscalasPrevisao {
+    font-family: 'Montserrat', 'sans-serif';
+    font-size: 0.8rem;
+    color: #E79839;
+}
+
 .ajudaCampoPrevisao {
     font-family: 'Montserrat', 'sans-serif';
     font-size: 0.8rem;

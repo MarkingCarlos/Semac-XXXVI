@@ -1,0 +1,167 @@
+/* =================================================================
+   crachas.css — subaba Crachás (aba Pessoas do /admin).
+   Tela: lista com seleção + prévia em tamanho real.
+   Impressão: só o portal com as folhas A4 aparece (9 crachás de
+   55 × 83,5 mm em 3 × 3, sem espaço entre eles, com marcas de corte na
+   margem prolongando as linhas da grade).
+   ================================================================= */
+
+.resumoImpressaoCrachas {
+    margin: 0;
+    font-size: 0.85rem;
+    color: rgba(237, 236, 236, 0.7);
+}
+
+.controlesListaCrachas {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.listaPessoasCrachas {
+    list-style: none;
+    margin: 0;
+    padding: 0.25rem 0;
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.itemPessoaCrachas {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.itemPessoaCrachas:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.caixaSelecaoPessoaCrachas {
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--AmareloAuxApoio);
+    cursor: pointer;
+}
+
+.spanNomePessoaCrachas {
+    flex: 1;
+    font-weight: 600;
+}
+
+.spanPerfilPessoaCrachas {
+    font-size: 0.75rem;
+    opacity: 0.55;
+}
+
+.spanSemQrPessoaCrachas {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--rosaMarketing);
+}
+
+.blocoPreviaCrachas {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.gradePreviaCrachas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+/* ── Folhas de impressão ─────────────────────────────────────── */
+
+.portalImpressaoCrachas {
+    display: none;
+}
+
+.folhaA4Crachas {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    overflow: hidden;
+    background: #ffffff;
+    break-after: page;
+}
+
+.folhaA4Crachas:last-child {
+    break-after: auto;
+}
+
+/* 3 × 55 = 165 mm de largura e 3 × 83,5 = 250,5 mm de altura,
+   centralizados na folha. */
+.gradeFolhaCrachas {
+    position: absolute;
+    left: 22.5mm;
+    top: 23.25mm;
+    width: 165mm;
+    height: 250.5mm;
+    display: grid;
+    grid-template-columns: repeat(3, 55mm);
+    grid-template-rows: repeat(3, 83.5mm);
+}
+
+.marcaCorteVerticalTopoFolhaCrachas,
+.marcaCorteVerticalBaseFolhaCrachas,
+.marcaCorteHorizontalEsquerdaFolhaCrachas,
+.marcaCorteHorizontalDireitaFolhaCrachas {
+    position: absolute;
+    background: #000000;
+}
+
+.marcaCorteVerticalTopoFolhaCrachas,
+.marcaCorteVerticalBaseFolhaCrachas {
+    width: 0.2mm;
+    height: 6mm;
+    margin-left: -0.1mm;
+}
+
+.marcaCorteVerticalTopoFolhaCrachas { top: -8mm; }
+.marcaCorteVerticalBaseFolhaCrachas { bottom: -8mm; }
+
+.marcaCorteHorizontalEsquerdaFolhaCrachas,
+.marcaCorteHorizontalDireitaFolhaCrachas {
+    width: 6mm;
+    height: 0.2mm;
+    margin-top: -0.1mm;
+}
+
+.marcaCorteHorizontalEsquerdaFolhaCrachas { left: -8mm; }
+.marcaCorteHorizontalDireitaFolhaCrachas { right: -8mm; }
+
+@media print {
+    @page {
+        size: A4;
+        margin: 0;
+    }
+
+    html,
+    body {
+        background: #ffffff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    body > *:not(.portalImpressaoCrachas) {
+        display: none !important;
+    }
+
+    .portalImpressaoCrachas {
+        display: block;
+    }
+
+    .marcaCorteVerticalTopoFolhaCrachas,
+    .marcaCorteVerticalBaseFolhaCrachas,
+    .marcaCorteHorizontalEsquerdaFolhaCrachas,
+    .marcaCorteHorizontalDireitaFolhaCrachas {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
