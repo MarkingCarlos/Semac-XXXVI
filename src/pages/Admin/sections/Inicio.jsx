@@ -135,7 +135,7 @@ function LinhaCamisetaInicio({ camiseta, indice, aoAlterarCampo, desabilitado, e
     );
 }
 
-export default function Inicio({ podeAcessarFinanceiro = false }) {
+export default function Inicio({ podeAcessarFinanceiro = false, podeVerPrevisao = false }) {
     const [perfil, setPerfil] = useState(null);
     const [carregando, setCarregando] = useState(true);
     const [erroCarregar, setErroCarregar] = useState('');
@@ -218,10 +218,15 @@ export default function Inicio({ podeAcessarFinanceiro = false }) {
                 <p className="saudacaoInicio">Bem-vindo,</p>
                 <div className="linhaNomeCardInicio">
                     <h1 className="nomeBoasVindasInicio">{primeiroNome}</h1>
-                    {podeAcessarFinanceiro && (
+                    {podeAcessarFinanceiro ? (
                         <Link href="/financeiro" className="cartaoIrFinanceiroInicio">
                             <span className="tituloCartaoIrFinanceiroInicio">Ir para o financeiro</span>
                             <span className="subtituloCartaoIrFinanceiroInicio">Acessar o painel financeiro da SEMAC</span>
+                        </Link>
+                    ) : podeVerPrevisao && (
+                        <Link href="/financeiro" className="cartaoIrFinanceiroInicio">
+                            <span className="tituloCartaoIrFinanceiroInicio">Ver previsão de gastos</span>
+                            <span className="subtituloCartaoIrFinanceiroInicio">Acompanhar o orçamento da SEMAC (somente leitura)</span>
                         </Link>
                     )}
                 </div>

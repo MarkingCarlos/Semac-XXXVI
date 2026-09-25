@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'preact/hooks'
 import { useLocation } from 'wouter'
-import { salvarSessao, temAcessoFinanceiro, temAcessoAdmin, temAcessoParticipante } from '../../auth/sessao.js'
+import { salvarSessao, temAcessoFinanceiro, temAcessoPrevisao, temAcessoAdmin, temAcessoParticipante } from '../../auth/sessao.js'
 import { apiFetch } from '../../lib/apiFetch.js'
 import { criarPagamentoCartao } from './apiPagamento.js'
 import { carregarMercadoPago } from './lib/carregarMercadoPago.js'
@@ -40,6 +40,8 @@ const ROTAS_ADMIN = ['/admin', '/sorteio', '/checkin']
 function destinoPosLogin(rotaRetorno) {
     if (rotaRetorno) {
         if (rotaRetorno.startsWith('/financeiro') && temAcessoFinanceiro()) return rotaRetorno
+        // Leitura da Previsão: só a raiz do /financeiro, conjuntos seguem fechados
+        if (rotaRetorno === '/financeiro' && temAcessoPrevisao())            return rotaRetorno
         if (ROTAS_ADMIN.includes(rotaRetorno) && temAcessoAdmin())          return rotaRetorno
         if (rotaRetorno === '/participantes' && temAcessoParticipante())     return rotaRetorno
     }

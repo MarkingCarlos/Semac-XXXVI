@@ -129,8 +129,13 @@ function TooltipPrevisao({ active, payload, label }) {
 
    Os totais NÃO são somados aqui: vêm do /api/previsao/resumo, que tem o
    orçamento em mãos para aplicar as escalas. Recalcular no cliente daria
-   um segundo lugar para a mesma regra divergir. */
-export default function Previsao({ fornecedores, setFornecedores }) {
+   um segundo lugar para a mesma regra divergir.
+
+   `somenteLeitura`: diretores fora do financeiro veem indicadores,
+   gráficos, tabela e parâmetros, mas nenhum botão que altere dados. A
+   trava de verdade é no backend (só GET liberado para eles). */
+export default function Previsao({ fornecedores, setFornecedores, somenteLeitura = false }) {
+    const totalColunasTabela = somenteLeitura ? 5 : 6;
     const [itens, setItens] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [resumo, setResumo] = useState(null);
@@ -436,21 +441,25 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                     </p>
                 </div>
                 <div className="controlesCabecalhoFinancas">
-                    <button type="button" className="botaoFantasmaFinancas" onClick={abrirCategorias}>
-                        Categorias
-                    </button>
+                    {!somenteLeitura && (
+                        <button type="button" className="botaoFantasmaFinancas" onClick={abrirCategorias}>
+                            Categorias
+                        </button>
+                    )}
                     <button type="button" className="botaoFantasmaFinancas" onClick={abrirOrcamento} disabled={!orcamento}>
                         Orçamento
                     </button>
-                    <button
-                        type="button"
-                        className="botaoPrimarioFinancas"
-                        onClick={abrirNovaPrevisao}
-                        disabled={categorias.length === 0}
-                        title={categorias.length === 0 ? 'Crie uma categoria antes de lançar a primeira previsão' : undefined}
-                    >
-                        + Nova previsão
-                    </button>
+                    {!somenteLeitura && (
+                        <button
+                            type="button"
+                            className="botaoPrimarioFinancas"
+                            onClick={abrirNovaPrevisao}
+                            disabled={categorias.length === 0}
+                            title={categorias.length === 0 ? 'Crie uma categoria antes de lançar a primeira previsão' : undefined}
+                        >
+                            + Nova previsão
+                        </button>
+                    )}
                 </div>
             </header>
 
@@ -681,19 +690,19 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                             <th>Cálculo</th>
                             <th>Total</th>
                             <th>Estágio</th>
-                            <th aria-label="Ações" />
+                            {!somenteLeitura && <th aria-label="Ações" />}
                         </tr>
                     </thead>
                     <tbody>
                         {carregando && (
-                            <tr><td colSpan={6} className="celulaVaziaFinancas">Carregando previsão…</td></tr>
+                            <tr><td colSpan={totalColunasTabela} className="celulaVaziaFinancas">Carregando previsão…</td></tr>
                         )}
                         {!carregando && itensFiltrados.length === 0 && (
                             <tr>
-                                <td colSpan={6} className="celulaVaziaFinancas">
+                                <td colSpan={totalColunasTabela} className="celulaVaziaFinancas">
                                     {filtro.trim() || filtroCategoria || filtroStatus
                                         ? 'Nenhuma previsão encontrada para esse filtro.'
-                                        : categorias.length === 0
+                                        : categorias.length === 0 && !somenteLeitura
                                             ? 'Nenhuma categoria cadastrada — crie a primeira em “Categorias” para poder lançar previsões.'
                                             : 'Nenhuma previsão registrada ainda.'}
                                 </td>
@@ -738,6 +747,7 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                                         {ROTULO_STATUS[item.status]}
                                     </span>
                                 </td>
+                                {!somenteLeitura && (
                                 <td>
                                     <div className="grupoAcoesLinhaFinancas">
                                         {item.status !== 'PAGO' && (
@@ -801,6 +811,7 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                                         </button>
                                     </div>
                                 </td>
+                                )}
                             </tr>
                         ))}
                     </tbody>
@@ -813,7 +824,7 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                                 <td className="celulaValorFinancas celulaValorTotalPrevisao">
                                     {formatarCentavos(totalFiltrado)}
                                 </td>
-                                <td colSpan={2} />
+                                <td colSpan={totalColunasTabela - 4} />
                             </tr>
                         </tfoot>
                     )}
@@ -1079,7 +1090,9 @@ export default function Previsao({ fornecedores, setFornecedores }) {
                                 </strong>
                                 <span className="notaNumeroDetalhePrevisao">
                                     {detalheCategoria.margem === null
-                                        ? 'Defina um teto em “Categorias” para acompanhar'
+                                        ? somenteLeitura
+                                            ? 'Categoria sem teto definido'
+                                            : 'Defina um teto em “Categorias” para acompanhar'
                                         : `Teto menos a projeção de ${formatarCentavos(detalheCategoria.projecao)}`}
                                 </span>
                             </li>

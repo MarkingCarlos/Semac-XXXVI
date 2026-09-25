@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { useLocation } from 'wouter';
-import { limparSessao } from '../../auth/sessao.js';
+import { limparSessao, temAcessoFinanceiro } from '../../auth/sessao.js';
 import Resumo from './sections/Resumo.jsx';
 import Patrocinios from './sections/Patrocinios.jsx';
 import Compras from './sections/Compras.jsx';
@@ -35,7 +35,13 @@ const SECOES = [
    Acesso será restrito a diretores e presidente quando o login existir. */
 export default function Financas() {
     const [, navegar] = useLocation();
-    const [secaoAtiva, setSecaoAtiva] = useState('resumo');
+
+    // Diretores de conteúdo, patrocínio, apoio e marketing entram aqui só
+    // para ver a Previsão: as demais abas somem e nada é editável. As
+    // outras listas nem são buscadas — a API responderia 403 para eles.
+    const podeEditarFinanceiro = temAcessoFinanceiro();
+    const secoesVisiveis = podeEditarFinanceiro ? SECOES : SECOES.filter((secao) => secao.id === 'previsao');
+    const [secaoAtiva, setSecaoAtiva] = useState(podeEditarFinanceiro ? 'resumo' : 'previsao');
 
     // Encerra a sessão e volta para o site público.
     function sair() {
@@ -120,6 +126,7 @@ export default function Financas() {
     }
 
     useEffect(() => {
+        if (!podeEditarFinanceiro) return undefined;
         let ativo = true;
         listarPatrocinadores()
             .then((lista) => {
@@ -227,7 +234,11 @@ export default function Financas() {
                         />
                     )}
                     {secaoAtiva === 'previsao' && (
-                        <Previsao fornecedores={fornecedores} setFornecedores={setFornecedores} />
+                        <Previsao
+                            fornecedores={fornecedores}
+                            setFornecedores={setFornecedores}
+                            somenteLeitura={!podeEditarFinanceiro}
+                        />
                     )}
                     {secaoAtiva === 'patrocinios' && (
                         <Patrocinios
@@ -292,7 +303,7 @@ export default function Financas() {
                         style={{ left: `${indicadorNav.left}px`, width: `${indicadorNav.width}px` }}
                         aria-hidden="true"
                     />
-                    {SECOES.map((secao) => (
+                    {secoesVisiveis.map((secao) => (
                         <button
                             key={secao.id}
                             type="button"

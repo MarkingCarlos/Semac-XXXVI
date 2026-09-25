@@ -3,7 +3,7 @@ import { lazy, Suspense } from 'preact/compat'
 import './index.css'
 import { App } from './app.jsx'
 import { Switch, Route, Redirect } from 'wouter'
-import { temAcessoFinanceiro, temAcessoAdmin, temAcessoParticipante } from './auth/sessao.js'
+import { temAcessoFinanceiro, temAcessoPrevisao, temAcessoAdmin, temAcessoParticipante } from './auth/sessao.js'
 
 /* Páginas carregadas sob demanda (uma por rota): a home pública (`App`,
    acima) não precisa esperar o JS do /admin, /financeiro, /participantes,
@@ -41,8 +41,10 @@ function CarregandoRota() {
 }
 
 
+/* temAcessoPrevisao já inclui os papéis do financeiro; quem tem só ela
+   entra vendo apenas a aba Previsão (ver Financas.jsx). */
 function RotaFinanceiro() {
-    return temAcessoFinanceiro()
+    return temAcessoPrevisao()
         ? <Financas />
         : <Redirect to="/inscricoes?tab=entrar&next=/financeiro" />;
 }

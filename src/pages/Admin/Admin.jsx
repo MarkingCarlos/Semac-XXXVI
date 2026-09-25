@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { Link, useLocation } from 'wouter';
-import { lerSessao, limparSessao, temAcessoFinanceiro } from '../../auth/sessao.js';
+import { lerSessao, limparSessao, temAcessoFinanceiro, temAcessoPrevisao } from '../../auth/sessao.js';
 import '../Financas/financas.css';
 import './admin.css';
 
@@ -36,6 +36,7 @@ export default function Admin() {
     const roleAtual = lerSessao()?.role;
     const secoesVisiveis = SECOES.filter(s => !s.papeis || s.papeis.includes(roleAtual));
     const podeAcessarFinanceiro = temAcessoFinanceiro();
+    const podeVerPrevisao = temAcessoPrevisao();
 
     // Encerra a sessão e volta para o site público.
     function sair() {
@@ -148,7 +149,7 @@ export default function Admin() {
             {/* ── Conteúdo ────────────────────────────────── */}
             <main className="conteudoAdmin">
                 <section key={secaoAtiva} className="secaoAdmin">
-                    {secaoAtiva === 'inicio' && <Inicio podeAcessarFinanceiro={podeAcessarFinanceiro} />}
+                    {secaoAtiva === 'inicio' && <Inicio podeAcessarFinanceiro={podeAcessarFinanceiro} podeVerPrevisao={podeVerPrevisao} />}
                     {secaoAtiva === 'doacoes' && <Doacoes />}
                     {secaoAtiva === 'conteudo' && (
                         <Conteudo

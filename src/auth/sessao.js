@@ -13,6 +13,10 @@ const CHAVE_SESSAO = 'semacSessao';
 /* Papéis com acesso ao módulo financeiro (/financeiro). */
 const PAPEIS_FINANCEIRO = ['DIRETOR_SITE', 'PRESIDENTE'];
 
+/* Papéis que podem VER a aba Previsão do /financeiro, sem editar nada.
+   Espelha PAPEIS_LEITURA_PREVISAO do backend (SecurityConfig). */
+const PAPEIS_LEITURA_PREVISAO = [...PAPEIS_FINANCEIRO, 'DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING'];
+
 /* Papéis com acesso ao módulo de administração (/admin). */
 const PAPEIS_ADMIN = ['MEMBRO', 'DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'];
 
@@ -75,6 +79,13 @@ export function usuarioLogado() {
 export function temAcessoFinanceiro() {
     const sessao = lerSessao();
     return !!sessao && PAPEIS_FINANCEIRO.includes(sessao.role) && !sessaoExpirada();
+}
+
+/* Entrada no /financeiro. Quem tem só esta (e não temAcessoFinanceiro)
+   vê apenas a aba Previsão, em modo leitura. */
+export function temAcessoPrevisao() {
+    const sessao = lerSessao();
+    return !!sessao && PAPEIS_LEITURA_PREVISAO.includes(sessao.role) && !sessaoExpirada();
 }
 
 export function temAcessoAdmin() {
