@@ -18,6 +18,7 @@ export default function SecaoPerfilParticipantes({
     certificados,
     certificadosLiberados,
     onAbrirQr,
+    onSair,
 }) {
     return (
         <div className="secaoPerfilParticipantes">
@@ -51,6 +52,12 @@ export default function SecaoPerfilParticipantes({
                         <span>{perfil.presencas} de {perfil.presencasTotais} atividades</span>
                     </div>
                 </div>
+
+                {/* Fecha a coluna de dados, longe do QR CODE: sair é raro e
+                    não deve ser tocado sem querer no celular. */}
+                <button type="button" className="botaoSairContaSecaoPerfilParticipantes" onClick={onSair}>
+                    SAIR DA CONTA
+                </button>
             </div>
             {conquistas.length > 0 && (
             <div className="blocoConquistasSecaoPerfilParticipantes">

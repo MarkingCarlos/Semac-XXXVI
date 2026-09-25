@@ -482,7 +482,6 @@ export default function Participantes() {
                         email={emailParticipante}
                         iniciais={iniciais}
                         onIrParaPaginaPrincipal={irParaPaginaPrincipal}
-                        onSair={sair}
                     />
                 </div>
             </header>
@@ -549,6 +548,7 @@ export default function Participantes() {
                             certificados={certificadosMockParticipante}
                             certificadosLiberados={CERTIFICADOS_LIBERADOS_PARTICIPANTES}
                             onAbrirQr={() => setQrAberto(true)}
+                            onSair={sair}
                         />
                     )}
                 </div>

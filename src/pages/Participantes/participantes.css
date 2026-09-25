@@ -156,8 +156,7 @@
   overflow-wrap: anywhere;
 }
 
-.itemPaginaPrincipalMenuPerfilCabecalhoParticipantes,
-.itemSairMenuPerfilCabecalhoParticipantes {
+.itemPaginaPrincipalMenuPerfilCabecalhoParticipantes {
   width: 100%;
   text-align: right;
   background: none;
@@ -171,23 +170,10 @@
   transition: color 0.2s ease, background 0.2s ease;
 }
 
-/* Divisória entre a volta pro site e o sair: são ações de peso bem
-   diferente, não dá pra clicar em uma achando que é a outra. */
-.itemPaginaPrincipalMenuPerfilCabecalhoParticipantes {
-  border-bottom: 1px solid rgba(252, 248, 245, 0.15);
-}
-
 .itemPaginaPrincipalMenuPerfilCabecalhoParticipantes:hover,
 .itemPaginaPrincipalMenuPerfilCabecalhoParticipantes:focus-visible {
   background: rgba(252, 248, 245, 0.07);
   color: var(--brancoQuenteParticipantes);
-  outline: none;
-}
-
-.itemSairMenuPerfilCabecalhoParticipantes:hover,
-.itemSairMenuPerfilCabecalhoParticipantes:focus-visible {
-  background: rgba(252, 248, 245, 0.07);
-  color: #e9897b;
   outline: none;
 }
 
@@ -719,6 +705,10 @@
   gap: 8px;
   color: var(--brancoQuenteParticipantes);
   border: 3px solid transparent;
+  /* Palavra maior que o card quebra (com hífen onde o navegador souber
+     silabar pt-br) em vez de vazar a borda ou esticar a coluna da grade. */
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 @media (min-width: 560px) {
@@ -1621,6 +1611,29 @@
   border: none;
   background: var(--AmareloAuxApoio);
   color: var(--vermelhoAuxDiretoria);
+}
+
+/* Sair da conta: secundário, só contorno — o destaque fica com o QR CODE. */
+.botaoSairContaSecaoPerfilParticipantes {
+  width: 100%;
+  font-family: var(--fonteTituloBungee);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  min-height: 46px;
+  border-radius: 8px;
+  cursor: pointer;
+  background: none;
+  border: 1px solid rgba(252, 248, 245, 0.25);
+  color: rgba(252, 248, 245, 0.7);
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.botaoSairContaSecaoPerfilParticipantes:hover,
+.botaoSairContaSecaoPerfilParticipantes:focus-visible {
+  background: rgba(252, 248, 245, 0.07);
+  border-color: #e9897b;
+  color: #e9897b;
+  outline: none;
 }
 
 .cardDadosInscricaoSecaoPerfilParticipantes {
