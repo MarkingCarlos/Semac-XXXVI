@@ -825,6 +825,109 @@
   color: var(--brancoQuenteParticipantes);
 }
 
+/* ── Escolha dos dias do ingresso diário ─────────────────
+   Reaproveita a casca do modal de minicursos; só os cards de dia e o
+   rodapé são próprios. */
+.gradeDiasModalDiasIngressoParticipantes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+  gap: 10px;
+}
+
+.botaoDiaModalDiasIngressoParticipantes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 14px 8px;
+  border-radius: 18px;
+  border: 3px solid transparent;
+  background: rgba(11, 11, 11, 0.2);
+  color: var(--brancoQuenteParticipantes);
+  font-family: var(--fonteCorpoMontserrat);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.botaoDiaModalDiasIngressoParticipantes:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.botaoDiaSelecionadoModalDiasIngressoParticipantes {
+  background: var(--vermelhoDiretoria);
+  border-color: var(--AmareloAuxApoio);
+}
+
+/* Dia travado (em uso) segue selecionado: só não dá pra desmarcar. */
+.botaoDiaSelecionadoModalDiasIngressoParticipantes:disabled { opacity: 1; }
+
+.nomeBotaoDiaModalDiasIngressoParticipantes { font-size: 10px; font-weight: 800; letter-spacing: 0.08em; }
+.numeroBotaoDiaModalDiasIngressoParticipantes { font-family: var(--fonteTituloBungee); font-size: 26px; line-height: 1.1; }
+.mesBotaoDiaModalDiasIngressoParticipantes { font-family: var(--fonteTituloBungee); font-size: 11px; color: var(--AmareloAuxApoio); }
+
+.etiquetaBotaoDiaModalDiasIngressoParticipantes {
+  margin-top: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  background: rgba(11, 11, 11, 0.25);
+}
+
+.contadorModalDiasIngressoParticipantes { font-size: 11px; font-weight: 700; color: var(--Branco); }
+
+.acoesRodapeModalDiasIngressoParticipantes { display: flex; align-items: center; gap: 8px; }
+
+.botaoConfirmarModalDiasIngressoParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 11px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--AmareloAuxApoio);
+  color: var(--vermelhoAuxDiretoria);
+  cursor: pointer;
+}
+
+.botaoConfirmarModalDiasIngressoParticipantes:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Modal do QR: em que dias o crachá do diarista vale, ou o convite a
+   escolher quando ainda não escolheu. */
+.avisoDiasModalQrParticipantes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--brancoQuenteParticipantes);
+}
+
+.rotuloDiasModalQrParticipantes { font-weight: 800; letter-spacing: 0.06em; }
+
+.botaoDiasModalQrParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 11px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--AmareloAuxApoio);
+  color: var(--vermelhoAuxDiretoria);
+  cursor: pointer;
+}
+
+.botaoTrocarDiasModalQrParticipantes {
+  font-size: 10px;
+  font-weight: 700;
+  border: none;
+  background: none;
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 /* ── Cores compartilhadas (minicursos / conquistas) ─────── */
 .corMinicursoAzulParticipantes {
   background: #94499E;

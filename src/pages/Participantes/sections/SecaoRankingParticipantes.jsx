@@ -32,7 +32,8 @@ function notaAtraso(regrasXp) {
 }
 
 export default function SecaoRankingParticipantes({ ranking, regrasXp }) {
-    const regrasEmPontos = regrasXp.filter((regra) => regra.unidade === 'PONTOS');
+    // Atividade que vale 0 XP não é jeito de ganhar XP — fica fora do card.
+    const regrasEmPontos = regrasXp.filter((regra) => regra.unidade === 'PONTOS' && regra.valor > 0);
     const avisoAtraso = notaAtraso(regrasXp);
 
     return (

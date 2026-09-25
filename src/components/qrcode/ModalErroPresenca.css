@@ -72,6 +72,18 @@
     margin-top: 12px;
 }
 
+/* Orientação ao operador no caso do ingresso diário fora do dia. */
+.avisoIngressoDiarioModalErroPresenca {
+    font-size: 0.78rem;
+    line-height: 1.45;
+    font-weight: 700;
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--vermelhoAuxDiretoria);
+    color: var(--AmareloAuxApoio);
+}
+
 .acoesModalErroPresenca {
     display: flex;
     flex-direction: column;

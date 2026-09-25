@@ -27,6 +27,7 @@ import './participantes.css';
 
 import QrCrachaParticipantes from './QrCrachaParticipantes.jsx';
 import ModalEscolhaMinicursos from './ModalEscolhaMinicursos.jsx';
+import ModalEscolhaDiasIngresso from './ModalEscolhaDiasIngresso.jsx';
 import MenuPerfilParticipantes from './MenuPerfilParticipantes.jsx';
 import MenuFabParticipantes from './MenuFabParticipantes.jsx';
 import SecaoInicioParticipantes from './sections/SecaoInicioParticipantes.jsx';
@@ -42,6 +43,10 @@ import {
     cancelarMinicurso,
 } from './data/apiEventosParticipantes.js';
 import { buscarNivelParticipante } from './data/apiPerfilParticipante.js';
+import {
+    buscarDiasIngressoParticipante,
+    salvarDiasIngressoParticipante,
+} from './data/apiDiasIngressoParticipante.js';
 import { buscarRankingParticipante } from './data/apiRankingParticipante.js';
 import { buscarRegrasXpParticipante } from './data/apiRegrasXpParticipante.js';
 import { listarMinhasConquistas, marcarConquistaComoVista } from './data/apiConquistasParticipante.js';
@@ -57,6 +62,7 @@ import {
     atividadeAgora,
     proximaAtividade,
     ehMinicurso,
+    diaDoEvento,
 } from './data/agendaParticipantes.js';
 
 import {
@@ -92,6 +98,14 @@ const DURACAO_SAIDA_ABA_PARTICIPANTES = 180;
 /* De quanto em quanto tempo o relógio da página avança — é ele que move
    um item de "a seguir" para "acontece agora". */
 const INTERVALO_RELOGIO_PARTICIPANTES = 60000;
+
+/* '2026-10-26' → 'SEG 26/10', o rótulo de dia do modal do QR. */
+const ROTULOS_DIA_INGRESSO_QR = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
+function formatarDiaIngressoQr(dia) {
+    const data = new Date(`${dia}T00:00:00`);
+    const mes = String(data.getMonth() + 1).padStart(2, '0');
+    return `${ROTULOS_DIA_INGRESSO_QR[data.getDay()]} ${data.getDate()}/${mes}`;
+}
 
 function iniciaisNomeParticipante(nome) {
     if (!nome) return '';
@@ -130,6 +144,14 @@ export default function Participantes() {
     const [diaSelecionado, setDiaSelecionado] = useState('');
     const [erroMinicurso, setErroMinicurso] = useState('');
     const [minicursoEmEspera, setMinicursoEmEspera] = useState(null);
+
+    /* Ingresso diário: em quais dias o QR vale. null até carregar (e para
+       sempre, se a chamada falhar — aí a página segue como ingresso cheio,
+       e o check-in continua barrando no backend). */
+    const [diasIngresso, setDiasIngresso] = useState(null);
+    const [escolhaDiasAberta, setEscolhaDiasAberta] = useState(false);
+    const [salvandoDiasIngresso, setSalvandoDiasIngresso] = useState(false);
+    const [erroDiasIngresso, setErroDiasIngresso] = useState('');
 
     /* Desafios são carregados só quando a aba é aberta: a maioria das
        visitas não passa por ela, e seria mais uma requisição em toda
@@ -185,6 +207,16 @@ export default function Participantes() {
             .then((valor) => { if (ativo) setNivel(valor); })
             .catch(() => {})
             .finally(() => { if (ativo) setCarregandoNivel(false); });
+        return () => { ativo = false; };
+    }, []);
+
+    /* Dias do ingresso diário. Separado da agenda como os demais: uma
+       falha aqui não derruba a página. */
+    useEffect(() => {
+        let ativo = true;
+        buscarDiasIngressoParticipante()
+            .then((valor) => { if (ativo && valor) setDiasIngresso(valor); })
+            .catch(() => {});
         return () => { ativo = false; };
     }, []);
 
@@ -254,7 +286,24 @@ export default function Participantes() {
         }
     }
 
-    const diasSemana = useMemo(() => montarDiasDaSemana(eventos, agora), [eventos, agora]);
+    /* Diarista que ainda não completou a escolha não passa daqui: o modal
+       abre sozinho e só fecha depois de confirmar. Sem programação
+       publicada não há o que escolher, então não trava a página. */
+    const escolhaDiasPendente = Boolean(
+        diasIngresso?.porDia
+            && diasIngresso.diasDisponiveis.length > 0
+            && diasIngresso.diasEscolhidos.length < diasIngresso.diasContratados,
+    );
+
+    /* A agenda do diarista é só a dos dias do ingresso dele: palestras,
+       minicursos e o "acontece agora" dos outros dias não são dele. */
+    const eventosDoIngresso = useMemo(() => {
+        if (!diasIngresso?.porDia || diasIngresso.diasEscolhidos.length === 0) return eventos;
+        const diasValidos = new Set(diasIngresso.diasEscolhidos);
+        return eventos.filter((evento) => diasValidos.has(diaDoEvento(evento)));
+    }, [eventos, diasIngresso]);
+
+    const diasSemana = useMemo(() => montarDiasDaSemana(eventosDoIngresso, agora), [eventosDoIngresso, agora]);
 
     /* Abre no dia de hoje quando há programação hoje; fora da semana do
        evento, no próximo dia com atividade. */
@@ -265,33 +314,33 @@ export default function Participantes() {
     }, [diasSemana]);
 
     const palestrasDoDiaSelecionado = useMemo(
-        () => palestrasDoDia(eventos, diaSelecionado, agora),
-        [eventos, diaSelecionado, agora],
+        () => palestrasDoDia(eventosDoIngresso, diaSelecionado, agora),
+        [eventosDoIngresso, diaSelecionado, agora],
     );
 
     const meuDia = useMemo(
-        () => montarMeuDia(eventos, meusEventos, diaSelecionado, agora),
-        [eventos, meusEventos, diaSelecionado, agora],
+        () => montarMeuDia(eventosDoIngresso, meusEventos, diaSelecionado, agora),
+        [eventosDoIngresso, meusEventos, diaSelecionado, agora],
     );
 
     const minicursos = useMemo(
-        () => montarMinicursos(eventos, meusEventos, agora),
-        [eventos, meusEventos, agora],
+        () => montarMinicursos(eventosDoIngresso, meusEventos, agora),
+        [eventosDoIngresso, meusEventos, agora],
     );
 
     const meusMinicursos = useMemo(() => minicursos.filter((curso) => curso.escolhido), [minicursos]);
 
     const atividadeAtual = useMemo(
-        () => atividadeAgora(eventos, meusEventos, agora),
-        [eventos, meusEventos, agora],
+        () => atividadeAgora(eventosDoIngresso, meusEventos, agora),
+        [eventosDoIngresso, meusEventos, agora],
     );
 
     const atividadeSeguinte = useMemo(
-        () => proximaAtividade(eventos, meusEventos, agora),
-        [eventos, meusEventos, agora],
+        () => proximaAtividade(eventosDoIngresso, meusEventos, agora),
+        [eventosDoIngresso, meusEventos, agora],
     );
 
-    const totalMinicursos = useMemo(() => eventos.filter(ehMinicurso).length, [eventos]);
+    const totalMinicursos = useMemo(() => eventosDoIngresso.filter(ehMinicurso).length, [eventosDoIngresso]);
 
     /* Widget de ranking do Início é compacto: sem a cauda extra que só
        aparece na aba Ranking pra preencher telas grandes. */
@@ -302,7 +351,11 @@ export default function Participantes() {
 
     /* Troca de aba em dois tempos: o conteúdo atual some, e só então o novo
        entra. Sem isso a tela pisca do conteúdo antigo pro novo. Repetir a
-       aba atual não faz nada — não vale piscar a tela à toa. */
+       aba atual não faz nada — não vale piscar a tela à toa.
+
+       A aba nova sempre começa do topo: o salto acontece com o conteúdo
+       antigo já invisível, então não aparece. Rolagem nativa — o Lenis é
+       desligado nesta página (ver efeito abaixo). */
     function irPara(aba) {
         setQrAberto(false);
         if (aba === abaAtiva) return;
@@ -311,11 +364,23 @@ export default function Participantes() {
         clearTimeout(temporizadorTrocaAbaRef.current);
         temporizadorTrocaAbaRef.current = setTimeout(() => {
             setAbaAtiva(aba);
+            window.scrollTo(0, 0);
             setTrocandoAba(false);
         }, DURACAO_SAIDA_ABA_PARTICIPANTES);
     }
 
     useEffect(() => () => clearTimeout(temporizadorTrocaAbaRef.current), []);
+
+    /* A área do participante usa a rolagem nativa: o Lenis global (criado
+       no index.html) é destruído ao entrar e recriado ao sair, para o resto
+       do site seguir com a rolagem suave. */
+    useEffect(() => {
+        window.lenis?.destroy();
+        window.lenis = null;
+        return () => {
+            if (!window.lenis && window.criarLenis) window.lenis = window.criarLenis();
+        };
+    }, []);
 
     function sair() {
         limparSessao();
@@ -355,6 +420,29 @@ export default function Participantes() {
             setMinicursoEmEspera(null);
         }
         return deuCerto;
+    }
+
+    function abrirEscolhaDiasIngresso() {
+        setErroDiasIngresso('');
+        setQrAberto(false);
+        setEscolhaDiasAberta(true);
+    }
+
+    /* Trocar de dia pode desfazer minicursos do dia que saiu (o backend
+       libera a vaga), então a agenda é recarregada em seguida. */
+    async function salvarDiasIngresso(dias) {
+        setErroDiasIngresso('');
+        setSalvandoDiasIngresso(true);
+        try {
+            const atualizado = await salvarDiasIngressoParticipante(dias);
+            if (atualizado) setDiasIngresso(atualizado);
+            setEscolhaDiasAberta(false);
+            await carregarAgenda().catch((erro) => setErroAgenda(erro.message));
+        } catch (erro) {
+            setErroDiasIngresso(erro.message);
+        } finally {
+            setSalvandoDiasIngresso(false);
+        }
     }
 
     const escolherMinicurso = (eventoId) => alterarMinicurso(eventoId, inscreverEmMinicurso);
@@ -483,7 +571,18 @@ export default function Participantes() {
                 />
             )}
 
-            {conquistasACelebrar.length > 0 && (
+            {diasIngresso && (escolhaDiasPendente || escolhaDiasAberta) && (
+                <ModalEscolhaDiasIngresso
+                    diasIngresso={diasIngresso}
+                    obrigatorio={escolhaDiasPendente}
+                    salvando={salvandoDiasIngresso}
+                    erro={erroDiasIngresso}
+                    onSalvar={salvarDiasIngresso}
+                    onFechar={() => setEscolhaDiasAberta(false)}
+                />
+            )}
+
+            {conquistasACelebrar.length > 0 && !escolhaDiasPendente && (
                 <ConquistaDesbloqueada
                     conquistas={conquistasACelebrar}
                     /* No modo de teste não confirma nada: se marcasse, a
@@ -517,10 +616,34 @@ export default function Participantes() {
 
                         </div>
 
-                        <QrCrachaParticipantes tamanho={200} uuidParticipante={sessao?.uuid} />
+                        {escolhaDiasPendente ? (
+                            <div className="avisoDiasModalQrParticipantes">
+                                <span>
+                                    Seu ingresso é diário. Escolha os dias em que vai participar para liberar o
+                                    seu QR code.
+                                </span>
+                                <button type="button" className="botaoDiasModalQrParticipantes" onClick={abrirEscolhaDiasIngresso}>
+                                    ESCOLHER MEUS DIAS
+                                </button>
+                            </div>
+                        ) : (
+                            <QrCrachaParticipantes tamanho={200} uuidParticipante={sessao?.uuid} />
+                        )}
                         <div className="identidadeModalQrParticipantes">
                             <span className="nomeModalQrParticipantes">{nomeParticipante.toUpperCase()}</span>
                         </div>
+                        {diasIngresso?.porDia && !escolhaDiasPendente && diasIngresso.diasEscolhidos.length > 0 && (
+                            <div className="avisoDiasModalQrParticipantes">
+                                <span className="rotuloDiasModalQrParticipantes">
+                                    VÁLIDO EM: {diasIngresso.diasEscolhidos.map(formatarDiaIngressoQr).join(' · ')}
+                                </span>
+                                {diasIngresso.diasEscolhidos.length > diasIngresso.diasTravados.length && (
+                                    <button type="button" className="botaoTrocarDiasModalQrParticipantes" onClick={abrirEscolhaDiasIngresso}>
+                                        trocar dias
+                                    </button>
+                                )}
+                            </div>
+                        )}
                         {/*{(atividadeAtual || atividadeSeguinte) && (*/}
                         {/*    <div className="avisoAgoraModalQrParticipantes">*/}
                         {/*        /!*<span className="tagAgoraModalQrParticipantes">*!/*/}
