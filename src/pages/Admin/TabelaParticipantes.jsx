@@ -458,13 +458,15 @@ function ModalConfirmarParticipante({ participante, aoFechar, aoConfirmado }) {
         }
     }, [participante.id, participante.temComprovante])
 
-    // Avança para a etapa de ingresso e carrega os ativos do ano atual.
+    // Avança para a etapa de ingresso e carrega todos os do ano atual —
+    // inclusive os inativos: o ingresso escolhido na inscrição pode ter
+    // sido desativado depois. Ativos vêm primeiro.
     function irParaIngresso() {
         setErro(null)
         setEtapa('ingresso')
         setCarregandoIngressos(true)
         listarTiposInscricao(ANO_ATUAL)
-            .then(lista => setIngressos(lista.filter(t => t.ativo)))
+            .then(lista => setIngressos([...lista].sort((a, b) => Number(!!b.ativo) - Number(!!a.ativo))))
             .catch(e => setErro(e.message))
             .finally(() => setCarregandoIngressos(false))
     }
@@ -634,7 +636,7 @@ function ModalConfirmarParticipante({ participante, aoFechar, aoConfirmado }) {
                             <p class="estadoCarregandoParticipantesAdmin">Carregando ingressos...</p>
                         ) : ingressos.length === 0 ? (
                             <p class="avisoVazioIngressoModalAdmin">
-                                Nenhum ingresso ativo para {ANO_ATUAL}. Cadastre em “Informações SEMAC”.
+                                Nenhum ingresso cadastrado para {ANO_ATUAL}. Cadastre em “Informações SEMAC”.
                             </p>
                         ) : (
                             <div class="opcoesRoleModalParticipantesAdmin">
@@ -645,7 +647,12 @@ function ModalConfirmarParticipante({ participante, aoFechar, aoConfirmado }) {
                                         class={`opcaoRoleModalParticipantesAdmin ${ingressoSelecionado === tipo.id ? 'opcaoRoleAtivaModalParticipantesAdmin' : ''}`}
                                         onClick={() => setIngressoSelecionado(tipo.id)}
                                     >
-                                        <span class="rotuloOpcaoRoleAdmin">{tipo.nome}</span>
+                                        <span class="rotuloOpcaoRoleAdmin">
+                                            {tipo.nome}
+                                            {!tipo.ativo && (
+                                                <span class="spanSeloInativoIngressoModalAdmin">Inativo</span>
+                                            )}
+                                        </span>
                                         <span class="descricaoOpcaoRoleAdmin">{formatarCentavos(tipo.valor)}</span>
                                     </button>
                                 ))}
