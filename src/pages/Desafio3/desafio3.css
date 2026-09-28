@@ -1,0 +1,265 @@
+.quiz-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    z-index: 51;
+    overflow: hidden;
+}
+
+.paperTextura{
+    position: fixed;
+    inset: 0;
+    height: 100vh;
+    background-size: 110%;
+    background-attachment: scroll;
+    mix-blend-mode: overlay;
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.quiz-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    box-sizing: border-box;
+}
+
+.quiz-header-lado {
+    flex: 0 0 160px;
+    display: flex;
+}
+
+.quiz-header-lado.direita {
+    justify-content: flex-end;
+}
+
+.quiz-voltar {
+    font-family: 'Bungee', sans-serif;
+    font-size: clamp(20px, 2vw, 28px);
+    font-weight: 900;
+    background: var(--vermelhoDiretoria);
+    border: none;
+    border-radius: 12px;
+    width: clamp(42px, 5vw, 52px);
+    height: clamp(42px, 5vw, 52px);
+    color: var(--Branco);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quiz-titulo {
+    font-family: 'Bungee', sans-serif;
+    font-size: clamp(28px, 5vw, 50px);
+    color: var(--Branco);
+    text-transform: uppercase;
+    margin: 0;
+    flex: 1;
+    text-align: center;
+}
+
+.quiz-como-jogar {
+    font-family: 'Bungee', sans-serif;
+    font-size: clamp(20px, 2vw, 28px);
+    font-weight: 900;
+    background: var(--vermelhoDiretoria);
+    border: none;
+    border-radius: 12px;
+    width: clamp(42px, 5vw, 52px);
+    height: clamp(42px, 5vw, 52px);
+    color: var(--Branco);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quiz-corpo {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    gap: 1.5rem;
+    padding: 1rem 1.5rem 2rem;
+    box-sizing: border-box;
+    align-items: stretch;
+}
+
+.quiz-esquerda {
+    flex: 1;
+    background-color: var(--vermelhoAuxDiretoria);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.quiz-numero-wrapper {
+    width: 48px;
+    height: 48px;
+    background-color: var(--vermelhoDiretoria);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quiz-numero {
+    font-family: 'Bungee', sans-serif;
+    font-size: 1.3rem;
+    color: var(--Branco);
+}
+
+.quiz-enunciado {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(16px, 2vw, 24px);
+    color: var(--Branco);
+    line-height: 1.5;
+    margin: 0;
+    flex: 1;
+}
+
+.quiz-confirmar {
+    font-family: 'Bungee', sans-serif;
+    font-size: clamp(16px, 2vw, 24px);
+    text-transform: uppercase;
+    color: var(--Branco);
+    background-color: var(--vermelhoDiretoria);
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    transition: filter 0.2s, transform 0.15s;
+    align-self: stretch;
+}
+
+.quiz-confirmar:hover:not(.desabilitado) {
+    filter: brightness(1.2);
+    transform: scale(1.02);
+}
+
+.quiz-confirmar.desabilitado {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.quiz-direita {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.quiz-alternativa {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.2rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: left;
+    transition: filter 0.2s, transform 0.1s;
+    flex: 1;
+}
+
+.quiz-alternativa:hover:not(:disabled) {
+    filter: brightness(1.1);
+    transform: scale(1.01);
+}
+
+.estado-normal      { background-color: var(--vermelhoAuxDiretoria); }
+.estado-selecionada { background-color: var(--vermelhoDiretoria); }
+.estado-certa       { background-color: var(--azulConteudo); }
+.estado-errada      { background-color: var(--AmareloAuxApoio); }
+
+.quiz-letra {
+    font-family: 'Bungee', sans-serif;
+    font-size: clamp(16px, 2vw, 22px);
+    color: var(--Branco);
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.quiz-alternativa.estado-normal   .quiz-letra { background-color: var(--vermelhoDiretoria); }
+.quiz-alternativa.estado-selecionada .quiz-letra { background-color: var(--vermelhoAuxDiretoria); }
+.quiz-alternativa.estado-certa    .quiz-letra { background-color: var(--azulAuxConteudo); }
+.quiz-alternativa.estado-errada   .quiz-letra { background-color: var(--AmareloApoio); }
+
+.quiz-alternativa-texto {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(14px, 1.6vw, 20px);
+    color: var(--Branco);
+    line-height: 1.4;
+}
+
+.quiz-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.60);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+}
+
+.quiz-modal-caixa {
+    background-color: var(--vermelhoAuxDiretoria);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    max-width: 500px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    color: var(--Branco);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.quiz-modal-titulo {
+    font-family: 'Bungee', sans-serif;
+    font-size: clamp(24px, 4vw, 36px);
+    text-transform: uppercase;
+    color: var(--Branco);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.quiz-modal-continuar {
+    font-family: 'Bungee', sans-serif;
+    font-size: clamp(16px, 2vw, 24px);
+    text-transform: uppercase;
+    color: var(--Branco);
+    background-color: var(--vermelhoDiretoria);
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 2rem;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: filter 0.2s, transform 0.15s;
+}
+
+.quiz-modal-continuar:hover {
+    filter: brightness(1.2);
+    transform: scale(1.02);
+}
+
+@media (max-width: 768px) {
+    .quiz-corpo { flex-direction: column; }
+    .quiz-header-lado { flex: 0 0 100px; }
+}

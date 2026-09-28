@@ -20,6 +20,7 @@ const ConjuntosCotacao = lazy(() => import('./pages/Financas/conjuntos/Conjuntos
 const ConjuntoDetalhe = lazy(() => import('./pages/Financas/conjuntos/ConjuntoDetalhe.jsx'));
 // import Ranking from "./pages/Ranking/paginaRanking.jsx";
 const Participantes = lazy(() => import('./pages/Participantes/Participantes.jsx'));
+const Desafio3 = lazy(() => import('./pages/Desafio3/desafio3.jsx'));
 
 function CarregandoRota() {
     return (
@@ -83,6 +84,12 @@ function RotaSorteio() {
         : <Redirect to="/inscricoes?tab=entrar&next=/sorteio" />;
 }
 
+function RotaDesafio3(){
+    return temAcessoAdmin()
+        ? <Desafio3 />
+        : <Redirect to ="/inscricoes?tab=entrar&next=/desafio3" />
+}
+
 render(
     <Suspense fallback={<CarregandoRota />}>
         <Switch>
@@ -98,6 +105,7 @@ render(
             <Route path="/termo"><Termo/></Route>
             <Route path="/sorteio"><RotaSorteio/></Route>
             {/*<Route path="/ranking"><Ranking /></Route>*/}
+            <Route path ="/desafio3"><RotaDesafio3/></Route>
             <Route><App /></Route>
         </Switch>
     </Suspense>,
