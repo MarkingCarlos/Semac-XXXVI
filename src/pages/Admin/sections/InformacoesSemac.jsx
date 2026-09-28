@@ -2,6 +2,7 @@ import { useState, useEffect } from 'preact/hooks';
 import PainelLateral from '../../Financas/components/PainelLateral.jsx';
 import CampoMoeda from '../../Financas/components/CampoMoeda.jsx';
 import { formatarCentavos } from '../../Financas/utils/moeda.js';
+import { temAcessoFinanceiro } from '../../../auth/sessao.js';
 import {
     listarTiposInscricao,
     criarTipoInscricao,
@@ -126,12 +127,19 @@ const FORMULARIO_CONQUISTA_VAZIO = {
     ordem: 0,
 };
 
+/* `somenteFinanceiro`: a sub-aba só aparece para quem tem acesso
+   financeiro. O diretor de conteúdo entra nesta seção só pela
+   gamificação — o backend (PAPEIS_GAMIFICACAO) libera a escrita dela, e
+   as rotas financeiras seguem trancadas para ele. */
 const SUBABAS = [
     { id: 'gamificacao', rotulo: 'Gamificação' },
-    { id: 'financeiras', rotulo: 'Configurações financeiras' },
+    { id: 'financeiras', rotulo: 'Configurações financeiras', somenteFinanceiro: true },
 ];
 
 export default function InformacoesSemac() {
+    const podeVerFinanceiras = temAcessoFinanceiro();
+    const subabasVisiveis = SUBABAS.filter((subaba) => podeVerFinanceiras || !subaba.somenteFinanceiro);
+
     const [tipos, setTipos] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState('');
@@ -175,8 +183,9 @@ export default function InformacoesSemac() {
     /* Divide os sete blocos em dois grupos, para a tela não ser uma
        rolagem única de configurações sem relação entre si. Mesmo padrão
        visual de Mensagens e Pessoas (listaSubabasAdmin, no admin.css).
-       Padrão é o financeiro: é onde fica o interruptor das inscrições. */
-    const [subabaAtiva, setSubabaAtiva] = useState('financeiras');
+       Padrão é o financeiro: é onde fica o interruptor das inscrições —
+       para quem não o vê, abre direto na gamificação. */
+    const [subabaAtiva, setSubabaAtiva] = useState(podeVerFinanceiras ? 'financeiras' : 'gamificacao');
 
     /* Níveis ainda sem cota — em dev a lista nasce vazia (os 6 já existem). */
     const niveisDisponiveis = NIVEIS_PATROCINIO.filter(
@@ -221,23 +230,26 @@ export default function InformacoesSemac() {
 
     useEffect(() => {
         let ativo = true;
-        listarTiposInscricao(ANO_ATUAL)
-            .then((lista) => { if (ativo) setTipos(lista); })
-            .catch((e) => { if (ativo) setErro(e.message); })
-            .finally(() => { if (ativo) setCarregando(false); });
-        lerCamisetaExtra(ANO_ATUAL)
-            .then((centavos) => { if (ativo) { setPrecoCamiseta(centavos); setRascunhoPrecoCamiseta(centavos); } })
-            .catch((e) => { if (ativo) setErroPrecoCamiseta(e.message); });
-        lerMetaDoacao(ANO_ATUAL)
-            .then((centavos) => { if (ativo) { setMetaDoacao(centavos); setRascunhoMetaDoacao(centavos); } })
-            .catch((e) => { if (ativo) setErroMetaDoacao(e.message); });
-        lerConfiguracaoInscricao(ANO_ATUAL)
-            .then((aberta) => { if (ativo) setInscricoesAbertas(aberta); })
-            .catch((e) => { if (ativo) setErroInscricoesAbertas(e.message); });
-        listarCotas()
-            .then((lista) => { if (ativo) setCotas([...lista].sort(porValorCrescente)); })
-            .catch((e) => { if (ativo) setErroCotas(e.message); })
-            .finally(() => { if (ativo) setCarregandoCotas(false); });
+        /* Dados da sub-aba financeira só para quem a vê. */
+        if (podeVerFinanceiras) {
+            listarTiposInscricao(ANO_ATUAL)
+                .then((lista) => { if (ativo) setTipos(lista); })
+                .catch((e) => { if (ativo) setErro(e.message); })
+                .finally(() => { if (ativo) setCarregando(false); });
+            lerCamisetaExtra(ANO_ATUAL)
+                .then((centavos) => { if (ativo) { setPrecoCamiseta(centavos); setRascunhoPrecoCamiseta(centavos); } })
+                .catch((e) => { if (ativo) setErroPrecoCamiseta(e.message); });
+            lerMetaDoacao(ANO_ATUAL)
+                .then((centavos) => { if (ativo) { setMetaDoacao(centavos); setRascunhoMetaDoacao(centavos); } })
+                .catch((e) => { if (ativo) setErroMetaDoacao(e.message); });
+            lerConfiguracaoInscricao(ANO_ATUAL)
+                .then((aberta) => { if (ativo) setInscricoesAbertas(aberta); })
+                .catch((e) => { if (ativo) setErroInscricoesAbertas(e.message); });
+            listarCotas()
+                .then((lista) => { if (ativo) setCotas([...lista].sort(porValorCrescente)); })
+                .catch((e) => { if (ativo) setErroCotas(e.message); })
+                .finally(() => { if (ativo) setCarregandoCotas(false); });
+        }
         listarNiveis()
             .then((lista) => { if (ativo) setNiveisParticipante([...lista].sort(porXpMinimoCrescente)); })
             .catch((e) => { if (ativo) setErroNiveisParticipante(e.message); })
@@ -641,7 +653,7 @@ export default function InformacoesSemac() {
             </header>
 
             <div className="listaSubabasAdmin" role="tablist">
-                {SUBABAS.map((subaba) => (
+                {subabasVisiveis.map((subaba) => (
                     <button
                         key={subaba.id}
                         type="button"

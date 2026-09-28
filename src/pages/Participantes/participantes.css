@@ -1100,7 +1100,7 @@
 }
 
 .cardMinicursoInicioParticipantes {
-  border-radius: var(--radius-lg, 25px);
+  border-radius: var(--radius-lg, 15px);
   padding: 18px 20px;
   display: flex;
   flex-direction: column;
@@ -1127,7 +1127,7 @@
 
 .itemMeuDiaInicioParticipantes {
   background: var(--vermelhoDiretoria);
-  border-radius: var(--radius-lg, 25px);
+  border-radius: var(--radius-lg, 15px);
   padding: 14px 16px;
   display: flex;
   align-items: center;

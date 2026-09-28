@@ -21,12 +21,12 @@ import { listarEventos } from './data/apiEventos.js';
 /* `papeis` opcional: quando presente, a seção só aparece para os roles listados. */
 const SECOES = [
     { id: 'inicio', rotulo: 'Início' },
-    { id: 'doacoes', rotulo: 'Doações',papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
+    { id: 'doacoes', rotulo: 'Doações', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_PATROCINIO'] },
     { id: 'conteudo', rotulo: 'Conteúdo', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO']  },
     { id: 'brindes', rotulo: 'Brindes', papeis: ['DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'] },
     { id: 'relatorios', rotulo: 'Relatórios', papeis: ['DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'] },
     { id: 'pessoas', rotulo: 'Pessoas', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
-    { id: 'informacoes', rotulo: 'Informações SEMAC', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
+    { id: 'informacoes', rotulo: 'Informações SEMAC', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO'] },
     { id: 'termo', rotulo: 'Termo', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
     { id: 'mensagens', rotulo: 'Mensagens', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
 ];
