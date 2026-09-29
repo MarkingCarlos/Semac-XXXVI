@@ -1066,6 +1066,24 @@
 .botaoConfirmarInscricao:hover    { filter: brightness(1.08); }
 .botaoConfirmarInscricao:disabled { opacity: 0.4; cursor: not-allowed; filter: none; }
 
+/* ── Link "Esqueci minha senha" na aba Entrar ────────────────── */
+
+.botaoEsqueciSenhaEntrar {
+    align-self: center;
+    padding: 0.25rem 0;
+    border: none;
+    background: none;
+    color: rgba(252, 248, 245, 0.75);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.botaoEsqueciSenhaEntrar:hover { color: var(--AmareloAuxApoio); }
+
 /* ── Logo ────────────────────────────────────────────────────── */
 
 .logoSemacEntrar {

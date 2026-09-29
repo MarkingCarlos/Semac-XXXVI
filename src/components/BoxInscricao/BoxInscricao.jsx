@@ -4,6 +4,7 @@ import { salvarSessao, temAcessoFinanceiro, temAcessoPrevisao, temAcessoAdmin, t
 import { apiFetch } from '../../lib/apiFetch.js'
 import { criarPagamentoCartao } from './apiPagamento.js'
 import { carregarMercadoPago } from './lib/carregarMercadoPago.js'
+import ModalRecuperarSenha from './ModalRecuperarSenha.jsx'
 import './boxInscricao.css'
 import logoRaios from '../../assets/logoSemacRaios.png'
 import qrCodePix from '../../assets/qr.png'
@@ -113,6 +114,7 @@ export default function BoxInscricao() {
 
     const [aba,       setAba]       = useState(tabInicial === 'entrar' ? 'entrar' : 'inscricao')
     const [abaSaindo, setAbaSaindo] = useState(false)
+    const [recuperarSenhaAberto, setRecuperarSenhaAberto] = useState(false)
     const [etapa,     setEtapa]     = useState(1)
 
     /* A etapa 1 é dividida em duas telas: quem você é, depois como você
@@ -982,7 +984,25 @@ export default function BoxInscricao() {
                         <button type="submit" class="botaoConfirmarInscricao" disabled={enviando}>
                             {enviando ? 'Entrando…' : 'Entrar'}
                         </button>
+                        <button
+                            type="button"
+                            class="botaoEsqueciSenhaEntrar"
+                            onClick={() => setRecuperarSenhaAberto(true)}
+                        >
+                            Esqueci minha senha
+                        </button>
                     </form>
+                )}
+                {recuperarSenhaAberto && (
+                    <ModalRecuperarSenha
+                        emailInicial={form.email}
+                        aoFechar={() => setRecuperarSenhaAberto(false)}
+                        aoConcluir={email => {
+                            setForm(atual => ({ ...atual, email, senha: '' }))
+                            setFeedback(null)
+                            setRecuperarSenhaAberto(false)
+                        }}
+                    />
                 )}
             </div>
         </div>
@@ -1143,12 +1163,13 @@ function ResumoInscricao({ linhas, total }) {
     )
 }
 
-function Feedback({ feedback }) {
+/* Exportados para o ModalRecuperarSenha reaproveitar os mesmos campos. */
+export function Feedback({ feedback }) {
     const sufixo = feedback.tipo.charAt(0).toUpperCase() + feedback.tipo.slice(1)
     return <p class={`feedbackInscricao feedbackInscricao${sufixo}`} role="status">{feedback.msg}</p>
 }
 
-function CampoTexto({ label, type = 'text', value, onInput, inputMode, required }) {
+export function CampoTexto({ label, type = 'text', value, onInput, inputMode, required }) {
     return (
         <div class="campoInscricao">
             <label class="rotuloCampoInscricao">{label}</label>
@@ -1164,13 +1185,13 @@ function CampoTexto({ label, type = 'text', value, onInput, inputMode, required 
     )
 }
 
-function CampoSenha({ value, onInput, senhaOk, required, permitirVerSenha }) {
+export function CampoSenha({ label = 'Senha', value, onInput, senhaOk, required, permitirVerSenha }) {
     const [senhaVisivel, setSenhaVisivel] = useState(false)
     const rotuloOlho = senhaVisivel ? 'Ocultar senha' : 'Mostrar senha'
 
     return (
         <div class="campoInscricao">
-            <label class="rotuloCampoInscricao">Senha</label>
+            <label class="rotuloCampoInscricao">{label}</label>
             <div class="envoltorioSenhaInscricao">
                 <input
                     class={`inputCampoInscricao ${permitirVerSenha ? 'inputSenhaComOlhoInscricao' : ''}`}

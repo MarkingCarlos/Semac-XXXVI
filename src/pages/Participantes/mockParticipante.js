@@ -21,8 +21,6 @@
 
 export const perfilMockParticipante = {
     curso: 'Ciência da Computação · 3º ano',
-    minicursosUsados: 3,
-    minicursosTotais: 4,
     presencas: 3,
     presencasTotais: 12,
 };

@@ -1,0 +1,174 @@
+/* =================================================================
+   modalRecuperarSenha.css — "Esqueci minha senha" da aba Entrar
+
+   Mesmo card vermelho do BoxInscricao, para parecer continuação do
+   login. Campos, feedback e botão principal reaproveitam as classes de
+   boxInscricao.css (CampoTexto, CampoSenha, Feedback).
+   ================================================================= */
+
+.overlayModalRecuperarSenha {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.6);
+    animation: entradaOverlayRecuperarSenha 0.2s ease both;
+}
+
+.cardModalRecuperarSenha {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+    background: var(--vermelhoAuxDiretoria);
+    border: 1px solid rgba(252, 248, 245, 0.08);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.45);
+    border-radius: 25px;
+    padding: 2rem 1.75rem 1.75rem;
+    color: var(--Branco);
+    font-family: 'Montserrat', sans-serif;
+    animation: entradaCardRecuperarSenha 0.25s ease both;
+}
+
+.botaoFecharModalRecuperarSenha {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.9rem;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: rgba(252, 248, 245, 0.7);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s, background-color 0.2s;
+}
+.botaoFecharModalRecuperarSenha:hover {
+    color: var(--Branco);
+    background: rgba(0, 0, 0, 0.2);
+}
+.botaoFecharModalRecuperarSenha:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.tituloModalRecuperarSenha {
+    margin: 0 0 1.25rem;
+    font-family: 'Bungee', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--AmareloAuxApoio);
+    text-align: center;
+}
+
+.formularioModalRecuperarSenha {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+}
+
+.textoModalRecuperarSenha {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    text-align: center;
+    color: rgba(252, 248, 245, 0.85);
+}
+.textoModalRecuperarSenha strong {
+    color: var(--Branco);
+    word-break: break-all;
+}
+
+/* ── Código de 5 dígitos ─────────────────────────────────────── */
+
+.grupoDigitosCodigoRecuperarSenha {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.inputDigitoCodigoRecuperarSenha {
+    width: 3rem;
+    height: 3.5rem;
+    min-width: 0;
+    border: 1.5px solid rgba(252, 248, 245, 0.3);
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.25);
+    color: var(--Branco);
+    font-family: 'Bungee', sans-serif;
+    font-size: 1.4rem;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+.inputDigitoCodigoRecuperarSenha:focus-visible {
+    border-color: var(--AmareloAuxApoio);
+    background: rgba(0, 0, 0, 0.35);
+}
+.inputDigitoCodigoRecuperarSenha:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.contagemBloqueioRecuperarSenha {
+    margin: -0.5rem 0 0;
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-align: center;
+    color: var(--AmareloAuxApoio);
+}
+
+.acoesSecundariasRecuperarSenha {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.botaoLinkRecuperarSenha {
+    padding: 0.25rem 0;
+    border: none;
+    background: none;
+    color: rgba(252, 248, 245, 0.8);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+.botaoLinkRecuperarSenha:hover { color: var(--AmareloAuxApoio); }
+.botaoLinkRecuperarSenha:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    color: rgba(252, 248, 245, 0.8);
+}
+
+.avisoSenhasDiferentesRecuperarSenha {
+    margin: -0.5rem 0 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #ff8a80;
+}
+
+@media (max-width: 380px) {
+    .cardModalRecuperarSenha { padding: 1.75rem 1.1rem 1.25rem; }
+    .inputDigitoCodigoRecuperarSenha { width: 2.6rem; height: 3.1rem; font-size: 1.2rem; }
+}
+
+@keyframes entradaOverlayRecuperarSenha {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes entradaCardRecuperarSenha {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .overlayModalRecuperarSenha,
+    .cardModalRecuperarSenha { animation: none; }
+}
