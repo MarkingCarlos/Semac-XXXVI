@@ -1323,7 +1323,12 @@
     }
 
     .conteudoAdmin {
-        padding: 20px 18px 132px;
+        padding: 20px 18px calc(110px + env(safe-area-inset-bottom));
+    }
+
+    /* No mobile a navegação é o menu FAB (MenuFabModulos). */
+    .navFlutuanteAdmin {
+        display: none;
     }
 
     .navFlutuanteAdmin {

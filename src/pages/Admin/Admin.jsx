@@ -14,21 +14,23 @@ import Termo from './sections/TermoAdmin.jsx';
 import Mensagens from './sections/Mensagens.jsx';
 import Relatorios from './sections/Relatorios.jsx';
 import Pessoas from './sections/Pessoas.jsx';
+import MenuFabModulos from '../../components/MenuFabModulos/MenuFabModulos.jsx';
 
 import { listarParticipantes, listarComissao } from './data/apiParticipantes.js';
 import { listarEventos } from './data/apiEventos.js';
 
-/* `papeis` opcional: quando presente, a seção só aparece para os roles listados. */
+/* `papeis` opcional: quando presente, a seção só aparece para os roles listados.
+   `marca` e `classeMarcador` só servem ao menu FAB do mobile (MenuFabModulos). */
 const SECOES = [
-    { id: 'inicio', rotulo: 'Início' },
-    { id: 'doacoes', rotulo: 'Doações', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_PATROCINIO'] },
-    { id: 'conteudo', rotulo: 'Conteúdo', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO']  },
-    { id: 'brindes', rotulo: 'Brindes', papeis: ['DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'] },
-    { id: 'relatorios', rotulo: 'Relatórios', papeis: ['DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'] },
-    { id: 'pessoas', rotulo: 'Pessoas', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
-    { id: 'informacoes', rotulo: 'Informações SEMAC', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO'] },
-    { id: 'termo', rotulo: 'Termo', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
-    { id: 'mensagens', rotulo: 'Mensagens', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
+    { id: 'inicio', rotulo: 'Início', marca: 'I', classeMarcador: 'marcadorAmareloMenuFabModulos' },
+    { id: 'doacoes', rotulo: 'Doações', marca: 'D', classeMarcador: 'marcadorAzulMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_PATROCINIO'] },
+    { id: 'conteudo', rotulo: 'Conteúdo', marca: 'C', classeMarcador: 'marcadorRosaMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO']  },
+    { id: 'brindes', rotulo: 'Brindes', marca: 'B', classeMarcador: 'marcadorVermelhoMenuFabModulos', papeis: ['DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'] },
+    { id: 'relatorios', rotulo: 'Relatórios', marca: 'R', classeMarcador: 'marcadorPetroleoMenuFabModulos', papeis: ['DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'] },
+    { id: 'pessoas', rotulo: 'Pessoas', marca: 'P', classeMarcador: 'marcadorAmareloMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
+    { id: 'informacoes', rotulo: 'Informações SEMAC', marca: 'IS', classeMarcador: 'marcadorAzulMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO'] },
+    { id: 'termo', rotulo: 'Termo', marca: 'T', classeMarcador: 'marcadorRosaMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
+    { id: 'mensagens', rotulo: 'Mensagens', marca: 'M', classeMarcador: 'marcadorVermelhoMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
 ];
 
 export default function Admin() {
@@ -179,7 +181,7 @@ export default function Admin() {
                 </section>
             </main>
 
-            {/* ── Navbar flutuante ─────────────────────────── */}
+            {/* ── Navbar flutuante (desktop) ───────────────── */}
             <nav className="navFlutuanteAdmin" aria-label="Seções do módulo de administração">
                 <div className="trilhoNavFlutuanteAdmin" ref={trilhoNavRef}>
                     <div
@@ -208,6 +210,15 @@ export default function Admin() {
                     </button>
                 </div>
             </nav>
+
+            {/* ── Menu FAB (só mobile; substitui a navbar acima) ── */}
+            <MenuFabModulos
+                secoes={secoesVisiveis}
+                secaoAtiva={secaoAtiva}
+                onIrPara={setSecaoAtiva}
+                onSair={sair}
+                rotuloMenu="Seções do módulo de administração"
+            />
         </div>
     );
 }

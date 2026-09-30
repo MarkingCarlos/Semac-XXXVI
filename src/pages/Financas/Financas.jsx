@@ -17,17 +17,19 @@ import { listarCompras } from './data/apiCompras.js';
 import { listarCotacoes } from './data/apiCotacoes.js';
 import { listarCaixas } from './data/apiCaixa.js';
 import { lerResumoPrevisao } from './data/apiPrevisao.js';
+import MenuFabModulos from '../../components/MenuFabModulos/MenuFabModulos.jsx';
 import './financas.css';
 
+/* `marca` e `classeMarcador` só servem ao menu FAB do mobile (MenuFabModulos). */
 const SECOES = [
-    { id: 'resumo', rotulo: 'Resumo' },
-    { id: 'previsao', rotulo: 'Previsão' },
-    { id: 'patrocinios', rotulo: 'Patrocínios' },
-    { id: 'compras', rotulo: 'Compras' },
-    { id: 'cotacoes', rotulo: 'Cotação' },
-    { id: 'fornecedores', rotulo: 'Fornecedores' },
-    { id: 'inscricoes', rotulo: 'Inscrições' },
-    { id: 'doacoes', rotulo: 'Doações' },
+    { id: 'resumo', rotulo: 'Resumo', marca: 'R', classeMarcador: 'marcadorAmareloMenuFabModulos' },
+    { id: 'previsao', rotulo: 'Previsão', marca: 'PV', classeMarcador: 'marcadorAzulMenuFabModulos' },
+    { id: 'patrocinios', rotulo: 'Patrocínios', marca: 'PT', classeMarcador: 'marcadorRosaMenuFabModulos' },
+    { id: 'compras', rotulo: 'Compras', marca: 'CP', classeMarcador: 'marcadorVermelhoMenuFabModulos' },
+    { id: 'cotacoes', rotulo: 'Cotação', marca: 'CT', classeMarcador: 'marcadorPetroleoMenuFabModulos' },
+    { id: 'fornecedores', rotulo: 'Fornecedores', marca: 'F', classeMarcador: 'marcadorAmareloMenuFabModulos' },
+    { id: 'inscricoes', rotulo: 'Inscrições', marca: 'I', classeMarcador: 'marcadorAzulMenuFabModulos' },
+    { id: 'doacoes', rotulo: 'Doações', marca: 'D', classeMarcador: 'marcadorRosaMenuFabModulos' },
 ];
 
 /* Módulo financeiro da SEMAC — rota /financeiro.
@@ -295,7 +297,7 @@ export default function Financas() {
                 </section>
             </main>
 
-            {/* ── Navbar flutuante ─────────────────────────── */}
+            {/* ── Navbar flutuante (desktop) ───────────────── */}
             <nav className="navFlutuanteFinancas" aria-label="Seções do módulo financeiro">
                 <div className="trilhoNavFlutuanteFinancas" ref={trilhoNavRef}>
                     <div
@@ -324,6 +326,15 @@ export default function Financas() {
                     </button>
                 </div>
             </nav>
+
+            {/* ── Menu FAB (só mobile; substitui a navbar acima) ── */}
+            <MenuFabModulos
+                secoes={secoesVisiveis}
+                secaoAtiva={secaoAtiva}
+                onIrPara={setSecaoAtiva}
+                onSair={sair}
+                rotuloMenu="Seções do módulo financeiro"
+            />
         </div>
     );
 }

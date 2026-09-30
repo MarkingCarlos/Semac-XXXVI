@@ -1,0 +1,226 @@
+/* ── Menu FAB dos módulos internos (mobile) ───────────────────
+   Mesmo desenho do menu FAB de /participantes, compacto para caber
+   até 10 itens (seções do admin + Sair). Some acima de 820px, onde a
+   navbar flutuante de cada módulo assume.
+   ─────────────────────────────────────────────────────────── */
+.fundoEscuroMenuFabModulos {
+  position: fixed;
+  inset: 0;
+  z-index: 48;
+  background: rgba(30, 2, 15, 0.72);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.fundoEscuroAbertoMenuFabModulos {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Com muitas seções o leque pode passar da altura da tela: ganha scroll
+   vertical. O padding evita cortar o anel do item ativo e a animação. */
+.listaItensMenuFabModulos {
+  position: fixed;
+  right: 16px;
+  bottom: calc(100px + env(safe-area-inset-bottom));
+  z-index: 49;
+  max-height: calc(100dvh - 124px - env(safe-area-inset-bottom));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 6px 8px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.listaItensAbertaMenuFabModulos {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.itemMenuFabModulos {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(18px) scale(0.9);
+  transition: opacity 0.3s ease, transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.listaItensAbertaMenuFabModulos .itemMenuFabModulos {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.itemMenuFabModulos:focus-visible {
+  outline: 2px solid var(--AmareloAuxApoio);
+  outline-offset: 4px;
+  border-radius: 9999px;
+}
+
+.rotuloItemMenuFabModulos {
+  font-family: var(--fonteTituloBungee);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: #FCF8F5;
+  text-align: right;
+  transition: color 0.25s ease;
+}
+
+.itemAtivoMenuFabModulos .rotuloItemMenuFabModulos {
+  color: var(--AmareloAuxApoio);
+}
+
+.marcadorItemMenuFabModulos {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--fonteTituloBungee);
+  font-size: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  transition: box-shadow 0.25s ease;
+}
+
+.itemAtivoMenuFabModulos .marcadorItemMenuFabModulos {
+  box-shadow: 0 0 0 3px var(--AmareloAuxApoio);
+}
+
+.marcadorAmareloMenuFabModulos {
+  background: var(--AmareloAuxApoio);
+  color: var(--vermelhoAuxDiretoria);
+}
+
+.marcadorAzulMenuFabModulos {
+  background: var(--azulConteudo);
+  color: #FCF8F5;
+}
+
+.marcadorRosaMenuFabModulos {
+  background: var(--rosaMarketing);
+  color: #FCF8F5;
+}
+
+.marcadorVermelhoMenuFabModulos {
+  background: var(--vermelhoDiretoria);
+  color: #FCF8F5;
+}
+
+.marcadorPetroleoMenuFabModulos {
+  background: #469197;
+  color: #FCF8F5;
+}
+
+/* "Sair" se separa do grupo de seções por uma linha e usa tom de alerta,
+   para não ser lido como mais uma aba. */
+.itemSairMenuFabModulos {
+  padding-bottom: 12px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid rgba(252, 248, 245, 0.15);
+}
+
+.itemSairMenuFabModulos .rotuloItemMenuFabModulos {
+  color: #e9897b;
+}
+
+.marcadorSairMenuFabModulos {
+  background: #3D0118;
+  color: #e9897b;
+  box-shadow: inset 0 0 0 1.5px rgba(233, 137, 123, 0.55), 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.botaoFabMenuModulos {
+  position: fixed;
+  right: 15px;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  z-index: 50;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  background: var(--AmareloAuxApoio);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease;
+}
+
+.botaoFabMenuModulos:focus-visible {
+  outline: 2px solid #FCF8F5;
+  outline-offset: 3px;
+}
+
+.botaoFabAbertoMenuModulos {
+  background: #FCF8F5;
+}
+
+/* Três riscos empilhados a partir do centro do botão. */
+.barraTopoBotaoFabModulos,
+.barraMeioBotaoFabModulos,
+.barraBaseBotaoFabModulos {
+  position: absolute;
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--vermelhoAuxDiretoria);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+.barraTopoBotaoFabModulos { transform: translateY(-7px); }
+.barraMeioBotaoFabModulos { transform: translateY(0); }
+.barraBaseBotaoFabModulos { transform: translateY(7px); }
+
+/* Aberto, os riscos de cima e de baixo se cruzam no "×" e o do meio some. */
+.botaoFabAbertoMenuModulos .barraTopoBotaoFabModulos {
+  transform: translateY(0) rotate(45deg);
+}
+
+.botaoFabAbertoMenuModulos .barraMeioBotaoFabModulos {
+  opacity: 0;
+  transform: translateY(0) scaleX(0);
+}
+
+.botaoFabAbertoMenuModulos .barraBaseBotaoFabModulos {
+  transform: translateY(0) rotate(-45deg);
+}
+
+@media (min-width: 821px) {
+  .fundoEscuroMenuFabModulos,
+  .listaItensMenuFabModulos,
+  .botaoFabMenuModulos { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fundoEscuroMenuFabModulos,
+  .listaItensMenuFabModulos,
+  .itemMenuFabModulos,
+  .botaoFabMenuModulos {
+    transition: none;
+  }
+
+  .itemMenuFabModulos { transform: none; }
+
+  .barraTopoBotaoFabModulos,
+  .barraMeioBotaoFabModulos,
+  .barraBaseBotaoFabModulos { transition: none; }
+}
