@@ -46,6 +46,14 @@ export default function Admin() {
 
     const [secaoAtiva, setSecaoAtiva] = useState('inicio');
 
+    // Atalho do menu FAB para o /financeiro — mesma regra do cartão do
+    // Início, que no mobile fica escondido e é substituído por este item.
+    const atalhoFinanceiroMenuFab = podeAcessarFinanceiro
+        ? { rotulo: 'Financeiro', marca: 'F', onClick: () => navegar('/financeiro') }
+        : podeVerPrevisao
+            ? { rotulo: 'Previsão de gastos', marca: '$', onClick: () => navegar('/financeiro') }
+            : undefined;
+
     // Indicador deslizante da navbar flutuante: mede a posição/largura do
     // botão ativo e anima o retângulo amarelo até ele (trilho sem padding
     // própria, para o cálculo de left/width não precisar descontar o
@@ -215,6 +223,7 @@ export default function Admin() {
                 onIrPara={setSecaoAtiva}
                 onSair={sair}
                 rotuloMenu="Seções do módulo de administração"
+                atalhoExterno={atalhoFinanceiroMenuFab}
             />
         </div>
     );

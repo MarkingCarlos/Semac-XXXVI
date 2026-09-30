@@ -146,6 +146,24 @@
   box-shadow: inset 0 0 0 1.5px rgba(233, 137, 123, 0.55), 0 4px 20px rgba(0, 0, 0, 0.35);
 }
 
+/* Atalho para outro módulo: laranja tracejado, igual ao cartão
+   "Ir para o financeiro" do Início no desktop. */
+.itemAtalhoExternoMenuFabModulos {
+  padding-bottom: 12px;
+  margin-bottom: 2px;
+  border-bottom: 1px solid rgba(252, 248, 245, 0.15);
+}
+
+.itemAtalhoExternoMenuFabModulos .rotuloItemMenuFabModulos {
+  color: #E79839;
+}
+
+.marcadorAtalhoExternoMenuFabModulos {
+  background: #3D0118;
+  color: #E79839;
+  border: 1.5px dashed rgba(231, 152, 57, 0.75);
+}
+
 .botaoFabMenuModulos {
   position: fixed;
   right: 15px;

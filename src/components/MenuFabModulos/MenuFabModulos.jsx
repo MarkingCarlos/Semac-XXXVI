@@ -4,7 +4,11 @@
    flutuante horizontal — que com 8+ seções virava uma faixa com scroll.
 
    No desktop (>820px) some: lá a navbar flutuante continua valendo.
-   Cada seção traz sua `marca` (letra do disco) e `classeMarcador` (cor). */
+   Cada seção traz sua `marca` (letra do disco) e `classeMarcador` (cor).
+
+   `atalhoExterno` (opcional): { rotulo, marca, onClick } — item que leva
+   a outro módulo (ex.: /admin → /financeiro). Fica logo abaixo do "Sair",
+   com visual tracejado para não ser confundido com uma seção. */
 
 import { useEffect, useRef, useState } from 'preact/hooks';
 import './menuFabModulos.css';
@@ -14,7 +18,7 @@ import './menuFabModulos.css';
 const ATRASO_ENTRADA_ITEM_MENU_FAB_MODULOS = 35;
 const ATRASO_SAIDA_ITEM_MENU_FAB_MODULOS = 20;
 
-export default function MenuFabModulos({ secoes, secaoAtiva, onIrPara, onSair, rotuloMenu }) {
+export default function MenuFabModulos({ secoes, secaoAtiva, onIrPara, onSair, rotuloMenu, atalhoExterno }) {
     const [aberto, setAberto] = useState(false);
     const botaoFabRef = useRef(null);
 
@@ -38,8 +42,10 @@ export default function MenuFabModulos({ secoes, secaoAtiva, onIrPara, onSair, r
     }
 
     /* "Sair" vai no topo do leque, longe do polegar, para não ser tocado
-       por engano. Conta como um item a mais no cálculo dos atrasos. */
-    const totalItens = secoes.length + 1;
+       por engano. Ele e o atalho externo (se houver) contam como itens a
+       mais no cálculo dos atrasos. */
+    const itensAntesDasSecoes = atalhoExterno ? 2 : 1;
+    const totalItens = secoes.length + itensAntesDasSecoes;
 
     function atrasoDoItemMenuFabModulos(indice) {
         return aberto
@@ -89,6 +95,25 @@ export default function MenuFabModulos({ secoes, secaoAtiva, onIrPara, onSair, r
                     </span>
                 </button>
 
+                {atalhoExterno && (
+                    <button
+                        type="button"
+                        role="menuitem"
+                        tabIndex={aberto ? 0 : -1}
+                        className="itemMenuFabModulos itemAtalhoExternoMenuFabModulos"
+                        style={{ transitionDelay: `${atrasoDoItemMenuFabModulos(1)}ms` }}
+                        onClick={() => {
+                            setAberto(false);
+                            atalhoExterno.onClick();
+                        }}
+                    >
+                        <span className="rotuloItemMenuFabModulos">{atalhoExterno.rotulo.toUpperCase()}</span>
+                        <span className="marcadorItemMenuFabModulos marcadorAtalhoExternoMenuFabModulos">
+                            {atalhoExterno.marca}
+                        </span>
+                    </button>
+                )}
+
                 {secoes.map((secao, indiceSecao) => {
                     const ativa = secao.id === secaoAtiva;
 
@@ -104,7 +129,7 @@ export default function MenuFabModulos({ secoes, secaoAtiva, onIrPara, onSair, r
                                     ? 'itemMenuFabModulos itemAtivoMenuFabModulos'
                                     : 'itemMenuFabModulos'
                             }
-                            style={{ transitionDelay: `${atrasoDoItemMenuFabModulos(indiceSecao + 1)}ms` }}
+                            style={{ transitionDelay: `${atrasoDoItemMenuFabModulos(indiceSecao + itensAntesDasSecoes)}ms` }}
                             onClick={() => escolherSecaoNoMenuFabModulos(secao.id)}
                         >
                             <span className="rotuloItemMenuFabModulos">{secao.rotulo.toUpperCase()}</span>

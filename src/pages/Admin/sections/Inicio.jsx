@@ -93,7 +93,6 @@ export default function Inicio({ podeAcessarFinanceiro = false, podeVerPrevisao 
                 <p className="saudacaoInicio">Bem-vindo,</p>
                 <div className="linhaNomeCardInicio">
                     <h1 className="nomeBoasVindasInicio">{primeiroNome}</h1>
-                    <p className="emailUsuarioInicio">{perfil.email}</p>
                     {podeAcessarFinanceiro ? (
                         <Link href="/financeiro" className="cartaoIrFinanceiroInicio">
                             <span className="tituloCartaoIrFinanceiroInicio">Ir para o financeiro</span>

@@ -169,6 +169,20 @@ function CardVagasMinicursos({ consulta, aoAbrir }) {
     );
 }
 
+/* Card é estreito: mostra só os dois primeiros nomes ("Carlos Alberto de
+   Souza Junior" → "Carlos Alberto"). Conectivos na segunda posição são
+   pulados, senão "Maria da Silva" viraria "Maria da". O nome completo
+   segue no title e no modal do ranking. */
+const CONECTIVOS_NOME_TOP_RANKING = ['de', 'da', 'do', 'dos', 'das', 'e'];
+
+function abreviarNomeTopRanking(nome) {
+    const [primeiroNome, ...demaisNomes] = nome.trim().split(/\s+/);
+    const segundoNome = demaisNomes.find(
+        (parteNome) => !CONECTIVOS_NOME_TOP_RANKING.includes(parteNome.toLowerCase())
+    );
+    return segundoNome ? `${primeiroNome} ${segundoNome}` : primeiroNome;
+}
+
 function CardTopRanking({ consulta, aoAbrir }) {
     const ranking = consulta.dados ?? [];
     const top3 = ranking.slice(0, 3);
@@ -187,7 +201,9 @@ function CardTopRanking({ consulta, aoAbrir }) {
                     {top3.map((participante) => (
                         <span className="linhaTopRankingCardDashboard" key={participante.id}>
                             <span className="posicaoTopRankingCardDashboard">{participante.posicao}º</span>
-                            <span className="nomeTopRankingCardDashboard">{participante.nome}</span>
+                            <span className="nomeTopRankingCardDashboard" title={participante.nome}>
+                                {abreviarNomeTopRanking(participante.nome)}
+                            </span>
                             <span className="xpTopRankingCardDashboard">{participante.xp} XP</span>
                         </span>
                     ))}

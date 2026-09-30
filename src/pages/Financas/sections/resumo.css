@@ -27,6 +27,13 @@
     outline-offset: 2px;
 }
 
+/* No mobile o atalho vai para o menu FAB (MenuFabModulos). */
+@media (max-width: 820px) {
+    .cartaoMudarVisaoResumo {
+        display: none;
+    }
+}
+
 .tituloCartaoMudarVisaoResumo {
     font-family: 'Montserrat', sans-serif;
     font-size: 0.78rem;

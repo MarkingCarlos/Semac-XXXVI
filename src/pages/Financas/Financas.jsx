@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { useLocation } from 'wouter';
-import { limparSessao, temAcessoFinanceiro } from '../../auth/sessao.js';
+import { limparSessao, temAcessoFinanceiro, temAcessoAdmin } from '../../auth/sessao.js';
 import Resumo from './sections/Resumo.jsx';
 import Patrocinios from './sections/Patrocinios.jsx';
 import Compras from './sections/Compras.jsx';
@@ -44,6 +44,13 @@ export default function Financas() {
     const podeEditarFinanceiro = temAcessoFinanceiro();
     const secoesVisiveis = podeEditarFinanceiro ? SECOES : SECOES.filter((secao) => secao.id === 'previsao');
     const [secaoAtiva, setSecaoAtiva] = useState(podeEditarFinanceiro ? 'resumo' : 'previsao');
+
+    // Atalho do menu FAB para o /admin — substitui, no mobile, o cartão
+    // "Mudar para visão administrativa" do Resumo. Só aparece para quem
+    // tem acesso ao /admin (quem só lê a Previsão pode não ter).
+    const atalhoAdminMenuFab = temAcessoAdmin()
+        ? { rotulo: 'Admin', marca: 'A', onClick: () => navegar('/admin') }
+        : undefined;
 
     // Encerra a sessão e volta para o site público.
     function sair() {
@@ -334,6 +341,7 @@ export default function Financas() {
                 onIrPara={setSecaoAtiva}
                 onSair={sair}
                 rotuloMenu="Seções do módulo financeiro"
+                atalhoExterno={atalhoAdminMenuFab}
             />
         </div>
     );
