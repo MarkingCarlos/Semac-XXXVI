@@ -5,7 +5,6 @@ export default function AdminHeader() {
         <header class="cabecalhoAdmin">
             <a href="/" class="linkVoltarAdmin">← Voltar ao site</a>
             <h1 class="tituloCabecalhoAdmin">SEMAC Admin</h1>
-            <span class="badgeVersaoAdmin">SEMAC XXXVI</span>
         </header>
     )
 }

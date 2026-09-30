@@ -12,7 +12,6 @@ import Brindes from './sections/Brindes.jsx';
 import InformacoesSemac from './sections/InformacoesSemac.jsx';
 import Termo from './sections/TermoAdmin.jsx';
 import Mensagens from './sections/Mensagens.jsx';
-import Relatorios from './sections/Relatorios.jsx';
 import Pessoas from './sections/Pessoas.jsx';
 import MenuFabModulos from '../../components/MenuFabModulos/MenuFabModulos.jsx';
 
@@ -26,7 +25,6 @@ const SECOES = [
     { id: 'doacoes', rotulo: 'Doações', marca: 'D', classeMarcador: 'marcadorAzulMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_PATROCINIO'] },
     { id: 'conteudo', rotulo: 'Conteúdo', marca: 'C', classeMarcador: 'marcadorRosaMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO']  },
     { id: 'brindes', rotulo: 'Brindes', marca: 'B', classeMarcador: 'marcadorVermelhoMenuFabModulos', papeis: ['DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'] },
-    { id: 'relatorios', rotulo: 'Relatórios', marca: 'R', classeMarcador: 'marcadorPetroleoMenuFabModulos', papeis: ['DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'] },
     { id: 'pessoas', rotulo: 'Pessoas', marca: 'P', classeMarcador: 'marcadorAmareloMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
     { id: 'informacoes', rotulo: 'Informações SEMAC', marca: 'IS', classeMarcador: 'marcadorAzulMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO'] },
     { id: 'termo', rotulo: 'Termo', marca: 'T', classeMarcador: 'marcadorRosaMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
@@ -162,7 +160,6 @@ export default function Admin() {
                         />
                     )}
                     {secaoAtiva === 'brindes' && <Brindes />}
-                    {secaoAtiva === 'relatorios' && <Relatorios />}
                     {secaoAtiva === 'pessoas' && (
                         <Pessoas
                             participantes={participantes}

@@ -48,35 +48,9 @@ export async function registrarPresencaPorQrCode(eventoId, uuid) {
     return lerErroOuFalhar(resposta, 'Não foi possível registrar a presença.');
 }
 
-/* Confirmação manual (busca por nome/e-mail), para quando a leitura do
-   QR falha ou o participante não tem o crachá em mãos. */
-export async function registrarPresencaManual(eventoId, participanteId) {
-    const resposta = await apiFetch(`${API_URL}/api/evento/${eventoId}/presenca/${participanteId}`, {
-        method: 'POST',
-        headers: cabecalhosAuth(),
-    });
-    return lerErroOuFalhar(resposta, 'Não foi possível registrar a presença.');
-}
-
-/* Busca manual por nome/e-mail — reaproveita a listagem de participantes
-   já usada no /admin, filtrando no cliente. */
-export async function buscarParticipantesPorTermo(termo) {
-    const resposta = await apiFetch(`${API_URL}/api/pessoa/participantes`, {
-        headers: cabecalhosAuth(),
-    });
-    if (!resposta.ok) throw new Error('Falha ao buscar participantes.');
-    const participantes = await resposta.json();
-
-    const alvo = termo.trim().toLowerCase();
-    if (!alvo) return participantes;
-    return participantes.filter(
-        (p) => p.nome.toLowerCase().includes(alvo) || p.email.toLowerCase().includes(alvo)
-    );
-}
-
 /* ── Conquistas manuais ──────────────────────────────────────────
    O /checkin tem dois modos: marcar presença (acima) e conceder
-   conquista (aqui). A câmera e a busca manual são as mesmas; só muda
+   conquista (aqui). A câmera é a mesma; só muda
    o que acontece quando o participante é identificado.
 
    Conceder é restrito a diretores e presidência no backend — MEMBRO
@@ -96,15 +70,6 @@ export async function concederConquistaPorQrCode(conquistaId, uuid) {
         method: 'POST',
         headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ uuid }),
-    });
-    return lerErroOuFalhar(resposta, 'Não foi possível conceder a conquista.');
-}
-
-export async function concederConquistaManual(conquistaId, participanteId) {
-    const resposta = await apiFetch(`${API_URL}/api/conquista/${conquistaId}/conceder`, {
-        method: 'POST',
-        headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ participanteId }),
     });
     return lerErroOuFalhar(resposta, 'Não foi possível conceder a conquista.');
 }

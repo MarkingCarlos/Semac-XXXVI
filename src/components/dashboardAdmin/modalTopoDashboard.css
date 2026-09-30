@@ -1,0 +1,464 @@
+/* =================================================================
+   modalTopoDashboard.css — casca dos modais da dashboard do /admin
+   (ModalTopoDashboard) e os blocos de lista que os três modais
+   compartilham: linhas, barras de ocupação, busca, abas e etiquetas.
+   O painel desce do topo; âmbar (#E79839) é a cor de destaque.
+   ================================================================= */
+
+.sobreposicaoModalTopoDashboard {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(20, 0, 8, 0.55);
+    backdrop-filter: blur(3px);
+    animation: surgirSobreposicaoModalTopoDashboard 0.25s ease both;
+}
+
+@media screen and (max-width: 768px) {
+    .sobreposicaoModalTopoDashboard {
+        align-items: flex-end;
+    }
+}
+
+.sobreposicaoSaindoModalTopoDashboard {
+    animation: sumirSobreposicaoModalTopoDashboard 0.26s ease both;
+}
+
+.painelModalTopoDashboard {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: min(1060px, 100%);
+    max-height: min(86vh, 860px);
+    background: var(--vermelhoEscuro);
+    /*border-top: none;*/
+    border-radius: 15px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    color: #fcf8f5;
+    font-family: var(--fonteCorpoMontserrat);
+    animation: descerPainelModalTopoDashboard 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media screen and (max-width: 768px) {
+    .painelModalTopoDashboard {
+        width: min(760px, 100%);
+        border-radius: 15px 15px 0 0;
+    }
+}
+
+.painelSaindoModalTopoDashboard {
+    animation: subirPainelModalTopoDashboard 0.26s cubic-bezier(0.55, 0, 0.9, 0.4) both;
+}
+
+.cabecalhoModalTopoDashboard {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 26px 26px 16px;
+    border-bottom: 1px solid rgba(252, 248, 245, 0.08);
+}
+
+.textosCabecalhoModalTopoDashboard {
+    min-width: 0;
+}
+
+.tituloModalTopoDashboard {
+    margin: 0;
+    font-family: var(--fonteTituloBungee);
+    font-weight: 400;
+    font-size: clamp(1.1rem, 3.5vw, 1.45rem);
+    line-height: 1.15;
+    color: #fcf8f5;
+    text-transform: uppercase;
+}
+
+.subtituloModalTopoDashboard {
+    margin: 6px 0 0;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--AmareloAuxApoio);
+}
+
+.botaoVoltarModalTopoDashboard {
+    display: inline-block;
+    margin: 0 0 8px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: rgba(252, 248, 245, 0.7);
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.botaoVoltarModalTopoDashboard:hover {
+    color: #fcf8f5;
+}
+
+.botaoFecharModalTopoDashboard {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(252, 248, 245, 0.08);
+    color: #fcf8f5;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.botaoFecharModalTopoDashboard:hover {
+    background: rgba(252, 248, 245, 0.16);
+}
+
+.corpoModalTopoDashboard {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 18px 26px 30px;
+}
+
+/* Alça decorativa na base do painel, reforçando que ele "desceu". */
+.alcaModalTopoDashboard {
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    width: 44px;
+    height: 4px;
+    border-radius: 4px;
+    transform: translateX(-50%);
+    background: rgba(252, 248, 245, 0.18);
+}
+
+.botaoVoltarModalTopoDashboard:focus-visible,
+.botaoFecharModalTopoDashboard:focus-visible,
+.linhaClicavelModalDashboard:focus-visible,
+.abaModalDashboard:focus-visible,
+.campoBuscaModalDashboard:focus-visible {
+    outline: 2px solid var(--AmareloAuxApoio);
+    outline-offset: 2px;
+}
+
+/* ── Blocos compartilhados pelos modais ──────────────────────── */
+
+.resumoTotaisModalDashboard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.itemResumoTotaisModalDashboard {
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(252, 248, 245, 0.06);
+}
+
+.valorResumoTotaisModalDashboard {
+    display: block;
+    font-family: var(--fonteTituloBungee);
+    font-size: 1.35rem;
+    line-height: 1.1;
+    color: var(--AmareloAuxApoio);
+    font-variant-numeric: tabular-nums;
+}
+
+.rotuloResumoTotaisModalDashboard {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(252, 248, 245, 0.6);
+}
+
+.listaModalDashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.linhaModalDashboard,
+.linhaClicavelModalDashboard {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: rgba(252, 248, 245, 0.05);
+    color: inherit;
+    font-family: inherit;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+.linhaClicavelModalDashboard {
+    cursor: pointer;
+    transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.linhaClicavelModalDashboard:hover {
+    background: rgba(252, 248, 245, 0.1);
+    border-color: rgba(231, 152, 57, 0.4);
+}
+
+.linhaDestaqueModalDashboard {
+    background: rgba(231, 152, 57, 0.14);
+    border-color: rgba(231, 152, 57, 0.35);
+}
+
+.blocoTextoLinhaModalDashboard {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.nomeLinhaModalDashboard {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.detalheLinhaModalDashboard {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.74rem;
+    color: rgba(252, 248, 245, 0.6);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.valorLinhaModalDashboard {
+    flex: 0 0 auto;
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.95rem;
+    color: #fcf8f5;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.rotuloValorLinhaModalDashboard {
+    display: block;
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(252, 248, 245, 0.55);
+}
+
+.posicaoLinhaModalDashboard {
+    flex: 0 0 auto;
+    width: 34px;
+    font-family: var(--fonteTituloBungee);
+    font-size: 1rem;
+    color: rgba(252, 248, 245, 0.55);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.linhaDestaqueModalDashboard .posicaoLinhaModalDashboard {
+    color: var(--AmareloAuxApoio);
+}
+
+/* Barra de ocupação (vagas de minicurso, leituras de um evento). */
+.barraModalDashboard {
+    display: block;
+    height: 6px;
+    margin-top: 8px;
+    border-radius: 6px;
+    background: rgba(252, 248, 245, 0.12);
+    overflow: hidden;
+}
+
+.preenchimentoBarraModalDashboard {
+    display: block;
+    height: 100%;
+    border-radius: 6px;
+    background: var(--AmareloAuxApoio);
+    transition: width 0.4s ease;
+}
+
+.preenchimentoCheioBarraModalDashboard {
+    background: #f06a7e;
+}
+
+.etiquetaModalDashboard {
+    flex: 0 0 auto;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.etiquetaAmarelaModalDashboard {
+    background: rgba(231, 152, 57, 0.18);
+    color: var(--AmareloAuxApoio);
+}
+
+.etiquetaVermelhaModalDashboard {
+    background: rgba(240, 106, 126, 0.18);
+    color: #f5a3b0;
+}
+
+.etiquetaNeutraModalDashboard {
+    background: rgba(252, 248, 245, 0.1);
+    color: rgba(252, 248, 245, 0.7);
+}
+
+.campoBuscaModalDashboard {
+    width: 100%;
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    border: 1px solid rgba(252, 248, 245, 0.14);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    color: #fcf8f5;
+    font-family: inherit;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+}
+
+.campoBuscaModalDashboard::placeholder {
+    color: rgba(252, 248, 245, 0.45);
+}
+
+.abasModalDashboard {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    padding: 4px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.abaModalDashboard {
+    flex: 1 1 0;
+    min-height: 40px;
+    padding: 8px 10px;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    color: rgba(252, 248, 245, 0.7);
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.abaAtivaModalDashboard {
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoEscuro);
+}
+
+.tituloSecaoModalDashboard {
+    margin: 22px 0 10px;
+    font-family: var(--fonteTituloBungee);
+    font-weight: 400;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    color: rgba(252, 248, 245, 0.75);
+    text-transform: uppercase;
+}
+
+.tituloSecaoModalDashboard:first-child {
+    margin-top: 0;
+}
+
+.estadoModalDashboard {
+    margin: 18px 0;
+    font-size: 0.86rem;
+    color: rgba(252, 248, 245, 0.6);
+    text-align: center;
+}
+
+.erroModalDashboard {
+    color: #f5a3b0;
+}
+
+/* ── Animações ───────────────────────────────────────────────── */
+
+@keyframes descerPainelModalTopoDashboard {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+}
+
+@keyframes subirPainelModalTopoDashboard {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-100%); }
+}
+
+@keyframes surgirSobreposicaoModalTopoDashboard {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes sumirSobreposicaoModalTopoDashboard {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+@media (max-width: 560px) {
+    .painelModalTopoDashboard {
+        max-height: 92vh;
+    }
+
+    .cabecalhoModalTopoDashboard {
+        padding: 20px 18px 14px;
+    }
+
+    .corpoModalTopoDashboard {
+        padding: 16px 16px 28px;
+    }
+
+    .resumoTotaisModalDashboard {
+        gap: 6px;
+    }
+
+    .itemResumoTotaisModalDashboard {
+        padding: 10px;
+    }
+
+    .valorResumoTotaisModalDashboard {
+        font-size: 1.1rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sobreposicaoModalTopoDashboard,
+    .sobreposicaoSaindoModalTopoDashboard,
+    .painelModalTopoDashboard,
+    .painelSaindoModalTopoDashboard {
+        animation: none;
+    }
+
+    .preenchimentoBarraModalDashboard,
+    .linhaClicavelModalDashboard {
+        transition: none;
+    }
+}

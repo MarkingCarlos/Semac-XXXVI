@@ -2,8 +2,7 @@
    modalAdicionarParticipante.css — cadastro manual de participante
    (ModalAdicionarParticipante). Reaproveita a casca de modal de
    admin.css (overlayModalParticipantesAdmin, modalConfirmarParticipantesAdmin,
-   tituloModalParticipantesAdmin, rodapeModalParticipantesAdmin etc.) e as
-   linhas de camiseta de modalEditarCamisetas.css.
+   tituloModalParticipantesAdmin, rodapeModalParticipantesAdmin etc.).
    ================================================================= */
 
 .modalAdicionarParticipanteAdmin {
@@ -135,14 +134,6 @@
 
 .switchOpcaoAtivoAdicionarParticipanteAdmin .rotuloSwitchOpcaoAdicionarParticipanteAdmin {
     color: var(--Branco);
-}
-
-.tituloBlocoCamisetasAdicionarParticipanteAdmin {
-    font-family: 'Bungee', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--Branco);
-    margin: 1.4rem 0 0.7rem;
 }
 
 /* Botão "+ Adicionar participante" no topo da tabela de participantes. */

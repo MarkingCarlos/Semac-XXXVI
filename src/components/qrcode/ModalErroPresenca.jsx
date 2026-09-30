@@ -15,10 +15,7 @@ function tituloErro(mensagem) {
     return mensagem.toLowerCase().includes('já registrada') ? 'PRESENÇA JÁ REGISTRADA' : 'NÃO CADASTRADO';
 }
 
-export default function ModalErroPresenca({ mensagem, onBuscarManualmente, onFechar }) {
-    /* Ingresso diário fora do dia não se resolve buscando a pessoa na mão:
-       a busca manual passa pela mesma regra. O botão sai para não sugerir
-       uma saída que não existe. */
+export default function ModalErroPresenca({ mensagem, onFechar }) {
     const ingressoDiario = ehErroIngressoDiario(mensagem);
 
     return (
@@ -40,11 +37,6 @@ export default function ModalErroPresenca({ mensagem, onBuscarManualmente, onFec
                         </div>
                     )}
                     <div className="acoesModalErroPresenca">
-                        {!ingressoDiario && (
-                            <button type="button" onClick={onBuscarManualmente} className="botaoBuscarModalErroPresenca">
-                                BUSCAR MANUALMENTE
-                            </button>
-                        )}
                         <button type="button" onClick={onFechar} className="botaoFecharModalErroPresenca">
                             FECHAR
                         </button>

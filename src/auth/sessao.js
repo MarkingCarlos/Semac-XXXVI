@@ -27,6 +27,12 @@ const PAPEIS_ADMIN = ['MEMBRO', 'DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRET
    aqui automaticamente. */
 const PAPEIS_DIRETORIA = PAPEIS_ADMIN.filter((papel) => papel !== 'MEMBRO');
 
+/* Quem vê a dashboard da seção Início do /admin. Por enquanto só a
+   presidência (que vê tudo) e a diretoria de site (quem mantém o
+   sistema); a divisão por papel vem depois. Espelha PAPEIS_DASHBOARD do
+   backend (SecurityConfig). */
+const PAPEIS_DASHBOARD = ['PRESIDENTE', 'DIRETOR_SITE'];
+
 /* Papel com acesso à área do participante (/participantes) — atribuído
    pelo admin quando a inscrição é confirmada (ver apiParticipantes.js). */
 const PAPEIS_PARTICIPANTE = ['PARTICIPANTE'];
@@ -100,6 +106,11 @@ export function temAcessoAdmin() {
 export function temAcessoDiretoria() {
     const sessao = lerSessao();
     return !!sessao && PAPEIS_DIRETORIA.includes(sessao.role) && !sessaoExpirada();
+}
+
+export function temAcessoDashboard() {
+    const sessao = lerSessao();
+    return !!sessao && PAPEIS_DASHBOARD.includes(sessao.role) && !sessaoExpirada();
 }
 
 export function temAcessoParticipante() {

@@ -27,7 +27,7 @@ export async function listarComissao() {
 /* Cadastra uma pessoa manualmente (inscrição de balcão: dinheiro,
    cortesia, quem se inscreveu presencialmente). `dados` traz nome, cpf,
    email, senha, ra, telefone (só dígitos em cpf/telefone), ehUnesp,
-   tipoInscricaoId, dias, camisetas:[{ modelo, tamanho, avulsa }] e
+   tipoInscricaoId, dias, camisetas (sempre [] — já encomendadas) e
    `confirmar` — true já cria como PARTICIPANTE confirmado, false deixa
    aguardando confirmação. Retorna a pessoa criada no mesmo formato da
    listagem, pronta para entrar na tabela. */
@@ -106,22 +106,6 @@ export async function buscarComprovante(id) {
             : 'Não foi possível carregar o comprovante.');
     }
     return resposta.blob();
-}
-
-/* Substitui a lista inteira de camisetas da pessoa (replace-all) — editor
-   restrito a DIRETOR_SITE/PRESIDENTE (mesmo acesso do financeiro). Cada
-   item é { modelo, tamanho, avulsa }. Retorna a pessoa atualizada. */
-export async function atualizarCamisetas(id, camisetas) {
-    const resposta = await apiFetch(`${API_URL}/api/pessoa/${id}/camisetas`, {
-        method: 'PUT',
-        headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ camisetas }),
-    });
-    if (!resposta.ok) {
-        const corpo = await resposta.json().catch(() => null);
-        throw new Error(corpo?.mensagem || 'Não foi possível salvar as camisetas.');
-    }
-    return resposta.json();
 }
 
 /* Exclui definitivamente um participante ou membro da comissão. Ação

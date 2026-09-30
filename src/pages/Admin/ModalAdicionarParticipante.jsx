@@ -22,14 +22,6 @@ import './modalAdicionarParticipante.css'
 
 const ANO_ATUAL = new Date().getFullYear()
 
-const MODELOS = [
-    { valor: 'NORMAL', rotulo: 'Normal' },
-    { valor: 'BABY_LOOK', rotulo: 'Baby Look' },
-]
-const TAMANHOS = ['PP', 'P', 'M', 'G', 'GG', 'XG', 'XXG']
-
-const camisetaPadrao = (avulsa = false) => ({ modelo: 'NORMAL', tamanho: 'M', avulsa })
-
 // Máscara de CPF enquanto digita: 000.000.000-00 (mesma do BoxInscricao).
 function mascaraCPF(valor) {
     return valor
@@ -66,7 +58,6 @@ const formularioVazio = {
 
 export default function ModalAdicionarParticipante({ aoFechar, aoCriado }) {
     const [formulario, setFormulario] = useState(formularioVazio)
-    const [camisetas, setCamisetas] = useState([])
 
     const [ingressos, setIngressos] = useState([])
     const [carregandoIngressos, setCarregandoIngressos] = useState(true)
@@ -91,22 +82,9 @@ export default function ModalAdicionarParticipante({ aoFechar, aoCriado }) {
         setFormulario(anterior => ({ ...anterior, [campo]: valor }))
     }
 
-    // Trocar o ingresso remonta a lista de camisetas com as inclusas dele
-    // (o caso comum no balcão); avulsas e ajustes de tamanho são feitos
-    // depois, nas linhas abaixo.
     function selecionarIngresso(id) {
-        const ingresso = ingressos.find(i => i.id === id) ?? null
         setIngressoSelecionadoId(id)
         setDias(1)
-        setCamisetas(Array.from({ length: ingresso?.camisetasGratis ?? 0 }, () => camisetaPadrao(false)))
-    }
-
-    function atualizarCamiseta(indice, campo, valor) {
-        setCamisetas(camisetas.map((linha, i) => (i === indice ? { ...linha, [campo]: valor } : linha)))
-    }
-
-    function removerCamiseta(indice) {
-        setCamisetas(camisetas.filter((_, i) => i !== indice))
     }
 
     const digitosCpf = formulario.cpf.replace(/\D/g, '')
@@ -137,7 +115,9 @@ export default function ModalAdicionarParticipante({ aoFechar, aoCriado }) {
                 ehUnesp: formulario.ehUnesp,
                 tipoInscricaoId: ingressoSelecionadoId,
                 dias: ingressoSelecionado?.porDia ? Number(dias) : null,
-                camisetas,
+                // As camisetas já foram encomendadas: cadastro novo não
+                // entra mais no pedido.
+                camisetas: [],
                 confirmar: formulario.confirmar,
             })
             aoCriado(criado)
@@ -329,77 +309,6 @@ export default function ModalAdicionarParticipante({ aoFechar, aoCriado }) {
                         ? 'Entra já como participante, com 0 de xp e pré-inscrição nos eventos abertos.'
                         : 'Entra na fila de aguardando confirmação, como quem se inscreve pelo site.'}
                 </p>
-
-                <h4 class="tituloBlocoCamisetasAdicionarParticipanteAdmin">Camisetas</h4>
-                <div class="listaLinhasCamisetasAdmin">
-                    {camisetas.length === 0 && (
-                        <p class="vazioLinhasCamisetasAdmin">Nenhuma camiseta para esta pessoa.</p>
-                    )}
-                    {camisetas.map((linha, indice) => (
-                        <div class="linhaCamisetaAdmin" key={indice}>
-                            <select
-                                class="selectPapelComissaoModalAdmin selectLinhaCamisetaAdmin"
-                                value={linha.modelo}
-                                disabled={salvando}
-                                onChange={e => atualizarCamiseta(indice, 'modelo', e.currentTarget.value)}
-                            >
-                                {MODELOS.map(m => (
-                                    <option key={m.valor} value={m.valor}>{m.rotulo}</option>
-                                ))}
-                            </select>
-                            <select
-                                class="selectPapelComissaoModalAdmin selectLinhaCamisetaAdmin selectTamanhoLinhaCamisetaAdmin"
-                                value={linha.tamanho}
-                                disabled={salvando}
-                                onChange={e => atualizarCamiseta(indice, 'tamanho', e.currentTarget.value)}
-                            >
-                                {TAMANHOS.map(t => (
-                                    <option key={t} value={t}>{t}</option>
-                                ))}
-                            </select>
-                            <div class="alternarAvulsaLinhaCamisetaAdmin" role="group" aria-label="Inclusa no kit ou avulsa">
-                                <button
-                                    type="button"
-                                    class={`botaoAlternarAvulsaAdmin ${!linha.avulsa ? 'botaoAlternarAvulsaAtivoAdmin' : ''}`}
-                                    disabled={salvando}
-                                    onClick={() => atualizarCamiseta(indice, 'avulsa', false)}
-                                >
-                                    Inclusa
-                                </button>
-                                <button
-                                    type="button"
-                                    class={`botaoAlternarAvulsaAdmin ${linha.avulsa ? 'botaoAlternarAvulsaAtivoAdmin' : ''}`}
-                                    disabled={salvando}
-                                    onClick={() => atualizarCamiseta(indice, 'avulsa', true)}
-                                >
-                                    Avulsa
-                                </button>
-                            </div>
-                            <button
-                                type="button"
-                                class="botaoRemoverLinhaCamisetaAdmin"
-                                aria-label="Remover camiseta"
-                                title="Remover"
-                                disabled={salvando}
-                                onClick={() => removerCamiseta(indice)}
-                            >
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="18" y1="6" x2="6" y2="18" />
-                                    <line x1="6" y1="6" x2="18" y2="18" />
-                                </svg>
-                            </button>
-                        </div>
-                    ))}
-                </div>
-
-                <button
-                    type="button"
-                    class="botaoAdicionarLinhaCamisetaAdmin"
-                    disabled={salvando}
-                    onClick={() => setCamisetas([...camisetas, camisetaPadrao(true)])}
-                >
-                    + Adicionar camiseta
-                </button>
 
                 {erro && <p class="avisoErroModalParticipantesAdmin">{erro}</p>}
 

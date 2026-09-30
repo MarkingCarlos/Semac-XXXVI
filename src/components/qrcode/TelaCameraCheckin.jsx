@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { useLeitorQrCodeCamera } from './hooks/useLeitorQrCodeCamera.js';
 import ModalSucessoPresenca from './ModalSucessoPresenca.jsx';
 import ModalErroPresenca from './ModalErroPresenca.jsx';
-import ModalBuscaManualPresenca from './ModalBuscaManualPresenca.jsx';
 import './TelaCameraCheckin.css';
 
 const DURACAO_MODAL_SUCESSO_MS = 2200;
@@ -11,13 +10,13 @@ const DURACAO_MODAL_SUCESSO_MS = 2200;
 
    Não sabe o que está fazendo com o código lido: recebe uma `operacao`
    com o que mostrar na barra do topo e o que chamar quando identifica um
-   participante — por uuid (câmera) ou por id (busca manual). Marcar
-   presença e conceder conquista entram por aqui do mesmo jeito.
+   participante pelo uuid do crachá. Marcar presença e conceder
+   conquista entram por aqui do mesmo jeito. Não há busca manual: toda
+   leitura passa pelo QR, para ficar registrado quem leu o crachá.
 
-   operacao = { titulo, subtitulo, porUuid, porId, normalizar } */
+   operacao = { titulo, subtitulo, porUuid, normalizar } */
 export default function TelaCameraCheckin({ operacao, onVoltar }) {
     const [modal, setModal] = useState(null); // null | 'sucesso' | 'erro'
-    const [buscaAberta, setBuscaAberta] = useState(false);
     const [participanteConfirmado, setParticipanteConfirmado] = useState(null);
     const [mensagemErro, setMensagemErro] = useState('');
     const [lidos, setLidos] = useState(0);
@@ -47,7 +46,7 @@ export default function TelaCameraCheckin({ operacao, onVoltar }) {
 
     const { videoRef, cameraOk, liberarUltimoLido } = useLeitorQrCodeCamera({
         ativo: true,
-        pausado: modal !== null || buscaAberta || processando,
+        pausado: modal !== null || processando,
         onLeitura: lerCodigo,
     });
 
@@ -59,30 +58,6 @@ export default function TelaCameraCheckin({ operacao, onVoltar }) {
         setParticipanteConfirmado(null);
         setMensagemErro('');
         liberarUltimoLido();
-    }
-
-    function abrirBusca() {
-        clearTimeout(timeoutFechamentoRef.current);
-        setModal(null);
-        setBuscaAberta(true);
-    }
-
-    function fecharBusca() {
-        setBuscaAberta(false);
-    }
-
-    function confirmadoNaBusca(dto) {
-        setBuscaAberta(false);
-        setParticipanteConfirmado(operacao.normalizar(dto));
-        setLidos((valor) => valor + 1);
-        setModal('sucesso');
-        timeoutFechamentoRef.current = setTimeout(fecharModal, DURACAO_MODAL_SUCESSO_MS);
-    }
-
-    function erroNaBusca(mensagem) {
-        setBuscaAberta(false);
-        setMensagemErro(mensagem);
-        setModal('erro');
     }
 
     return (
@@ -125,24 +100,13 @@ export default function TelaCameraCheckin({ operacao, onVoltar }) {
 
             <div className="rodapeTelaCameraCheckin">
                 <div className="contadorTelaCameraCheckin">{lidos} LIDOS</div>
-                <button type="button" onClick={abrirBusca} className="botaoBuscarManualmenteTelaCameraCheckin">
-                    BUSCAR MANUALMENTE
-                </button>
             </div>
 
             {modal === 'sucesso' && participanteConfirmado && (
                 <ModalSucessoPresenca resultado={participanteConfirmado} onFechar={fecharModal} />
             )}
             {modal === 'erro' && (
-                <ModalErroPresenca mensagem={mensagemErro} onBuscarManualmente={abrirBusca} onFechar={fecharModal} />
-            )}
-            {buscaAberta && (
-                <ModalBuscaManualPresenca
-                    aoConfirmar={operacao.porId}
-                    onFechar={fecharBusca}
-                    onConfirmado={confirmadoNaBusca}
-                    onErro={erroNaBusca}
-                />
+                <ModalErroPresenca mensagem={mensagemErro} onFechar={fecharModal} />
             )}
         </div>
     );

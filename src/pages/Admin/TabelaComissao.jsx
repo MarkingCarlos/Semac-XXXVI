@@ -14,8 +14,6 @@
 import { useState, useMemo } from 'preact/hooks'
 import { createPortal } from 'preact/compat'
 import { atribuirRole, definirAtivo, desconfirmarParticipante, excluirParticipante } from './data/apiParticipantes.js'
-import { temAcessoFinanceiro } from '../../auth/sessao.js'
-import ModalEditarCamisetas from './ModalEditarCamisetas.jsx'
 
 // Papéis de comissão e seus rótulos amigáveis (espelham o enum Role).
 const PAPEIS_COMISSAO = [
@@ -28,18 +26,6 @@ const PAPEIS_COMISSAO = [
     { valor: 'PRESIDENTE',         rotulo: 'Presidente' },
 ]
 const ROTULO_ROLE = Object.fromEntries(PAPEIS_COMISSAO.map(p => [p.valor, p.rotulo]))
-
-const ROTULO_MODELO = { NORMAL: 'Normal', BABY_LOOK: 'Baby Look' }
-
-// Monta o texto da camiseta: "Normal - M", com sufixo "+N" para quem tem
-// mais de um pedido. Retorna '—' se não houver nenhum.
-function textoCamiseta(camisetas) {
-    const lista = camisetas ?? []
-    if (lista.length === 0) return '—'
-    const primeira = lista[0]
-    const texto = `${ROTULO_MODELO[primeira.modelo] ?? primeira.modelo} - ${primeira.tamanho}`
-    return lista.length > 1 ? `${texto} +${lista.length - 1}` : texto
-}
 
 // Formata o telefone salvo (só dígitos) para exibição: (00) 00000-0000
 // (celular) ou (00) 0000-0000 (fixo). '—' se não houver telefone.
@@ -54,13 +40,11 @@ function textoTelefone(telefone) {
 export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
     const [busca, setBusca] = useState('')
     const [membroEmEdicao, setMembroEmEdicao] = useState(null)
-    const [membroEditandoCamisetas, setMembroEditandoCamisetas] = useState(null)
     const [idConfirmandoDesativar, setIdConfirmandoDesativar] = useState(null)
     const [idConfirmandoExcluir, setIdConfirmandoExcluir] = useState(null)
     const [idConfirmandoDesconfirmar, setIdConfirmandoDesconfirmar] = useState(null)
     const [idProcessando, setIdProcessando] = useState(null)
     const [erroAcao, setErroAcao] = useState('')
-    const podeEditarCamisetas = temAcessoFinanceiro()
 
     const filtrados = useMemo(() =>
         comissao.filter(membro =>
@@ -152,7 +136,6 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
                             <th>RA</th>
                             <th>Telefone</th>
                             <th>Conta</th>
-                            <th>Camiseta</th>
                             <th>Função</th>
                             <th>Ações</th>
                         </tr>
@@ -160,7 +143,7 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
                     <tbody>
                         {filtrados.length === 0 ? (
                             <tr>
-                                <td colSpan={7} class="tabelaVaziaAdmin">
+                                <td colSpan={6} class="tabelaVaziaAdmin">
                                     Nenhum membro da comissão encontrado.
                                 </td>
                             </tr>
@@ -177,7 +160,6 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
                                         {membro.ativo ? 'Ativo' : 'Inativo'}
                                     </span>
                                 </td>
-                                <td class="celulaCamisetaAdmin">{textoCamiseta(membro.camisetas)}</td>
                                 <td class="celulaFuncaoComissaoAdmin">
                                     <span class="badgeFuncaoComissaoAdmin">
                                         {ROTULO_ROLE[membro.role] ?? membro.role}
@@ -216,19 +198,6 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
                                                 <path d="M9 14 4 9l5-5M4 9h10.5a5.5 5.5 0 0 1 0 11H11" />
                                             </svg>
                                         </button>
-                                        {podeEditarCamisetas && (
-                                            <button
-                                                type="button"
-                                                class="botaoAcaoLinhaFinancas"
-                                                aria-label={`Editar camisetas de ${membro.nome}`}
-                                                title="Editar camisetas"
-                                                onClick={() => setMembroEditandoCamisetas(membro)}
-                                            >
-                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                    <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z" />
-                                                </svg>
-                                            </button>
-                                        )}
                                         <button
                                             type="button"
                                             class={`botaoAcaoLinhaFinancas ${idConfirmandoDesativar === membro.id ? 'botaoConfirmarExclusaoFinancas' : ''}`}
@@ -285,14 +254,6 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
             <div class="rodapeTabelaAdmin">
                 Exibindo {filtrados.length} de {comissao.length} membros
             </div>
-
-            {membroEditandoCamisetas && (
-                <ModalEditarCamisetas
-                    pessoa={membroEditandoCamisetas}
-                    aoFechar={() => setMembroEditandoCamisetas(null)}
-                    aoAtualizado={aoAtualizar}
-                />
-            )}
 
             {membroEmEdicao && (
                 <ModalAlterarFuncao

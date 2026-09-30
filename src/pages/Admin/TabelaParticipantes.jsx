@@ -1,7 +1,7 @@
 // Tabela de participantes com busca em tempo real por nome ou e-mail.
 //
 // Cada linha exibe: nome (com e-mail abaixo), RA, status da conta,
-// a camiseta escolhida na inscrição e a ação de confirmação.
+// o ingresso, o nível e a ação de confirmação.
 // A filtragem é feita no cliente — quando houver muitos participantes,
 // considerar mover para query params na API (?busca=...).
 //
@@ -12,7 +12,7 @@
 // Props:
 //   participantes — array completo de participantes vindo do Admin pai
 //   aoConfirmar   — (pessoaAtualizada) => void, chamado após confirmar,
-//                   desconfirmar, editar camisetas ou cadastrar manualmente
+//                   desconfirmar ou cadastrar manualmente
 //   aoExcluir     — (id) => void, chamado após excluir definitivamente
 
 import { useState, useMemo, useEffect } from 'preact/hooks'
@@ -20,15 +20,11 @@ import { createPortal } from 'preact/compat'
 import { atribuirRole, desconfirmarParticipante, excluirParticipante, buscarComprovante } from './data/apiParticipantes.js'
 import { listarTiposInscricao } from './data/apiTipoInscricao.js'
 import { formatarCentavos } from '../Financas/utils/moeda.js'
-import { temAcessoFinanceiro, temAcessoDiretoria } from '../../auth/sessao.js'
-import ModalEditarCamisetas from './ModalEditarCamisetas.jsx'
+import { temAcessoDiretoria } from '../../auth/sessao.js'
 import ModalConquistasParticipante from './ModalConquistasParticipante.jsx'
 import ModalAdicionarParticipante from './ModalAdicionarParticipante.jsx'
 
 const ANO_ATUAL = new Date().getFullYear()
-
-// Rótulos legíveis dos enums de camiseta (espelham o backend).
-const ROTULO_MODELO = { NORMAL: 'Normal', BABY_LOOK: 'Baby Look' }
 
 // Categorias de papel oferecidas na confirmação da inscrição.
 const OPCOES_ROLE = [
@@ -65,16 +61,6 @@ const PAPEIS_COMISSAO = [
     { valor: 'PRESIDENTE',         rotulo: 'Presidente' },
 ]
 
-// Monta o texto da camiseta: "Normal - M". Quem tem mais de uma (ingresso
-// com várias inclusas, ou avulsas compradas) ganha o sufixo "+N".
-// Retorna '—' se não houver pedido.
-function textoCamiseta(camisetas) {
-    const lista = camisetas ?? []
-    if (lista.length === 0) return '—'
-    const primeira = lista[0]
-    const texto = `${ROTULO_MODELO[primeira.modelo] ?? primeira.modelo} - ${primeira.tamanho}`
-    return lista.length > 1 ? `${texto} +${lista.length - 1}` : texto
-}
 
 // Formata o telefone salvo (só dígitos) para exibição: (00) 00000-0000
 // (celular) ou (00) 0000-0000 (fixo). '—' se não houver telefone.
@@ -90,7 +76,6 @@ function textoTelefone(telefone) {
 function LinhaParticipante({
     participante, aoAbrirConfirmacao, aoExcluir, confirmandoExcluir, processandoExcluir,
     aoDesconfirmar, confirmandoDesconfirmar, processandoDesconfirmar,
-    podeEditarCamisetas, aoEditarCamisetas,
     podeVerConquistas, aoVerConquistas,
 }) {
     const confirmado = participante.role === 'PARTICIPANTE'
@@ -108,7 +93,6 @@ function LinhaParticipante({
                     {participante.ativo ? 'Ativo' : 'Inativo'}
                 </span>
             </td>
-            <td class="celulaCamisetaAdmin">{textoCamiseta(participante.camisetas)}</td>
             <td class="celulaIngressoParticipantesAdmin">{participante.tipoInscricao?.nome ?? '—'}</td>
             <td class="celulaNivelParticipantesAdmin">
                 {participante.nivel ? `${participante.nivel.nome} (${participante.xp ?? 0} xp)` : '—'}
@@ -173,19 +157,6 @@ function LinhaParticipante({
                             </svg>
                         </button>
                     )}
-                    {podeEditarCamisetas && (
-                        <button
-                            type="button"
-                            class="botaoAcaoLinhaFinancas"
-                            aria-label={`Editar camisetas de ${participante.nome}`}
-                            title="Editar camisetas"
-                            onClick={() => aoEditarCamisetas(participante)}
-                        >
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23Z" />
-                            </svg>
-                        </button>
-                    )}
                     <button
                         type="button"
                         class={`botaoAcaoLinhaFinancas ${confirmandoExcluir ? 'botaoConfirmarExclusaoFinancas' : ''}`}
@@ -212,7 +183,6 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
     const [busca, setBusca] = useState('')
     const [ordenarPorDataInscricao, setOrdenarPorDataInscricao] = useState(false)
     const [participanteEmConfirmacao, setParticipanteEmConfirmacao] = useState(null)
-    const [participanteEditandoCamisetas, setParticipanteEditandoCamisetas] = useState(null)
     const [participanteVendoConquistas, setParticipanteVendoConquistas] = useState(null)
     const [cadastroManualAberto, setCadastroManualAberto] = useState(false)
     const [idConfirmandoExcluir, setIdConfirmandoExcluir] = useState(null)
@@ -221,7 +191,6 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
     const [idConfirmandoDesconfirmar, setIdConfirmandoDesconfirmar] = useState(null)
     const [idProcessandoDesconfirmar, setIdProcessandoDesconfirmar] = useState(null)
     const [erroDesconfirmar, setErroDesconfirmar] = useState('')
-    const podeEditarCamisetas = temAcessoFinanceiro()
     /* Ver e revogar conquista fica com diretores e presidência — revogar
        mexe no xp e no ranking (ver SecurityConfig). */
     const podeVerConquistas = temAcessoDiretoria()
@@ -328,7 +297,6 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
                             <th>RA</th>
                             <th>Telefone</th>
                             <th>Conta</th>
-                            <th>Camiseta</th>
                             <th>Ingresso</th>
                             <th>Nível</th>
                             <th>Ação</th>
@@ -337,7 +305,7 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
                     <tbody>
                         {filtrados.length === 0 ? (
                             <tr>
-                                <td colSpan={8} class="tabelaVaziaAdmin">
+                                <td colSpan={7} class="tabelaVaziaAdmin">
                                     Nenhum participante encontrado.
                                 </td>
                             </tr>
@@ -352,8 +320,6 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
                                 aoDesconfirmar={desconfirmar}
                                 confirmandoDesconfirmar={idConfirmandoDesconfirmar === participante.id}
                                 processandoDesconfirmar={idProcessandoDesconfirmar === participante.id}
-                                podeEditarCamisetas={podeEditarCamisetas}
-                                aoEditarCamisetas={setParticipanteEditandoCamisetas}
                                 podeVerConquistas={podeVerConquistas}
                                 aoVerConquistas={setParticipanteVendoConquistas}
                             />
@@ -370,14 +336,6 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
                 <ModalAdicionarParticipante
                     aoFechar={() => setCadastroManualAberto(false)}
                     aoCriado={aoConfirmar}
-                />
-            )}
-
-            {participanteEditandoCamisetas && (
-                <ModalEditarCamisetas
-                    pessoa={participanteEditandoCamisetas}
-                    aoFechar={() => setParticipanteEditandoCamisetas(null)}
-                    aoAtualizado={aoConfirmar}
                 />
             )}
 

@@ -6,15 +6,13 @@ import TelaCameraCheckin from './TelaCameraCheckin.jsx';
 import {
     listarConquistasManuaisCheckin,
     registrarPresencaPorQrCode,
-    registrarPresencaManual,
     concederConquistaPorQrCode,
-    concederConquistaManual,
 } from './data/apiCheckin.js';
 import { temAcessoDiretoria } from '../../auth/sessao.js';
 import './ModalQrCode.css';
 
 /* Ferramenta usada durante o evento, na rota /checkin. Dois modos, com a
-   mesma câmera e a mesma busca manual por trás:
+   mesma câmera por trás (só leitura de QR — não há busca manual):
 
    1. Marcar presença — escolhe a palestra/minicurso e lê os crachás.
       Qualquer papel de comissão pode.
@@ -51,7 +49,6 @@ const ModalQrCode = () => {
             titulo: `${evento.data.split('-').reverse().slice(0, 2).join('/')} · ${evento.hora}`,
             subtitulo: evento.nome,
             porUuid: (uuid) => registrarPresencaPorQrCode(evento.id, uuid),
-            porId: (participanteId) => registrarPresencaManual(evento.id, participanteId),
             normalizar: (dto) => ({
                 titulo: 'PRESENÇA CONFIRMADA',
                 nome: dto.nome,
@@ -68,7 +65,6 @@ const ModalQrCode = () => {
             titulo: 'CONQUISTA',
             subtitulo: conquista.nome,
             porUuid: (uuid) => concederConquistaPorQrCode(conquista.id, uuid),
-            porId: (participanteId) => concederConquistaManual(conquista.id, participanteId),
             normalizar: (dto) => ({
                 titulo: 'CONQUISTA CONCEDIDA',
                 nome: dto.participanteNome,

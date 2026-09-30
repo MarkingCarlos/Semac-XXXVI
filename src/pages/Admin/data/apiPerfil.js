@@ -8,10 +8,8 @@ import { apiFetch } from '../../../lib/apiFetch.js';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const ROTA = `${API_URL}/api/pessoa/me`;
 
-/* Carrega nome, e-mail, função (read-only), RA e camisetas (editáveis).
-   `camisetas` traz todos os pedidos da pessoa — uma pessoa pode ter mais
-   de um (a inclusa no kit e eventuais avulsas). Retorna null quando a
-   sessão expirou (tratarErroAuth já redireciona). */
+/* Carrega nome, e-mail, função (read-only) e RA (editável). Retorna null
+   quando a sessão expirou (tratarErroAuth já redireciona). */
 export async function buscarPerfil() {
     const resposta = await apiFetch(ROTA, { headers: cabecalhosAuth() });
     if (tratarErroAuth(resposta)) return null;
@@ -19,15 +17,14 @@ export async function buscarPerfil() {
     return resposta.json();
 }
 
-/* Salva os campos editáveis: RA (opcional) e o modelo/tamanho de cada
-   camiseta já existente. `camisetas` precisa trazer o `id` de cada uma —
-   essa rota só edita, nunca adiciona ou remove camiseta. Retorna o
-   perfil atualizado, ou null quando a sessão expirou. */
-export async function atualizarPerfil({ ra, camisetas }) {
+/* Salva o único campo editável: o RA (opcional). As camisetas já foram
+   encomendadas e não mudam mais. Retorna o perfil atualizado, ou null
+   quando a sessão expirou. */
+export async function atualizarPerfil({ ra }) {
     const resposta = await apiFetch(ROTA, {
         method: 'PATCH',
         headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ ra: ra?.trim() || null, camisetas }),
+        body: JSON.stringify({ ra: ra?.trim() || null }),
     });
     if (tratarErroAuth(resposta)) return null;
     if (!resposta.ok) {

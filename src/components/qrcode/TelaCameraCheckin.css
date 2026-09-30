@@ -205,14 +205,3 @@
     color: var(--AmareloAuxApoio);
 }
 
-.botaoBuscarManualmenteTelaCameraCheckin {
-    background: transparent;
-    border: none;
-    color: rgba(252, 248, 245, 0.75);
-    font-family: var(--fonteTituloBungee);
-    font-size: 0.65rem;
-    letter-spacing: 0.06em;
-    cursor: pointer;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-}
