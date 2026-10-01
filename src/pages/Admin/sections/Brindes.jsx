@@ -2,12 +2,23 @@ import { useState, useEffect } from 'preact/hooks';
 import PainelLateral from '../../Financas/components/PainelLateral.jsx';
 import { normalizar } from '../../Financas/utils/moeda.js';
 import { listarBrindes, criarBrinde, atualizarBrinde, excluirBrinde } from '../data/apiBrindes.js';
+import { listarSorteios } from '../../Sorteio/data/apiSorteio.js';
+import { listarEventos } from '../data/apiEventos.js';
+import SorteiosBrindes from './SorteiosBrindes.jsx';
 
-/* Brindes — tabela `brinde` (nome, quantidade). Usados na tela /sorteio:
-   `quantidadeEntregue` vem calculada pelo backend (sorteios já
-   confirmados para o brinde) e não é editável aqui, só exibida. */
+/* Brindes — duas sub-abas:
+   - "Brindes": tabela `brinde` (nome, quantidade, sorteio). Todo brinde
+     pertence a um sorteio. `quantidadeEntregue` vem calculada pelo
+     backend (entregas já confirmadas) e não é editável aqui.
+   - "Sorteios": CRUD de `sorteio` (nome + evento), em SorteiosBrindes.jsx.
+   A lista de sorteios mora aqui porque as duas sub-abas precisam dela. */
 
-const FORMULARIO_VAZIO = { nome: '', quantidade: '' };
+const FORMULARIO_VAZIO = { nome: '', quantidade: '', sorteioId: '' };
+
+const SUBABAS_BRINDES = [
+    { id: 'brindes', rotulo: 'Brindes' },
+    { id: 'sorteios', rotulo: 'Sorteios' },
+];
 
 export default function Brindes() {
     const [brindes, setBrindes] = useState([]);
@@ -21,6 +32,11 @@ export default function Brindes() {
     const [idConfirmandoExclusao, setIdConfirmandoExclusao] = useState(null);
     const [filtro, setFiltro] = useState('');
 
+    const [subabaAtivaBrindes, setSubabaAtivaBrindes] = useState('brindes');
+    const [sorteios, setSorteios] = useState([]);
+    const [carregandoSorteios, setCarregandoSorteios] = useState(true);
+    const [eventos, setEventos] = useState([]);
+
     useEffect(() => {
         let ativo = true;
         listarBrindes()
@@ -30,8 +46,33 @@ export default function Brindes() {
         return () => { ativo = false; };
     }, []);
 
+    useEffect(() => {
+        let ativo = true;
+        listarSorteios()
+            .then((lista) => { if (ativo) setSorteios(lista); })
+            .catch((e) => { if (ativo) setErro(e.message); })
+            .finally(() => { if (ativo) setCarregandoSorteios(false); });
+        listarEventos()
+            .then((lista) => { if (ativo) setEventos(lista); })
+            .catch((e) => { if (ativo) setErro(e.message); });
+        return () => { ativo = false; };
+    }, []);
+
+    /* A quantidade de brindes por sorteio é calculada no backend; depois
+       de mexer num brinde, recarrega a lista para a outra sub-aba ficar
+       certa. Falha aqui não atrapalha o que já foi salvo. */
+    const recarregarSorteios = () => {
+        listarSorteios().then(setSorteios).catch(() => {});
+    };
+
+    /* Nome do sorteio vem da lista local, e não do brinde, para refletir
+       na hora uma renomeação feita na sub-aba Sorteios. */
+    const nomeDoSorteio = (brinde) =>
+        sorteios.find((sorteio) => sorteio.id === brinde.sorteioId)?.nome ?? brinde.sorteioNome;
+
     const brindesFiltrados = filtro.trim()
-        ? brindes.filter((brinde) => normalizar(brinde.nome).includes(normalizar(filtro)))
+        ? brindes.filter((brinde) =>
+            normalizar(`${brinde.nome} ${nomeDoSorteio(brinde)}`).includes(normalizar(filtro)))
         : brindes;
 
     const abrirNovoBrinde = () => {
@@ -42,7 +83,7 @@ export default function Brindes() {
     };
 
     const abrirEdicaoBrinde = (brinde) => {
-        setFormulario({ nome: brinde.nome, quantidade: brinde.quantidade });
+        setFormulario({ nome: brinde.nome, quantidade: brinde.quantidade, sorteioId: String(brinde.sorteioId) });
         setIdEmEdicao(brinde.id);
         setErro('');
         setPainelAberto(true);
@@ -61,6 +102,7 @@ export default function Brindes() {
                 setBrindes([...brindes, criado]);
             }
             setPainelAberto(false);
+            recarregarSorteios();
         } catch (e) {
             setErro(e.message);
         } finally {
@@ -77,6 +119,7 @@ export default function Brindes() {
         try {
             await excluirBrinde(id);
             setBrindes(brindes.filter((b) => b.id !== id));
+            recarregarSorteios();
         } catch (e) {
             setErro(e.message);
         } finally {
@@ -90,10 +133,37 @@ export default function Brindes() {
                 <div>
                     <h1 className="tituloSecaoFinancas">Brindes</h1>
                     <p className="subtituloSecaoFinancas">
-                        Prêmios disponíveis para o sorteio — nome e quantidade em estoque
+                        Prêmios e os sorteios em que cada um será entregue
                     </p>
                 </div>
-                <div className="controlesCabecalhoFinancas">
+            </header>
+
+            <div className="listaSubabasAdmin" role="tablist">
+                {SUBABAS_BRINDES.map((subaba) => (
+                    <button
+                        key={subaba.id}
+                        type="button"
+                        role="tab"
+                        aria-selected={subabaAtivaBrindes === subaba.id}
+                        className={`botaoSubabaAdmin${subabaAtivaBrindes === subaba.id ? ' botaoSubabaAdminAtivo' : ''}`}
+                        onClick={() => setSubabaAtivaBrindes(subaba.id)}
+                    >
+                        {subaba.rotulo}
+                    </button>
+                ))}
+            </div>
+
+            {subabaAtivaBrindes === 'sorteios' && (
+                <SorteiosBrindes
+                    sorteios={sorteios}
+                    eventos={eventos}
+                    carregando={carregandoSorteios}
+                    aoAlterarSorteios={setSorteios}
+                />
+            )}
+
+            {subabaAtivaBrindes === 'brindes' && (<>
+                <div className="controlesCabecalhoFinancas barraFerramentasBrindesAdmin">
                     <div className="filtroTabelaFinancas">
                         <span className="iconeFiltroFinancas">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -103,17 +173,16 @@ export default function Brindes() {
                         <input
                             className="entradaFiltroFinancas"
                             type="search"
-                            placeholder="Filtrar por brinde…"
+                            placeholder="Filtrar por brinde ou sorteio…"
                             value={filtro}
                             onInput={(e) => setFiltro(e.currentTarget.value)}
-                            aria-label="Filtrar brindes por nome"
+                            aria-label="Filtrar brindes por nome ou sorteio"
                         />
                     </div>
                     <button type="button" className="botaoPrimarioFinancas" onClick={abrirNovoBrinde}>
                         + Novo brinde
                     </button>
                 </div>
-            </header>
 
             {erro && <p className="avisoErroAdmin" role="alert">{erro}</p>}
 
@@ -122,6 +191,7 @@ export default function Brindes() {
                     <thead>
                         <tr>
                             <th>Brinde</th>
+                            <th>Sorteio</th>
                             <th>Quantidade</th>
                             <th>Entregues</th>
                             <th>Restante</th>
@@ -131,12 +201,12 @@ export default function Brindes() {
                     <tbody>
                         {carregando && (
                             <tr>
-                                <td colSpan={5} className="celulaVaziaFinancas">Carregando brindes…</td>
+                                <td colSpan={6} className="celulaVaziaFinancas">Carregando brindes…</td>
                             </tr>
                         )}
                         {!carregando && brindesFiltrados.length === 0 && (
                             <tr>
-                                <td colSpan={5} className="celulaVaziaFinancas">
+                                <td colSpan={6} className="celulaVaziaFinancas">
                                     {filtro.trim()
                                         ? 'Nenhum brinde encontrado para esse filtro.'
                                         : 'Nenhum brinde cadastrado ainda.'}
@@ -148,6 +218,7 @@ export default function Brindes() {
                             return (
                                 <tr key={brinde.id}>
                                     <td><span className="nomeDoadorDoacoes">{brinde.nome}</span></td>
+                                    <td>{nomeDoSorteio(brinde)}</td>
                                     <td>{brinde.quantidade}</td>
                                     <td>{brinde.quantidadeEntregue}</td>
                                     <td>{restante > 0 ? restante : 'Esgotado'}</td>
@@ -195,6 +266,7 @@ export default function Brindes() {
                     </tbody>
                 </table>
             </div>
+            </>)}
 
             <PainelLateral
                 aberto={painelAberto}
@@ -224,6 +296,29 @@ export default function Brindes() {
                             value={formulario.quantidade}
                             onInput={(e) => setFormulario({ ...formulario, quantidade: e.currentTarget.value })}
                         />
+                    </div>
+
+                    <div className="campoFormularioFinancas">
+                        <label className="rotuloCampoFinancas" htmlFor="campoSorteioBrinde">Sorteio *</label>
+                        <select
+                            id="campoSorteioBrinde"
+                            className="entradaFormularioFinancas"
+                            required
+                            value={formulario.sorteioId}
+                            onChange={(e) => setFormulario({ ...formulario, sorteioId: e.currentTarget.value })}
+                        >
+                            <option value="" disabled>Selecione o sorteio</option>
+                            {sorteios.map((sorteio) => (
+                                <option key={sorteio.id} value={String(sorteio.id)}>
+                                    {sorteio.nome} — {sorteio.eventoNome}
+                                </option>
+                            ))}
+                        </select>
+                        {!carregandoSorteios && sorteios.length === 0 && (
+                            <span className="dicaCampoSorteiosBrindes">
+                                Nenhum sorteio cadastrado — crie um na sub-aba Sorteios primeiro.
+                            </span>
+                        )}
                     </div>
 
                     <div className="rodapeFormularioFinancas">

@@ -17,6 +17,11 @@ const PAPEIS_FINANCEIRO = ['DIRETOR_SITE', 'PRESIDENTE'];
    Espelha PAPEIS_LEITURA_PREVISAO do backend (SecurityConfig). */
 const PAPEIS_LEITURA_PREVISAO = [...PAPEIS_FINANCEIRO, 'DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING'];
 
+/* Quem cadastra, edita e exclui doações (aba Doações do /financeiro).
+   Espelha PAPEIS_DOACAO do backend (SecurityConfig). O diretor de
+   patrocínio entra aqui sem ganhar o resto do financeiro. */
+const PAPEIS_DOACAO = [...PAPEIS_FINANCEIRO, 'DIRETOR_PATROCINIO'];
+
 /* Papéis com acesso ao módulo de administração (/admin). */
 const PAPEIS_ADMIN = ['MEMBRO', 'DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'];
 
@@ -92,6 +97,13 @@ export function temAcessoFinanceiro() {
 export function temAcessoPrevisao() {
     const sessao = lerSessao();
     return !!sessao && PAPEIS_LEITURA_PREVISAO.includes(sessao.role) && !sessaoExpirada();
+}
+
+/* Aba Doações do /financeiro. Quem tem esta mas não temAcessoFinanceiro
+   vê só Previsão (leitura) + Doações. */
+export function temAcessoDoacao() {
+    const sessao = lerSessao();
+    return !!sessao && PAPEIS_DOACAO.includes(sessao.role) && !sessaoExpirada();
 }
 
 export function temAcessoAdmin() {

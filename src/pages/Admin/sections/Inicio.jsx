@@ -24,7 +24,7 @@ const LABEL_FUNCAO = {
     PRESIDENTE: 'Presidente',
 };
 
-export default function Inicio({ podeAcessarFinanceiro = false, podeVerPrevisao = false }) {
+export default function Inicio({ podeAcessarFinanceiro = false, podeVerPrevisao = false, podeGerenciarDoacoes = false }) {
     const [perfil, setPerfil] = useState(null);
     const [carregando, setCarregando] = useState(true);
     const [erroCarregar, setErroCarregar] = useState('');
@@ -97,6 +97,13 @@ export default function Inicio({ podeAcessarFinanceiro = false, podeVerPrevisao 
                         <Link href="/financeiro" className="cartaoIrFinanceiroInicio">
                             <span className="tituloCartaoIrFinanceiroInicio">Ir para o financeiro</span>
                             <span className="subtituloCartaoIrFinanceiroInicio">Acessar o painel financeiro da SEMAC</span>
+                        </Link>
+                    ) : podeGerenciarDoacoes ? (
+                        /* Diretor de patrocínio: além da Previsão (leitura),
+                           gerencia as Doações, que moram no /financeiro. */
+                        <Link href="/financeiro" className="cartaoIrFinanceiroInicio">
+                            <span className="tituloCartaoIrFinanceiroInicio">Previsão e doações</span>
+                            <span className="subtituloCartaoIrFinanceiroInicio">Acompanhar o orçamento e cadastrar doações</span>
                         </Link>
                     ) : podeVerPrevisao && (
                         <Link href="/financeiro" className="cartaoIrFinanceiroInicio">

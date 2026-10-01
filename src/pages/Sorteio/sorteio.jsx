@@ -1,14 +1,14 @@
 import "./sorteio.css";
 import { useState, useEffect, useRef } from "preact/hooks";
 import gifConfete from "../../assets/confete.gif";
-import { listarEventos } from "../Admin/data/apiEventos.js";
 import { listarBrindes } from "../Admin/data/apiBrindes.js";
-import { listarElegiveis, registrarGanhador } from "./data/apiSorteio.js";
+import { listarSorteios, listarElegiveis, registrarGanhador } from "./data/apiSorteio.js";
 
-/* Fluxo de 3 passos: escolher o evento do dia → escolher o brinde →
-   girar o rolo entre quem está com presença confirmada nesse evento.
-   O vencedor é sorteado no front (resposta instantânea); só a
-   confirmação final (ENTREGUE) é persistida no backend. */
+/* Fluxo de 3 passos: escolher um dos sorteios do dia (cadastrados no
+   /admin, aba Brindes → Sorteios) → escolher um brinde desse sorteio →
+   girar o rolo entre quem está com presença confirmada no evento do
+   sorteio. O vencedor é sorteado no front (resposta instantânea); só a
+   confirmação final (ENTREGUE) é persistida, com quem realizou. */
 
 const ALTURA_ITEM_ROLO = 150;
 const QUANTIDADE_ITENS_ROLO = 24;
@@ -32,13 +32,13 @@ function montarRolo(candidatos, vencedor) {
 }
 
 const Sorteio = () => {
-    const [passo, setPasso] = useState("evento");
+    const [passo, setPasso] = useState("listaSorteios");
 
-    // Passo 1 — evento
-    const [eventos, setEventos] = useState([]);
-    const [carregandoEventos, setCarregandoEventos] = useState(true);
-    const [erroEventos, setErroEventos] = useState("");
-    const [eventoEscolhido, setEventoEscolhido] = useState(null);
+    // Passo 1 — sorteio
+    const [sorteios, setSorteios] = useState([]);
+    const [carregandoSorteios, setCarregandoSorteios] = useState(true);
+    const [erroSorteios, setErroSorteios] = useState("");
+    const [sorteioEscolhido, setSorteioEscolhido] = useState(null);
 
     // Passo 2 — brinde
     const [brindes, setBrindes] = useState([]);
@@ -77,10 +77,10 @@ const Sorteio = () => {
 
     useEffect(() => {
         let ativo = true;
-        listarEventos()
-            .then((lista) => { if (ativo) setEventos(lista); })
-            .catch((e) => { if (ativo) setErroEventos(e.message); })
-            .finally(() => { if (ativo) setCarregandoEventos(false); });
+        listarSorteios()
+            .then((lista) => { if (ativo) setSorteios(lista); })
+            .catch((e) => { if (ativo) setErroSorteios(e.message); })
+            .finally(() => { if (ativo) setCarregandoSorteios(false); });
         return () => { ativo = false; };
     }, []);
 
@@ -93,19 +93,22 @@ const Sorteio = () => {
         return () => { ativo = false; };
     }, []);
 
-    const eventosDeHoje = eventos
-        .filter((evento) => evento.data === hojeISO())
-        .sort((a, b) => (a.horaInicio || "").localeCompare(b.horaInicio || ""));
+    /* eventoDataHoraInicio chega como "2026-10-05T14:00:00". */
+    const sorteiosDeHoje = sorteios
+        .filter((sorteio) => (sorteio.eventoDataHoraInicio || "").slice(0, 10) === hojeISO())
+        .sort((a, b) => a.eventoDataHoraInicio.localeCompare(b.eventoDataHoraInicio));
 
-    function escolherEvento(evento) {
-        setEventoEscolhido(evento);
+    const brindesDoSorteio = brindes.filter((brinde) => brinde.sorteioId === sorteioEscolhido?.id);
+
+    function escolherSorteio(sorteio) {
+        setSorteioEscolhido(sorteio);
         setErroSorteio("");
         setPasso("brinde");
     }
 
-    function voltarParaEventos() {
-        setPasso("evento");
-        setEventoEscolhido(null);
+    function voltarParaSorteios() {
+        setPasso("listaSorteios");
+        setSorteioEscolhido(null);
         setBrindeEscolhido(null);
     }
 
@@ -146,14 +149,14 @@ const Sorteio = () => {
     }
 
     async function iniciarSorteio() {
-        if (!eventoEscolhido || !brindeEscolhido) return;
+        if (!sorteioEscolhido || !brindeEscolhido) return;
         setErroSorteio("");
         setCarregandoSorteio(true);
         try {
-            const pool = await listarElegiveis(eventoEscolhido.id);
+            const pool = await listarElegiveis(sorteioEscolhido.id);
             if (!pool.length) {
                 setErroSorteio(
-                    "Não há participantes com presença confirmada nesse evento (ou todos já ganharam algum brinde)."
+                    "Não há participantes com presença confirmada no evento deste sorteio (ou todos já ganharam algum brinde)."
                 );
                 return;
             }
@@ -180,7 +183,7 @@ const Sorteio = () => {
         setErroRegistro("");
         try {
             await registrarGanhador({
-                eventoId: eventoEscolhido.id,
+                sorteioId: sorteioEscolhido.id,
                 brindeId: brindeEscolhido.id,
                 participanteId: ganhador.id,
             });
@@ -221,20 +224,22 @@ const Sorteio = () => {
                 <header className="headerPainelSorteio">
                     <div className="divTituloPainelSorteio">
                         <h1 className="h1TituloPainelSorteio">
-                            {passo === "evento" && "Escolher evento"}
+                            {passo === "listaSorteios" && "Escolher sorteio"}
                             {passo === "brinde" && "Escolher brinde"}
                             {passo === "sorteio" && "Sorteio"}
                         </h1>
-                        {passo === "brinde" && eventoEscolhido && (
-                            <span className="spanSubtituloPainelSorteio">{eventoEscolhido.nome}</span>
+                        {passo === "brinde" && sorteioEscolhido && (
+                            <span className="spanSubtituloPainelSorteio">
+                                {sorteioEscolhido.nome} · {sorteioEscolhido.eventoNome}
+                            </span>
                         )}
                         {passo === "sorteio" && (
                             <span className="spanSubtituloPainelSorteio">SEMAC XXXVI</span>
                         )}
                     </div>
                     {passo === "brinde" && (
-                        <button type="button" className="botaoVoltarPainelSorteio" onClick={voltarParaEventos}>
-                            ← Trocar evento
+                        <button type="button" className="botaoVoltarPainelSorteio" onClick={voltarParaSorteios}>
+                            ← Trocar sorteio
                         </button>
                     )}
                     {passo === "sorteio" && (
@@ -245,26 +250,27 @@ const Sorteio = () => {
                 </header>
 
                 <div className="divCorpoPainelSorteio">
-                    {passo === "evento" && (
+                    {passo === "listaSorteios" && (
                         <>
-                            {erroEventos && <p className="pAvisoErroSorteio" role="alert">{erroEventos}</p>}
-                            {carregandoEventos && <p className="pAvisoVazioSorteio">Carregando eventos…</p>}
-                            {!carregandoEventos && eventosDeHoje.length === 0 && (
-                                <p className="pAvisoVazioSorteio">Nenhum evento programado para hoje.</p>
+                            {erroSorteios && <p className="pAvisoErroSorteio" role="alert">{erroSorteios}</p>}
+                            {carregandoSorteios && <p className="pAvisoVazioSorteio">Carregando sorteios…</p>}
+                            {!carregandoSorteios && sorteiosDeHoje.length === 0 && (
+                                <p className="pAvisoVazioSorteio">
+                                    Nenhum sorteio programado para hoje — cadastre em /admin, aba Brindes → Sorteios.
+                                </p>
                             )}
-                            {!carregandoEventos && eventosDeHoje.length > 0 && (
+                            {!carregandoSorteios && sorteiosDeHoje.length > 0 && (
                                 <div className="divListaEventosSorteio">
-                                    {eventosDeHoje.map((evento) => (
+                                    {sorteiosDeHoje.map((sorteio) => (
                                         <button
-                                            key={evento.id}
+                                            key={sorteio.id}
                                             type="button"
                                             className="botaoCartaoEventoSorteio"
-                                            onClick={() => escolherEvento(evento)}
+                                            onClick={() => escolherSorteio(sorteio)}
                                         >
-                                            <span className="spanNomeCartaoEventoSorteio">{evento.nome}</span>
+                                            <span className="spanNomeCartaoEventoSorteio">{sorteio.nome}</span>
                                             <span className="spanHorarioCartaoEventoSorteio">
-                                                {evento.horaInicio}
-                                                {evento.horaFim ? `–${evento.horaFim}` : ""}
+                                                {sorteio.eventoDataHoraInicio.slice(11, 16)} · {sorteio.eventoNome}
                                             </span>
                                         </button>
                                     ))}
@@ -278,14 +284,14 @@ const Sorteio = () => {
                             {erroBrindes && <p className="pAvisoErroSorteio" role="alert">{erroBrindes}</p>}
                             {erroSorteio && <p className="pAvisoErroSorteio" role="alert">{erroSorteio}</p>}
                             {carregandoBrindes && <p className="pAvisoVazioSorteio">Carregando brindes…</p>}
-                            {!carregandoBrindes && brindes.length === 0 && (
+                            {!carregandoBrindes && brindesDoSorteio.length === 0 && (
                                 <p className="pAvisoVazioSorteio">
-                                    Nenhum brinde cadastrado ainda — adicione em /admin, na aba Brindes.
+                                    Nenhum brinde neste sorteio — adicione em /admin, na aba Brindes.
                                 </p>
                             )}
-                            {!carregandoBrindes && brindes.length > 0 && (
+                            {!carregandoBrindes && brindesDoSorteio.length > 0 && (
                                 <ul className="ulFilaBrindesSorteio">
-                                    {brindes.map((brinde, indice) => {
+                                    {brindesDoSorteio.map((brinde, indice) => {
                                         const restante = brinde.quantidade - brinde.quantidadeEntregue;
                                         const esgotado = restante <= 0;
                                         const selecionado = brindeEscolhido?.id === brinde.id;

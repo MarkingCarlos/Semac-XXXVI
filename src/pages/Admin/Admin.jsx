@@ -1,12 +1,11 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { Link, useLocation } from 'wouter';
-import { lerSessao, limparSessao, temAcessoFinanceiro, temAcessoPrevisao } from '../../auth/sessao.js';
+import { lerSessao, limparSessao, temAcessoFinanceiro, temAcessoPrevisao, temAcessoDoacao } from '../../auth/sessao.js';
 import '../Financas/financas.css';
 import './admin.css';
 
 import AdminHeader from './AdminHeader.jsx';
 import Inicio from './sections/Inicio.jsx';
-import Doacoes from './sections/Doacoes.jsx';
 import Conteudo from './sections/Conteudo.jsx';
 import Brindes from './sections/Brindes.jsx';
 import InformacoesSemac from './sections/InformacoesSemac.jsx';
@@ -22,7 +21,6 @@ import { listarEventos } from './data/apiEventos.js';
    `marca` e `classeMarcador` só servem ao menu FAB do mobile (MenuFabModulos). */
 const SECOES = [
     { id: 'inicio', rotulo: 'Início', marca: 'I', classeMarcador: 'marcadorAmareloMenuFabModulos' },
-    { id: 'doacoes', rotulo: 'Doações', marca: 'D', classeMarcador: 'marcadorAzulMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_PATROCINIO'] },
     { id: 'conteudo', rotulo: 'Conteúdo', marca: 'C', classeMarcador: 'marcadorRosaMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO']  },
     { id: 'brindes', rotulo: 'Brindes', marca: 'B', classeMarcador: 'marcadorVermelhoMenuFabModulos', papeis: ['DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'] },
     { id: 'pessoas', rotulo: 'Pessoas', marca: 'P', classeMarcador: 'marcadorAmareloMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
@@ -37,6 +35,7 @@ export default function Admin() {
     const secoesVisiveis = SECOES.filter(s => !s.papeis || s.papeis.includes(roleAtual));
     const podeAcessarFinanceiro = temAcessoFinanceiro();
     const podeVerPrevisao = temAcessoPrevisao();
+    const podeGerenciarDoacoes = temAcessoDoacao();
 
     // Encerra a sessão e volta para o site público.
     function sair() {
@@ -51,7 +50,11 @@ export default function Admin() {
     const atalhoFinanceiroMenuFab = podeAcessarFinanceiro
         ? { rotulo: 'Financeiro', marca: 'F', onClick: () => navegar('/financeiro') }
         : podeVerPrevisao
-            ? { rotulo: 'Previsão de gastos', marca: '$', onClick: () => navegar('/financeiro') }
+            ? {
+                rotulo: podeGerenciarDoacoes ? 'Previsão e doações' : 'Previsão de gastos',
+                marca: '$',
+                onClick: () => navegar('/financeiro'),
+            }
             : undefined;
 
     // Indicador deslizante da navbar flutuante: mede a posição/largura do
@@ -157,8 +160,7 @@ export default function Admin() {
             {/* ── Conteúdo ────────────────────────────────── */}
             <main className="conteudoAdmin">
                 <section key={secaoAtiva} className="secaoAdmin">
-                    {secaoAtiva === 'inicio' && <Inicio podeAcessarFinanceiro={podeAcessarFinanceiro} podeVerPrevisao={podeVerPrevisao} />}
-                    {secaoAtiva === 'doacoes' && <Doacoes />}
+                    {secaoAtiva === 'inicio' && <Inicio podeAcessarFinanceiro={podeAcessarFinanceiro} podeVerPrevisao={podeVerPrevisao} podeGerenciarDoacoes={podeGerenciarDoacoes} />}
                     {secaoAtiva === 'conteudo' && (
                         <Conteudo
                             eventos={eventos}

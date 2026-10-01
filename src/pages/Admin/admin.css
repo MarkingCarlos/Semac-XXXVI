@@ -1615,3 +1615,68 @@
     color: var(--AmareloAuxApoio);
     white-space: nowrap;
 }
+
+/* ── Brindes: sub-abas Brindes / Sorteios ─────────────────────── */
+
+.conteudoDoacoesAdmin > .listaSubabasAdmin {
+    display: inline-flex;
+    margin-bottom: 16px;
+}
+
+.barraFerramentasBrindesAdmin {
+    justify-content: flex-end;
+    margin-bottom: 16px;
+}
+
+.celulaEventoSorteiosBrindes {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.dataEventoSorteiosBrindes {
+    font-size: 0.76rem;
+    color: rgba(252, 248, 245, 0.5);
+}
+
+.dicaCampoSorteiosBrindes {
+    margin: 0;
+    font-size: 0.76rem;
+    color: rgba(252, 248, 245, 0.5);
+    text-align: left;
+}
+
+.listaGanhadoresSorteiosBrindes {
+    list-style: none;
+    margin: 0 0 16px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.itemGanhadorSorteiosBrindes {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(252, 248, 245, 0.08);
+    text-align: left;
+}
+
+.nomeGanhadorSorteiosBrindes {
+    font-weight: 600;
+    color: #FCF8F5;
+}
+
+.brindeGanhadorSorteiosBrindes {
+    font-size: 0.8rem;
+    color: #E79839;
+}
+
+.realizadoPorGanhadorSorteiosBrindes {
+    font-size: 0.74rem;
+    color: rgba(252, 248, 245, 0.5);
+}

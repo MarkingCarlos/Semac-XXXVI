@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { useLocation } from 'wouter';
-import { limparSessao, temAcessoFinanceiro, temAcessoAdmin } from '../../auth/sessao.js';
+import { limparSessao, temAcessoFinanceiro, temAcessoAdmin, temAcessoDoacao } from '../../auth/sessao.js';
 import Resumo from './sections/Resumo.jsx';
 import Patrocinios from './sections/Patrocinios.jsx';
 import Compras from './sections/Compras.jsx';
@@ -41,8 +41,12 @@ export default function Financas() {
     // Diretores de conteúdo, patrocínio, apoio e marketing entram aqui só
     // para ver a Previsão: as demais abas somem e nada é editável. As
     // outras listas nem são buscadas — a API responderia 403 para eles.
+    // Exceção: o diretor de patrocínio também gerencia as Doações.
     const podeEditarFinanceiro = temAcessoFinanceiro();
-    const secoesVisiveis = podeEditarFinanceiro ? SECOES : SECOES.filter((secao) => secao.id === 'previsao');
+    const podeGerenciarDoacoes = temAcessoDoacao();
+    const secoesVisiveis = podeEditarFinanceiro
+        ? SECOES
+        : SECOES.filter((secao) => secao.id === 'previsao' || (secao.id === 'doacoes' && podeGerenciarDoacoes));
     const [secaoAtiva, setSecaoAtiva] = useState(podeEditarFinanceiro ? 'resumo' : 'previsao');
 
     // Atalho do menu FAB para o /admin — substitui, no mobile, o cartão
@@ -96,7 +100,7 @@ export default function Financas() {
     const [carregandoPatrocinios, setCarregandoPatrocinios] = useState(true);
     const [erroPatrocinios, setErroPatrocinios] = useState('');
 
-    // Doações vêm da API (cadastradas no /admin); contabilizadas no caixa.
+    // Doações vêm da API (cadastradas na aba Doações daqui); contabilizadas no caixa.
     const [doadores, setDoadores] = useState([]);
     const [carregandoDoacoes, setCarregandoDoacoes] = useState(true);
     const [erroDoacoes, setErroDoacoes] = useState('');
@@ -134,6 +138,33 @@ export default function Financas() {
             .catch((e) => setErroCaixas(e.message));
     }
 
+    // Separado do bloco abaixo: o diretor de patrocínio também precisa
+    // das doações, sem buscar as listas que a API negaria para ele.
+    useEffect(() => {
+        if (!podeGerenciarDoacoes) return undefined;
+        let ativo = true;
+        listarDoadores()
+            .then((lista) => {
+                if (ativo) setDoadores(lista);
+            })
+            .catch((e) => {
+                if (ativo) setErroDoacoes(e.message);
+            })
+            .finally(() => {
+                if (ativo) setCarregandoDoacoes(false);
+            });
+        return () => {
+            ativo = false;
+        };
+    }, []);
+
+    /* Doação mexe nas entradas da comissão: além da lista, recalcula o
+       resumo vindo do backend. Só quem vê o Resumo precisa disso. */
+    function aoAlterarDoadores(listaAtualizada) {
+        setDoadores(listaAtualizada);
+        if (podeEditarFinanceiro) recarregarContas();
+    }
+
     useEffect(() => {
         if (!podeEditarFinanceiro) return undefined;
         let ativo = true;
@@ -146,16 +177,6 @@ export default function Financas() {
             })
             .finally(() => {
                 if (ativo) setCarregandoPatrocinios(false);
-            });
-        listarDoadores()
-            .then((lista) => {
-                if (ativo) setDoadores(lista);
-            })
-            .catch((e) => {
-                if (ativo) setErroDoacoes(e.message);
-            })
-            .finally(() => {
-                if (ativo) setCarregandoDoacoes(false);
             });
         listarFornecedores()
             .then((lista) => {
@@ -299,6 +320,7 @@ export default function Financas() {
                             doadores={doadores}
                             carregando={carregandoDoacoes}
                             erro={erroDoacoes}
+                            aoAlterarDoadores={aoAlterarDoadores}
                         />
                     )}
                 </section>

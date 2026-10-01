@@ -1,6 +1,6 @@
 /* Camada de acesso à API de doações (tabela `doador` do backend java_api).
-   Vive no módulo financeiro por ser uma primitiva financeira: o /admin
-   cadastra as doações e o /financeiro as contabiliza no caixa.
+   Vive no módulo financeiro: a aba Doações do /financeiro cadastra as
+   doações e o Resumo as contabiliza no caixa.
 
    A interface trabalha com valores em CENTAVOS (inteiros) para reaproveitar
    o CampoMoeda; o backend usa reais (DECIMAL). A conversão acontece aqui,
