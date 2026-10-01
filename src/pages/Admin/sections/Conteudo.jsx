@@ -2,12 +2,7 @@ import { useState, useEffect } from 'preact/hooks';
 import PainelLateral from '../../Financas/components/PainelLateral.jsx';
 import { normalizar } from '../../Financas/utils/moeda.js';
 import { criarEvento, atualizarEvento, excluirEvento, iniciarEvento } from '../data/apiEventos.js';
-import {
-    listarTiposEvento,
-    criarTipoEvento,
-    atualizarTipoEvento,
-    excluirTipoEvento,
-} from '../data/apiTipoEvento.js';
+import { listarTiposEvento, atualizarTipoEvento } from '../data/apiTipoEvento.js';
 import {
     listarTrilhas,
     criarTrilha,
@@ -55,12 +50,12 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
     const [idConfirmandoExclusao, setIdConfirmandoExclusao] = useState(null);
     const [idConfirmandoInicio, setIdConfirmandoInicio] = useState(null);
 
-    // Tipos de evento (seletor do formulário + painel de gerenciamento)
+    // Tipos de evento (seletor do formulário + painel de edição; criar e
+    // excluir não existem — os tipos são um catálogo fixo do backend)
     const [tiposEvento, setTiposEvento] = useState([]);
     const [painelTiposAberto, setPainelTiposAberto] = useState(false);
     const [formularioTipo, setFormularioTipo] = useState(TIPO_VAZIO);
     const [idTipoEmEdicao, setIdTipoEmEdicao] = useState(null);
-    const [idTipoConfirmandoExclusao, setIdTipoConfirmandoExclusao] = useState(null);
     const [salvandoTipo, setSalvandoTipo] = useState(false);
     const [erroTipo, setErroTipo] = useState('');
 
@@ -211,37 +206,17 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
 
     const salvarTipo = async (evento) => {
         evento.preventDefault();
+        if (idTipoEmEdicao === null) return;
         setSalvandoTipo(true);
         setErroTipo('');
         try {
-            if (idTipoEmEdicao !== null) {
-                const atualizado = await atualizarTipoEvento(idTipoEmEdicao, formularioTipo);
-                setTiposEvento(tiposEvento.map((t) => (t.id === idTipoEmEdicao ? atualizado : t)));
-            } else {
-                const criado = await criarTipoEvento(formularioTipo);
-                setTiposEvento([...tiposEvento, criado]);
-            }
+            const atualizado = await atualizarTipoEvento(idTipoEmEdicao, formularioTipo);
+            setTiposEvento(tiposEvento.map((t) => (t.id === idTipoEmEdicao ? atualizado : t)));
             cancelarEdicaoTipo();
         } catch (e) {
             setErroTipo(e.message);
         } finally {
             setSalvandoTipo(false);
-        }
-    };
-
-    const removerTipo = async (id) => {
-        if (idTipoConfirmandoExclusao !== id) {
-            setIdTipoConfirmandoExclusao(id);
-            return;
-        }
-        setErroTipo('');
-        try {
-            await excluirTipoEvento(id);
-            setTiposEvento(tiposEvento.filter((t) => t.id !== id));
-        } catch (e) {
-            setErroTipo(e.message);
-        } finally {
-            setIdTipoConfirmandoExclusao(null);
         }
     };
 
@@ -673,7 +648,7 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
 
                 <ul className="listaTiposEventoConteudo">
                     {tiposEvento.length === 0 && (
-                        <p className="avisoVazioPalestrantesConteudo">Nenhum tipo cadastrado ainda.</p>
+                        <p className="avisoVazioPalestrantesConteudo">Nenhum tipo carregado.</p>
                     )}
                     {tiposEvento.map((tipo) => (
                         <li key={tipo.id} className="itemTipoEventoConteudo">
@@ -696,92 +671,65 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                                         <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
                                     </svg>
                                 </button>
-                                <button
-                                    type="button"
-                                    className={
-                                        idTipoConfirmandoExclusao === tipo.id
-                                            ? 'botaoAcaoLinhaFinancas botaoConfirmarExclusaoFinancas'
-                                            : 'botaoAcaoLinhaFinancas'
-                                    }
-                                    aria-label={
-                                        idTipoConfirmandoExclusao === tipo.id
-                                            ? `Confirmar exclusão do tipo ${tipo.nome}`
-                                            : `Excluir tipo ${tipo.nome}`
-                                    }
-                                    title={
-                                        idTipoConfirmandoExclusao === tipo.id
-                                            ? 'Clique novamente para confirmar'
-                                            : 'Excluir'
-                                    }
-                                    onClick={() => removerTipo(tipo.id)}
-                                >
-                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                                    </svg>
-                                </button>
                             </div>
                         </li>
                     ))}
                 </ul>
 
-                <form className="formularioFinancas" onSubmit={salvarTipo}>
-                    <div className="campoFormularioFinancas">
-                        <label className="rotuloCampoFinancas" htmlFor="campoNomeTipo">
-                            {idTipoEmEdicao !== null ? 'Editando tipo' : 'Novo tipo'} *
-                        </label>
-                        <input
-                            id="campoNomeTipo"
-                            className="entradaFormularioFinancas"
-                            placeholder="Nome do tipo"
-                            required
-                            value={formularioTipo.nome}
-                            onInput={(e) => setFormularioTipo({ ...formularioTipo, nome: e.currentTarget.value })}
-                        />
-                    </div>
-                    <div className="campoFormularioFinancas">
-                        <label className="rotuloCampoFinancas" htmlFor="campoPontosTipo">Pontos *</label>
-                        <input
-                            id="campoPontosTipo"
-                            className="entradaFormularioFinancas"
-                            type="number"
-                            min="0"
-                            required
-                            value={formularioTipo.pontos}
-                            onInput={(e) => setFormularioTipo({ ...formularioTipo, pontos: e.currentTarget.value })}
-                        />
-                    </div>
-                    <div className="campoFormularioFinancas">
-                        <label className="rotuloCheckboxTipoEventoConteudo" htmlFor="campoExigeInscricaoTipo">
+                {idTipoEmEdicao !== null && (
+                    <form className="formularioFinancas" onSubmit={salvarTipo}>
+                        <div className="campoFormularioFinancas">
+                            <label className="rotuloCampoFinancas" htmlFor="campoNomeTipo">
+                                Editando tipo *
+                            </label>
                             <input
-                                id="campoExigeInscricaoTipo"
-                                type="checkbox"
-                                checked={formularioTipo.exigeInscricao}
-                                onChange={(e) => setFormularioTipo({ ...formularioTipo, exigeInscricao: e.currentTarget.checked })}
+                                id="campoNomeTipo"
+                                className="entradaFormularioFinancas"
+                                placeholder="Nome do tipo"
+                                required
+                                value={formularioTipo.nome}
+                                onInput={(e) => setFormularioTipo({ ...formularioTipo, nome: e.currentTarget.value })}
                             />
-                            <span>
-                                Participante escolhe (vagas limitadas)
-                                <small className="ajudaCheckboxTipoEventoConteudo">
-                                    Marque para minicursos. Desmarcado, todo participante confirmado
-                                    é inscrito automaticamente nos eventos desse tipo.
-                                </small>
-                            </span>
-                        </label>
-                    </div>
-                    <div className="rodapeFormularioFinancas">
-                        {idTipoEmEdicao !== null && (
+                        </div>
+                        <div className="campoFormularioFinancas">
+                            <label className="rotuloCampoFinancas" htmlFor="campoPontosTipo">Pontos *</label>
+                            <input
+                                id="campoPontosTipo"
+                                className="entradaFormularioFinancas"
+                                type="number"
+                                min="0"
+                                required
+                                value={formularioTipo.pontos}
+                                onInput={(e) => setFormularioTipo({ ...formularioTipo, pontos: e.currentTarget.value })}
+                            />
+                        </div>
+                        <div className="campoFormularioFinancas">
+                            <label className="rotuloCheckboxTipoEventoConteudo" htmlFor="campoExigeInscricaoTipo">
+                                <input
+                                    id="campoExigeInscricaoTipo"
+                                    type="checkbox"
+                                    checked={formularioTipo.exigeInscricao}
+                                    onChange={(e) => setFormularioTipo({ ...formularioTipo, exigeInscricao: e.currentTarget.checked })}
+                                />
+                                <span>
+                                    Participante escolhe (vagas limitadas)
+                                    <small className="ajudaCheckboxTipoEventoConteudo">
+                                        Marque para minicursos. Desmarcado, todo participante confirmado
+                                        é inscrito automaticamente nos eventos desse tipo.
+                                    </small>
+                                </span>
+                            </label>
+                        </div>
+                        <div className="rodapeFormularioFinancas">
                             <button type="button" className="botaoFantasmaFinancas" onClick={cancelarEdicaoTipo}>
                                 Cancelar edição
                             </button>
-                        )}
-                        <button type="submit" className="botaoPrimarioFinancas" disabled={salvandoTipo}>
-                            {salvandoTipo
-                                ? 'Salvando…'
-                                : idTipoEmEdicao !== null
-                                    ? 'Salvar tipo'
-                                    : 'Adicionar tipo'}
-                        </button>
-                    </div>
-                </form>
+                            <button type="submit" className="botaoPrimarioFinancas" disabled={salvandoTipo}>
+                                {salvandoTipo ? 'Salvando…' : 'Salvar tipo'}
+                            </button>
+                        </div>
+                    </form>
+                )}
             </PainelLateral>
 
             {/* ── Painel: gerenciamento das trilhas ─────────────────── */}

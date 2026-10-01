@@ -1,6 +1,7 @@
 /* Camada de acesso à API de tipos de evento (tabela `tipo_evento`).
    Alimenta o seletor de tipo no formulário de Conteúdo e o painel de
-   gerenciamento de tipos na mesma seção. */
+   edição de tipos na mesma seção. Não há criar nem excluir: os tipos são
+   um catálogo fixo do backend (ver CodigoTipoEvento). */
 
 import { apiFetch } from '../../../lib/apiFetch.js';
 import { cabecalhosAuth } from '../../../auth/sessao.js';
@@ -32,15 +33,6 @@ export async function listarTiposEvento() {
     return lerOuFalhar(resposta, 'Falha ao carregar tipos de evento.');
 }
 
-export async function criarTipoEvento(tipo) {
-    const resposta = await apiFetch(ROTA, {
-        method: 'POST',
-        headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify(paraRequisicao(tipo)),
-    });
-    return lerOuFalhar(resposta, 'Falha ao criar tipo de evento.');
-}
-
 export async function atualizarTipoEvento(id, tipo) {
     const resposta = await apiFetch(`${ROTA}/${id}`, {
         method: 'PUT',
@@ -48,12 +40,4 @@ export async function atualizarTipoEvento(id, tipo) {
         body: JSON.stringify(paraRequisicao(tipo)),
     });
     return lerOuFalhar(resposta, 'Falha ao atualizar tipo de evento.');
-}
-
-export async function excluirTipoEvento(id) {
-    const resposta = await apiFetch(`${ROTA}/${id}`, { method: 'DELETE', headers: cabecalhosAuth() });
-    if (!resposta.ok) {
-        const corpo = await resposta.json().catch(() => null);
-        throw new Error(corpo?.mensagem || 'Falha ao excluir tipo de evento.');
-    }
 }
