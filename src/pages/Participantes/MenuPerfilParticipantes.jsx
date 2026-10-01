@@ -67,15 +67,6 @@ export default function MenuPerfilParticipantes({ nome, email, iniciais, onIrPar
                         )}
                     </div>
 
-                    <button
-                        type="button"
-                        ref={primeiroItemMenuPerfilRef}
-                        role="menuitem"
-                        className="itemPaginaPrincipalMenuPerfilCabecalhoParticipantes"
-                        onClick={onIrParaPaginaPrincipal}
-                    >
-                        PÁGINA PRINCIPAL
-                    </button>
                 </div>
             )}
         </div>

@@ -90,10 +90,10 @@ export default function ModalEscolhaDiasIngresso({ diasIngresso, obrigatorio, sa
                     </div>
                 </div>
 
-                <span className="instrucaoDiaModalMinicursosParticipantes">
-                    Seu QR code só será aceito na entrada das atividades dos dias escolhidos. Dá pra trocar
-                    depois, até o dia começar.
-                </span>
+                <p className="avisoTrocaDiaModalDiasIngressoParticipantes">
+                    <strong>Atenção:</strong> a troca de um dia só é possível antes de ele começar, ou seja, até o
+                    dia anterior. A partir de 00h do dia escolhido, ele fica travado e não pode mais ser trocado.
+                </p>
 
                 {erro && (
                     <p className="avisoErroModalMinicursosParticipantes" role="alert">{erro}</p>
@@ -126,9 +126,6 @@ export default function ModalEscolhaDiasIngresso({ diasIngresso, obrigatorio, sa
                                     <span className="mesBotaoDiaModalDiasIngressoParticipantes">{card.mes}</span>
                                     {card.travado && (
                                         <span className="etiquetaBotaoDiaModalDiasIngressoParticipantes">EM USO</span>
-                                    )}
-                                    {!card.travado && card.passou && !selecionado && (
-                                        <span className="etiquetaBotaoDiaModalDiasIngressoParticipantes">JÁ PASSOU</span>
                                     )}
                                 </button>
                             );

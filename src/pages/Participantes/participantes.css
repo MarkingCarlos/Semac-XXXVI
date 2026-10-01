@@ -156,26 +156,8 @@
   overflow-wrap: anywhere;
 }
 
-.itemPaginaPrincipalMenuPerfilCabecalhoParticipantes {
-  width: 100%;
-  text-align: right;
-  background: none;
-  border: none;
-  padding: 12px 14px;
-  font-family: var(--fonteTituloBungee);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  color: rgba(252, 248, 245, 0.7);
-  cursor: pointer;
-  transition: color 0.2s ease, background 0.2s ease;
-}
 
-.itemPaginaPrincipalMenuPerfilCabecalhoParticipantes:hover,
-.itemPaginaPrincipalMenuPerfilCabecalhoParticipantes:focus-visible {
-  background: rgba(252, 248, 245, 0.07);
-  color: var(--brancoQuenteParticipantes);
-  outline: none;
-}
+
 
 @media (min-width: 860px) {
   .cabecalhoParticipantes { padding: 20px 40px; }
@@ -683,6 +665,15 @@
   font-size: 11px;
   color: var(--Branco);
   line-height: 1.45; }
+
+.avisoTrocaDiaModalDiasIngressoParticipantes {
+  font-size: 12px;
+  line-height: 1.45;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: var(--Branco);
+  background: rgba(240, 173, 40, 0.16);
+  border: 1px solid rgba(240, 173, 40, 0.55); }
 
 .avisoVazioModalMinicursosParticipantes { font-size: 12px; line-height: 1.45; color: rgba(115, 8, 53, 0.75); }
 
