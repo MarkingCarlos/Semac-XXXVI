@@ -393,34 +393,34 @@ export default function Participantes() {
         navegar('/');
     }
 
-    function abrirEscolhaMinicursos() {
-        setErroMinicurso('');
-        setEscolhaMinicursosAberta(true);
-    }
+    // function abrirEscolhaMinicursos() {
+    //     setErroMinicurso('');
+    //     setEscolhaMinicursosAberta(true);
+    // }
 
     /* Entrar/sair de minicurso recarrega a agenda em seguida: a vaga que
        acabou de ser tomada (ou liberada) precisa aparecer para todos.
        Devolve se a operação deu certo — o modal de escolha só avança
        para o próximo dia quando a inscrição realmente entrou. */
-    async function alterarMinicurso(eventoId, acao) {
-        setErroMinicurso('');
-        setMinicursoEmEspera(eventoId);
-        let deuCerto = true;
-        try {
-            await acao(eventoId);
-        } catch (erro) {
-            deuCerto = false;
-            setErroMinicurso(erro.message);
-        } finally {
-            try {
-                await carregarAgenda();
-            } catch (erro) {
-                setErroAgenda(erro.message);
-            }
-            setMinicursoEmEspera(null);
-        }
-        return deuCerto;
-    }
+    // async function alterarMinicurso(eventoId, acao) {
+    //     setErroMinicurso('');
+    //     setMinicursoEmEspera(eventoId);
+    //     let deuCerto = true;
+    //     try {
+    //         await acao(eventoId);
+    //     } catch (erro) {
+    //         deuCerto = false;
+    //         setErroMinicurso(erro.message);
+    //     } finally {
+    //         try {
+    //             await carregarAgenda();
+    //         } catch (erro) {
+    //             setErroAgenda(erro.message);
+    //         }
+    //         setMinicursoEmEspera(null);
+    //     }
+    //     return deuCerto;
+    // }
 
     function abrirEscolhaDiasIngresso() {
         setErroDiasIngresso('');
@@ -514,7 +514,7 @@ export default function Participantes() {
                             onAbrirQr={() => setQrAberto(true)}
                             onVerRanking={() => irPara('ranking')}
                             onVerAgenda={() => irPara('agenda')}
-                            onEscolherMinicursos={abrirEscolhaMinicursos}
+                            // onEscolherMinicursos={abrirEscolhaMinicursos}
                         />
                     )}
                     {abaAtiva === 'agenda' && (
@@ -560,16 +560,16 @@ export default function Participantes() {
                 onIrPara={irPara}
             />
 
-            {escolhaMinicursosAberta && (
-                <ModalEscolhaMinicursos
-                    minicursos={minicursos}
-                    minicursoEmEspera={minicursoEmEspera}
-                    erroMinicurso={erroMinicurso}
-                    onEscolher={escolherMinicurso}
-                    onSair={sairDoMinicurso}
-                    onFechar={() => setEscolhaMinicursosAberta(false)}
-                />
-            )}
+            {/*{escolhaMinicursosAberta && (*/}
+            {/*    <ModalEscolhaMinicursos*/}
+            {/*        minicursos={minicursos}*/}
+            {/*        minicursoEmEspera={minicursoEmEspera}*/}
+            {/*        erroMinicurso={erroMinicurso}*/}
+            {/*        onEscolher={escolherMinicurso}*/}
+            {/*        onSair={sairDoMinicurso}*/}
+            {/*        onFechar={() => setEscolhaMinicursosAberta(false)}*/}
+            {/*    />*/}
+            {/*)}*/}
 
             {diasIngresso && (escolhaDiasPendente || escolhaDiasAberta) && (
                 <ModalEscolhaDiasIngresso

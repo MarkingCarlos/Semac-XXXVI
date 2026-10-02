@@ -136,39 +136,39 @@ export default function SecaoInicioParticipantes({
                 {/* Único ponto de entrada da escolha de minicursos — a aba
                     Agenda é só leitura, então este bloco aparece também no
                     mobile. */}
-                {totalMinicursos > 0 && (
-                    <div className="blocoMinicursosInicioParticipantes">
-                        <div className="cabecalhoBlocoInicioParticipantes">
-                            <span className="rotuloBlocoInicioParticipantes">MEUS MINICURSOS</span>
-                            <span className="acaoBlocoInicioParticipantes" onClick={onEscolherMinicursos}>
-                                {meusMinicursos.length > 0 ? 'Trocar' : 'Escolher'}
-                            </span>
-                        </div>
-                        {meusMinicursos.length === 0 ? (
-                            <>
-                                <button
-                                    type="button"
-                                    className="botaoEscolherMinicursosInicioParticipantes"
-                                    onClick={onEscolherMinicursos}
-                                >
-                                    ESCOLHER MEUS MINICURSOS
-                                </button>
-                            </>
-                        ) : (
-                            <div className="grelhaMinicursosInicioParticipantes">
-                                {meusMinicursos.map((curso) => (
-                                    <div key={curso.id} className={`cardMinicursoInicioParticipantes corMinicurso${capitalizar(curso.cor)}Participantes`}>
-                                        <span className="professorCardMinicursoInicioParticipantes">{curso.professor}</span>
-                                        <span className="tituloCardMinicursoInicioParticipantes">{curso.titulo}</span>
-                                        <div className="rodapeCardMinicursoInicioParticipantes">
-                                            <span className="horarioCardMinicursoInicioParticipantes">{curso.horarioLocal}</span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                )}
+                {/*{totalMinicursos > 0 && (*/}
+                {/*    <div className="blocoMinicursosInicioParticipantes">*/}
+                {/*        <div className="cabecalhoBlocoInicioParticipantes">*/}
+                {/*            <span className="rotuloBlocoInicioParticipantes">MEUS MINICURSOS</span>*/}
+                {/*            <span className="acaoBlocoInicioParticipantes" onClick={onEscolherMinicursos}>*/}
+                {/*                {meusMinicursos.length > 0 ? 'Trocar' : 'Escolher'}*/}
+                {/*            </span>*/}
+                {/*        </div>*/}
+                {/*        {meusMinicursos.length === 0 ? (*/}
+                {/*            <>*/}
+                {/*                <button*/}
+                {/*                    type="button"*/}
+                {/*                    className="botaoEscolherMinicursosInicioParticipantes"*/}
+                {/*                    onClick={onEscolherMinicursos}*/}
+                {/*                >*/}
+                {/*                    ESCOLHER MEUS MINICURSOS*/}
+                {/*                </button>*/}
+                {/*            </>*/}
+                {/*        ) : (*/}
+                {/*            <div className="grelhaMinicursosInicioParticipantes">*/}
+                {/*                {meusMinicursos.map((curso) => (*/}
+                {/*                    <div key={curso.id} className={`cardMinicursoInicioParticipantes corMinicurso${capitalizar(curso.cor)}Participantes`}>*/}
+                {/*                        <span className="professorCardMinicursoInicioParticipantes">{curso.professor}</span>*/}
+                {/*                        <span className="tituloCardMinicursoInicioParticipantes">{curso.titulo}</span>*/}
+                {/*                        <div className="rodapeCardMinicursoInicioParticipantes">*/}
+                {/*                            <span className="horarioCardMinicursoInicioParticipantes">{curso.horarioLocal}</span>*/}
+                {/*                        </div>*/}
+                {/*                    </div>*/}
+                {/*                ))}*/}
+                {/*            </div>*/}
+                {/*        )}*/}
+                {/*    </div>*/}
+                {/*)}*/}
 
                 <div className="blocoMeuDiaInicioParticipantes soMobileParticipantes">
                     <div className="cabecalhoBlocoInicioParticipantes">
