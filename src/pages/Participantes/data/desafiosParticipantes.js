@@ -21,6 +21,7 @@
    `carregarEstado` (um estado só). */
 
 import { listarDiasTermo } from '../../Termo/apiTermo.js';
+import { lerEstadoCriptografia } from '../../Criptografia/apiCriptografia.js';
 
 export const CATEGORIA_DIARIO_DESAFIOS = 'diario';
 export const CATEGORIA_BASICO_DESAFIOS = 'basico';
@@ -147,6 +148,75 @@ async function carregarCartoesTermo(desafio) {
     }));
 }
 
+/* Estado do card de Criptografia a partir de uma linha de GET /api/criptografia/estado. */
+function estadoCriptografia(estado) {
+    /* Armazena o XP ganho. */
+    const xpGanho = !estado.disponivel && estado.acertos > 0 ? (estado.xpGanho ?? 0) : undefined;
+
+    /* Se o desafio estiver disponível e o usuário tiver vencido, retorna o estado de concluído. */
+    if (estado.disponivel && estado.venceu) {
+        return {
+            situacao: SITUACAO_CONCLUIDO_DESAFIOS,
+            detalhe: 'Você acertou todas as palavras.',
+            xpGanho,
+        };
+    }
+
+    /* Se o desafio não estiver disponível, retorna o estado de encerrado (venceu) ou finalizado (acertou alguma, mas não todas). */
+    if (!estado.disponivel) {
+        return estado.venceu
+            ? {
+                situacao: SITUACAO_ENCERRADO_DESAFIOS,
+                detalhe: 'Você acertou todas as palavras.',
+                xpGanho,
+            }
+            : {
+                situacao: SITUACAO_FINALIZADO_DESAFIOS,
+                detalhe: 'Não foi dessa vez.',
+                xpGanho,
+            };
+    }
+
+    /* Se o desafio estiver disponível e o usuário não tiver vencido mas tiver acertado alguma palavra, retorna o estado de em andamento. */
+    if (estado.acertos > 0) {
+        return {
+            situacao: SITUACAO_EM_ANDAMENTO_DESAFIOS,
+            detalhe: `${estado.acertos} de 3 palavras descobertas.`,
+            xpGanho,
+        };
+    }
+
+    console.log('estadoCriptografia', estado);
+
+    return {
+        situacao: SITUACAO_DISPONIVEL_DESAFIOS,
+        detalhe: `Você tem 3 palavras para descobrir.`,
+    };
+}
+
+/* Um card para o desafio da Criptografia */
+async function carregarCartaoCriptografia(desafio) {
+    const estado = await lerEstadoCriptografia();
+
+    /* null = a sessão caiu e estado já está redirecionando para o
+       login; não há tela a montar. */
+    if (!estado) {
+        return [cartaoIndisponivelDesafios(desafio, '')];
+    }
+
+    /* Não está no dia do desafio (ainda não chegou ou já passou e não venceu). */
+    if (!estado.disponivel && !estado.venceu) {
+        return [cartaoIndisponivelDesafios(desafio, 'Desafio indisponível.')];
+    }
+
+    return {
+        ...desafio,
+        id: `${desafio.id}`,
+        nome: `${desafio.nome}`,
+        estado: estadoCriptografia(estado),
+    };
+}
+
 /* Card sem estado jogável: vale para o desafio que ainda não abriu e para
    o que não pôde ser carregado. Mantém o `id` do catálogo, então é sempre
    um só por desafio. */
@@ -166,6 +236,15 @@ export const DESAFIOS_PARTICIPANTES = [
         xp: 5,
         rota: '/termo',
         carregarCartoes: carregarCartoesTermo,
+    },
+    {
+        id: 'criptografia',
+        categoria: CATEGORIA_DIARIO_DESAFIOS,
+        nome: 'Criptografia',
+        descricao: 'Encontre as palavras criptografadas nos slides das palestras do dia, descubra a palavra original e informe aqui.',
+        xp: 75,
+        rota: '/criptografia',
+        carregarCartoes: carregarCartaoCriptografia,
     },
 ];
 

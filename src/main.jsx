@@ -14,6 +14,7 @@ const Inscricao = lazy(() => import('./pages/Inscricao/Inscricao.jsx'));
 const PaginaCotas = lazy(() => import('./pages/PaginaCotas/PaginaCotas.jsx'));
 const Checkin = lazy(() => import('./components/qrcode/ModalQrCode.jsx'));
 const Termo = lazy(() => import('./pages/Termo/termo.jsx'));
+const Criptografia = lazy(() => import('./pages/Criptografia/criptografia.jsx'));
 const Sorteio = lazy(() => import('./pages/Sorteio/sorteio.jsx'));
 const Financas = lazy(() => import('./pages/Financas/Financas.jsx'));
 const ConjuntosCotacao = lazy(() => import('./pages/Financas/conjuntos/ConjuntosCotacao.jsx'));
@@ -96,6 +97,7 @@ render(
             <Route path="/participantes"><RotaParticipantes /></Route>
             <Route path="/checkin"><RotaCheckin /></Route>
             <Route path="/termo"><Termo/></Route>
+            <Route path="/criptografia"><Criptografia/></Route>
             <Route path="/sorteio"><RotaSorteio/></Route>
             {/*<Route path="/ranking"><Ranking /></Route>*/}
             <Route><App /></Route>

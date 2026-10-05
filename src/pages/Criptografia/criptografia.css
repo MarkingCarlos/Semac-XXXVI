@@ -1,0 +1,298 @@
+@keyframes entrarToastCriptografia {
+    from { transform: translate(-50%, -12px); opacity: 0; }
+    to   { transform: translate(-50%, 0);     opacity: 1; }
+}
+
+.divPaginaCriptografia {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--vermelhoAuxDiretoria);
+    font-family: var(--fonteCorpoMontserrat);
+    overflow: hidden;
+}
+
+.divToastErroCriptografia {
+    position: absolute;
+    top: 64px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--Branco);
+    color: var(--vermelhoAuxDiretoria);
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(0.75rem, 2vw, 0.9375rem);
+    letter-spacing: 0.08em;
+    padding: 10px 20px;
+    border-radius: 9999px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    z-index: 50;
+    white-space: nowrap;
+    animation: entrarToastCriptografia 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.divAcertouPalavraCriptografia {
+    position: absolute;
+    top: 64px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--Branco);
+    color: var(--azulConteudo);
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(0.75rem, 2vw, 0.9375rem);
+    letter-spacing: 0.08em;
+    padding: 10px 20px;
+    border-radius: 9999px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    z-index: 50;
+    white-space: nowrap;
+    animation: entrarToastCriptografia 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.divCabecalhoCriptografia {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px 6px;
+    position: relative;
+    z-index: 2;
+}
+
+.botaoVoltarCriptografia,
+.botaoAjudaCriptografia {
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    background: var(--vermelhoDiretoria);
+    border: none;
+    color: var(--Branco);
+    font-family: var(--fonteTituloBungee);
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+
+.botaoVoltarCriptografia:active,
+.botaoAjudaCriptografia:active {
+    transform: scale(0.92);
+}
+
+.tituloCriptografia {
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(1.25rem, 6vw, 1.6rem);
+    letter-spacing: 0.02em;
+    color: var(--Branco);
+    margin: 0;
+}
+
+.divConteudoJogoCriptografia {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(10px, 4vh, 15px);
+    padding: 10px 16px 24px;
+    position: relative;
+    z-index: 2;
+}
+
+.spanCarregamentoCriptografia {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: clamp(0.625rem, 1.5vw, 0.75rem);
+    letter-spacing: 0.08em;
+    color: rgba(237, 236, 236, 0.65);
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.divPalpiteCriptografia {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 8px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.inputPalpiteCriptografia {
+    width: 100%;
+    border: 2px solid var(--vermelhoEscuro);
+    border-radius: 10px;
+    font-size: 1.2em;
+    padding: 10px;
+    background-color: var(--vermelhoDiretoria);
+    outline: none;
+}
+.inputPalpiteCriptografia:focus-visible { border-color: var(--Branco); }
+
+.buttonPalpiteCriptografia {
+    width: 100%;
+    background-color: var(--AmareloAuxApoio);
+}
+
+.spanRotuloAcertosCriptografia {
+    width: 100%;
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: clamp(0.75rem, 2vw, 0.9375rem);
+    color: var(--azulConteudo);
+    text-align: end;
+}
+
+.divSobreposicaoAjudaCriptografia,
+.divSobreposicaoFimCriptografia {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 100;
+}
+
+.divSobreposicaoAjudaCriptografia {
+    background: rgba(10, 10, 10, 0.6);
+}
+
+.divSobreposicaoFimCriptografia {
+    background: rgba(10, 10, 10, 0.72);
+}
+
+.divCartaoAjudaCriptografia {
+    background: var(--vermelhoDiretoria);
+    border-radius: 25px;
+    padding: 24px 20px;
+    max-width: 340px;
+    color: var(--Branco);
+}
+
+.tituloAjudaCriptografia {
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(1.125rem, 3vw, 1.5rem);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin: 0 0 12px;
+}
+
+.textoAjudaCriptografia {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: clamp(0.75rem, 2vw, 0.9375rem);
+    line-height: 1.7;
+    margin: 0 0 14px;
+}
+
+.divLinhaLegendaAjudaCriptografia {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.corLegendaAjudaCriptografia {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.botaoEntendiAjudaCriptografia,
+.botaoReiniciarFimCriptografia {
+    width: 100%;
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoAuxDiretoria);
+    border: none;
+    border-radius: 8px;
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(0.75rem, 2vw, 0.9375rem);
+    cursor: pointer;
+}
+
+.botaoEntendiAjudaCriptografia {
+    padding: 12px;
+    margin-top: 16px;
+}
+
+.divCartaoFimCriptografia {
+    background: var(--vermelhoDiretoria);
+    border-radius: 25px;
+    padding: 28px 22px;
+    width: 25%;
+    text-align: center;
+    color: var(--Branco);
+    animation: aparecerCelulaTermo 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media(max-width: 768px) {
+    .divCartaoFimCriptografia {
+        width: 90%;
+    }
+}
+
+.tituloFimCriptografia {
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    margin: 0 0 10px;
+}
+
+.tituloFimCriptografia.venceuFimCriptografia{
+    color: var(--brancoQuenteParticipantes);
+}
+.tituloFimCriptografia.perdeuFimCriptografia  {
+    color: var(--AmareloAuxApoio);
+}
+
+.textoFimCriptografia {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: clamp(0.75rem, 2vw, 0.9375rem);
+    opacity: 0.85;
+    margin: 0 0 18px;
+}
+
+.palavraFimCriptografia {
+    font-family: var(--fonteTituloBungee);
+    color: var(--AmareloAuxApoio);
+}
+
+.botaoReiniciarFimCriptografia {
+    padding: 13px;
+}
+
+/* XP creditado pela vitória, no modal de fim. Fica acima do recado porque
+   é a novidade da tela — o resto a pessoa já sabe. */
+.divXpGanhoFimCriptografia {
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(1.125rem, 3vw, 1.5rem);
+    color: var(--azulConteudo);
+    margin: 0 0 12px;
+}
+
+/* Card de aviso no lugar da grade: dia sem palavra cadastrada ou falha ao
+   carregar o jogo. Mesma caixa do modal de fim, só que dentro da página. */
+.divCartaoAvisoCriptografia {
+    background: var(--vermelhoDiretoria);
+    border-radius: 25px;
+    padding: 28px 22px;
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
+    color: var(--Branco);
+    animation: aparecerCelulaTermo 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tituloAvisoCriptografia {
+    font-family: var(--fonteTituloBungee);
+    font-size: clamp(1.125rem, 3vw, 1.5rem);
+    color: var(--AmareloAuxApoio);
+    margin: 0 0 10px;
+}
+
+.textoAvisoCriptografia {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: clamp(0.75rem, 2vw, 0.9375rem);
+    opacity: 0.85;
+    margin: 0 0 18px;
+}
