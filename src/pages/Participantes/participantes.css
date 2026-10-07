@@ -1124,7 +1124,7 @@
 
 .itemMeuDiaInicioParticipantes {
   background: var(--vermelhoDiretoria);
-  border-radius: var(--radius-lg, 15px);
+  border-radius: 15px;
   padding: 14px 16px;
   display: flex;
   align-items: center;
