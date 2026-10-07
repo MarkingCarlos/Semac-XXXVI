@@ -22,6 +22,8 @@
 
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { useLocation } from 'wouter';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
 import { lerSessao, limparSessao } from '../../auth/sessao.js';
 import './participantes.css';
 
@@ -51,6 +53,7 @@ import { buscarRankingParticipante } from './data/apiRankingParticipante.js';
 import { buscarRegrasXpParticipante } from './data/apiRegrasXpParticipante.js';
 import { listarMinhasConquistas, marcarConquistaComoVista } from './data/apiConquistasParticipante.js';
 import { carregarDesafiosParticipantes } from './data/desafiosParticipantes.js';
+import { lerEscolhaMinicursos } from '../Admin/data/apiEscolhaMinicursos.js';
 import ConquistaDesbloqueada, { MODO_TESTE_CONQUISTA } from '../../components/ConquistaDesbloqueada/ConquistaDesbloqueada.jsx';
 import { montarRankingExibicao } from './data/rankingParticipantes.js';
 import {
@@ -126,6 +129,9 @@ export default function Participantes() {
     const [trocandoAba, setTrocandoAba] = useState(false);
     const temporizadorTrocaAbaRef = useRef(null);
     const [qrAberto, setQrAberto] = useState(false);
+    const sobreposicaoQrRef = useRef(null);
+    const modalQrRef = useRef(null);
+    const fechandoQrRef = useRef(false);
     const [escolhaMinicursosAberta, setEscolhaMinicursosAberta] = useState(false);
 
     const [eventos, setEventos] = useState([]);
@@ -144,6 +150,19 @@ export default function Participantes() {
     const [diaSelecionado, setDiaSelecionado] = useState('');
     const [erroMinicurso, setErroMinicurso] = useState('');
     const [minicursoEmEspera, setMinicursoEmEspera] = useState(null);
+
+    /* Botão "Escolha de minicursos" do /admin (aba Conteúdo). Começa
+       fechada — e fica assim se a chamada falhar: o backend recusa entrar
+       e sair de minicurso de qualquer jeito enquanto não for liberada. */
+    const [escolhaMinicursosLiberada, setEscolhaMinicursosLiberada] = useState(false);
+
+    useEffect(() => {
+        let ativo = true;
+        lerEscolhaMinicursos(new Date().getFullYear())
+            .then((liberada) => { if (ativo) setEscolhaMinicursosLiberada(liberada); })
+            .catch(() => {});
+        return () => { ativo = false; };
+    }, []);
 
     /* Ingresso diário: em quais dias o QR vale. null até carregar (e para
        sempre, se a chamada falhar — aí a página segue como ingresso cheio,
@@ -393,6 +412,44 @@ export default function Participantes() {
         navegar('/');
     }
 
+    /* Crachá entra e sai pela base da tela, como uma gaveta: sobe
+       desacelerando até assentar e, ao fechar, cai de volta acelerando.
+       O deslocamento é medido na hora (viewport − topo do cartão), então
+       o cartão some inteiro tanto no celular (colado embaixo) quanto no
+       desktop (centralizado). Com "reduzir movimento", só o fade.
+
+       revertOnUpdate: fechar por outro caminho (trocar de aba, escolher
+       dias) desmonta o modal na hora e mata qualquer tween pendente. */
+    const { contextSafe: contextSafeQr } = useGSAP(() => {
+        if (!qrAberto) return;
+        fechandoQrRef.current = false;
+
+        const reduzir = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const modal = modalQrRef.current;
+
+        gsap.from(sobreposicaoQrRef.current, { autoAlpha: 0, duration: 0.3, ease: 'power1.out' });
+        gsap.from(modal, reduzir
+            ? { autoAlpha: 0, duration: 0.3, ease: 'power1.out' }
+            : { y: () => window.innerHeight - modal.getBoundingClientRect().top, duration: 0.5, ease: 'expo.out' });
+    }, { dependencies: [qrAberto], revertOnUpdate: true });
+
+    const fecharQr = contextSafeQr(() => {
+        if (fechandoQrRef.current) return;
+        fechandoQrRef.current = true;
+
+        const reduzir = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const modal = modalQrRef.current;
+
+        gsap.to(sobreposicaoQrRef.current, { autoAlpha: 0, duration: 0.3, ease: 'power1.in' });
+        gsap.to(modal, {
+            ...(reduzir
+                ? { autoAlpha: 0, ease: 'power1.in' }
+                : { y: window.innerHeight - modal.getBoundingClientRect().top, ease: 'power3.in' }),
+            duration: 0.3,
+            onComplete: () => setQrAberto(false),
+        });
+    });
+
     function abrirEscolhaMinicursos() {
         setErroMinicurso('');
         setEscolhaMinicursosAberta(true);
@@ -509,6 +566,7 @@ export default function Participantes() {
                             conquistas={conquistas}
                             meusMinicursos={meusMinicursos}
                             totalMinicursos={totalMinicursos}
+                            escolhaMinicursosLiberada={escolhaMinicursosLiberada}
                             ranking={rankingWidgetInicio}
                             carregando={carregandoAgenda}
                             onAbrirQr={() => setQrAberto(true)}
@@ -598,8 +656,8 @@ export default function Participantes() {
             )}
 
             {qrAberto && (
-                <div className="sobreposicaoQrParticipantes" onClick={() => setQrAberto(false)}>
-                    <div className="modalQrParticipantes" onClick={(evento) => evento.stopPropagation()}>
+                <div ref={sobreposicaoQrRef} className="sobreposicaoQrParticipantes" onClick={fecharQr}>
+                    <div ref={modalQrRef} className="modalQrParticipantes" onClick={(evento) => evento.stopPropagation()}>
                         {/*<button*/}
                         {/*    type="button"*/}
                         {/*    className="botaoFecharModalQrParticipantes"*/}

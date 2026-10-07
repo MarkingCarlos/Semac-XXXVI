@@ -469,9 +469,10 @@
   flex-direction: column;
   align-items: center;
   gap: 14px;
-  animation: qrInParticipantes 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Entrada e saída animadas via GSAP (ver fecharQr em Participantes.jsx) */
 }
 
+/* Entrada do modal de minicursos */
 @keyframes qrInParticipantes {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
@@ -1100,7 +1101,12 @@
 }
 
 .professorCardMinicursoInicioParticipantes { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: rgba(252, 248, 245, 0.85); }
-.tituloCardMinicursoInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 16px; line-height: 1.15; }
+.tituloCardMinicursoInicioParticipantes {
+  font-family: var(--fonteCorpoMontserrat);
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.1;
+}
 
 .rodapeCardMinicursoInicioParticipantes {
   display: flex;
@@ -1134,7 +1140,6 @@
 }
 
 .statusMeuDiaProximoParticipantes {
-  text-align: left;
   background: #95073b;
   color: #ffffff;
 }
@@ -1155,23 +1160,27 @@
 .valorHorarioItemMeuDiaInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 14px; }
 .localItemMeuDiaInicioParticipantes { font-size: 9px; font-weight: 700; opacity: 0.7; }
 
-.textoItemMeuDiaInicioParticipantes { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.tituloItemMeuDiaInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 13px; line-height: 1.2; }
-.detalheItemMeuDiaInicioParticipantes { font-size: 11px; opacity: 0.75; }
+.textoItemMeuDiaInicioParticipantes {
+
+  flex: 1; display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.tituloItemMeuDiaInicioParticipantes {
+  font-family: var(--fonteCorpoMontserrat);
+  font-size: 10px;
+  line-height: 1.2;
+}
+.detalheItemMeuDiaInicioParticipantes {
+  font-size: 11px;
+  opacity: 0.75; 
+}
 
 .statusMeuDiaAtualParticipantes .detalheItemMeuDiaInicioParticipantes { color: var(--rosaMarketing); font-weight: 700; opacity: 1; }
-
-.marcaConcluidaItemMeuDiaInicioParticipantes {
-  width: 26px;
-  height: 26px;
-  border-radius: 9999px;
-  background: var(--azulConteudo);
-  display: grid;
-  place-items: center;
-  font-family: var(--fonteTituloBungee);
-  font-size: 11px;
-  flex: none;
-}
 
 .grelhaPalestrasSemanaInicioParticipantes { display: grid; grid-template-columns: 1fr; gap: 12px; }
 

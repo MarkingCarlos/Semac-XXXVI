@@ -22,6 +22,7 @@ export default function SecaoInicioParticipantes({
     conquistas,
     meusMinicursos,
     totalMinicursos,
+    escolhaMinicursosLiberada,
     ranking,
     carregando,
     onAbrirQr,
@@ -135,16 +136,24 @@ export default function SecaoInicioParticipantes({
 
                 {/* Único ponto de entrada da escolha de minicursos — a aba
                     Agenda é só leitura, então este bloco aparece também no
-                    mobile. */}
+                    mobile. Enquanto o /admin não libera a escolha, quem já
+                    tem minicurso só os vê (sem "Trocar") e quem não tem vê
+                    o aviso no lugar do botão. */}
                 {totalMinicursos > 0 && (
                     <div className="blocoMinicursosInicioParticipantes">
                         <div className="cabecalhoBlocoInicioParticipantes">
                             <span className="rotuloBlocoInicioParticipantes">MEUS MINICURSOS</span>
-                            <span className="acaoBlocoInicioParticipantes" onClick={onEscolherMinicursos}>
-                                {meusMinicursos.length > 0 ? 'Trocar' : 'Escolher'}
-                            </span>
+                            {escolhaMinicursosLiberada && (
+                                <span className="acaoBlocoInicioParticipantes" onClick={onEscolherMinicursos}>
+                                    {meusMinicursos.length > 0 ? 'Trocar' : 'Escolher'}
+                                </span>
+                            )}
                         </div>
-                        {meusMinicursos.length === 0 ? (
+                        {meusMinicursos.length === 0 && !escolhaMinicursosLiberada ? (
+                            <p className="avisoVazioAgendaParticipantes">
+                                A escolha de minicursos abre em breve. Fique de olho!
+                            </p>
+                        ) : meusMinicursos.length === 0 ? (
                             <>
                                 <button
                                     type="button"
@@ -188,7 +197,6 @@ export default function SecaoInicioParticipantes({
                                 <span className="tituloItemMeuDiaInicioParticipantes">{item.titulo}</span>
                                 <span className="detalheItemMeuDiaInicioParticipantes">{item.detalhe}</span>
                             </div>
-                            {item.status === 'concluido' && <span className="marcaConcluidaItemMeuDiaInicioParticipantes">OK</span>}
                         </div>
                     ))}
                 </div>

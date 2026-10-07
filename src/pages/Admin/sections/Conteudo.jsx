@@ -9,6 +9,7 @@ import {
     atualizarTrilha,
     excluirTrilha,
 } from '../data/apiTrilha.js';
+import { lerEscolhaMinicursos, salvarEscolhaMinicursos } from '../data/apiEscolhaMinicursos.js';
 
 /* Conteúdo — eventos (tabela `evento`) com seu tipo (`tipo_evento`) e
    palestrantes (`palestrante`, vínculo recriado a cada gravação). A lista
@@ -30,6 +31,7 @@ const EVENTO_VAZIO = {
 
 const TIPO_VAZIO = { nome: '', pontos: '', exigeInscricao: false };
 const TRILHA_VAZIA = { nome: '' };
+const ANO_ATUAL = new Date().getFullYear();
 
 /* 'YYYY-MM-DD' → 'DD/MM/YYYY' (sem Date para não sofrer com fuso) */
 function formatarDataEvento(data) {
@@ -68,6 +70,11 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
     const [salvandoTrilha, setSalvandoTrilha] = useState(false);
     const [erroTrilha, setErroTrilha] = useState('');
 
+    // Botão "Escolha de minicursos" do /participantes (null = carregando)
+    const [escolhaMinicursosAberta, setEscolhaMinicursosAberta] = useState(null);
+    const [salvandoEscolhaMinicursos, setSalvandoEscolhaMinicursos] = useState(false);
+    const [erroEscolhaMinicursos, setErroEscolhaMinicursos] = useState('');
+
     useEffect(() => {
         let ativo = true;
         listarTiposEvento()
@@ -76,8 +83,25 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
         listarTrilhas()
             .then((lista) => { if (ativo) setTrilhas(lista); })
             .catch(() => { if (ativo) setErroTrilha('Não foi possível carregar as trilhas.'); });
+        lerEscolhaMinicursos(ANO_ATUAL)
+            .then((aberta) => { if (ativo) setEscolhaMinicursosAberta(aberta); })
+            .catch((e) => { if (ativo) setErroEscolhaMinicursos(e.message); });
         return () => { ativo = false; };
     }, []);
+
+    /* ── Escolha de minicursos ───────────────────────────────── */
+
+    const alternarEscolhaMinicursos = async (novoValor) => {
+        setSalvandoEscolhaMinicursos(true);
+        setErroEscolhaMinicursos('');
+        try {
+            setEscolhaMinicursosAberta(await salvarEscolhaMinicursos(ANO_ATUAL, novoValor));
+        } catch (e) {
+            setErroEscolhaMinicursos(e.message);
+        } finally {
+            setSalvandoEscolhaMinicursos(false);
+        }
+    };
 
     const eventosFiltrados = filtro.trim()
         ? eventos.filter((ev) => normalizar(ev.nome).includes(normalizar(filtro)))
@@ -314,6 +338,29 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
 
             {erro && <p className="avisoErroAdmin" role="alert">{erro}</p>}
             {erroAcao && <p className="avisoErroAdmin" role="alert">{erroAcao}</p>}
+
+            {erroEscolhaMinicursos && <p className="avisoErroAdmin" role="alert">{erroEscolhaMinicursos}</p>}
+            <section className="cartaoEscolhaMinicursosConteudo" aria-label="Escolha de minicursos">
+                <div className="textoEscolhaMinicursosConteudo">
+                    <span className="rotuloEscolhaMinicursosConteudo">Escolha de minicursos</span>
+                    <p className="notaEscolhaMinicursosConteudo">
+                        Fechada, ninguém entra nem sai de minicurso no /participantes — quem já está inscrito continua inscrito.
+                    </p>
+                </div>
+                <label className="campoCheckboxEscolhaMinicursosConteudo">
+                    <input
+                        type="checkbox"
+                        checked={Boolean(escolhaMinicursosAberta)}
+                        disabled={escolhaMinicursosAberta === null || salvandoEscolhaMinicursos}
+                        onInput={(e) => alternarEscolhaMinicursos(e.currentTarget.checked)}
+                    />
+                    <span>
+                        {escolhaMinicursosAberta === null
+                            ? 'Carregando…'
+                            : escolhaMinicursosAberta ? 'Liberada' : 'Fechada'}
+                    </span>
+                </label>
+            </section>
 
             <div className="envelopeTabelaFinancas">
                 <table className="tabelaFinancas">
