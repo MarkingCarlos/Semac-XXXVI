@@ -222,7 +222,7 @@ export default function SecaoInicioParticipantes({
 
                 {conquistas.length > 0 && (
                 <div className="blocoConquistasInicioParticipantes soMobileParticipantes">
-                    <div className="cabecalhoBlocoInicioParticipantes">
+                    <div className="cabecalhoBlocoInicioParticipantes" style={{marginBottom: '10px'}} >
                         <span className="rotuloBlocoInicioParticipantes">CONQUISTAS</span>
                         <span className="contadorBlocoInicioParticipantes">
                             {conquistas.filter((c) => c.desbloqueada).length} de {conquistas.length}
