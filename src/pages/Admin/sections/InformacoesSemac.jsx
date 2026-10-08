@@ -1055,11 +1055,6 @@ export default function InformacoesSemac() {
                 <div className="cabecalhoBlocoInfoSemac">
                     <div>
                         <h2 className="tituloBlocoInfoSemac">Conquistas</h2>
-                        <p className="notaBlocoInfoSemac">
-                            Cada conquista já existe no sistema com sua regra — aqui se define nome,
-                            pontos, imagem e descrição, e se ela já vale. Só conquista ativa aparece
-                            para os participantes; a imagem fica em preto e branco até ser conquistada.
-                        </p>
                     </div>
                     <button
                         type="button"

@@ -1,0 +1,44 @@
+/* =================================================================
+   modalEditarParticipante.css — edição de dados e minicursos pela
+   diretoria (ModalEditarParticipante). Reaproveita a casca de modal de
+   admin.css, os campos de modalAdicionarParticipante.css e a lista do
+   modal de conquistas.
+   ================================================================= */
+
+.tituloSecaoEditarParticipanteAdmin {
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    color: var(--AmareloAuxApoio);
+    margin: 1.25rem 0 0.75rem;
+}
+
+.rodapeSecaoDadosEditarParticipanteAdmin {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.85rem;
+}
+
+.avisoSucessoDadosEditarParticipanteAdmin {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.78rem;
+    color: #7ee0a1;
+    margin: 0.6rem 0 0;
+}
+
+.linhaAdicionarMinicursoEditarParticipanteAdmin {
+    display: flex;
+    gap: 0.6rem;
+    align-items: stretch;
+}
+
+.selectMinicursoEditarParticipanteAdmin {
+    flex: 1;
+    min-width: 0;
+}
+
+@media (max-width: 560px) {
+    .linhaAdicionarMinicursoEditarParticipanteAdmin {
+        flex-direction: column;
+    }
+}

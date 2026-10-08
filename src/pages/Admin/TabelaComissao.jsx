@@ -2,7 +2,9 @@
 // (MEMBRO, DIRETOR_* e PRESIDENTE), com busca por nome ou e-mail.
 //
 // Ações por linha: alterar a função (entre os papéis de comissão) e
-// desativar/reativar o membro (campo `ativo` — preserva o histórico).
+// desativar/reativar o membro (campo `ativo` — preserva o histórico) e,
+// para diretoria de site e presidência, corrigir os dados cadastrais
+// (ModalEditarParticipante).
 // Mesma identidade visual da tabela de participantes; a coluna "Ingresso"
 // dá lugar a "Função" (o papel).
 //
@@ -14,6 +16,8 @@
 import { useState, useMemo } from 'preact/hooks'
 import { createPortal } from 'preact/compat'
 import { atribuirRole, definirAtivo, desconfirmarParticipante, excluirParticipante } from './data/apiParticipantes.js'
+import { temAcessoGestaoParticipantes } from '../../auth/sessao.js'
+import ModalEditarParticipante from './ModalEditarParticipante.jsx'
 
 // Papéis de comissão e seus rótulos amigáveis (espelham o enum Role).
 const PAPEIS_COMISSAO = [
@@ -45,6 +49,10 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
     const [idConfirmandoDesconfirmar, setIdConfirmandoDesconfirmar] = useState(null)
     const [idProcessando, setIdProcessando] = useState(null)
     const [erroAcao, setErroAcao] = useState('')
+    const [membroEmEdicaoDados, setMembroEmEdicaoDados] = useState(null)
+    /* Corrigir nome, e-mail, RA e telefone: só diretoria de site e
+       presidência (ver SecurityConfig). */
+    const podeEditarDadosMembro = temAcessoGestaoParticipantes()
 
     const filtrados = useMemo(() =>
         comissao.filter(membro =>
@@ -167,6 +175,21 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
                                 </td>
                                 <td class="celulaAcaoComissaoAdmin">
                                     <div class="grupoAcoesComissaoAdmin">
+                                        {podeEditarDadosMembro && (
+                                            <button
+                                                type="button"
+                                                class="botaoAcaoLinhaFinancas"
+                                                aria-label={`Editar dados de ${membro.nome}`}
+                                                title="Editar dados"
+                                                onClick={() => { setErroAcao(''); setMembroEmEdicaoDados(membro) }}
+                                            >
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M11.5 15H7a4 4 0 0 0-4 4v2" />
+                                                    <path d="M21.378 16.626a1 1 0 0 0-3.004-3.004l-4.01 4.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z" />
+                                                    <circle cx="10" cy="7" r="4" />
+                                                </svg>
+                                            </button>
+                                        )}
                                         <button
                                             type="button"
                                             class="botaoAcaoLinhaFinancas"
@@ -254,6 +277,14 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
             <div class="rodapeTabelaAdmin">
                 Exibindo {filtrados.length} de {comissao.length} membros
             </div>
+
+            {membroEmEdicaoDados && (
+                <ModalEditarParticipante
+                    pessoa={membroEmEdicaoDados}
+                    aoFechar={() => setMembroEmEdicaoDados(null)}
+                    aoAtualizado={aoAtualizar}
+                />
+            )}
 
             {membroEmEdicao && (
                 <ModalAlterarFuncao

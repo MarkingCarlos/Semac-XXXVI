@@ -20,9 +20,10 @@ import { createPortal } from 'preact/compat'
 import { atribuirRole, desconfirmarParticipante, excluirParticipante, buscarComprovante } from './data/apiParticipantes.js'
 import { listarTiposInscricao } from './data/apiTipoInscricao.js'
 import { formatarCentavos } from '../Financas/utils/moeda.js'
-import { temAcessoDiretoria } from '../../auth/sessao.js'
+import { temAcessoDiretoria, temAcessoGestaoParticipantes } from '../../auth/sessao.js'
 import ModalConquistasParticipante from './ModalConquistasParticipante.jsx'
 import ModalAdicionarParticipante from './ModalAdicionarParticipante.jsx'
+import ModalEditarParticipante from './ModalEditarParticipante.jsx'
 
 const ANO_ATUAL = new Date().getFullYear()
 
@@ -77,6 +78,7 @@ function LinhaParticipante({
     participante, aoAbrirConfirmacao, aoExcluir, confirmandoExcluir, processandoExcluir,
     aoDesconfirmar, confirmandoDesconfirmar, processandoDesconfirmar,
     podeVerConquistas, aoVerConquistas,
+    podeEditarParticipante, aoEditarParticipante,
 }) {
     const confirmado = participante.role === 'PARTICIPANTE'
 
@@ -143,6 +145,21 @@ function LinhaParticipante({
                             </svg>
                         </button>
                     )}
+                    {podeEditarParticipante && (
+                        <button
+                            type="button"
+                            class="botaoAcaoLinhaFinancas"
+                            aria-label={`Editar dados e minicursos de ${participante.nome}`}
+                            title="Editar dados e minicursos"
+                            onClick={() => aoEditarParticipante(participante)}
+                        >
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11.5 15H7a4 4 0 0 0-4 4v2" />
+                            <path d="M21.378 16.626a1 1 0 0 0-3.004-3.004l-4.01 4.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z" />
+                            <circle cx="10" cy="7" r="4" />
+                        </svg>
+                        </button>
+                    )}
                     {podeVerConquistas && confirmado && (
                         <button
                             type="button"
@@ -194,6 +211,10 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
     /* Ver e revogar conquista fica com diretores e presidência — revogar
        mexe no xp e no ranking (ver SecurityConfig). */
     const podeVerConquistas = temAcessoDiretoria()
+    /* Corrigir cadastro e mexer em minicurso de outra pessoa fica com a
+       diretoria de site e a presidência (ver SecurityConfig). */
+    const podeEditarParticipante = temAcessoGestaoParticipantes()
+    const [participanteEmEdicao, setParticipanteEmEdicao] = useState(null)
 
     // Com o switch desligado, ordem alfabética (padrão). Ligado, mais
     // recentes primeiro por inscritoEm — cadastros antigos sem essa data
@@ -322,6 +343,8 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
                                 processandoDesconfirmar={idProcessandoDesconfirmar === participante.id}
                                 podeVerConquistas={podeVerConquistas}
                                 aoVerConquistas={setParticipanteVendoConquistas}
+                                podeEditarParticipante={podeEditarParticipante}
+                                aoEditarParticipante={setParticipanteEmEdicao}
                             />
                         ))}
                     </tbody>
@@ -336,6 +359,14 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
                 <ModalAdicionarParticipante
                     aoFechar={() => setCadastroManualAberto(false)}
                     aoCriado={aoConfirmar}
+                />
+            )}
+
+            {participanteEmEdicao && (
+                <ModalEditarParticipante
+                    pessoa={participanteEmEdicao}
+                    aoFechar={() => setParticipanteEmEdicao(null)}
+                    aoAtualizado={aoConfirmar}
                 />
             )}
 

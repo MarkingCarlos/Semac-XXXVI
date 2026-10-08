@@ -121,3 +121,66 @@ export async function excluirParticipante(id) {
         throw new Error(corpo?.mensagem || 'Não foi possível excluir esta pessoa.');
     }
 }
+
+/* ── Gestão pela diretoria (Diretor de Site e Presidência) ───────── */
+
+/* Corrige nome, e-mail, RA e telefone de um participante ou membro da
+   comissão. `dados` = { nome, email, ra, telefone } (telefone só dígitos).
+   O backend recusa (409) e-mail que já é de outra pessoa. Retorna a
+   pessoa atualizada no formato da listagem. */
+export async function atualizarDadosPessoa(id, dados) {
+    const resposta = await apiFetch(`${API_URL}/api/pessoa/${id}/dados`, {
+        method: 'PATCH',
+        headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(dados),
+    });
+    if (!resposta.ok) {
+        const corpo = await resposta.json().catch(() => null);
+        throw new Error(corpo?.mensagem || 'Não foi possível salvar os dados.');
+    }
+    return resposta.json();
+}
+
+/* Minicursos em que o participante está: [{ evento, status }], com o
+   evento no formato do backend (EventoResponseDTO). */
+export async function listarMinicursosDoParticipante(id) {
+    const resposta = await apiFetch(`${API_URL}/api/pessoa/${id}/minicursos`, { headers: cabecalhosAuth() });
+    if (!resposta.ok) throw new Error('Falha ao carregar os minicursos do participante.');
+    return resposta.json();
+}
+
+/* Todos os minicursos (eventos cujo tipo exige inscrição), com
+   vagasRestantes — opções do "adicionar a um minicurso". */
+export async function listarTodosMinicursos() {
+    const resposta = await apiFetch(`${API_URL}/api/evento`);
+    if (!resposta.ok) throw new Error('Falha ao carregar os minicursos.');
+    const eventos = await resposta.json();
+    return eventos.filter(evento => evento.tipoEvento?.exigeInscricao);
+}
+
+/* Coloca o participante no minicurso. Regras do minicurso (vagas, choque
+   de horário, dia do ingresso diário) voltam como erro com a mensagem do
+   backend. */
+export async function adicionarParticipanteMinicurso(id, eventoId) {
+    const resposta = await apiFetch(`${API_URL}/api/pessoa/${id}/minicursos/${eventoId}`, {
+        method: 'POST',
+        headers: cabecalhosAuth(),
+    });
+    if (!resposta.ok) {
+        const corpo = await resposta.json().catch(() => null);
+        throw new Error(corpo?.mensagem || 'Não foi possível adicionar ao minicurso.');
+    }
+}
+
+/* Tira o participante do minicurso, liberando a vaga. Recusado (409) se
+   a presença já foi registrada. */
+export async function removerParticipanteMinicurso(id, eventoId) {
+    const resposta = await apiFetch(`${API_URL}/api/pessoa/${id}/minicursos/${eventoId}`, {
+        method: 'DELETE',
+        headers: cabecalhosAuth(),
+    });
+    if (!resposta.ok) {
+        const corpo = await resposta.json().catch(() => null);
+        throw new Error(corpo?.mensagem || 'Não foi possível remover do minicurso.');
+    }
+}

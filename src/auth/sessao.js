@@ -38,6 +38,11 @@ const PAPEIS_DIRETORIA = PAPEIS_ADMIN.filter((papel) => papel !== 'MEMBRO');
    backend (SecurityConfig). */
 const PAPEIS_DASHBOARD = ['PRESIDENTE', 'DIRETOR_SITE'];
 
+/* Quem corrige o cadastro de outra pessoa (nome, e-mail, RA, telefone) e
+   coloca/tira participante de minicurso no /admin. Espelha
+   PAPEIS_GESTAO_PARTICIPANTES do backend (SecurityConfig). */
+const PAPEIS_GESTAO_PARTICIPANTES = ['DIRETOR_SITE', 'PRESIDENTE'];
+
 /* Papel com acesso à área do participante (/participantes) — atribuído
    pelo admin quando a inscrição é confirmada (ver apiParticipantes.js). */
 const PAPEIS_PARTICIPANTE = ['PARTICIPANTE'];
@@ -123,6 +128,13 @@ export function temAcessoDiretoria() {
 export function temAcessoDashboard() {
     const sessao = lerSessao();
     return !!sessao && PAPEIS_DASHBOARD.includes(sessao.role) && !sessaoExpirada();
+}
+
+/* Esconde o botão "Editar dados e minicursos" das tabelas de Pessoas de
+   quem não pode usá-lo. A checagem de verdade é no backend. */
+export function temAcessoGestaoParticipantes() {
+    const sessao = lerSessao();
+    return !!sessao && PAPEIS_GESTAO_PARTICIPANTES.includes(sessao.role) && !sessaoExpirada();
 }
 
 export function temAcessoParticipante() {
