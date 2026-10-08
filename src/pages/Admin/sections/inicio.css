@@ -14,8 +14,14 @@
 
 .cabecalhoBoasVindasInicio {
     margin-bottom: 5px;
+    display: flex;
+    flex-direction: column;
 }
-
+.adminRow{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
 .eyebrowPerfilInicio {
     display: inline-block;
     font-family: 'Bungee', cursive;
@@ -41,7 +47,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: space-between;
+    justify-content: center;
     flex-wrap: wrap;
 }
 

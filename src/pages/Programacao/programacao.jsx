@@ -73,6 +73,16 @@ export default function CronogramaContainer() {
 
   const dias = useMemo(() => diasComEvento(eventos), [eventos]);
 
+  /* Data real de cada dia da semana (a do primeiro evento dele), usada
+     no título do filtro ("10 DE OUTUBRO" em vez de "SEGUNDA-FEIRA"). */
+  const datasPorDiaProgramacao = useMemo(() => {
+    const datas = {};
+    for (const evento of eventos) {
+      if (!datas[evento.dia]) datas[evento.dia] = evento.dataHoraInicio;
+    }
+    return datas;
+  }, [eventos]);
+
   // A programação carrega de forma assíncrona e muda a altura da página; o
   // Lenis (index.html) usa naiveDimensions e não percebe isso sozinho, então
   // avisamos manualmente depois que o conteúdo real é renderizado.
@@ -99,6 +109,7 @@ export default function CronogramaContainer() {
       <h1 className="tituloCronograma tituloSecao" style={{marginBottom: '0px', marginTop:'1em'}} >Programação</h1>
       <CronogramaFiltro
         dias={dias}
+        datasDias={datasPorDiaProgramacao}
         categorias={trilhas}
         selectedDay={selectedDay}
         setSelectedDay={setSelectedDay}

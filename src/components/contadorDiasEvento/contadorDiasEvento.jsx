@@ -42,7 +42,7 @@ const ContadorDiasEvento = () => {
                     <div className="linhaDataLocalContadorDias">
                         <span className="tracoAmareloContadorDias" aria-hidden="true" />
                         <span className="textoDataLocalContadorDias">
-                            <span className="textoDataEventoContadorDias">26 a 30 de outubro de 2026</span>{' '}
+                            <span className="textoDataEventoContadorDias">26 a 29 de outubro de 2026</span>{' '}
                             <span className="separadorDataLocalContadorDias" aria-hidden="true">·</span>{' '}
                             <span className="textoLocalEventoContadorDias">IBILCE/UNESP</span>
                         </span>

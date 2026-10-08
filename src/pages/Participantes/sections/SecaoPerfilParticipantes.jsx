@@ -4,7 +4,8 @@
    enquanto carrega ou quando a pessoa ainda não tem xp atribuído.
 
    Só chegam aqui as conquistas ativas (ver GET /api/conquista/minhas) —
-   o que a presidência ainda não liberou não existe para o participante. */
+   o que a presidência ainda não liberou não existe para o participante.
+   Dessas, só as desbloqueadas são exibidas; sem nenhuma, o bloco some. */
 
 import CardConquista from '../../../components/CardConquista/CardConquista.jsx';
 
@@ -20,6 +21,8 @@ export default function SecaoPerfilParticipantes({
     onAbrirQr,
     onSair,
 }) {
+    const conquistasDesbloqueadasPerfil = conquistas.filter((c) => c.desbloqueada);
+
     return (
         <div className="secaoPerfilParticipantes">
             <div className="dadosParticipante">
@@ -55,16 +58,16 @@ export default function SecaoPerfilParticipantes({
                     SAIR DA CONTA
                 </button>
             </div>
-            {conquistas.length > 0 && (
+            {conquistasDesbloqueadasPerfil.length > 0 && (
             <div className="blocoConquistasSecaoPerfilParticipantes">
                 <div className="cabecalhoBlocoSecaoPerfilParticipantes">
-                    <span className="rotuloBlocoSecaoPerfilParticipantes">CONQUISTAS</span>
+                    <span className="rotuloBlocoSecaoPerfilParticipantes">SUAS CONQUISTAS</span>
                     <span className="contadorBlocoSecaoPerfilParticipantes">
-                        {conquistas.filter((c) => c.desbloqueada).length} de {conquistas.length}
+                        {conquistasDesbloqueadasPerfil.length} de {conquistas.length}
                     </span>
                 </div>
                 <div className="grelhaConquistasSecaoPerfilParticipantes">
-                    {conquistas.map((conquista) => (
+                    {conquistasDesbloqueadasPerfil.map((conquista) => (
                         <CardConquista key={conquista.id} conquista={conquista} />
                     ))}
                 </div>

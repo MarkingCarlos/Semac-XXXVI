@@ -86,34 +86,40 @@ export default function Inicio({ podeAcessarFinanceiro = false, podeVerPrevisao 
 
     return (
         <div className="conteudoInicio">
-            <header className="cabecalhoBoasVindasInicio">
-                <span className="eyebrowPerfilInicio">
-                    Perfil<span className="separadorEyebrowInicio">/</span>{funcao}
-                </span>
-                <p className="saudacaoInicio">Bem-vindo,</p>
-                <div className="linhaNomeCardInicio">
-                    <h1 className="nomeBoasVindasInicio">{primeiroNome}</h1>
-                    {podeAcessarFinanceiro ? (
-                        <Link href="/financeiro" className="cartaoIrFinanceiroInicio">
-                            <span className="tituloCartaoIrFinanceiroInicio">Ir para o financeiro</span>
-                            <span className="subtituloCartaoIrFinanceiroInicio">Acessar o painel financeiro da SEMAC</span>
-                        </Link>
-                    ) : podeGerenciarDoacoes ? (
-                        /* Diretor de patrocínio: além da Previsão (leitura),
-                           gerencia as Doações, que moram no /financeiro. */
-                        <Link href="/financeiro" className="cartaoIrFinanceiroInicio">
-                            <span className="tituloCartaoIrFinanceiroInicio">Previsão e doações</span>
-                            <span className="subtituloCartaoIrFinanceiroInicio">Acompanhar o orçamento e cadastrar doações</span>
-                        </Link>
-                    ) : podeVerPrevisao && (
-                        <Link href="/financeiro" className="cartaoIrFinanceiroInicio">
-                            <span className="tituloCartaoIrFinanceiroInicio">Ver previsão de gastos</span>
-                            <span className="subtituloCartaoIrFinanceiroInicio">Acompanhar o orçamento da SEMAC (somente leitura)</span>
-                        </Link>
-                    )}
-                </div>
 
-            </header>
+            <header className="cabecalhoBoasVindasInicio">
+                 <span className="eyebrowPerfilInicio">
+                   Perfil<span className="separadorEyebrowInicio">/</span>{funcao}
+                 </span>
+                <div className="adminRow">
+                    <div className="boasbindasAdmin" >
+                        <p className="saudacaoInicio">Bem-vindo,</p>
+                        <h1 className="nomeBoasVindasInicio">{primeiroNome}</h1>
+                    </div>
+
+                    <div className="linhaNomeCardInicio">
+                        {podeAcessarFinanceiro ? (
+                            <Link href="/financeiro" className="cartaoIrFinanceiroInicio">
+                                <span className="tituloCartaoIrFinanceiroInicio">Ir para o financeiro</span>
+                                <span className="subtituloCartaoIrFinanceiroInicio">Acessar o painel financeiro da SEMAC</span>
+                            </Link>
+                        ) : podeGerenciarDoacoes ? (
+                            /* Diretor de patrocínio: além da Previsão (leitura),
+                               gerencia as Doações, que moram no /financeiro. */
+                            <Link href="/financeiro" className="cartaoIrFinanceiroInicio">
+                                <span className="tituloCartaoIrFinanceiroInicio">Previsão e doações</span>
+                                <span className="subtituloCartaoIrFinanceiroInicio">Acompanhar o orçamento e cadastrar doações</span>
+                            </Link>
+                        ) : podeVerPrevisao && (
+                            <Link href="/financeiro" className="cartaoIrFinanceiroInicio">
+                                <span className="tituloCartaoIrFinanceiroInicio">Ver previsão de gastos</span>
+                                <span className="subtituloCartaoIrFinanceiroInicio">Acompanhar o orçamento da SEMAC (somente leitura)</span>
+                            </Link>
+                        )}
+                    </div>
+                </div>
+        </header>
+
 
             {temAcessoDashboard() && <DashboardAdmin />}
 

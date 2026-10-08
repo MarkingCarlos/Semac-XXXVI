@@ -35,7 +35,7 @@ export default function SecaoAgendaParticipantes({
                         onClick={() => onSelecionarDia(dia.id)}
                     >
                         <span className="rotuloItemDiaAgendaParticipantes">{dia.rotulo}</span>
-                        <span className="dataItemDiaAgendaParticipantes">{dia.hoje ? `${dia.data} · hoje` : dia.data}</span>
+                        <span className="dataItemDiaAgendaParticipantes">{dia.hoje ? `${dia.data}` : dia.data}</span>
                     </button>
                 ))}
             </div>
@@ -59,9 +59,6 @@ export default function SecaoAgendaParticipantes({
                             <span className="tituloCardAtividadeAgendaParticipantes">{item.titulo}</span>
                             <span className="detalheCardAtividadeAgendaParticipantes">{item.detalhe}</span>
                         </div>
-                        {item.status === 'concluido' && (
-                            <span className="marcaConcluidaCardAtividadeAgendaParticipantes">OK</span>
-                        )}
                     </div>
                 ))}
             </div>

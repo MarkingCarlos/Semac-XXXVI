@@ -1,8 +1,14 @@
 import "./cronogramaFiltro.css";
 import SplitText from "./SplitText";
 
+/* "10 DE OUTUBRO" a partir de um Date. */
+function formatarDataTituloCronograma(data) {
+  return data.toLocaleDateString("pt-BR", { day: "numeric", month: "long" }).toUpperCase();
+}
+
 export default function CronogramaFiltro({
   dias,
+  datasDias = {},
   categorias,
   selectedDay,
   setSelectedDay,
@@ -13,6 +19,11 @@ export default function CronogramaFiltro({
     setSelectedFilter((prev) => (prev === category ? null : category));
   }
 
+  const dataDiaSelecionado = datasDias[selectedDay];
+  const textoTituloDiaCronograma = dataDiaSelecionado
+    ? formatarDataTituloCronograma(dataDiaSelecionado)
+    : `${selectedDay}-FEIRA`;
+
   return (
     <div className="wrapperCronograma">
       <div className="cartaoCronograma">
@@ -20,7 +31,7 @@ export default function CronogramaFiltro({
           <SplitText
             key={selectedDay}
             tag="span"
-            text={`${selectedDay}-FEIRA`}
+            text={textoTituloDiaCronograma}
             textAlign="center"
             delay={40}
             duration={0.5}
