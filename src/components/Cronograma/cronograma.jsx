@@ -1,5 +1,7 @@
+import { Fragment } from "preact";
 import { useEffect, useState } from "react";
 import { getCorTipoEvento } from "./tiposEventoCores.js";
+import { formatarDataCronograma } from "../cronogramaFiltro/formatarDataCronograma.js";
 import "./cronograma.css";
 
 function ordenarPorHorario(a, b) {
@@ -199,13 +201,14 @@ export default function Cronograma({ eventos, selectedDay, selectedFilter }) {
     return () => consulta.removeEventListener("change", aoMudar);
   }, []);
 
+  // Sem trilha: só o dia selecionado. Com trilha: a trilha em todos os
+  // dias, em ordem cronológica (aí o horário sozinho não basta para ordenar).
+  const filtrandoPorTrilha = selectedFilter !== null;
   const eventosFiltrados = eventos
-    .filter((evento) => {
-      const bateDia = evento.dia === selectedDay;
-      const bateCategoria = selectedFilter === null || evento.categoria === selectedFilter;
-      return bateDia && bateCategoria;
-    })
-    .sort(ordenarPorHorario);
+    .filter((evento) =>
+      filtrandoPorTrilha ? evento.categoria === selectedFilter : evento.dia === selectedDay
+    )
+    .sort(filtrandoPorTrilha ? (a, b) => getChaveOrdenacao(a) - getChaveOrdenacao(b) : ordenarPorHorario);
 
   // Garante que sempre haja um evento válido selecionado quando o filtro muda
   useEffect(() => {
@@ -238,29 +241,42 @@ export default function Cronograma({ eventos, selectedDay, selectedFilter }) {
       <div className="corpoCronograma">
         <div className="listaEventosCronograma">
           {eventosFiltrados.length > 0 ? (
-            eventosFiltrados.map((evento) => {
+            eventosFiltrados.map((evento, indice) => {
               const isSelected = evento.id === eventoSelecionado?.id;
               const status = getStatusEvento(evento, agora);
+              // Com trilha ativa a lista mistura dias: abre um cabeçalho a
+              // cada troca de dia para o horário não ficar ambíguo.
+              const iniciaNovoDia =
+                filtrandoPorTrilha &&
+                (indice === 0 ||
+                  eventosFiltrados[indice - 1].dataHoraInicio.toDateString() !==
+                    evento.dataHoraInicio.toDateString());
               return (
-                <button
-                  key={evento.id}
-                  className={`eventoItemCronograma ${
-                    isSelected ? "eventoItemAtivoCronograma" : ""
-                  } ${status === "passado" ? "eventoItemPassadoCronograma" : ""}`}
-                  onClick={() => selecionarEvento(evento.id)}
-                >
-                  <span className="eventoRailCronograma" />
-                  <span className="eventoHorarioCronograma">{evento.horarioInicio}</span>
-                  <span className="eventoTextoCronograma">
-                    <span className="eventoTituloCronograma">{evento.titulo}</span>
-                    <span className="eventoPalestranteCronograma">{evento.palestrante}</span>
-                    <SeloTipoEventoCronograma
-                      tipo={evento.tipo}
-                      className="eventoSeloTipoEventoCronograma"
-                    />
-                  </span>
-                  {status === "agora" && <span className="eventoAoVivoCronograma" />}
-                </button>
+                <Fragment key={evento.id}>
+                  {iniciaNovoDia && (
+                    <span className="cabecalhoDiaListaEventosCronograma">
+                      {formatarDataCronograma(evento.dataHoraInicio)} · {evento.dia}
+                    </span>
+                  )}
+                  <button
+                    className={`eventoItemCronograma ${
+                      isSelected ? "eventoItemAtivoCronograma" : ""
+                    } ${status === "passado" ? "eventoItemPassadoCronograma" : ""}`}
+                    onClick={() => selecionarEvento(evento.id)}
+                  >
+                    <span className="eventoRailCronograma" />
+                    <span className="eventoHorarioCronograma">{evento.horarioInicio}</span>
+                    <span className="eventoTextoCronograma">
+                      <span className="eventoTituloCronograma">{evento.titulo}</span>
+                      <span className="eventoPalestranteCronograma">{evento.palestrante}</span>
+                      <SeloTipoEventoCronograma
+                        tipo={evento.tipo}
+                        className="eventoSeloTipoEventoCronograma"
+                      />
+                    </span>
+                    {status === "agora" && <span className="eventoAoVivoCronograma" />}
+                  </button>
+                </Fragment>
               );
             })
           ) : (

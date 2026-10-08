@@ -1,10 +1,6 @@
 import "./cronogramaFiltro.css";
 import SplitText from "./SplitText";
-
-/* "10 DE OUTUBRO" a partir de um Date. */
-function formatarDataTituloCronograma(data) {
-  return data.toLocaleDateString("pt-BR", { day: "numeric", month: "long" }).toUpperCase();
-}
+import { formatarDataCronograma } from "./formatarDataCronograma.js";
 
 export default function CronogramaFiltro({
   dias,
@@ -19,17 +15,27 @@ export default function CronogramaFiltro({
     setSelectedFilter((prev) => (prev === category ? null : category));
   }
 
+  // Com trilha ativa a lista mostra todos os dias, então o título vira o
+  // nome da trilha em vez de uma data.
   const dataDiaSelecionado = datasDias[selectedDay];
-  const textoTituloDiaCronograma = dataDiaSelecionado
-    ? formatarDataTituloCronograma(dataDiaSelecionado)
-    : `${selectedDay}-FEIRA`;
+  const textoTituloDiaCronograma = selectedFilter !== null
+    ? selectedFilter.toUpperCase()
+    : dataDiaSelecionado
+      ? formatarDataCronograma(dataDiaSelecionado)
+      : `${selectedDay}-FEIRA`;
+
+  // Escolher um dia sai do modo "trilha em todos os dias".
+  function handleDayClick(day) {
+    setSelectedDay(day);
+    setSelectedFilter(null);
+  }
 
   return (
     <div className="wrapperCronograma">
       <div className="cartaoCronograma">
         <h1 className="" style={{marginBottom: '0px'}}>
           <SplitText
-            key={selectedDay}
+            key={textoTituloDiaCronograma}
             tag="span"
             text={textoTituloDiaCronograma}
             textAlign="center"
@@ -45,14 +51,14 @@ export default function CronogramaFiltro({
 
         <div className="linhaDiasCronograma">
           {dias.map((day) => {
-            const isActive = day === selectedDay;
+            const isActive = selectedFilter === null && day === selectedDay;
             const cls = isActive ? "diaAtivoCronograma" : "diaInativoCronograma";
 
             return (
               <button
                 key={day}
                 className={`botaoDiaCronograma ${cls}`}
-                onClick={() => setSelectedDay(day)}
+                onClick={() => handleDayClick(day)}
               >
                 {day}
               </button>

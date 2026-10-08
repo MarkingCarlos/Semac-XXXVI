@@ -136,6 +136,19 @@
   line-height: 1.4;
 }
 
+/* Separador de dia na lista quando uma trilha está filtrada (vários dias) */
+.cabecalhoDiaListaEventosCronograma {
+  font-family: var(--fonteTituloBungee), sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 6px 4px 0;
+}
+
+.cabecalhoDiaListaEventosCronograma:first-child {
+  padding-top: 0;
+}
+
 .semEventosCronograma {
   font-size: 0.7rem;
   color: rgba(255, 255, 255, 0.55);
