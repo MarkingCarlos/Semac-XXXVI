@@ -14,7 +14,8 @@ function separarDataHora(iso) {
 }
 
 /* Lista achatada de eventos (todos os tipos — palestras e minicursos),
-   já com data/hora separadas para os dois seletores da tela de check-in. */
+   já com data/hora separadas para os dois seletores da tela de check-in.
+   `horaFim`, `tipo` e `local` alimentam o cartão de cada evento. */
 export async function listarEventosCheckin() {
     const resposta = await apiFetch(`${API_URL}/api/evento`);
     if (!resposta.ok) throw new Error('Falha ao carregar os eventos.');
@@ -23,7 +24,15 @@ export async function listarEventosCheckin() {
     return eventos
         .map((evento) => {
             const { data, hora } = separarDataHora(evento.dataHoraInicio);
-            return { id: evento.id, nome: evento.nome, data, hora };
+            return {
+                id: evento.id,
+                nome: evento.nome,
+                data,
+                hora,
+                horaFim: separarDataHora(evento.dataHoraFim).hora,
+                tipo: evento.tipoEvento?.nome ?? '',
+                local: evento.local ?? '',
+            };
         })
         .sort((a, b) => (a.data + a.hora).localeCompare(b.data + b.hora));
 }
@@ -72,4 +81,14 @@ export async function concederConquistaPorQrCode(conquistaId, uuid) {
         body: JSON.stringify({ uuid }),
     });
     return lerErroOuFalhar(resposta, 'Não foi possível conceder a conquista.');
+}
+
+/* Modo "Testar leitura": só confere a quem pertence o QR lido. Não grava
+   nada no backend (sem presença, xp, conquista ou log de tentativa).
+   Devolve { nome, situacao }; QR desconhecido volta como erro (404). */
+export async function testarLeituraQrCode(uuid) {
+    const resposta = await apiFetch(`${API_URL}/api/checkin/teste/${encodeURIComponent(uuid)}`, {
+        headers: cabecalhosAuth(),
+    });
+    return lerErroOuFalhar(resposta, 'Não foi possível ler este QR code.');
 }

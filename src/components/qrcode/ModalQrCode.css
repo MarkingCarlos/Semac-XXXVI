@@ -10,6 +10,7 @@
 }
 
 .telaAppCheckin {
+    padding: 16px 0 0 0;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -24,8 +25,8 @@
 .cabecalhoAppCheckin {
     padding: max(28px, env(safe-area-inset-top)) 20px 14px;
     display: flex;
+    flex-direction: column;
     align-items: baseline;
-    gap: 10px;
     flex: 0 0 auto;
 }
 

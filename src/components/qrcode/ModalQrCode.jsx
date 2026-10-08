@@ -7,6 +7,7 @@ import {
     listarConquistasManuaisCheckin,
     registrarPresencaPorQrCode,
     concederConquistaPorQrCode,
+    testarLeituraQrCode,
 } from './data/apiCheckin.js';
 import { temAcessoDiretoria } from '../../auth/sessao.js';
 import './ModalQrCode.css';
@@ -25,7 +26,7 @@ import './ModalQrCode.css';
    `operacao` com o que chamar e como exibir o resultado (ver
    TelaCameraCheckin). É isto que monta essa operação. */
 const ModalQrCode = () => {
-    const [modo, setModo] = useState(null); // null | 'presenca' | 'conquista'
+    const [modo, setModo] = useState(null); // null | 'presenca' | 'conquista' | 'teste'
     const [operacao, setOperacao] = useState(null);
     const [conquistasManuais, setConquistasManuais] = useState([]);
 
@@ -60,6 +61,23 @@ const ModalQrCode = () => {
         });
     }
 
+    /* Teste de leitura: vai direto para a câmera, sem escolher alvo. Só
+       mostra de quem é o QR — nada é registrado (ver CheckinTesteController). */
+    function iniciarTeste() {
+        setModo('teste');
+        setOperacao({
+            titulo: 'TESTE',
+            subtitulo: 'Nada é registrado',
+            porUuid: testarLeituraQrCode,
+            normalizar: (dto) => ({
+                titulo: 'LEITURA OK',
+                nome: dto.nome,
+                info: dto.situacao,
+                xpTexto: null,
+            }),
+        });
+    }
+
     function iniciarConquista(conquista) {
         setOperacao({
             titulo: 'CONQUISTA',
@@ -81,6 +99,8 @@ const ModalQrCode = () => {
        de palestra, não de ferramenta. */
     function voltarDaCamera() {
         setOperacao(null);
+        // O teste não tem alvo para escolher: volta direto aos modos.
+        if (modo === 'teste') setModo(null);
     }
 
     function voltarParaModos() {
@@ -91,12 +111,6 @@ const ModalQrCode = () => {
     return (
         <div className="containerPrincipalCheckin">
             <div className="telaAppCheckin">
-                <div className="cabecalhoAppCheckin">
-                    <span className="tituloAppCheckin">SEMAC XXXVI</span>
-                    <span className="subtituloAppCheckin">
-                        {modo === 'conquista' ? 'conceder conquista' : 'controle de presença'}
-                    </span>
-                </div>
 
                 <div className="corpoAppCheckin">
                     {operacao ? (
@@ -115,6 +129,7 @@ const ModalQrCode = () => {
                             conquistasDisponiveis={conquistasManuais.length}
                             onEscolherPresenca={() => setModo('presenca')}
                             onEscolherConquista={() => setModo('conquista')}
+                            onEscolherTeste={iniciarTeste}
                         />
                     )}
                 </div>

@@ -18,9 +18,15 @@ import { listarParticipantes, listarComissao } from './data/apiParticipantes.js'
 import { listarEventos } from './data/apiEventos.js';
 
 /* `papeis` opcional: quando presente, a seção só aparece para os roles listados.
+   `rota` opcional: o item não é uma seção do /admin, e sim um atalho para
+   outra página (ex.: /checkin) — clicar navega em vez de trocar a seção.
    `marca` e `classeMarcador` só servem ao menu FAB do mobile (MenuFabModulos). */
 const SECOES = [
     { id: 'inicio', rotulo: 'Início', marca: 'I', classeMarcador: 'marcadorAmareloMenuFabModulos' },
+    /* Toda a comissão marca presença (o /checkin e o POST de presença
+       aceitam PAPEIS_ADMIN); conceder conquista lá dentro segue só com a
+       diretoria. */
+    { id: 'checkin', rotulo: 'Check-in', marca: 'CK', classeMarcador: 'marcadorAzulMenuFabModulos', rota: '/checkin' },
     { id: 'conteudo', rotulo: 'Conteúdo', marca: 'C', classeMarcador: 'marcadorRosaMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO']  },
     { id: 'brindes', rotulo: 'Brindes', marca: 'B', classeMarcador: 'marcadorVermelhoMenuFabModulos', papeis: ['DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'] },
     { id: 'pessoas', rotulo: 'Pessoas', marca: 'P', classeMarcador: 'marcadorAmareloMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
@@ -44,6 +50,16 @@ export default function Admin() {
     }
 
     const [secaoAtiva, setSecaoAtiva] = useState('inicio');
+
+    // Itens com `rota` levam para outra página; os demais trocam a seção.
+    function irParaSecaoAdmin(idSecao) {
+        const secao = SECOES.find(s => s.id === idSecao);
+        if (secao?.rota) {
+            navegar(secao.rota);
+            return;
+        }
+        setSecaoAtiva(idSecao);
+    }
 
     // Atalho do menu FAB para o /financeiro — mesma regra do cartão do
     // Início, que no mobile fica escondido e é substituído por este item.
@@ -207,7 +223,7 @@ export default function Admin() {
                                     : 'itemNavFlutuanteAdmin'
                             }
                             aria-current={secaoAtiva === secao.id ? 'page' : undefined}
-                            onClick={() => setSecaoAtiva(secao.id)}
+                            onClick={() => irParaSecaoAdmin(secao.id)}
                         >
                             {secao.rotulo}
                         </button>
@@ -222,7 +238,7 @@ export default function Admin() {
             <MenuFabModulos
                 secoes={secoesVisiveis}
                 secaoAtiva={secaoAtiva}
-                onIrPara={setSecaoAtiva}
+                onIrPara={irParaSecaoAdmin}
                 onSair={sair}
                 rotuloMenu="Seções do módulo de administração"
                 atalhoExterno={atalhoFinanceiroMenuFab}

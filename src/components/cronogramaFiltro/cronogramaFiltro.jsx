@@ -1,6 +1,12 @@
 import "./cronogramaFiltro.css";
 import SplitText from "./SplitText";
-import { formatarDataCronograma } from "./formatarDataCronograma.js";
+
+// "26/10" a partir de um Date — rótulo dos botões de dia.
+function textoDataBotaoDiaCronograma(data) {
+  const dia = String(data.getDate()).padStart(2, "0");
+  const mes = String(data.getMonth() + 1).padStart(2, "0");
+  return `${dia}/${mes}`;
+}
 
 export default function CronogramaFiltro({
   dias,
@@ -15,13 +21,14 @@ export default function CronogramaFiltro({
     setSelectedFilter((prev) => (prev === category ? null : category));
   }
 
-  // Com trilha ativa a lista mostra todos os dias, então o título vira o
-  // nome da trilha em vez de uma data.
-  const dataDiaSelecionado = datasDias[selectedDay];
+  // Título com o dia da semana ("SEGUNDA-FEIRA"); sábado e domingo não
+  // levam "-FEIRA". Com trilha ativa a lista mostra todos os dias, então
+  // o título vira o nome da trilha. A data ("26/10") fica nos botões.
+  const ehFimDeSemanaSelecionado = selectedDay === "SÁBADO" || selectedDay === "DOMINGO";
   const textoTituloDiaCronograma = selectedFilter !== null
     ? selectedFilter.toUpperCase()
-    : dataDiaSelecionado
-      ? formatarDataCronograma(dataDiaSelecionado)
+    : ehFimDeSemanaSelecionado
+      ? selectedDay
       : `${selectedDay}-FEIRA`;
 
   // Escolher um dia sai do modo "trilha em todos os dias".
@@ -53,14 +60,18 @@ export default function CronogramaFiltro({
           {dias.map((day) => {
             const isActive = selectedFilter === null && day === selectedDay;
             const cls = isActive ? "diaAtivoCronograma" : "diaInativoCronograma";
+            // Sem data conhecida para o dia, o botão mostra o nome dele.
+            const dataBotaoDia = datasDias[day];
+            const textoBotaoDia = dataBotaoDia ? textoDataBotaoDiaCronograma(dataBotaoDia) : day;
 
             return (
               <button
                 key={day}
                 className={`botaoDiaCronograma ${cls}`}
+                aria-label={dataBotaoDia ? `${day}, ${textoBotaoDia}` : undefined}
                 onClick={() => handleDayClick(day)}
               >
-                {day}
+                {textoBotaoDia}
               </button>
             );
           })}

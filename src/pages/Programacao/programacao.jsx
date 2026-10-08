@@ -74,7 +74,7 @@ export default function CronogramaContainer() {
   const dias = useMemo(() => diasComEvento(eventos), [eventos]);
 
   /* Data real de cada dia da semana (a do primeiro evento dele), usada
-     no título do filtro ("10 DE OUTUBRO" em vez de "SEGUNDA-FEIRA"). */
+     nos botões de dia do filtro ("26/10"). */
   const datasPorDiaProgramacao = useMemo(() => {
     const datas = {};
     for (const evento of eventos) {

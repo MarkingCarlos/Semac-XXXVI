@@ -1,3 +1,4 @@
+import { useLocation } from 'wouter';
 import './TelaSelecaoModoCheckin.css';
 
 /* Primeira tela do /checkin: o que se vai fazer com os QR codes.
@@ -15,12 +16,24 @@ export default function TelaSelecaoModoCheckin({
     conquistasDisponiveis,
     onEscolherPresenca,
     onEscolherConquista,
+    onEscolherTeste,
 }) {
     const semConquistas = conquistasDisponiveis === 0;
+    const [, navegar] = useLocation();
 
     return (
         <div className="containerTelaSelecaoModoCheckin">
-            <h2 className="tituloTelaSelecaoModoCheckin">O QUE VOCÊ VAI FAZER?</h2>
+            {/* Entrada pelo menu do /admin — esta é a saída de volta. */}
+            <div className="cabecalhoVoltarTelaSelecaoModoCheckin">
+                <h2 className="tituloTelaSelecaoModoCheckin">O QUE VOCÊ VAI FAZER?</h2>
+                <button
+                    type="button"
+                    onClick={() => navegar('/admin')}
+                    className="botaoVoltarTelaSelecaoModoCheckin"
+                >
+                    ← ADMIN
+                </button>
+            </div>
 
             <button
                 type="button"
@@ -48,6 +61,18 @@ export default function TelaSelecaoModoCheckin({
                     </span>
                 </button>
             )}
+
+            {/* Toda a comissão: confere se o crachá é lido, sem registrar nada. */}
+            <button
+                type="button"
+                className="cartaoModoCheckin"
+                onClick={onEscolherTeste}
+            >
+                <span className="tituloCartaoModoCheckin">TESTAR LEITURA</span>
+                <span className="descricaoCartaoModoCheckin">
+                    Ler um crachá só para conferir o QR, não registra nada.
+                </span>
+            </button>
         </div>
     );
 }
