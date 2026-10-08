@@ -1,13 +1,32 @@
 @import '../../index.css';
 
-@keyframes fadeInModalPresenca {
+/* Painel de sucesso do /checkin: sobe da base da tela (bottom sheet) e
+   desce ao fechar. A saída é ligada pela classe *Saindo* (ver
+   useFechamentoAnimadoModalCheckin); o modal só desmonta no fim dela. */
+
+@keyframes entrarFundoModalSucessoPresenca {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
-@keyframes popInModalPresenca {
-    from { transform: translateY(18px) scale(0.96); opacity: 0; }
-    to { transform: translateY(0) scale(1); opacity: 1; }
+@keyframes sairFundoModalSucessoPresenca {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes subirPainelModalSucessoPresenca {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+@keyframes descerPainelModalSucessoPresenca {
+    from { transform: translateY(0); }
+    to { transform: translateY(100%); }
+}
+
+@keyframes surgirSeloModalSucessoPresenca {
+    from { transform: scale(0.4) rotate(-25deg); opacity: 0; }
+    to { transform: scale(1) rotate(0); opacity: 1; }
 }
 
 .sobreposicaoModalSucessoPresenca {
@@ -16,21 +35,30 @@
     background: rgba(20, 3, 12, 0.72);
     display: flex;
     align-items: flex-end;
-    padding: 20px;
-    animation: fadeInModalPresenca 0.18s ease-out;
+    animation: entrarFundoModalSucessoPresenca 0.3s ease-out both;
     z-index: 20;
+}
+
+.sobreposicaoSaindoModalSucessoPresenca {
+    animation: sairFundoModalSucessoPresenca 0.3s ease-in 0.05s both;
 }
 
 .cartaoModalSucessoPresenca {
     width: 100%;
     background: var(--azulConteudo);
-    border-radius: 25px;
-    padding: 26px 22px 22px;
+    border-radius: 28px 28px 0 0;
+    padding: 12px 22px max(24px, env(safe-area-inset-bottom));
     position: relative;
     overflow: hidden;
     color: var(--Branco);
     font-family: var(--fonteCorpoMontserrat);
-    animation: popInModalPresenca 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    text-align: center;
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.35);
+    animation: subirPainelModalSucessoPresenca 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cartaoSaindoModalSucessoPresenca {
+    animation: descerPainelModalSucessoPresenca 0.32s cubic-bezier(0.7, 0, 0.84, 0) both;
 }
 
 .formaDecorativaModalSucessoPresenca {
@@ -44,20 +72,21 @@
     transform: rotate(20deg);
 }
 
-.conteudoModalSucessoPresenca {
+/* Tracinho de "puxar" no topo do painel, como num bottom sheet nativo. */
+.alcaModalSucessoPresenca {
+    width: 44px;
+    height: 5px;
+    margin: 0 auto 18px;
+    border-radius: 999px;
+    background: rgba(252, 248, 245, 0.45);
     position: relative;
 }
 
-.iconeCheckModalSucessoPresenca {
-    width: 54px;
-    height: 54px;
-    border-radius: 27px;
-    background: var(--Branco);
-    color: var(--azulAuxConteudo);
+.conteudoModalSucessoPresenca {
+    position: relative;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    margin-bottom: 16px;
 }
 
 .tituloModalSucessoPresenca {
@@ -66,10 +95,21 @@
     line-height: 1.1;
 }
 
+/* Selo ondulado com ✓: entra com um "pop" logo depois que o painel sobe,
+   com um brilho embaixo (drop-shadow segue o contorno do selo). */
+.seloModalSucessoPresenca {
+    margin: 18px 0 10px;
+    filter: drop-shadow(0 10px 18px rgba(10, 107, 142, 0.65));
+    animation: surgirSeloModalSucessoPresenca 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+
+.formaSeloModalSucessoPresenca { fill: var(--azulAuxConteudo); }
+.checkSeloModalSucessoPresenca { stroke: var(--Branco); }
+
 .nomeParticipanteModalSucessoPresenca {
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 700;
-    margin-top: 12px;
+    margin-top: 6px;
 }
 
 .infoParticipanteModalSucessoPresenca {
@@ -100,15 +140,27 @@
 }
 
 .botaoProximoModalSucessoPresenca {
-    margin-top: 20px;
+    margin-top: 22px;
     width: 100%;
     padding: 15px 0;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     background: var(--Branco);
     color: var(--azulAuxConteudo);
     font-family: var(--fonteTituloBungee);
     font-size: 0.9rem;
     letter-spacing: 0.02em;
     cursor: pointer;
+}
+.botaoProximoModalSucessoPresenca:focus-visible {
+    outline: 2px solid var(--Branco);
+    outline-offset: 3px;
+}
+
+/* Sem deslocamento para quem pediu menos movimento: só fade curto (que
+   ainda dispara o animationend que desmonta o modal). */
+@media (prefers-reduced-motion: reduce) {
+    .cartaoModalSucessoPresenca { animation: entrarFundoModalSucessoPresenca 0.15s ease-out both; }
+    .cartaoSaindoModalSucessoPresenca { animation: sairFundoModalSucessoPresenca 0.15s ease-in both; }
+    .seloModalSucessoPresenca { animation: none; }
 }

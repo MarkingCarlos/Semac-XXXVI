@@ -1,3 +1,4 @@
+import { useFechamentoAnimadoModalCheckin } from './hooks/useFechamentoAnimadoModalCheckin.js';
 import './ModalErroPresenca.css';
 
 /* O backend distingue os motivos de erro pela mensagem: uuid sem
@@ -15,20 +16,49 @@ function tituloErro(mensagem) {
     return mensagem.toLowerCase().includes('já registrada') ? 'PRESENÇA JÁ REGISTRADA' : 'NÃO CADASTRADO';
 }
 
+/* Painel que sobe da base da tela e desce ao fechar, no mesmo formato do
+   de sucesso. Não fecha sozinho: o operador precisa ler o motivo. */
 export default function ModalErroPresenca({ mensagem, onFechar }) {
     const ingressoDiario = ehErroIngressoDiario(mensagem);
+    const titulo = tituloErro(mensagem);
+    const { saindo, fechar, aoTerminarAnimacao } = useFechamentoAnimadoModalCheckin(onFechar);
 
     return (
-        <div className="sobreposicaoModalErroPresenca">
-            <div className="cartaoModalErroPresenca">
+        <div
+            className={
+                saindo
+                    ? 'sobreposicaoModalErroPresenca sobreposicaoSaindoModalErroPresenca'
+                    : 'sobreposicaoModalErroPresenca'
+            }
+        >
+            <div
+                role="alertdialog"
+                aria-modal="true"
+                aria-label={titulo}
+                className={saindo ? 'cartaoModalErroPresenca cartaoSaindoModalErroPresenca' : 'cartaoModalErroPresenca'}
+                onAnimationEnd={aoTerminarAnimacao}
+            >
                 <div className="formaDecorativaModalErroPresenca" />
+                <div className="alcaModalErroPresenca" aria-hidden="true" />
                 <div className="conteudoModalErroPresenca">
-                    <div className="iconeXModalErroPresenca">
-                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round">
-                            <path d="M6 6l12 12M18 6L6 18" />
+                    <div className="tituloModalErroPresenca">{titulo}</div>
+
+                    <div className="seloModalErroPresenca" aria-hidden="true">
+                        <svg width="76" height="76" viewBox="0 0 24 24">
+                            <path
+                                className="formaSeloModalErroPresenca"
+                                d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"
+                            />
+                            <path
+                                className="xSeloModalErroPresenca"
+                                d="M9.3 9.3l5.4 5.4M14.7 9.3l-5.4 5.4"
+                                fill="none"
+                                stroke-width="2.2"
+                                stroke-linecap="round"
+                            />
                         </svg>
                     </div>
-                    <div className="tituloModalErroPresenca">{tituloErro(mensagem)}</div>
+
                     <div className="mensagemModalErroPresenca">{mensagem}</div>
                     {ingressoDiario && (
                         <div className="avisoIngressoDiarioModalErroPresenca">
@@ -37,7 +67,12 @@ export default function ModalErroPresenca({ mensagem, onFechar }) {
                         </div>
                     )}
                     <div className="acoesModalErroPresenca">
-                        <button type="button" onClick={onFechar} className="botaoFecharModalErroPresenca">
+                        <button
+                            type="button"
+                            onClick={fechar}
+                            disabled={saindo}
+                            className="botaoFecharModalErroPresenca"
+                        >
                             FECHAR
                         </button>
                     </div>

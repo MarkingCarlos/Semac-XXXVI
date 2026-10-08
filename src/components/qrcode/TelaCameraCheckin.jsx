@@ -1,10 +1,23 @@
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
 import { useLeitorQrCodeCamera } from './hooks/useLeitorQrCodeCamera.js';
 import ModalSucessoPresenca from './ModalSucessoPresenca.jsx';
 import ModalErroPresenca from './ModalErroPresenca.jsx';
 import './TelaCameraCheckin.css';
 
 const DURACAO_MODAL_SUCESSO_MS = 2200;
+
+// TEMPORÁRIO — ajuste visual: mantém o modal de sucesso sempre aberto
+// (com dados de exemplo) para posicionar pelo CSS. Voltar para false
+// antes de subir.
+const FIXAR_MODAL_SUCESSO_PARA_AJUSTE = false;
+const RESULTADO_EXEMPLO_MODAL_SUCESSO = {
+    titulo: 'PRESENÇA CONFIRMADA',
+    nome: 'Fulano de Tal da Silva',
+    info: 'Participante confirmado',
+    xpTexto: '+50 XP',
+    xpZerado: false,
+    detalhe: 'atraso de 5 min',
+};
 
 /* Leitura contínua de QR code, usada pelos dois modos do /checkin.
 
@@ -22,8 +35,9 @@ export default function TelaCameraCheckin({ operacao, onVoltar }) {
     const [lidos, setLidos] = useState(0);
     const [processando, setProcessando] = useState(false);
 
+    const [repeticaoModalAjuste, setRepeticaoModalAjuste] = useState(0);
+
     const processandoRef = useRef(false);
-    const timeoutFechamentoRef = useRef(null);
 
     async function lerCodigo(uuid) {
         if (processandoRef.current) return;
@@ -34,7 +48,6 @@ export default function TelaCameraCheckin({ operacao, onVoltar }) {
             setParticipanteConfirmado(operacao.normalizar(dto));
             setLidos((valor) => valor + 1);
             setModal('sucesso');
-            timeoutFechamentoRef.current = setTimeout(fecharModal, DURACAO_MODAL_SUCESSO_MS);
         } catch (erro) {
             setMensagemErro(erro.message);
             setModal('erro');
@@ -50,10 +63,9 @@ export default function TelaCameraCheckin({ operacao, onVoltar }) {
         onLeitura: lerCodigo,
     });
 
-    useEffect(() => () => clearTimeout(timeoutFechamentoRef.current), []);
-
+    // Chamado pelo modal só depois da animação de saída: é aqui que a
+    // câmera volta a ler.
     function fecharModal() {
-        clearTimeout(timeoutFechamentoRef.current);
         setModal(null);
         setParticipanteConfirmado(null);
         setMensagemErro('');
@@ -102,8 +114,19 @@ export default function TelaCameraCheckin({ operacao, onVoltar }) {
                 <div className="contadorTelaCameraCheckin">{lidos} LIDOS</div>
             </div>
 
-            {modal === 'sucesso' && participanteConfirmado && (
-                <ModalSucessoPresenca resultado={participanteConfirmado} onFechar={fecharModal} />
+            {FIXAR_MODAL_SUCESSO_PARA_AJUSTE ? (
+                // Remonta ao fechar: o painel desce e sobe de novo, para ver as duas animações.
+                <ModalSucessoPresenca
+                    key={repeticaoModalAjuste}
+                    resultado={RESULTADO_EXEMPLO_MODAL_SUCESSO}
+                    onFechar={() => setRepeticaoModalAjuste((valor) => valor + 1)}
+                />
+            ) : modal === 'sucesso' && participanteConfirmado && (
+                <ModalSucessoPresenca
+                    resultado={participanteConfirmado}
+                    onFechar={fecharModal}
+                    fecharEmMs={DURACAO_MODAL_SUCESSO_MS}
+                />
             )}
             {modal === 'erro' && (
                 <ModalErroPresenca mensagem={mensagemErro} onFechar={fecharModal} />

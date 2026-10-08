@@ -1,13 +1,34 @@
 @import '../../index.css';
 
-@keyframes fadeInModalErroPresenca {
+/* Mesmo formato do painel de sucesso (ver ModalSucessoPresenca.css):
+   sobe da base da tela e desce ao fechar. */
+
+@keyframes entrarFundoModalErroPresenca {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
-@keyframes popInModalErroPresenca {
-    from { transform: translateY(18px) scale(0.96); opacity: 0; }
-    to { transform: translateY(0) scale(1); opacity: 1; }
+@keyframes sairFundoModalErroPresenca {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes subirPainelModalErroPresenca {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+@keyframes descerPainelModalErroPresenca {
+    from { transform: translateY(0); }
+    to { transform: translateY(100%); }
+}
+
+@keyframes surgirSeloModalErroPresenca {
+    0% { transform: scale(0.4); opacity: 0; }
+    60% { transform: scale(1.08); opacity: 1; }
+    75% { transform: scale(1) rotate(-6deg); }
+    90% { transform: rotate(5deg); }
+    100% { transform: rotate(0); }
 }
 
 .sobreposicaoModalErroPresenca {
@@ -16,21 +37,30 @@
     background: rgba(20, 3, 12, 0.72);
     display: flex;
     align-items: flex-end;
-    padding: 20px;
-    animation: fadeInModalErroPresenca 0.18s ease-out;
+    animation: entrarFundoModalErroPresenca 0.3s ease-out both;
     z-index: 20;
+}
+
+.sobreposicaoSaindoModalErroPresenca {
+    animation: sairFundoModalErroPresenca 0.3s ease-in 0.05s both;
 }
 
 .cartaoModalErroPresenca {
     width: 100%;
     background: var(--vermelhoDiretoria);
-    border-radius: 25px;
-    padding: 26px 22px 22px;
+    border-radius: 28px 28px 0 0;
+    padding: 12px 22px max(24px, env(safe-area-inset-bottom));
     position: relative;
     overflow: hidden;
     color: var(--Branco);
     font-family: var(--fonteCorpoMontserrat);
-    animation: popInModalErroPresenca 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    text-align: center;
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.35);
+    animation: subirPainelModalErroPresenca 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cartaoSaindoModalErroPresenca {
+    animation: descerPainelModalErroPresenca 0.32s cubic-bezier(0.7, 0, 0.84, 0) both;
 }
 
 .formaDecorativaModalErroPresenca {
@@ -44,20 +74,21 @@
     transform: rotate(20deg);
 }
 
-.conteudoModalErroPresenca {
+/* Tracinho de "puxar" no topo do painel. */
+.alcaModalErroPresenca {
+    width: 44px;
+    height: 5px;
+    margin: 0 auto 18px;
+    border-radius: 999px;
+    background: rgba(252, 248, 245, 0.45);
     position: relative;
 }
 
-.iconeXModalErroPresenca {
-    width: 54px;
-    height: 54px;
-    border-radius: 27px;
-    background: var(--AmareloAuxApoio);
-    color: var(--vermelhoAuxDiretoria);
+.conteudoModalErroPresenca {
+    position: relative;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    margin-bottom: 16px;
 }
 
 .tituloModalErroPresenca {
@@ -66,10 +97,20 @@
     line-height: 1.1;
 }
 
+/* Selo amarelo com ✕ e brilho embaixo; entra com uma leve "sacudida". */
+.seloModalErroPresenca {
+    margin: 18px 0 6px;
+    filter: drop-shadow(0 10px 18px rgba(231, 152, 57, 0.5));
+    animation: surgirSeloModalErroPresenca 0.6s ease-out 0.2s both;
+}
+
+.formaSeloModalErroPresenca { fill: var(--AmareloAuxApoio); }
+.xSeloModalErroPresenca { stroke: var(--vermelhoAuxDiretoria); }
+
 .mensagemModalErroPresenca {
     font-size: 0.85rem;
     line-height: 1.5;
-    margin-top: 12px;
+    margin-top: 8px;
 }
 
 /* Orientação ao operador no caso do ingresso diário fora do dia. */
@@ -77,6 +118,7 @@
     font-size: 0.78rem;
     line-height: 1.45;
     font-weight: 700;
+    text-align: left;
     margin-top: 12px;
     padding: 10px 12px;
     border-radius: 10px;
@@ -85,21 +127,33 @@
 }
 
 .acoesModalErroPresenca {
+    align-self: stretch;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-top: 20px;
+    margin-top: 22px;
 }
-
 
 .botaoFecharModalErroPresenca {
     width: 100%;
     padding: 13px 0;
     border: 1px solid rgba(252, 248, 245, 0.45);
-    border-radius: 8px;
+    border-radius: 12px;
     background: transparent;
     color: var(--Branco);
     font-family: var(--fonteTituloBungee);
     font-size: 0.75rem;
     cursor: pointer;
+}
+.botaoFecharModalErroPresenca:focus-visible {
+    outline: 2px solid var(--Branco);
+    outline-offset: 3px;
+}
+
+/* Sem deslocamento para quem pediu menos movimento: só fade curto (que
+   ainda dispara o animationend que desmonta o modal). */
+@media (prefers-reduced-motion: reduce) {
+    .cartaoModalErroPresenca { animation: entrarFundoModalErroPresenca 0.15s ease-out both; }
+    .cartaoSaindoModalErroPresenca { animation: sairFundoModalErroPresenca 0.15s ease-in both; }
+    .seloModalErroPresenca { animation: none; }
 }
