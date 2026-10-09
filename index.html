@@ -4,6 +4,15 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/mine_logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <script>
+      /* No iOS (Safari e Chrome, ambos WebKit) focar um campo com fonte < 16px dá zoom automático,
+         e numa SPA esse zoom persiste ao trocar de rota (ex.: login → /admin). maximum-scale=1 corta
+         o zoom automático; o iOS segue permitindo pinça. Só no iOS: no Android bloquearia a pinça. */
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+        document.querySelector('meta[name=viewport]')
+          .setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover');
+      }
+    </script>
       <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.23/dist/lenis.css">
       <script src="https://unpkg.com/lenis@1.3.23/dist/lenis.min.js"></script>
       <script>
