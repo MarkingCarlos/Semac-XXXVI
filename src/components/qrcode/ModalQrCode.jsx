@@ -36,6 +36,24 @@ const ModalQrCode = () => {
        manual ativa — sem isso o botão levaria a uma lista vazia. Falha em
        silêncio: sem conquistas, o modo aparece desabilitado, que é a
        mesma coisa que o usuário veria. */
+    /* Trava a rolagem da página enquanto o /checkin está aberto: a tela é
+       um app de altura fixa (ver .containerPrincipalCheckin). O Lenis
+       (rolagem suave global, index.html) também para, senão ele ainda
+       move a página com o toque. */
+    useEffect(() => {
+        const raiz = document.documentElement;
+        const overflowAnteriorRaiz = raiz.style.overflow;
+        const overflowAnteriorCorpo = document.body.style.overflow;
+        raiz.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+        window.lenis?.stop();
+        return () => {
+            raiz.style.overflow = overflowAnteriorRaiz;
+            document.body.style.overflow = overflowAnteriorCorpo;
+            window.lenis?.start();
+        };
+    }, []);
+
     useEffect(() => {
         if (!podeConcederConquista) return;
         let ativo = true;

@@ -1,9 +1,15 @@
 @import '../../index.css';
 
+/* Presa na área visível da tela: no iPhone 100vh é maior que o que se
+   vê, e a página rolava — levando junto o painel de confirmação, que é
+   ancorado na base. As listas que precisam rolar rolam por dentro. */
 .containerPrincipalCheckin {
-    width: 100vw;
+    position: fixed;
+    inset: 0;
+    width: 100%;
     height: 100dvh;
-    min-height: 100vh;
+    overflow: hidden;
+    overscroll-behavior: none;
     display: flex;
     justify-content: center;
     background-color: var(--vermelhoEscuro);
@@ -47,6 +53,8 @@
 .corpoAppCheckin {
     flex: 1 1 auto;
     min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     display: flex;
     flex-direction: column;
 }
