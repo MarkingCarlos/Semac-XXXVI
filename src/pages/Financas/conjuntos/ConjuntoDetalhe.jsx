@@ -3,6 +3,7 @@ import { useLocation, useParams } from 'wouter';
 import { formatarCentavos } from '../utils/moeda.js';
 import { listarCotacoes } from '../data/apiCotacoes.js';
 import { listarFornecedores } from '../data/apiFornecedores.js';
+import { useCategoriasPrevisao } from '../data/useCategoriasPrevisao.js';
 import { buscarConjunto, renomearConjunto, excluirConjunto as excluirConjuntoApi } from '../data/apiConjuntos.js';
 import { criarVariacao, atualizarVariacao, excluirVariacao as excluirVariacaoApi } from '../data/apiVariacoes.js';
 import BuscaItemVariacao from './BuscaItemVariacao.jsx';
@@ -30,6 +31,7 @@ export default function ConjuntoDetalhe() {
     const [fornecedores, setFornecedores] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState('');
+    const { categoriasPrevisao } = useCategoriasPrevisao();
 
     /* itensPorVariacao[variacaoId] = [cotacaoId] — a lista de itens é de
        cada variação, não do conjunto. A seleção não é persistida: ao
@@ -545,6 +547,7 @@ export default function ConjuntoDetalhe() {
                                         variacaoId={variacao.id}
                                         variacaoNome={variacao.nome}
                                         cotacoes={cotacoes}
+                                        categoriasPrevisao={categoriasPrevisao}
                                         fornecedores={fornecedores}
                                         selecionados={itensPorVariacao[variacao.id] ?? []}
                                         aoAdicionar={(cotacao) => adicionarItem(variacao.id, cotacao)}

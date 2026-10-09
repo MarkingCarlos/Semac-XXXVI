@@ -2,7 +2,9 @@ import { useState } from 'preact/hooks';
 import PainelLateral from '../components/PainelLateral.jsx';
 import CampoMoeda from '../components/CampoMoeda.jsx';
 import { formatarCentavos, formatarData, normalizar } from '../utils/moeda.js';
-import { CATEGORIAS_COMPRA, CORES_CATEGORIA } from '../data/mockFinancas.js';
+import {
+    useCategoriasPrevisao, estiloSeloCategoriaPrevisao, nomesCategoriasPrevisao,
+} from '../data/useCategoriasPrevisao.js';
 import { criarFornecedor } from '../data/apiFornecedores.js';
 import { criarCompra, atualizarCompra, excluirCompra as excluirCompraApi } from '../data/apiCompras.js';
 import './compras.css';
@@ -34,6 +36,7 @@ export default function Compras({ compras, setCompras, fornecedores, setForneced
     const [filtroCategoria, setFiltroCategoria] = useState('');
     const [erroAcao, setErroAcao] = useState('');
     const [salvando, setSalvando] = useState(false);
+    const { categoriasPrevisao, erroCategoriasPrevisao } = useCategoriasPrevisao();
 
     const cadastrandoFornecedor = formulario.fornecedorId === 'novo';
     const valorTotal = formulario.valorUnitario * (formulario.quantidade || 0);
@@ -153,7 +156,7 @@ export default function Compras({ compras, setCompras, fornecedores, setForneced
                         aria-label="Filtrar por categoria"
                     >
                         <option value="">Todas as categorias</option>
-                        {CATEGORIAS_COMPRA.map((categoria) => (
+                        {nomesCategoriasPrevisao(categoriasPrevisao).map((categoria) => (
                             <option key={categoria} value={categoria}>{categoria}</option>
                         ))}
                     </select>
@@ -163,8 +166,8 @@ export default function Compras({ compras, setCompras, fornecedores, setForneced
                 </div>
             </header>
 
-            {(erro || erroAcao) && (
-                <p className="avisoErroCompras" role="alert">{erro || erroAcao}</p>
+            {(erro || erroAcao || erroCategoriasPrevisao) && (
+                <p className="avisoErroCompras" role="alert">{erro || erroAcao || erroCategoriasPrevisao}</p>
             )}
 
             <div className="envelopeTabelaFinancas">
@@ -204,17 +207,14 @@ export default function Compras({ compras, setCompras, fornecedores, setForneced
                                     <td>
                                         <div className="celulaProdutoCompras">
                                             <span className="nomeProdutoCompras">{compra.descricao}</span>
-                                            {compra.categoria && (() => {
-                                                const cor = CORES_CATEGORIA[compra.categoria] ?? CORES_CATEGORIA['Outros'];
-                                                return (
-                                                    <span
-                                                        className="seloCategoriaCompras"
-                                                        style={{ background: cor.bg, color: cor.color }}
-                                                    >
-                                                        {compra.categoria}
-                                                    </span>
-                                                );
-                                            })()}
+                                            {compra.categoria && (
+                                                <span
+                                                    className="seloCategoriaCompras"
+                                                    style={estiloSeloCategoriaPrevisao(categoriasPrevisao, compra.categoria)}
+                                                >
+                                                    {compra.categoria}
+                                                </span>
+                                            )}
                                         </div>
                                     </td>
                                     <td>
@@ -320,7 +320,7 @@ export default function Compras({ compras, setCompras, fornecedores, setForneced
                             }
                         >
                             <option value="" disabled>Selecione a categoria</option>
-                            {CATEGORIAS_COMPRA.map((categoria) => (
+                            {nomesCategoriasPrevisao(categoriasPrevisao, formulario.categoria).map((categoria) => (
                                 <option key={categoria} value={categoria}>{categoria}</option>
                             ))}
                         </select>

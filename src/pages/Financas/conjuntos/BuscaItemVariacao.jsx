@@ -1,17 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
-import { CATEGORIAS_COMPRA, CORES_CATEGORIA } from '../data/mockFinancas.js';
+import {
+    corDaCategoriaPrevisao, ordemDaCategoriaPrevisao, nomesCategoriasPrevisao,
+} from '../data/useCategoriasPrevisao.js';
 import { formatarCentavos, normalizar } from '../utils/moeda.js';
 import { menorFornecedor } from './melhorPreco.js';
 import './buscaItemVariacao.css';
-
-const corDaCategoria = (categoria) => CORES_CATEGORIA[categoria] ?? CORES_CATEGORIA['Outros'];
-
-/* Categorias na ordem em que aparecem no cadastro — mantém a mesma
-   sequência nos resultados da busca e nas linhas da tabela. */
-const ordemDaCategoria = (categoria) => {
-    const indice = CATEGORIAS_COMPRA.indexOf(categoria);
-    return indice === -1 ? CATEGORIAS_COMPRA.length : indice;
-};
 
 /* Busca que alimenta UMA variação: cada variação monta a própria lista de
    itens, então esta barra aparece no topo de cada tabela e só enxerga o
@@ -22,11 +15,16 @@ const ordemDaCategoria = (categoria) => {
    overflow-x, que recortaria um painel posicionado de forma absoluta.
 
    O select de categoria restringe APENAS os resultados da busca — item já
-   adicionado continua na tabela independente da categoria escolhida. */
+   adicionado continua na tabela independente da categoria escolhida.
+
+   As categorias (as mesmas da Previsão) chegam por prop: o detalhe do
+   conjunto carrega uma vez e repassa a todas as variações. Os grupos de
+   resultado seguem a ordem do cadastro. */
 export default function BuscaItemVariacao({
     variacaoId,
     variacaoNome,
     cotacoes,
+    categoriasPrevisao,
     fornecedores,
     selecionados,
     aoAdicionar,
@@ -66,9 +64,9 @@ export default function BuscaItemVariacao({
             porCategoria.set(cotacao.categoria, lista);
         }
         return Array.from(porCategoria.entries()).sort(
-            ([a], [b]) => ordemDaCategoria(a) - ordemDaCategoria(b),
+            ([a], [b]) => ordemDaCategoriaPrevisao(categoriasPrevisao, a) - ordemDaCategoriaPrevisao(categoriasPrevisao, b),
         );
-    }, [candidatos, idsSelecionados]);
+    }, [candidatos, idsSelecionados, categoriasPrevisao]);
 
     /* Lista achatada na mesma ordem em que é renderizada — é ela que o
        teclado percorre (aria-activedescendant aponta pro índice ativo). */
@@ -169,7 +167,7 @@ export default function BuscaItemVariacao({
                     aria-label={`Restringir a busca de ${variacaoNome} a uma categoria`}
                 >
                     <option value="">Todas as categorias</option>
-                    {CATEGORIAS_COMPRA.map((nomeCategoria) => (
+                    {nomesCategoriasPrevisao(categoriasPrevisao).map((nomeCategoria) => (
                         <option key={nomeCategoria} value={nomeCategoria}>{nomeCategoria}</option>
                     ))}
                 </select>
@@ -192,7 +190,7 @@ export default function BuscaItemVariacao({
                     )}
 
                     {gruposResultado.map(([categoriaGrupo, itensGrupo]) => {
-                        const cor = corDaCategoria(categoriaGrupo);
+                        const corGrupo = corDaCategoriaPrevisao(categoriasPrevisao, categoriaGrupo);
                         return (
                             <div
                                 className="grupoResultadosBuscaItemVariacao"
@@ -200,10 +198,10 @@ export default function BuscaItemVariacao({
                                 role="group"
                                 aria-label={categoriaGrupo}
                             >
-                                <span className="tituloGrupoResultadosBuscaItemVariacao" style={{ color: cor.color }}>
+                                <span className="tituloGrupoResultadosBuscaItemVariacao" style={{ color: corGrupo }}>
                                     <span
                                         className="pontoGrupoResultadosBuscaItemVariacao"
-                                        style={{ background: cor.color }}
+                                        style={{ background: corGrupo }}
                                     />
                                     {categoriaGrupo}
                                 </span>

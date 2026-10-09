@@ -3,7 +3,9 @@ import { useLocation } from 'wouter';
 import PainelLateral from '../components/PainelLateral.jsx';
 import CampoMoeda from '../components/CampoMoeda.jsx';
 import { formatarCentavos, normalizar } from '../utils/moeda.js';
-import { CATEGORIAS_COMPRA, CORES_CATEGORIA } from '../data/mockFinancas.js';
+import {
+    useCategoriasPrevisao, estiloSeloCategoriaPrevisao, nomesCategoriasPrevisao,
+} from '../data/useCategoriasPrevisao.js';
 import { criarFornecedor } from '../data/apiFornecedores.js';
 import { criarCotacao, atualizarCotacao, excluirCotacao as excluirCotacaoApi } from '../data/apiCotacoes.js';
 import './cotacoes.css';
@@ -45,6 +47,7 @@ export default function Cotacoes({ cotacoes, setCotacoes, fornecedores, setForne
     const [filtroCategoria, setFiltroCategoria] = useState('');
     const [erroAcao, setErroAcao] = useState('');
     const [salvando, setSalvando] = useState(false);
+    const { categoriasPrevisao, erroCategoriasPrevisao } = useCategoriasPrevisao();
 
     const cotacoesFiltradas = cotacoes.filter((cotacao) => {
         const bateTexto = !filtro.trim() || normalizar(cotacao.descricao).includes(normalizar(filtro));
@@ -225,7 +228,7 @@ export default function Cotacoes({ cotacoes, setCotacoes, fornecedores, setForne
                         aria-label="Filtrar por categoria"
                     >
                         <option value="">Todas as categorias</option>
-                        {CATEGORIAS_COMPRA.map((categoria) => (
+                        {nomesCategoriasPrevisao(categoriasPrevisao).map((categoria) => (
                             <option key={categoria} value={categoria}>{categoria}</option>
                         ))}
                     </select>
@@ -242,8 +245,8 @@ export default function Cotacoes({ cotacoes, setCotacoes, fornecedores, setForne
                 </div>
             </header>
 
-            {(erro || erroAcao) && (
-                <p className="avisoErroCotacoes" role="alert">{erro || erroAcao}</p>
+            {(erro || erroAcao || erroCategoriasPrevisao) && (
+                <p className="avisoErroCotacoes" role="alert">{erro || erroAcao || erroCategoriasPrevisao}</p>
             )}
 
             <div className="envelopeTabelaFinancas">
@@ -281,17 +284,14 @@ export default function Cotacoes({ cotacoes, setCotacoes, fornecedores, setForne
                                     <td>
                                         <div className="celulaProdutoCotacoes">
                                             <span className="nomeProdutoCotacoes">{cotacao.descricao}</span>
-                                            {cotacao.categoria && (() => {
-                                                const cor = CORES_CATEGORIA[cotacao.categoria] ?? CORES_CATEGORIA['Outros'];
-                                                return (
-                                                    <span
-                                                        className="seloCategoriaCotacoes"
-                                                        style={{ background: cor.bg, color: cor.color }}
-                                                    >
-                                                        {cotacao.categoria}
-                                                    </span>
-                                                );
-                                            })()}
+                                            {cotacao.categoria && (
+                                                <span
+                                                    className="seloCategoriaCotacoes"
+                                                    style={estiloSeloCategoriaPrevisao(categoriasPrevisao, cotacao.categoria)}
+                                                >
+                                                    {cotacao.categoria}
+                                                </span>
+                                            )}
                                         </div>
                                     </td>
                                     <td>
@@ -422,7 +422,7 @@ export default function Cotacoes({ cotacoes, setCotacoes, fornecedores, setForne
                                 }
                             >
                                 <option value="" disabled>Selecione a categoria</option>
-                                {CATEGORIAS_COMPRA.map((categoria) => (
+                                {nomesCategoriasPrevisao(categoriasPrevisao, formulario.categoria).map((categoria) => (
                                     <option key={categoria} value={categoria}>{categoria}</option>
                                 ))}
                             </select>
