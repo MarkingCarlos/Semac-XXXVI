@@ -95,6 +95,19 @@ export default function Admin() {
         return () => window.removeEventListener('resize', medirIndicador);
     }, [secaoAtiva, secoesVisiveis.length]);
 
+    /* A página sempre abre no topo: vindo do login (que fica no meio da
+       home) a navegação da SPA herdaria a rolagem de lá, e num recarregar o
+       navegador restauraria a posição antiga — por isso a restauração fica
+       manual enquanto se está aqui. O Lenis segue ativo nesta página, então
+       ele também é zerado, senão devolveria a posição que guarda. */
+    useEffect(() => {
+        const restauracaoRolagemAnterior = history.scrollRestoration;
+        history.scrollRestoration = 'manual';
+        window.scrollTo(0, 0);
+        window.lenis?.scrollTo(0, { immediate: true, force: true });
+        return () => { history.scrollRestoration = restauracaoRolagemAnterior; };
+    }, []);
+
     const [eventos, setEventos] = useState([]);
     const [carregandoEventos, setCarregandoEventos] = useState(true);
     const [erroEventos, setErroEventos] = useState('');

@@ -392,11 +392,20 @@ export default function Participantes() {
 
     /* A área do participante usa a rolagem nativa: o Lenis global (criado
        no index.html) é destruído ao entrar e recriado ao sair, para o resto
-       do site seguir com a rolagem suave. */
+       do site seguir com a rolagem suave.
+
+       A página sempre abre no topo: vindo do login (que fica no meio da
+       home) a navegação da SPA herdaria a rolagem de lá, e num recarregar o
+       navegador restauraria a posição antiga — por isso a restauração fica
+       manual enquanto se está aqui. */
     useEffect(() => {
         window.lenis?.destroy();
         window.lenis = null;
+        const restauracaoRolagemAnterior = history.scrollRestoration;
+        history.scrollRestoration = 'manual';
+        window.scrollTo(0, 0);
         return () => {
+            history.scrollRestoration = restauracaoRolagemAnterior;
             if (!window.lenis && window.criarLenis) window.lenis = window.criarLenis();
         };
     }, []);
