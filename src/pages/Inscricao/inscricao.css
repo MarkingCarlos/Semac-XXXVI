@@ -61,8 +61,6 @@
 @media (max-width: 768px) {
     .conteinerInscricao {
         background-size: cover;
-        padding: 4.25rem 0.9rem 2.5rem;
-        align-items: flex-start;
     }
 
     .botaoVoltarInscricao {
