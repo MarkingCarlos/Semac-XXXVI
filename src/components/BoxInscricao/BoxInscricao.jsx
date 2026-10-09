@@ -558,7 +558,7 @@ export default function BoxInscricao() {
     ]
 
     return (
-        <div class="boxInscricao">
+        <div class={`boxInscricao${aba === 'entrar' ? ' boxInscricaoAbaEntrar' : ''}`}>
 
             {/* ── Abas ───────────────────────────────────────────── */}
             <div class="abasInscricao">

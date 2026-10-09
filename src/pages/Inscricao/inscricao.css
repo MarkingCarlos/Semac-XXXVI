@@ -63,6 +63,18 @@
         background-size: cover;
     }
 
+    /* Na aba Entrar o card é curto: a tela fica presa na área visível.
+       100dvh (e não 100vh) porque no iPhone 100vh é maior que o que se vê
+       e a página rolava; fixed + overflow hidden impede o body de rolar. */
+    .conteinerInscricao:has(.boxInscricaoAbaEntrar) {
+        position: fixed;
+        inset: 0;
+        height: 100dvh;
+        min-height: 0;
+        overflow: hidden;
+        overscroll-behavior: none;
+    }
+
     .botaoVoltarInscricao {
         top: 0.9rem;
         left: 1rem;
