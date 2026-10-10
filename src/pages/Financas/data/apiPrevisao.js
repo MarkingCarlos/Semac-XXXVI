@@ -143,3 +143,58 @@ export async function reverterPrevisao(id) {
     });
     return deResposta(await lerOuFalhar(resposta, 'Falha ao reverter a previsão.'));
 }
+
+/* ── Comprovantes de compra ───────────────────────────────────────
+   Arquivos (PDF, JPG, PNG, WEBP, até 5 MB) anexados a um item. O backend
+   aceita um arquivo por requisição; quem envia vários chama
+   `enviarComprovantePrevisao` uma vez para cada, e assim cada arquivo tem
+   o seu próprio erro. */
+
+export const TIPOS_COMPROVANTE_ACEITOS = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
+export const TAMANHO_MAXIMO_COMPROVANTE = 5 * 1024 * 1024;
+
+export async function listarComprovantesPrevisao(itemId) {
+    const resposta = await apiFetch(`${ROTA}/${itemId}/comprovantes`, { headers: cabecalhosAuth() });
+    return lerOuFalhar(resposta, 'Falha ao carregar os comprovantes.');
+}
+
+/* Sem Content-Type no cabeçalho: o navegador monta o multipart com o
+   boundary certo a partir do FormData. */
+export async function enviarComprovantePrevisao(itemId, arquivo) {
+    const formularioArquivo = new FormData();
+    formularioArquivo.append('arquivo', arquivo);
+    const resposta = await apiFetch(`${ROTA}/${itemId}/comprovantes`, {
+        method: 'POST',
+        headers: cabecalhosAuth(),
+        body: formularioArquivo,
+        timeout: 60000, // upload de arquivo: janela maior que o padrão
+    });
+    return lerOuFalhar(resposta, `Falha ao enviar ${arquivo.name}.`);
+}
+
+/* Devolve um Blob: a rota exige o Bearer token, então não dá para usar a
+   URL direto num link — o chamador monta um object URL e revoga depois
+   (mesmo esquema de buscarComprovante em apiParticipantes.js). */
+export async function baixarComprovantePrevisao(itemId, comprovanteId) {
+    const resposta = await apiFetch(`${ROTA}/${itemId}/comprovantes/${comprovanteId}`, {
+        headers: cabecalhosAuth(),
+    });
+    if (!resposta.ok) {
+        if (tratarErroAuth(resposta)) return;
+        const corpo = await resposta.json().catch(() => null);
+        throw new Error(corpo?.mensagem || 'Falha ao abrir o comprovante.');
+    }
+    return resposta.blob();
+}
+
+export async function excluirComprovantePrevisao(itemId, comprovanteId) {
+    const resposta = await apiFetch(`${ROTA}/${itemId}/comprovantes/${comprovanteId}`, {
+        method: 'DELETE',
+        headers: cabecalhosAuth(),
+    });
+    if (!resposta.ok) {
+        if (tratarErroAuth(resposta)) return;
+        const corpo = await resposta.json().catch(() => null);
+        throw new Error(corpo?.mensagem || 'Falha ao excluir o comprovante.');
+    }
+}

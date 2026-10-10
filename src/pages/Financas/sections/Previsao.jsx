@@ -5,6 +5,7 @@ import {
 } from 'recharts';
 import PainelLateral from '../components/PainelLateral.jsx';
 import CampoMoeda from '../components/CampoMoeda.jsx';
+import PainelComprovantesPrevisao from '../components/PainelComprovantesPrevisao.jsx';
 import { formatarCentavos, normalizar } from '../utils/moeda.js';
 import {
     listarCategoriasPrevisao, criarCategoriaPrevisao,
@@ -169,6 +170,19 @@ export default function Previsao({ fornecedores, setFornecedores, somenteLeitura
 
     const [idConfirmandoExclusao, setIdConfirmandoExclusao] = useState(null);
     const [idConfirmandoConversao, setIdConfirmandoConversao] = useState(null);
+
+    /* Guarda o id e não o item: a linha pode ser recarregada enquanto o
+       painel está aberto, e o item exibido deve ser sempre o atual. */
+    const [idItemComprovantesAberto, setIdItemComprovantesAberto] = useState(null);
+    const itemComprovantesAberto = itens.find((item) => item.id === idItemComprovantesAberto) ?? null;
+
+    /* O painel devolve a contagem nova e o selo da linha se atualiza sem
+       recarregar a previsão inteira. */
+    const atualizarTotalComprovantes = (itemId, totalComprovantes) => {
+        setItens((itensAtuais) => itensAtuais.map((item) => (
+            item.id === itemId ? { ...item, totalComprovantes } : item
+        )));
+    };
 
     const cadastrandoFornecedor = formulario.fornecedorId === 'novo';
 
@@ -777,6 +791,30 @@ export default function Previsao({ fornecedores, setFornecedores, somenteLeitura
                                         )}
                                         <button
                                             type="button"
+                                            className={
+                                                item.totalComprovantes > 0
+                                                    ? 'botaoAcaoLinhaFinancas botaoComprovantesLinhaPrevisao'
+                                                    : 'botaoAcaoLinhaFinancas'
+                                            }
+                                            aria-label={`Comprovantes de ${item.descricao} (${item.totalComprovantes ?? 0})`}
+                                            title={
+                                                item.totalComprovantes > 0
+                                                    ? `${item.totalComprovantes} ${item.totalComprovantes === 1 ? 'comprovante' : 'comprovantes'}`
+                                                    : 'Anexar comprovantes'
+                                            }
+                                            onClick={() => setIdItemComprovantesAberto(item.id)}
+                                        >
+                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+                                            </svg>
+                                            {item.totalComprovantes > 0 && (
+                                                <span className="contadorComprovantesLinhaPrevisao" aria-hidden="true">
+                                                    {item.totalComprovantes}
+                                                </span>
+                                            )}
+                                        </button>
+                                        <button
+                                            type="button"
                                             className="botaoAcaoLinhaFinancas"
                                             aria-label={`Editar ${item.descricao}`}
                                             title="Editar"
@@ -1036,6 +1074,15 @@ export default function Previsao({ fornecedores, setFornecedores, somenteLeitura
                     </div>
                 </form>
             </PainelLateral>
+
+            {/* ── Comprovantes do item ────────────────────── */}
+            {!somenteLeitura && (
+                <PainelComprovantesPrevisao
+                    item={itemComprovantesAberto}
+                    aoFechar={() => setIdItemComprovantesAberto(null)}
+                    aoAlterarTotal={atualizarTotalComprovantes}
+                />
+            )}
 
             {/* ── Detalhe de uma categoria ────────────────── */}
             <PainelLateral

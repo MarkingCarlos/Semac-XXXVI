@@ -679,3 +679,31 @@
     font-size: 0.76rem;
     line-height: 1.45;
 }
+
+/* ── Botão de comprovantes na linha ─────────────────────────────
+   Com anexos, o botão fica destacado e ganha o contador no canto. */
+
+.botaoComprovantesLinhaPrevisao {
+    position: relative;
+    color: #E79839;
+    border-color: rgba(231, 152, 57, 0.45);
+}
+
+.contadorComprovantesLinhaPrevisao {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    box-sizing: border-box;
+    border-radius: 8px;
+    background: #E79839;
+    color: #3D0118;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.62rem;
+    font-weight: 700;
+    line-height: 16px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
