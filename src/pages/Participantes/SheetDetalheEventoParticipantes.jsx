@@ -91,16 +91,18 @@ export default function SheetDetalheEventoParticipantes({ evento, onFechar }) {
                             {evento.titulo}
                         </h2>
 
-                        <div className="gradeInfoSheetDetalheEventoParticipantes">
-                            <div className="campoInfoSheetDetalheEventoParticipantes">
-                                <span className="rotuloInfoSheetDetalheEventoParticipantes">
-                                    {evento.variosPalestrantes ? 'Palestrantes' : 'Palestrante'}
-                                </span>
-                                <span className="valorInfoSheetDetalheEventoParticipantes">
-                                    {evento.palestrante || 'A confirmar'}
-                                </span>
+                        {evento.palestrante && (
+                            <div className="gradeInfoSheetDetalheEventoParticipantes">
+                                <div className="campoInfoSheetDetalheEventoParticipantes">
+                                    <span className="rotuloInfoSheetDetalheEventoParticipantes">
+                                        {evento.variosPalestrantes ? 'Palestrantes' : 'Palestrante'}
+                                    </span>
+                                    <span className="valorInfoSheetDetalheEventoParticipantes">
+                                        {evento.palestrante}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
 
                     <div className="colunaDescricaoSheetDetalheEventoParticipantes">

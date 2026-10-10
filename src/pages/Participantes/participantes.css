@@ -1026,6 +1026,7 @@
   flex-direction: column;
   gap: 14px;
   color: var(--vermelhoAuxDiretoria);
+  align-items: center;
 }
 
 .categoriaCardAconteceAgoraInicioParticipantes {
@@ -1393,7 +1394,13 @@
 .valorHorarioCardAtividadeAgendaParticipantes { font-family: var(--fonteTituloBungee); font-size: 14px; }
 .localCardAtividadeAgendaParticipantes { font-size: 9px; font-weight: 700; opacity: 0.7; }
 
-.textoCardAtividadeAgendaParticipantes { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.textoCardAtividadeAgendaParticipantes {
+  flex: 1; display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+  min-width: 0;
+}
 .tituloCardAtividadeAgendaParticipantes {
   font-family: var(--fonteTituloBungee);
   font-size: 20px;
@@ -1808,7 +1815,7 @@
 .cabecalhoCartaoDesafioParticipantes {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 10px;
   flex-wrap: wrap;
 }
@@ -2062,7 +2069,7 @@
     backdrop-filter: blur(3px);
   }
   .cardSheetDetalheEventoParticipantes {
-    max-width: 60vw;
+    max-width: fit-content;
     max-height: min(560px, 85dvh);
     padding: 26px 24px;
     border-radius: var(--radius-lg, 25px);
@@ -2077,7 +2084,7 @@
   /* Duas colunas: a da esquerda fica parada, só a descrição rola. */
   .corpoSheetDetalheEventoParticipantes {
     align-items: stretch;
-    gap: 24px;
+    gap: 10px;
     overflow: hidden;
   }
 
