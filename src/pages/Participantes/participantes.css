@@ -1105,10 +1105,12 @@
   gap: 10px;
   color: var(--brancoQuenteParticipantes);
   justify-content: space-between;
+  align-items: center;
 }
 
 .professorCardMinicursoInicioParticipantes { font-size: 10px; font-weight: 800; letter-spacing: 0.1em; color: rgba(252, 248, 245, 0.85); }
 .tituloCardMinicursoInicioParticipantes {
+  text-align: center;
   font-family: var(--fonteTituloBungee);
   font-size: 12px;
   line-height: 1.2;
@@ -1205,6 +1207,7 @@
   flex-direction: column;
   gap: 10px;
   justify-content: space-between;
+  align-items: center;
 }
 
 .cardPalestraSemanaInicioParticipantes.statusMeuDiaAtualParticipantes { background: var(--brancoQuenteParticipantes); }
@@ -1218,6 +1221,7 @@
 .cardPalestraSemanaInicioParticipantes.statusMeuDiaAtualParticipantes .horarioCardPalestraSemanaInicioParticipantes { color: var(--rosaMarketing); }
 
 .tituloCardPalestraSemanaInicioParticipantes {
+  text-align: center;
   font-family: var(--fonteTituloBungee);
   font-size: 12px;
   line-height: 1.15;
@@ -1967,26 +1971,6 @@
   flex: none;
 }
 
-.botaoFecharSheetDetalheEventoParticipantes {
-  position: absolute;
-  top: 28px;
-  right: 22px;
-  z-index: 1;
-  width: 36px;
-  height: 36px;
-  border: none;
-  border-radius: 50%;
-  background: var(--vermelhoDiretoria);
-  color: var(--brancoQuenteParticipantes);
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-}
-
-.botaoFecharSheetDetalheEventoParticipantes:focus-visible {
-  outline: 2px solid var(--AmareloAuxApoio);
-  outline-offset: 2px;
-}
 
 .corpoSheetDetalheEventoParticipantes {
   min-height: 0;
@@ -2007,10 +1991,10 @@
 /* Reserva a altura do botão de fechar, que fica sobreposto à direita. */
 .linhaSeloSheetDetalheEventoParticipantes {
   min-height: 36px;
-  padding-right: 48px;
   margin-bottom: 4px;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .seloTipoSheetDetalheEventoParticipantes {
@@ -2077,9 +2061,8 @@
     background: rgba(89, 6, 41, 0.86);
     backdrop-filter: blur(3px);
   }
-
   .cardSheetDetalheEventoParticipantes {
-    max-width: 640px;
+    max-width: 60vw;
     max-height: min(560px, 85dvh);
     padding: 26px 24px;
     border-radius: var(--radius-lg, 25px);
@@ -2090,29 +2073,12 @@
 
   .alcaSheetDetalheEventoParticipantes { display: none; }
 
-  /* Mesmo × discreto do ModalConquista: 44px de alvo, visual leve. */
-  .botaoFecharSheetDetalheEventoParticipantes {
-    top: 10px;
-    right: 10px;
-    width: 44px;
-    height: 44px;
-    background: none;
-    border-radius: 999px;
-    color: rgba(252, 248, 245, 0.55);
-  }
-  .botaoFecharSheetDetalheEventoParticipantes:hover { color: var(--Branco); }
-  .botaoFecharSheetDetalheEventoParticipantes:focus-visible { outline-offset: -4px; }
 
   /* Duas colunas: a da esquerda fica parada, só a descrição rola. */
   .corpoSheetDetalheEventoParticipantes {
-    flex-direction: row;
     align-items: stretch;
     gap: 24px;
     overflow: hidden;
-  }
-
-  .colunaInfoSheetDetalheEventoParticipantes {
-    flex: 0 0 220px;
   }
 
   .linhaSeloSheetDetalheEventoParticipantes {
@@ -2120,7 +2086,15 @@
     padding-right: 0;
   }
 
-  .tituloSheetDetalheEventoParticipantes { font-size: 17px; line-height: 1.15; }
+  /* Largura do texto em caracteres: o painel acompanha a tela (70vw),
+     mas a linha não passa do confortável para ler. */
+  .tituloSheetDetalheEventoParticipantes {
+    font-size: 17px;
+    line-height: 1.15;
+    max-width: 60ch;
+    margin-inline: auto;
+    text-wrap: balance;
+  }
 
   .gradeInfoSheetDetalheEventoParticipantes {
     padding: 0;
@@ -2133,7 +2107,6 @@
     min-width: 0;
     gap: 8px;
     padding-top: 4px;
-    padding-right: 28px; /* não passa por baixo do × */
     overflow-y: auto;
     overscroll-behavior: contain;
   }
@@ -2146,6 +2119,8 @@
   }
 
   .descricaoSheetDetalheEventoParticipantes {
+    max-width: 80ch;
+    margin-inline: auto;
     font-size: 15px;
     color: rgba(252, 248, 245, 0.78);
     text-wrap: pretty;

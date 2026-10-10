@@ -79,18 +79,7 @@ export default function SheetDetalheEventoParticipantes({ evento, onFechar }) {
             >
                 <span className="alcaSheetDetalheEventoParticipantes" aria-hidden="true" />
 
-                <button
-                    ref={botaoFecharSheetDetalheEventoRef}
-                    type="button"
-                    className="botaoFecharSheetDetalheEventoParticipantes"
-                    aria-label="Fechar"
-                    onClick={fechar}
-                >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
-                    </svg>
-                </button>
+
 
                 <div className="corpoSheetDetalheEventoParticipantes" data-lenis-prevent>
                     <div className="colunaInfoSheetDetalheEventoParticipantes">
@@ -110,14 +99,6 @@ export default function SheetDetalheEventoParticipantes({ evento, onFechar }) {
                                 <span className="valorInfoSheetDetalheEventoParticipantes">
                                     {evento.palestrante || 'A confirmar'}
                                 </span>
-                            </div>
-                            <div className="campoInfoSheetDetalheEventoParticipantes">
-                                <span className="rotuloInfoSheetDetalheEventoParticipantes">Horário</span>
-                                <span className="valorInfoSheetDetalheEventoParticipantes">{evento.diaHorario}</span>
-                            </div>
-                            <div className="campoInfoSheetDetalheEventoParticipantes">
-                                <span className="rotuloInfoSheetDetalheEventoParticipantes">Local</span>
-                                <span className="valorInfoSheetDetalheEventoParticipantes">{evento.local}</span>
                             </div>
                         </div>
                     </div>
