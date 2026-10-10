@@ -1405,6 +1405,7 @@
   font-family: var(--fonteTituloBungee);
   font-size: 20px;
   line-height: 1.2;
+  text-align: center;
 }
 
 .detalheCardAtividadeAgendaParticipantes {
@@ -1414,7 +1415,6 @@
 .statusAtividadeAtualAgendaParticipantes .detalheCardAtividadeAgendaParticipantes { color: var(--rosaMarketing); font-weight: 700; opacity: 1; }
 @media (max-width: 768px) {
   .tituloCardAtividadeAgendaParticipantes {
-    text-align: left;
     font-size: 12px;
   }
   .detalheCardAtividadeAgendaParticipantes {
