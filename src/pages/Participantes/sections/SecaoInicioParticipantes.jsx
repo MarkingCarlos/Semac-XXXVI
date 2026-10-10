@@ -29,6 +29,7 @@ export default function SecaoInicioParticipantes({
     onVerRanking,
     onVerAgenda,
     onEscolherMinicursos,
+    onAbrirDetalheEvento,
 }) {
     return (
         <div className="grelhaInicioParticipantes">
@@ -97,7 +98,11 @@ export default function SecaoInicioParticipantes({
                     {/* Fora do horário de qualquer atividade (antes da semana do
                         evento, por exemplo) o destaque passa a ser a próxima. */}
                     {!carregando && (atividadeAtual ?? atividadeSeguinte) && (
-                        <div className="cardAconteceAgoraInicioParticipantes">
+                        <button
+                            type="button"
+                            className="cardAconteceAgoraInicioParticipantes cardClicavelParticipantes"
+                            onClick={() => onAbrirDetalheEvento((atividadeAtual ?? atividadeSeguinte).id)}
+                        >
                             <span className="categoriaCardAconteceAgoraInicioParticipantes">
                                 {(atividadeAtual ?? atividadeSeguinte).tipo}
                                 {(atividadeAtual ?? atividadeSeguinte).palestrante
@@ -115,7 +120,7 @@ export default function SecaoInicioParticipantes({
                                     {(atividadeAtual ?? atividadeSeguinte).dia} · {(atividadeAtual ?? atividadeSeguinte).horario}
                                 </span>
                             </div>
-                        </div>
+                        </button>
                     )}
 
                     {!carregando && !atividadeAtual && !atividadeSeguinte && (
@@ -166,13 +171,18 @@ export default function SecaoInicioParticipantes({
                         ) : (
                             <div className="grelhaMinicursosInicioParticipantes">
                                 {meusMinicursos.map((curso) => (
-                                    <div key={curso.id} className={`cardMinicursoInicioParticipantes corMinicurso${capitalizar(curso.cor)}Participantes`}>
+                                    <button
+                                        key={curso.id}
+                                        type="button"
+                                        className={`cardMinicursoInicioParticipantes cardClicavelParticipantes corMinicurso${capitalizar(curso.cor)}Participantes`}
+                                        onClick={() => onAbrirDetalheEvento(curso.id)}
+                                    >
                                         <span className="professorCardMinicursoInicioParticipantes">{curso.professor}</span>
                                         <span className="tituloCardMinicursoInicioParticipantes">{curso.titulo}</span>
                                         <div className="rodapeCardMinicursoInicioParticipantes">
                                             <span className="horarioCardMinicursoInicioParticipantes">{curso.horarioLocal}</span>
                                         </div>
-                                    </div>
+                                    </button>
                                 ))}
                             </div>
                         )}
@@ -188,7 +198,12 @@ export default function SecaoInicioParticipantes({
                         <p className="avisoVazioAgendaParticipantes">Nada programado para esse dia.</p>
                     )}
                     {meuDia.map((item) => (
-                        <div key={item.id} className={`itemMeuDiaInicioParticipantes statusMeuDia${capitalizar(item.status)}Participantes`}>
+                        <button
+                            key={item.id}
+                            type="button"
+                            className={`itemMeuDiaInicioParticipantes cardClicavelParticipantes statusMeuDia${capitalizar(item.status)}Participantes`}
+                            onClick={() => onAbrirDetalheEvento(item.id)}
+                        >
                             <div className="horarioItemMeuDiaInicioParticipantes">
                                 <span className="valorHorarioItemMeuDiaInicioParticipantes">{item.horario}</span>
                                 <span className="localItemMeuDiaInicioParticipantes">{item.local}</span>
@@ -197,7 +212,7 @@ export default function SecaoInicioParticipantes({
                                 <span className="tituloItemMeuDiaInicioParticipantes">{item.titulo}</span>
                                 <span className="detalheItemMeuDiaInicioParticipantes">{item.detalhe}</span>
                             </div>
-                        </div>
+                        </button>
                     ))}
                 </div>
 
@@ -211,11 +226,16 @@ export default function SecaoInicioParticipantes({
                     )}
                     <div className="grelhaPalestrasSemanaInicioParticipantes">
                         {palestrasDoDia.map((item) => (
-                            <div key={item.id} className={`cardPalestraSemanaInicioParticipantes statusMeuDia${capitalizar(item.status)}Participantes`}>
+                            <button
+                                key={item.id}
+                                type="button"
+                                className={`cardPalestraSemanaInicioParticipantes cardClicavelParticipantes statusMeuDia${capitalizar(item.status)}Participantes`}
+                                onClick={() => onAbrirDetalheEvento(item.id)}
+                            >
                                 <span className="horarioCardPalestraSemanaInicioParticipantes">{item.horario}</span>
                                 <span className="tituloCardPalestraSemanaInicioParticipantes">{item.titulo}</span>
                                 <span className="detalheCardPalestraSemanaInicioParticipantes">{item.detalhe}</span>
-                            </div>
+                            </button>
                         ))}
                     </div>
                 </div>

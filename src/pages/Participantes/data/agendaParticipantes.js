@@ -186,6 +186,21 @@ function paraCartaoDestaque(evento) {
     };
 }
 
+/* Card de detalhe que sobe ao tocar numa atividade. A descrição é a mesma
+   `descricao` do evento que a programação da página inicial mostra. */
+export function detalheEventoParticipante(evento) {
+    return {
+        id: evento.id,
+        tipo: (evento.tipo || (ehMinicurso(evento) ? 'Minicurso' : 'Atividade')).toUpperCase(),
+        titulo: evento.nome,
+        palestrante: nomesPalestrantes(evento),
+        variosPalestrantes: (evento.palestrantes || []).length > 1,
+        diaHorario: `${formatarDiaCurto(evento)} · ${formatarFaixaHorario(evento)}`,
+        local: evento.local || 'Local a definir',
+        descricao: evento.descricao,
+    };
+}
+
 /* Um minicurso por faixa de horário — a mesma regra que o backend
    valida. Serve para desabilitar o botão antes de chamar a API. */
 export function conflitaComEscolhidos(candidato, escolhidos) {

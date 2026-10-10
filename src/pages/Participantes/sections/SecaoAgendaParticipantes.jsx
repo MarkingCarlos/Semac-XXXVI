@@ -3,7 +3,8 @@
    e os minicursos que escolheu.
 
    Nenhuma ação aqui: escolher, trocar ou desistir de minicurso acontece
-   exclusivamente no modal de escolha, aberto pela aba Início. */
+   exclusivamente no modal de escolha, aberto pela aba Início. Tocar numa
+   atividade só abre o card de detalhe. */
 
 export default function SecaoAgendaParticipantes({
     diasSemana,
@@ -11,6 +12,7 @@ export default function SecaoAgendaParticipantes({
     onSelecionarDia,
     meuDia,
     carregando,
+    onAbrirDetalheEvento,
 }) {
     return (
         <div className="secaoAgendaParticipantes">
@@ -50,7 +52,12 @@ export default function SecaoAgendaParticipantes({
                     <p className="avisoVazioAgendaParticipantes">Nada programado para você nesse dia.</p>
                 )}
                 {meuDia.map((item) => (
-                    <div key={item.id} className={`cardAtividadeAgendaParticipantes statusAtividade${capitalizar(item.status)}AgendaParticipantes`}>
+                    <button
+                        key={item.id}
+                        type="button"
+                        className={`cardAtividadeAgendaParticipantes cardClicavelParticipantes statusAtividade${capitalizar(item.status)}AgendaParticipantes`}
+                        onClick={() => onAbrirDetalheEvento(item.id)}
+                    >
                         <div className="horarioCardAtividadeAgendaParticipantes">
                             <span className="valorHorarioCardAtividadeAgendaParticipantes">{item.horario}</span>
                             <span className="localCardAtividadeAgendaParticipantes">{item.local}</span>
@@ -59,7 +66,7 @@ export default function SecaoAgendaParticipantes({
                             <span className="tituloCardAtividadeAgendaParticipantes">{item.titulo}</span>
                             <span className="detalheCardAtividadeAgendaParticipantes">{item.detalhe}</span>
                         </div>
-                    </div>
+                    </button>
                 ))}
             </div>
 

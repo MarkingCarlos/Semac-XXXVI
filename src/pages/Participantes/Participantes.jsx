@@ -32,6 +32,7 @@ import ModalEscolhaMinicursos from './ModalEscolhaMinicursos.jsx';
 import ModalEscolhaDiasIngresso from './ModalEscolhaDiasIngresso.jsx';
 import MenuPerfilParticipantes from './MenuPerfilParticipantes.jsx';
 import MenuFabParticipantes from './MenuFabParticipantes.jsx';
+import SheetDetalheEventoParticipantes from './SheetDetalheEventoParticipantes.jsx';
 import SecaoInicioParticipantes from './sections/SecaoInicioParticipantes.jsx';
 import SecaoAgendaParticipantes from './sections/SecaoAgendaParticipantes.jsx';
 import SecaoDesafiosParticipantes from './sections/SecaoDesafiosParticipantes.jsx';
@@ -66,6 +67,7 @@ import {
     proximaAtividade,
     ehMinicurso,
     diaDoEvento,
+    detalheEventoParticipante,
 } from './data/agendaParticipantes.js';
 
 import {
@@ -150,6 +152,8 @@ export default function Participantes() {
     const [diaSelecionado, setDiaSelecionado] = useState('');
     const [erroMinicurso, setErroMinicurso] = useState('');
     const [minicursoEmEspera, setMinicursoEmEspera] = useState(null);
+    /* Atividade aberta no card de detalhe (id do evento; null = fechado). */
+    const [eventoDetalheId, setEventoDetalheId] = useState(null);
 
     /* Botão "Escolha de minicursos" do /admin (aba Conteúdo). Começa
        fechada — e fica assim se a chamada falhar: o backend recusa entrar
@@ -358,6 +362,11 @@ export default function Participantes() {
         () => proximaAtividade(eventosDoIngresso, meusEventos, agora),
         [eventosDoIngresso, meusEventos, agora],
     );
+
+    const eventoDetalhe = useMemo(() => {
+        const evento = eventos.find((item) => item.id === eventoDetalheId);
+        return evento ? detalheEventoParticipante(evento) : null;
+    }, [eventos, eventoDetalheId]);
 
     const totalMinicursos = useMemo(() => eventosDoIngresso.filter(ehMinicurso).length, [eventosDoIngresso]);
 
@@ -582,6 +591,7 @@ export default function Participantes() {
                             onVerRanking={() => irPara('ranking')}
                             onVerAgenda={() => irPara('agenda')}
                             onEscolherMinicursos={abrirEscolhaMinicursos}
+                            onAbrirDetalheEvento={setEventoDetalheId}
                         />
                     )}
                     {abaAtiva === 'agenda' && (
@@ -591,6 +601,7 @@ export default function Participantes() {
                             onSelecionarDia={setDiaSelecionado}
                             meuDia={meuDia}
                             carregando={carregandoAgenda}
+                            onAbrirDetalheEvento={setEventoDetalheId}
                         />
                     )}
                     {abaAtiva === 'desafios' && (
@@ -626,6 +637,14 @@ export default function Participantes() {
                 abaAtiva={abaAtiva}
                 onIrPara={irPara}
             />
+
+            {eventoDetalhe && (
+                <SheetDetalheEventoParticipantes
+                    key={eventoDetalhe.id}
+                    evento={eventoDetalhe}
+                    onFechar={() => setEventoDetalheId(null)}
+                />
+            )}
 
             {escolhaMinicursosAberta && (
                 <ModalEscolhaMinicursos
