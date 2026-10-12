@@ -25,6 +25,8 @@ const ROTA_RETORNO = '/participantes';
 /* Backend → interface. Mantém os campos com os mesmos nomes da API e
    acrescenta só o que a interface usa em toda parte. */
 function deResposta(evento) {
+    const palestrantes = (evento.palestrantes || []).map((palestrante) => palestrante.nome);
+    const descricao = evento.descricao || '';
     return {
         id: evento.id,
         nome: evento.nome,
@@ -35,12 +37,15 @@ function deResposta(evento) {
            editável: debates recebem perguntas prévias dos participantes. */
         ehDebate: evento.tipoEvento?.codigo === 'DEBATE',
         local: evento.local || '',
-        descricao: evento.descricao || '',
+        descricao,
         dataHoraInicio: evento.dataHoraInicio,
         dataHoraFim: evento.dataHoraFim,
         capacidadeMaxima: evento.capacidadeMaxima,
         vagasRestantes: evento.vagasRestantes ?? null,
-        palestrantes: (evento.palestrantes || []).map((palestrante) => palestrante.nome),
+        palestrantes,
+        /* Sem palestrante e sem descrição (abertura, coffee-break…) o card
+           de detalhe não teria nada a mostrar, então não abre. */
+        temDetalhe: palestrantes.length > 0 || descricao.trim() !== '',
     };
 }
 

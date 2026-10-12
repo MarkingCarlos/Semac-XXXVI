@@ -129,6 +129,7 @@ export function palestrasDoDia(eventos, diaId, agora) {
             detalhe: detalheDoEvento(evento),
             status: statusPorHorario(evento, agora),
             ehDebate: Boolean(evento.ehDebate),
+            temDetalhe: Boolean(evento.temDetalhe),
         }));
 }
 
@@ -148,6 +149,7 @@ export function montarMeuDia(eventos, meusEventos, diaId, agora) {
             detalhe: detalheDoEvento(evento),
             status: statusPorHorario(evento, agora),
             ehDebate: Boolean(evento.ehDebate),
+            temDetalhe: Boolean(evento.temDetalhe),
         }));
 }
 
@@ -186,6 +188,7 @@ function paraCartaoDestaque(evento) {
         dia: formatarDiaCurto(evento),
         ehMinicurso: ehMinicurso(evento),
         ehDebate: Boolean(evento.ehDebate),
+        temDetalhe: Boolean(evento.temDetalhe),
     };
 }
 
@@ -202,6 +205,7 @@ export function detalheEventoParticipante(evento) {
         local: evento.local || 'Local a definir',
         descricao: evento.descricao,
         ehDebate: Boolean(evento.ehDebate),
+        temDetalhe: Boolean(evento.temDetalhe),
     };
 }
 
@@ -243,6 +247,7 @@ export function montarMinicursos(eventos, meusEventos, agora) {
                 jaComecou: paraData(evento.dataHoraInicio) <= agora,
                 conflita: !escolhido && conflitaComEscolhidos(evento, escolhidos),
                 status: statusPorHorario(evento, agora),
+                temDetalhe: Boolean(evento.temDetalhe),
                 dataHoraInicio: evento.dataHoraInicio,
                 dataHoraFim: evento.dataHoraFim,
             };

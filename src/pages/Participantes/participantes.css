@@ -1401,6 +1401,13 @@
   align-items: center;
   min-width: 0;
 }
+
+@media screen and (max-width: 768px) {
+  .textoCardAtividadeAgendaParticipantes {
+    align-items: flex-start;
+  }
+
+}
 .tituloCardAtividadeAgendaParticipantes {
   font-family: var(--fonteTituloBungee);
   font-size: 20px;
@@ -1926,8 +1933,12 @@
   transition: transform 0.15s ease, filter 0.15s ease;
 }
 
-.cardClicavelParticipantes:hover { filter: brightness(1.08); }
-.cardClicavelParticipantes:active { transform: scale(0.98); }
+.cardClicavelParticipantes:not(:disabled):hover { filter: brightness(1.08); }
+.cardClicavelParticipantes:not(:disabled):active { transform: scale(0.98); }
+
+/* Atividade sem palestrante nem descrição (abertura, coffee-break…):
+   mesmo visual, mas não abre o card de detalhe. */
+.cardClicavelParticipantes:disabled { cursor: default; }
 .cardClicavelParticipantes:focus-visible {
   outline: 2px solid var(--AmareloAuxApoio);
   outline-offset: 2px;

@@ -382,7 +382,7 @@ export default function Participantes() {
 
     const eventoDetalhe = useMemo(() => {
         const evento = eventos.find((item) => item.id === eventoDetalheId);
-        return evento ? detalheEventoParticipante(evento) : null;
+        return evento?.temDetalhe ? detalheEventoParticipante(evento) : null;
     }, [eventos, eventoDetalheId]);
 
     const totalMinicursos = useMemo(() => eventosDoIngresso.filter(ehMinicurso).length, [eventosDoIngresso]);

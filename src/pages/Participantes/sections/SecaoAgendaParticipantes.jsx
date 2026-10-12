@@ -57,6 +57,7 @@ export default function SecaoAgendaParticipantes({
                         key={item.id}
                         type="button"
                         className={`cardAtividadeAgendaParticipantes cardClicavelParticipantes statusAtividade${capitalizar(item.status)}AgendaParticipantes${perguntasDebateAbertas && item.ehDebate ? ' cardDebateBrilhanteParticipantes' : ''}`}
+                        disabled={!item.temDetalhe}
                         onClick={() => onAbrirDetalheEvento(item.id)}
                     >
                         <div className="horarioCardAtividadeAgendaParticipantes">

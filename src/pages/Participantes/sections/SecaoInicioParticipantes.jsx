@@ -102,6 +102,7 @@ export default function SecaoInicioParticipantes({
                         <button
                             type="button"
                             className={`cardAconteceAgoraInicioParticipantes cardClicavelParticipantes${perguntasDebateAbertas && (atividadeAtual ?? atividadeSeguinte).ehDebate ? ' cardDebateBrilhanteParticipantes' : ''}`}
+                            disabled={!(atividadeAtual ?? atividadeSeguinte).temDetalhe}
                             onClick={() => onAbrirDetalheEvento((atividadeAtual ?? atividadeSeguinte).id)}
                         >
                             <span className="categoriaCardAconteceAgoraInicioParticipantes">
@@ -176,6 +177,7 @@ export default function SecaoInicioParticipantes({
                                         key={curso.id}
                                         type="button"
                                         className={`cardMinicursoInicioParticipantes cardClicavelParticipantes corMinicurso${capitalizar(curso.cor)}Participantes`}
+                                        disabled={!curso.temDetalhe}
                                         onClick={() => onAbrirDetalheEvento(curso.id)}
                                     >
                                         <span className="professorCardMinicursoInicioParticipantes">{curso.professor}</span>
@@ -203,6 +205,7 @@ export default function SecaoInicioParticipantes({
                             key={item.id}
                             type="button"
                             className={`itemMeuDiaInicioParticipantes cardClicavelParticipantes statusMeuDia${capitalizar(item.status)}Participantes${perguntasDebateAbertas && item.ehDebate ? ' cardDebateBrilhanteParticipantes' : ''}`}
+                            disabled={!item.temDetalhe}
                             onClick={() => onAbrirDetalheEvento(item.id)}
                         >
                             <div className="horarioItemMeuDiaInicioParticipantes">
@@ -231,6 +234,7 @@ export default function SecaoInicioParticipantes({
                                 key={item.id}
                                 type="button"
                                 className={`cardPalestraSemanaInicioParticipantes cardClicavelParticipantes statusMeuDia${capitalizar(item.status)}Participantes${perguntasDebateAbertas && item.ehDebate ? ' cardDebateBrilhanteParticipantes' : ''}`}
+                                disabled={!item.temDetalhe}
                                 onClick={() => onAbrirDetalheEvento(item.id)}
                             >
                                 <span className="horarioCardPalestraSemanaInicioParticipantes">{item.horario}</span>
