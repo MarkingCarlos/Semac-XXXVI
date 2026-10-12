@@ -1228,6 +1228,7 @@
   line-height: 1.15;
 }
 .detalheCardPalestraSemanaInicioParticipantes {
+  text-align: center;
   font-size: 12px;
   opacity: 0.75;
 }
