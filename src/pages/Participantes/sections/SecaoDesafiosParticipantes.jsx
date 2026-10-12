@@ -123,7 +123,7 @@ export default function SecaoDesafiosParticipantes({ desafios, carregando, erro,
                     <>
                         <BlocoDesafiosParticipantes
                             titulo="DESAFIOS DIÁRIOS"
-                            subtitulo="Valem mais XP — um para cada dia do evento"
+                            subtitulo="Valem mais XP"
                             desafios={diarios}
                             vazio="Os desafios diários são liberados durante a SEMAC. Volte aqui no evento."
                             onAbrir={onAbrir}
