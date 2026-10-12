@@ -33,6 +33,7 @@ import ModalEscolhaDiasIngresso from './ModalEscolhaDiasIngresso.jsx';
 import MenuPerfilParticipantes from './MenuPerfilParticipantes.jsx';
 import MenuFabParticipantes from './MenuFabParticipantes.jsx';
 import SheetDetalheEventoParticipantes from './SheetDetalheEventoParticipantes.jsx';
+import ModalPerguntaDebateParticipantes from './ModalPerguntaDebateParticipantes.jsx';
 import SecaoInicioParticipantes from './sections/SecaoInicioParticipantes.jsx';
 import SecaoAgendaParticipantes from './sections/SecaoAgendaParticipantes.jsx';
 import SecaoDesafiosParticipantes from './sections/SecaoDesafiosParticipantes.jsx';
@@ -55,6 +56,7 @@ import { buscarRegrasXpParticipante } from './data/apiRegrasXpParticipante.js';
 import { listarMinhasConquistas, marcarConquistaComoVista } from './data/apiConquistasParticipante.js';
 import { carregarDesafiosParticipantes } from './data/desafiosParticipantes.js';
 import { lerEscolhaMinicursos } from '../Admin/data/apiEscolhaMinicursos.js';
+import { lerPerguntasDebateAbertas } from '../Admin/data/apiPerguntasDebate.js';
 import ConquistaDesbloqueada, { MODO_TESTE_CONQUISTA } from '../../components/ConquistaDesbloqueada/ConquistaDesbloqueada.jsx';
 import { montarRankingExibicao } from './data/rankingParticipantes.js';
 import {
@@ -164,6 +166,21 @@ export default function Participantes() {
         let ativo = true;
         lerEscolhaMinicursos(new Date().getFullYear())
             .then((liberada) => { if (ativo) setEscolhaMinicursosLiberada(liberada); })
+            .catch(() => {});
+        return () => { ativo = false; };
+    }, []);
+
+    /* Botão "Perguntas para debates" do /admin (Informações SEMAC). Ligado,
+       os cards de debate brilham e o detalhe ganha "Mande sua pergunta".
+       Começa desligado — e fica assim se a chamada falhar: o backend
+       recusa novas perguntas de qualquer jeito enquanto estiver fechado. */
+    const [perguntasDebateAbertas, setPerguntasDebateAbertas] = useState(false);
+    const [perguntaDebateAberta, setPerguntaDebateAberta] = useState(false);
+
+    useEffect(() => {
+        let ativo = true;
+        lerPerguntasDebateAbertas(new Date().getFullYear())
+            .then((abertas) => { if (ativo) setPerguntasDebateAbertas(abertas); })
             .catch(() => {});
         return () => { ativo = false; };
     }, []);
@@ -591,6 +608,7 @@ export default function Participantes() {
                             onVerRanking={() => irPara('ranking')}
                             onVerAgenda={() => irPara('agenda')}
                             onEscolherMinicursos={abrirEscolhaMinicursos}
+                            perguntasDebateAbertas={perguntasDebateAbertas}
                             onAbrirDetalheEvento={setEventoDetalheId}
                         />
                     )}
@@ -601,6 +619,7 @@ export default function Participantes() {
                             onSelecionarDia={setDiaSelecionado}
                             meuDia={meuDia}
                             carregando={carregandoAgenda}
+                            perguntasDebateAbertas={perguntasDebateAbertas}
                             onAbrirDetalheEvento={setEventoDetalheId}
                         />
                     )}
@@ -642,7 +661,20 @@ export default function Participantes() {
                 <SheetDetalheEventoParticipantes
                     key={eventoDetalhe.id}
                     evento={eventoDetalhe}
-                    onFechar={() => setEventoDetalheId(null)}
+                    podeMandarPergunta={perguntasDebateAbertas && eventoDetalhe.ehDebate}
+                    onMandarPergunta={() => setPerguntaDebateAberta(true)}
+                    onFechar={() => {
+                        setPerguntaDebateAberta(false);
+                        setEventoDetalheId(null);
+                    }}
+                />
+            )}
+
+            {eventoDetalhe && perguntaDebateAberta && (
+                <ModalPerguntaDebateParticipantes
+                    key={eventoDetalhe.id}
+                    evento={eventoDetalhe}
+                    onFechar={() => setPerguntaDebateAberta(false)}
                 />
             )}
 

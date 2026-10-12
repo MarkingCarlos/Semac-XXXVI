@@ -2133,3 +2133,254 @@
     text-wrap: pretty;
   }
 }
+
+/* ── Cards de debate com perguntas abertas ────────────────── */
+/* Mesmo brilho âmbar/branco do card de doação da Home (ver
+   DoacaoQRCode.css), só que contínuo: no celular não existe hover. Um
+   anel em conic-gradient gira na borda (máscara deixa só os 2px de fora)
+   e um halo pulsa em volta. Some quando as perguntas são fechadas no
+   /admin, porque a classe deixa de ser aplicada. */
+@property --anguloBrilhoDebateParticipantes {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.cardDebateBrilhanteParticipantes {
+  position: relative;
+  isolation: isolate;
+  animation: pulsoBrilhoDebateParticipantes 2.6s ease-in-out infinite;
+}
+
+.cardDebateBrilhanteParticipantes::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  padding: 2px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--anguloBrilhoDebateParticipantes),
+    transparent 0%,
+    transparent 45%,
+    var(--AmareloAuxApoio, #E79839) 70%,
+    rgba(255, 255, 255, 0.95) 82%,
+    var(--AmareloAuxApoio, #E79839) 92%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: giroBrilhoDebateParticipantes 3s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes giroBrilhoDebateParticipantes {
+  to { --anguloBrilhoDebateParticipantes: 360deg; }
+}
+
+@keyframes pulsoBrilhoDebateParticipantes {
+  0%, 100% { box-shadow: 0 0 8px rgba(231, 152, 57, 0.35), 0 0 0 rgba(231, 152, 57, 0); }
+  50% { box-shadow: 0 0 18px rgba(231, 152, 57, 0.6), 0 0 34px rgba(255, 255, 255, 0.12); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cardDebateBrilhanteParticipantes {
+    animation: none;
+    box-shadow: 0 0 14px rgba(231, 152, 57, 0.5);
+  }
+  .cardDebateBrilhanteParticipantes::before {
+    animation: none;
+    background: var(--AmareloAuxApoio, #E79839);
+  }
+}
+
+/* ── Rodapé do detalhe: "Mande sua pergunta" ──────────────── */
+.rodapeSheetDetalheEventoParticipantes {
+  flex: none;
+  padding-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.botaoMandarPerguntaSheetDetalheEventoParticipantes,
+.botaoPrimarioModalPerguntaDebateParticipantes {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--vermelhoAuxDiretoria);
+  background: var(--AmareloAuxApoio);
+  border: none;
+  border-radius: 50px;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.botaoMandarPerguntaSheetDetalheEventoParticipantes {
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 0 18px rgba(231, 152, 57, 0.45);
+}
+
+.botaoMandarPerguntaSheetDetalheEventoParticipantes:hover,
+.botaoPrimarioModalPerguntaDebateParticipantes:hover:not(:disabled) { filter: brightness(1.08); }
+.botaoMandarPerguntaSheetDetalheEventoParticipantes:active,
+.botaoPrimarioModalPerguntaDebateParticipantes:active:not(:disabled) { transform: scale(0.98); }
+.botaoMandarPerguntaSheetDetalheEventoParticipantes:focus-visible,
+.botaoPrimarioModalPerguntaDebateParticipantes:focus-visible,
+.botaoSecundarioModalPerguntaDebateParticipantes:focus-visible {
+  outline: 2px solid var(--brancoQuenteParticipantes);
+  outline-offset: 2px;
+}
+
+.botaoPrimarioModalPerguntaDebateParticipantes:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.botaoSecundarioModalPerguntaDebateParticipantes {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--brancoQuenteParticipantes);
+  background: transparent;
+  border: 1px solid rgba(252, 248, 245, 0.35);
+  border-radius: 50px;
+  padding: 12px 20px;
+  cursor: pointer;
+}
+
+/* ── Modal de pergunta para o debate ──────────────────────── */
+/* Fica por cima do card de detalhe (z-index 11). Mesma coreografia:
+   sobe de baixo no mobile, centralizado no desktop. Animação via GSAP
+   (ver ModalPerguntaDebateParticipantes.jsx). */
+.fundoModalPerguntaDebateParticipantes {
+  position: fixed;
+  inset: 0;
+  height: 100dvh;
+  overflow: hidden;
+  background: rgba(10, 10, 10, 0.6);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 12;
+}
+
+.cardModalPerguntaDebateParticipantes {
+  width: 100%;
+  max-width: 560px;
+  max-height: 85dvh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--vermelhoAuxDiretoria);
+  color: var(--brancoQuenteParticipantes);
+  border-radius: 25px 25px 0 0;
+  padding: 10px 22px calc(22px + env(safe-area-inset-bottom));
+  box-shadow: 0 -12px 40px rgba(10, 10, 10, 0.35);
+}
+
+.seloModalPerguntaDebateParticipantes { align-self: center; }
+
+.tituloModalPerguntaDebateParticipantes {
+  margin: 4px 0 6px;
+  font-family: var(--fonteTituloBungee);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--Branco);
+}
+
+.formularioModalPerguntaDebateParticipantes,
+.blocoSucessoModalPerguntaDebateParticipantes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campoTextoPerguntaDebateParticipantes {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 120px;
+  font: inherit;
+  /* 16px evita o zoom automático do iOS ao focar. */
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--brancoQuenteParticipantes);
+  background: var(--vermelhoDiretoria);
+  border: 1px solid rgba(252, 248, 245, 0.2);
+  border-radius: 15px;
+  padding: 12px 14px;
+}
+
+.campoTextoPerguntaDebateParticipantes::placeholder { color: rgba(252, 248, 245, 0.5); }
+
+.campoTextoPerguntaDebateParticipantes:focus {
+  outline: none;
+  border-color: var(--AmareloAuxApoio);
+}
+
+.contadorCaracteresPerguntaDebateParticipantes {
+  align-self: flex-end;
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.6;
+}
+
+.erroModalPerguntaDebateParticipantes {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--AmareloAuxApoio);
+}
+
+.acoesModalPerguntaDebateParticipantes {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+
+.acoesModalPerguntaDebateParticipantes > button { flex: 1 1 0; }
+
+.tituloSucessoModalPerguntaDebateParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 18px;
+  text-align: center;
+  color: var(--AmareloAuxApoio);
+}
+
+.textoSucessoModalPerguntaDebateParticipantes {
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+  color: rgba(252, 248, 245, 0.85);
+}
+
+@media (min-width: 860px) {
+  .fundoModalPerguntaDebateParticipantes {
+    align-items: center;
+    padding: 20px 16px;
+  }
+  .cardModalPerguntaDebateParticipantes {
+    max-width: 520px;
+    padding: 26px 24px;
+    border-radius: var(--radius-lg, 25px);
+    background: var(--vermelhoAux2Participantes);
+    border: 1px solid rgba(252, 248, 245, 0.14);
+    box-shadow: 0 20px 60px rgba(11, 11, 11, 0.5);
+  }
+  .cardModalPerguntaDebateParticipantes .alcaSheetDetalheEventoParticipantes { display: none; }
+  .acoesModalPerguntaDebateParticipantes > button { flex: 0 0 auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .botaoMandarPerguntaSheetDetalheEventoParticipantes,
+  .botaoPrimarioModalPerguntaDebateParticipantes { transition: none; }
+}

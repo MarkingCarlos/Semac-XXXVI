@@ -128,6 +128,7 @@ export function palestrasDoDia(eventos, diaId, agora) {
             titulo: evento.nome.toUpperCase(),
             detalhe: detalheDoEvento(evento),
             status: statusPorHorario(evento, agora),
+            ehDebate: Boolean(evento.ehDebate),
         }));
 }
 
@@ -146,6 +147,7 @@ export function montarMeuDia(eventos, meusEventos, diaId, agora) {
                 : evento.nome.toUpperCase(),
             detalhe: detalheDoEvento(evento),
             status: statusPorHorario(evento, agora),
+            ehDebate: Boolean(evento.ehDebate),
         }));
 }
 
@@ -183,6 +185,7 @@ function paraCartaoDestaque(evento) {
         horario: formatarFaixaHorario(evento),
         dia: formatarDiaCurto(evento),
         ehMinicurso: ehMinicurso(evento),
+        ehDebate: Boolean(evento.ehDebate),
     };
 }
 
@@ -198,6 +201,7 @@ export function detalheEventoParticipante(evento) {
         diaHorario: `${formatarDiaCurto(evento)} · ${formatarFaixaHorario(evento)}`,
         local: evento.local || 'Local a definir',
         descricao: evento.descricao,
+        ehDebate: Boolean(evento.ehDebate),
     };
 }
 

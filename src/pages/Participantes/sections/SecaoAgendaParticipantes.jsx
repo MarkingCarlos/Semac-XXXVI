@@ -12,6 +12,7 @@ export default function SecaoAgendaParticipantes({
     onSelecionarDia,
     meuDia,
     carregando,
+    perguntasDebateAbertas,
     onAbrirDetalheEvento,
 }) {
     return (
@@ -55,7 +56,7 @@ export default function SecaoAgendaParticipantes({
                     <button
                         key={item.id}
                         type="button"
-                        className={`cardAtividadeAgendaParticipantes cardClicavelParticipantes statusAtividade${capitalizar(item.status)}AgendaParticipantes`}
+                        className={`cardAtividadeAgendaParticipantes cardClicavelParticipantes statusAtividade${capitalizar(item.status)}AgendaParticipantes${perguntasDebateAbertas && item.ehDebate ? ' cardDebateBrilhanteParticipantes' : ''}`}
                         onClick={() => onAbrirDetalheEvento(item.id)}
                     >
                         <div className="horarioCardAtividadeAgendaParticipantes">

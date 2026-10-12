@@ -23,6 +23,7 @@ export default function SecaoInicioParticipantes({
     meusMinicursos,
     totalMinicursos,
     escolhaMinicursosLiberada,
+    perguntasDebateAbertas,
     ranking,
     carregando,
     onAbrirQr,
@@ -100,7 +101,7 @@ export default function SecaoInicioParticipantes({
                     {!carregando && (atividadeAtual ?? atividadeSeguinte) && (
                         <button
                             type="button"
-                            className="cardAconteceAgoraInicioParticipantes cardClicavelParticipantes"
+                            className={`cardAconteceAgoraInicioParticipantes cardClicavelParticipantes${perguntasDebateAbertas && (atividadeAtual ?? atividadeSeguinte).ehDebate ? ' cardDebateBrilhanteParticipantes' : ''}`}
                             onClick={() => onAbrirDetalheEvento((atividadeAtual ?? atividadeSeguinte).id)}
                         >
                             <span className="categoriaCardAconteceAgoraInicioParticipantes">
@@ -201,7 +202,7 @@ export default function SecaoInicioParticipantes({
                         <button
                             key={item.id}
                             type="button"
-                            className={`itemMeuDiaInicioParticipantes cardClicavelParticipantes statusMeuDia${capitalizar(item.status)}Participantes`}
+                            className={`itemMeuDiaInicioParticipantes cardClicavelParticipantes statusMeuDia${capitalizar(item.status)}Participantes${perguntasDebateAbertas && item.ehDebate ? ' cardDebateBrilhanteParticipantes' : ''}`}
                             onClick={() => onAbrirDetalheEvento(item.id)}
                         >
                             <div className="horarioItemMeuDiaInicioParticipantes">
@@ -229,7 +230,7 @@ export default function SecaoInicioParticipantes({
                             <button
                                 key={item.id}
                                 type="button"
-                                className={`cardPalestraSemanaInicioParticipantes cardClicavelParticipantes statusMeuDia${capitalizar(item.status)}Participantes`}
+                                className={`cardPalestraSemanaInicioParticipantes cardClicavelParticipantes statusMeuDia${capitalizar(item.status)}Participantes${perguntasDebateAbertas && item.ehDebate ? ' cardDebateBrilhanteParticipantes' : ''}`}
                                 onClick={() => onAbrirDetalheEvento(item.id)}
                             >
                                 <span className="horarioCardPalestraSemanaInicioParticipantes">{item.horario}</span>

@@ -29,6 +29,9 @@ function deResposta(evento) {
         nome: evento.nome,
         tipoEventoId: evento.tipoEvento ? evento.tipoEvento.id : null,
         tipo: evento.tipoEvento ? evento.tipoEvento.nome : '',
+        /* Pela chave estável do tipo, nunca pelo nome editável: debates
+           ganham o botão "Ver perguntas" na aba Conteúdo. */
+        ehDebate: evento.tipoEvento?.codigo === 'DEBATE',
         local: evento.local || '',
         descricao: evento.descricao || '',
         trilhaId: evento.trilha ? evento.trilha.id : null,

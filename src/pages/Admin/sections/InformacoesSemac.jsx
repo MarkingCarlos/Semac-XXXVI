@@ -38,6 +38,10 @@ import {
     salvarConfiguracaoInscricao,
 } from '../data/apiConfiguracaoInscricao.js';
 import {
+    lerPerguntasDebateAbertas,
+    salvarPerguntasDebateAbertas,
+} from '../data/apiPerguntasDebate.js';
+import {
     listarConquistas,
     atualizarConquista,
     alterarAtivaConquista,
@@ -150,6 +154,11 @@ export default function InformacoesSemac() {
     const [salvandoInscricoesAbertas, setSalvandoInscricoesAbertas] = useState(false);
     const [erroInscricoesAbertas, setErroInscricoesAbertas] = useState('');
 
+    /* ── Perguntas para debates (null = carregando) ───────────── */
+    const [perguntasDebateAbertas, setPerguntasDebateAbertas] = useState(null);
+    const [salvandoPerguntasDebateAbertas, setSalvandoPerguntasDebateAbertas] = useState(false);
+    const [erroPerguntasDebateAbertas, setErroPerguntasDebateAbertas] = useState('');
+
     const [painelAberto, setPainelAberto] = useState(false);
     const [formulario, setFormulario] = useState(FORMULARIO_VAZIO);
     const [idEmEdicao, setIdEmEdicao] = useState(null);
@@ -250,6 +259,9 @@ export default function InformacoesSemac() {
                 .catch((e) => { if (ativo) setErroCotas(e.message); })
                 .finally(() => { if (ativo) setCarregandoCotas(false); });
         }
+        lerPerguntasDebateAbertas(ANO_ATUAL)
+            .then((abertas) => { if (ativo) setPerguntasDebateAbertas(abertas); })
+            .catch((e) => { if (ativo) setErroPerguntasDebateAbertas(e.message); });
         listarNiveis()
             .then((lista) => { if (ativo) setNiveisParticipante([...lista].sort(porXpMinimoCrescente)); })
             .catch((e) => { if (ativo) setErroNiveisParticipante(e.message); })
@@ -277,6 +289,21 @@ export default function InformacoesSemac() {
             setErroInscricoesAbertas(e.message);
         } finally {
             setSalvandoInscricoesAbertas(false);
+        }
+    };
+
+    /* ── Perguntas para debates ───────────────────────────────── */
+
+    const alternarPerguntasDebateAbertas = async (novoValor) => {
+        setSalvandoPerguntasDebateAbertas(true);
+        setErroPerguntasDebateAbertas('');
+        try {
+            const salvo = await salvarPerguntasDebateAbertas(ANO_ATUAL, novoValor);
+            setPerguntasDebateAbertas(salvo);
+        } catch (e) {
+            setErroPerguntasDebateAbertas(e.message);
+        } finally {
+            setSalvandoPerguntasDebateAbertas(false);
         }
     };
 
@@ -931,6 +958,39 @@ export default function InformacoesSemac() {
 
             {/* ══ Sub-aba: Gamificação ═════════════════════════════════ */}
             {emGamificacao && (<>
+            {/* ── Perguntas para debates ──────────────────────── */}
+            <section className="blocoInfoSemac" aria-label="Perguntas para debates">
+                <div className="cabecalhoBlocoInfoSemac">
+                    <div>
+                        <h2 className="tituloBlocoInfoSemac">Perguntas para debates</h2>
+                        <p className="notaBlocoInfoSemac">
+                            Ligado, os cards de debate brilham no /participantes e o detalhe mostra o
+                            botão "Mande sua pergunta". Desligado, o botão some e nenhuma pergunta nova
+                            é aceita — as já enviadas continuam em Conteúdo.
+                        </p>
+                    </div>
+                </div>
+
+                {erroPerguntasDebateAbertas && <p className="avisoErroAdmin" role="alert">{erroPerguntasDebateAbertas}</p>}
+
+                <div className="cartaoPrecoCamisetaInfoSemac">
+                    <span className="rotuloPrecoCamisetaInfoSemac">Envio de perguntas pelos participantes</span>
+                    <label className="campoCheckboxInfoSemac">
+                        <input
+                            type="checkbox"
+                            checked={Boolean(perguntasDebateAbertas)}
+                            disabled={perguntasDebateAbertas === null || salvandoPerguntasDebateAbertas}
+                            onInput={(e) => alternarPerguntasDebateAbertas(e.currentTarget.checked)}
+                        />
+                        <span>
+                            {perguntasDebateAbertas === null
+                                ? 'Carregando…'
+                                : perguntasDebateAbertas ? 'Perguntas abertas' : 'Perguntas fechadas'}
+                        </span>
+                    </label>
+                </div>
+            </section>
+
             {/* ── Regras de XP ────────────────────────────────── */}
             <section className="blocoInfoSemac" aria-label="Regras de XP">
                 <div className="cabecalhoBlocoInfoSemac">

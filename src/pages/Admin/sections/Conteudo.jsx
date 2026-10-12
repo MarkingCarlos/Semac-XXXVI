@@ -10,6 +10,7 @@ import {
     excluirTrilha,
 } from '../data/apiTrilha.js';
 import { lerEscolhaMinicursos, salvarEscolhaMinicursos } from '../data/apiEscolhaMinicursos.js';
+import ModalPerguntasDebateAdmin from '../ModalPerguntasDebateAdmin.jsx';
 
 /* Conteúdo — eventos (tabela `evento`) com seu tipo (`tipo_evento`) e
    palestrantes (`palestrante`, vínculo recriado a cada gravação). A lista
@@ -74,6 +75,9 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
     const [escolhaMinicursosAberta, setEscolhaMinicursosAberta] = useState(null);
     const [salvandoEscolhaMinicursos, setSalvandoEscolhaMinicursos] = useState(false);
     const [erroEscolhaMinicursos, setErroEscolhaMinicursos] = useState('');
+
+    // Debate cujas perguntas estão abertas no modal (null = fechado)
+    const [eventoPerguntasDebateAberto, setEventoPerguntasDebateAberto] = useState(null);
 
     useEffect(() => {
         let ativo = true;
@@ -451,6 +455,21 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                                                 </svg>
                                             </button>
                                         )}
+                                        {evento.ehDebate && (
+                                            <button
+                                                type="button"
+                                                className="botaoAcaoLinhaFinancas"
+                                                aria-label={`Ver perguntas do debate ${evento.nome}`}
+                                                title="Ver perguntas dos participantes"
+                                                onClick={() => setEventoPerguntasDebateAberto(evento)}
+                                            >
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z" />
+                                                    <path d="M9.5 8.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5" />
+                                                    <path d="M12 14.5h.01" />
+                                                </svg>
+                                            </button>
+                                        )}
                                         <button
                                             type="button"
                                             className="botaoAcaoLinhaFinancas"
@@ -492,6 +511,13 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                     </tbody>
                 </table>
             </div>
+
+            {eventoPerguntasDebateAberto && (
+                <ModalPerguntasDebateAdmin
+                    evento={eventoPerguntasDebateAberto}
+                    aoFechar={() => setEventoPerguntasDebateAberto(null)}
+                />
+            )}
 
             {/* ── Painel: formulário de evento ─────────────────────── */}
             <PainelLateral

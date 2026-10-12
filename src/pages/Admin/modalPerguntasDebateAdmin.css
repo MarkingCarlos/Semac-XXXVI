@@ -1,0 +1,25 @@
+/* Lista de perguntas de um debate (ModalPerguntasDebateAdmin). A linha
+   vem da casca compartilhada (modalTopoDashboard.css); aqui só o texto
+   longo, que quebra em várias linhas em vez de cortar com reticências. */
+
+.itemPerguntaDebateAdmin {
+    align-items: flex-start;
+}
+
+.textoPerguntaDebateAdmin {
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 600;
+    line-height: 1.5;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.autorPerguntaDebateAdmin {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: var(--AmareloAuxApoio);
+}

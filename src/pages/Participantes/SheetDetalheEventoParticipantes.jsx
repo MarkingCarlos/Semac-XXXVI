@@ -9,7 +9,11 @@
    Desktop: painel centralizado em duas colunas, no mesmo padrão do
    ModalConquista — surge com um leve deslize e escala.
    Com "reduzir movimento", só o fade. Enquanto aberto, o Lenis para e o
-   conteúdo do card rola sozinho (data-lenis-prevent). */
+   conteúdo do card rola sozinho (data-lenis-prevent).
+
+   Em debates, com as perguntas liberadas no /admin, o rodapé ganha o
+   botão "Mande sua pergunta" (abre o ModalPerguntaDebateParticipantes
+   por cima deste card). */
 
 import { useEffect, useRef } from 'preact/hooks';
 import { useGSAP } from '@gsap/react';
@@ -33,7 +37,7 @@ function animacaoCardSheetDetalheEvento(card, entrando) {
         : { y: distancia, duration: 0.3, ease: 'power3.in' };
 }
 
-export default function SheetDetalheEventoParticipantes({ evento, onFechar }) {
+export default function SheetDetalheEventoParticipantes({ evento, podeMandarPergunta, onMandarPergunta, onFechar }) {
     const fundoSheetDetalheEventoRef = useRef(null);
     const cardSheetDetalheEventoRef = useRef(null);
     const botaoFecharSheetDetalheEventoRef = useRef(null);
@@ -112,6 +116,18 @@ export default function SheetDetalheEventoParticipantes({ evento, onFechar }) {
                         </p>
                     </div>
                 </div>
+
+                {podeMandarPergunta && (
+                    <div className="rodapeSheetDetalheEventoParticipantes">
+                        <button
+                            type="button"
+                            className="botaoMandarPerguntaSheetDetalheEventoParticipantes"
+                            onClick={onMandarPergunta}
+                        >
+                            Mande sua pergunta
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -31,6 +31,9 @@ function deResposta(evento) {
         tipo: evento.tipoEvento?.nome ?? '',
         pontos: evento.tipoEvento?.pontos ?? 0,
         exigeInscricao: Boolean(evento.tipoEvento?.exigeInscricao),
+        /* Pela chave estável do tipo (CodigoTipoEvento), nunca pelo nome
+           editável: debates recebem perguntas prévias dos participantes. */
+        ehDebate: evento.tipoEvento?.codigo === 'DEBATE',
         local: evento.local || '',
         descricao: evento.descricao || '',
         dataHoraInicio: evento.dataHoraInicio,
@@ -90,4 +93,15 @@ export async function cancelarMinicurso(eventoId) {
         headers: cabecalhosAuth(),
     });
     await falharSeErro(resposta, 'Não foi possível sair desse minicurso.');
+}
+
+/* Envia uma pergunta prévia para um debate. Perguntas encerradas e o
+   limite por participante chegam como 409 com a mensagem da API. */
+export async function enviarPerguntaDebate(eventoId, texto) {
+    const resposta = await apiFetch(`${ROTA}/${eventoId}/perguntas`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...cabecalhosAuth() },
+        body: JSON.stringify({ texto }),
+    });
+    await falharSeErro(resposta, 'Não foi possível enviar sua pergunta.');
 }
