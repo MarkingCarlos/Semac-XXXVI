@@ -11,11 +11,27 @@ import {
 } from '../data/apiTrilha.js';
 import { lerEscolhaMinicursos, salvarEscolhaMinicursos } from '../data/apiEscolhaMinicursos.js';
 import ModalPerguntasDebateAdmin from '../ModalPerguntasDebateAdmin.jsx';
+import { lerSessao } from '../../../auth/sessao.js';
+import Brindes from './Brindes.jsx';
+import SeletorModalSubabas from '../../../components/SeletorModalSubabas/SeletorModalSubabas.jsx';
+import ListaItensMobileAdmin from '../../../components/ListaItensMobileAdmin/ListaItensMobileAdmin.jsx';
+import ModalInferiorAdmin from '../../../components/ModalInferiorAdmin/ModalInferiorAdmin.jsx';
 
-/* Conteúdo — eventos (tabela `evento`) com seu tipo (`tipo_evento`) e
-   palestrantes (`palestrante`, vínculo recriado a cada gravação). A lista
-   de eventos é carregada e mantida pelo Admin; aqui ficam o formulário de
-   evento e os painéis de gerenciamento dos tipos de evento e das trilhas. */
+/* Conteúdo — três sub-abas:
+   - "Eventos": tabela `evento` com seu tipo (`tipo_evento`) e palestrantes
+     (`palestrante`, vínculo recriado a cada gravação). A lista de eventos
+     é carregada e mantida pelo Admin; aqui ficam o formulário de evento e
+     os painéis de gerenciamento dos tipos de evento e das trilhas.
+   - "Brindes" e "Sorteios": em Brindes.jsx. Ficam aqui porque todo
+     sorteio pertence a um evento.
+   Cada sub-aba tem seus papéis: o restante da diretoria cuida de brindes
+   e sorteios, mas não mexe na programação. */
+
+const SUBABAS_CONTEUDO = [
+    { id: 'eventos', rotulo: 'Eventos', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO'] },
+    { id: 'brindes', rotulo: 'Brindes' },
+    { id: 'sorteios', rotulo: 'Sorteios' },
+];
 
 const EVENTO_VAZIO = {
     nome: '',
@@ -42,6 +58,13 @@ function formatarDataEvento(data) {
 }
 
 export default function Conteudo({ eventos, setEventos, carregando, erro }) {
+    const roleAtual = lerSessao()?.role;
+    const subabasVisiveisConteudo = SUBABAS_CONTEUDO.filter(
+        (subaba) => !subaba.papeis || subaba.papeis.includes(roleAtual),
+    );
+    const podeVerEventos = subabasVisiveisConteudo.some((subaba) => subaba.id === 'eventos');
+    const [subabaAtivaConteudo, setSubabaAtivaConteudo] = useState(subabasVisiveisConteudo[0].id);
+
     const [filtro, setFiltro] = useState('');
     const [erroAcao, setErroAcao] = useState('');
     const [salvando, setSalvando] = useState(false);
@@ -79,7 +102,23 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
     // Debate cujas perguntas estão abertas no modal (null = fechado)
     const [eventoPerguntasDebateAberto, setEventoPerguntasDebateAberto] = useState(null);
 
+    /* Mobile: evento aberto no modal de detalhes. Só o id, buscado na
+       lista a cada render: o modal reflete na hora o "iniciado" e some
+       sozinho depois de uma exclusão. */
+    const [idEventoDetalhado, setIdEventoDetalhado] = useState(null);
+    const eventoDetalhado = eventos.find((ev) => ev.id === idEventoDetalhado) ?? null;
+
+    // Fechar o modal descarta um "toque de novo para confirmar" pendente.
+    const fecharDetalhesEvento = () => {
+        setIdEventoDetalhado(null);
+        setIdConfirmandoExclusao(null);
+        setIdConfirmandoInicio(null);
+    };
+
+    /* Tipos, trilhas e escolha de minicursos só servem à sub-aba Eventos —
+       quem não a vê nem chega a buscá-los. */
     useEffect(() => {
+        if (!podeVerEventos) return undefined;
         let ativo = true;
         listarTiposEvento()
             .then((lista) => { if (ativo) setTiposEvento(lista); })
@@ -309,10 +348,28 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                 <div>
                     <h1 className="tituloSecaoFinancas">Conteúdo</h1>
                     <p className="subtituloSecaoFinancas">
-                        Eventos da programação — palestras, minicursos e atividades
+                        Programação, brindes e os sorteios de cada evento
                     </p>
                 </div>
-                <div className="controlesCabecalhoFinancas">
+            </header>
+
+            {/* Pílulas no desktop; no mobile, uma pílula só que abre um modal de baixo para cima. */}
+            <SeletorModalSubabas
+                subabas={subabasVisiveisConteudo}
+                subabaAtiva={subabaAtivaConteudo}
+                aoTrocar={setSubabaAtivaConteudo}
+                tituloModal="Conteúdo"
+                rotuloAcessivel="Sub-abas de Conteúdo"
+            />
+
+            {/* Uma única instância para as duas sub-abas: trocar entre
+                Brindes e Sorteios mantém o estado e não recarrega. */}
+            {(subabaAtivaConteudo === 'brindes' || subabaAtivaConteudo === 'sorteios') && (
+                <Brindes subabaAtiva={subabaAtivaConteudo} eventos={eventos} />
+            )}
+
+            {subabaAtivaConteudo === 'eventos' && (<>
+                <div className="controlesCabecalhoFinancas barraFerramentasEventosConteudo">
                     <div className="filtroTabelaFinancas">
                         <span className="iconeFiltroFinancas">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -328,17 +385,19 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                             aria-label="Filtrar eventos por nome"
                         />
                     </div>
-                    <button type="button" className="botaoFantasmaFinancas" onClick={abrirPainelTipos}>
-                        Tipos de evento
-                    </button>
-                    <button type="button" className="botaoFantasmaFinancas" onClick={abrirPainelTrilhas}>
-                        Trilhas
-                    </button>
+                    <div class="btnFiltroConteudo">
+                        <button type="button" className="botaoFantasmaFinancas" onClick={abrirPainelTipos}>
+                            Tipos de evento
+                        </button>
+                        <button type="button" className="botaoFantasmaFinancas" onClick={abrirPainelTrilhas}>
+                            Trilhas
+                        </button>
+                    </div>
+
                     <button type="button" className="botaoPrimarioFinancas" onClick={abrirNovoEvento}>
                         + Novo evento
                     </button>
                 </div>
-            </header>
 
             {erro && <p className="avisoErroAdmin" role="alert">{erro}</p>}
             {erroAcao && <p className="avisoErroAdmin" role="alert">{erroAcao}</p>}
@@ -367,7 +426,20 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
             </section>
 
             <div className="envelopeTabelaFinancas">
-                <table className="tabelaFinancas">
+                {/* Mobile: só os nomes; o toque abre o modal de detalhes. */}
+                <ListaItensMobileAdmin
+                    itens={carregando ? [] : eventosFiltrados}
+                    textoVazio={
+                        carregando
+                            ? 'Carregando eventos…'
+                            : filtro.trim()
+                                ? 'Nenhum evento encontrado para esse filtro.'
+                                : 'Nenhum evento cadastrado ainda.'
+                    }
+                    aoSelecionar={(evento) => { setErroAcao(''); setIdEventoDetalhado(evento.id); }}
+                />
+
+                <table className="tabelaFinancas tabelaOcultaMobileAdmin">
                     <thead>
                         <tr>
                             <th>Evento</th>
@@ -511,6 +583,21 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                     </tbody>
                 </table>
             </div>
+            </>)}
+
+            {eventoDetalhado && (
+                <ModalDetalhesEvento
+                    evento={eventoDetalhado}
+                    aoFechar={fecharDetalhesEvento}
+                    erro={erroAcao}
+                    aoEditar={abrirEdicaoEvento}
+                    aoVerPerguntas={setEventoPerguntasDebateAberto}
+                    aoIniciar={marcarEventoIniciado}
+                    confirmandoInicio={idConfirmandoInicio === eventoDetalhado.id}
+                    aoExcluir={removerEvento}
+                    confirmandoExclusao={idConfirmandoExclusao === eventoDetalhado.id}
+                />
+            )}
 
             {eventoPerguntasDebateAberto && (
                 <ModalPerguntasDebateAdmin
@@ -893,5 +980,101 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                 </form>
             </PainelLateral>
         </div>
+    );
+}
+
+/* ── Modal de detalhes do evento (mobile) ─────────────────────────
+   No mobile a tabela vira uma lista de nomes; este modal mostra o resto
+   das colunas e as mesmas ações, com texto em vez de só ícone. As ações
+   que abrem outra coisa (painel de edição, perguntas do debate) fecham
+   este antes, para não empilhar. */
+function ModalDetalhesEvento({
+    evento, aoFechar, erro,
+    aoEditar, aoVerPerguntas,
+    aoIniciar, confirmandoInicio,
+    aoExcluir, confirmandoExclusao,
+}) {
+    const horarioEvento = evento.horaInicio
+        ? `${evento.horaInicio}${evento.horaFim ? `–${evento.horaFim}` : ''}`
+        : '';
+    const palestrantesEvento = evento.palestrantes && evento.palestrantes.length > 0
+        ? evento.palestrantes.map((p) => p.nome).join(', ')
+        : '—';
+
+    return (
+        <ModalInferiorAdmin titulo={evento.nome} subtitulo={evento.tipo} aoFechar={aoFechar}>
+            {(fecharDetalhes) => (
+                <>
+                    <dl className="listaDetalhesItemModalInferiorAdmin">
+                        <div className="linhaDetalheItemModalInferiorAdmin">
+                            <dt className="rotuloDetalheItemModalInferiorAdmin">Data</dt>
+                            <dd className="valorDetalheItemModalInferiorAdmin">
+                                {formatarDataEvento(evento.data)}{horarioEvento && ` · ${horarioEvento}`}
+                                {evento.horaIniciado && (
+                                    <span className="seloEventoIniciadoConteudo">iniciado {evento.horaIniciado}</span>
+                                )}
+                            </dd>
+                        </div>
+                        <div className="linhaDetalheItemModalInferiorAdmin">
+                            <dt className="rotuloDetalheItemModalInferiorAdmin">Trilha</dt>
+                            <dd className="valorDetalheItemModalInferiorAdmin">{evento.trilhaNome || '—'}</dd>
+                        </div>
+                        <div className="linhaDetalheItemModalInferiorAdmin">
+                            <dt className="rotuloDetalheItemModalInferiorAdmin">Local</dt>
+                            <dd className="valorDetalheItemModalInferiorAdmin">{evento.local || '—'}</dd>
+                        </div>
+                        <div className="linhaDetalheItemModalInferiorAdmin">
+                            <dt className="rotuloDetalheItemModalInferiorAdmin">Capacidade</dt>
+                            <dd className="valorDetalheItemModalInferiorAdmin">{evento.capacidadeMaxima ?? '—'}</dd>
+                        </div>
+                        <div className="linhaDetalheItemModalInferiorAdmin">
+                            <dt className="rotuloDetalheItemModalInferiorAdmin">Palestrantes</dt>
+                            <dd className="valorDetalheItemModalInferiorAdmin">{palestrantesEvento}</dd>
+                        </div>
+                    </dl>
+
+                    {erro && <p className="avisoErroAdmin" role="alert">{erro}</p>}
+
+                    <div className="grupoAcoesItemModalInferiorAdmin">
+                        <button
+                            type="button"
+                            className="botaoAcaoItemModalInferiorAdmin botaoAcaoPrincipalItemModalInferiorAdmin"
+                            onClick={() => fecharDetalhes(() => aoEditar(evento))}
+                        >
+                            Editar
+                        </button>
+                        {evento.ehDebate && (
+                            <button
+                                type="button"
+                                className="botaoAcaoItemModalInferiorAdmin"
+                                onClick={() => fecharDetalhes(() => aoVerPerguntas(evento))}
+                            >
+                                Ver perguntas
+                            </button>
+                        )}
+
+                        <div className="linhaAcoesDestrutivasItemModalInferiorAdmin">
+                            {/* Some depois de iniciado: o marco não se desfaz. */}
+                            {!evento.horaIniciado && (
+                                <button
+                                    type="button"
+                                    className={`botaoAcaoItemModalInferiorAdmin ${confirmandoInicio ? 'botaoConfirmarInicioConteudo' : ''}`}
+                                    onClick={() => aoIniciar(evento.id)}
+                                >
+                                    {confirmandoInicio ? 'Toque de novo para iniciar' : 'Iniciar evento'}
+                                </button>
+                            )}
+                            <button
+                                type="button"
+                                className={`botaoAcaoItemModalInferiorAdmin botaoAcaoPerigoItemModalInferiorAdmin ${confirmandoExclusao ? 'botaoAcaoConfirmandoItemModalInferiorAdmin' : ''}`}
+                                onClick={() => aoExcluir(evento.id)}
+                            >
+                                {confirmandoExclusao ? 'Toque de novo para excluir' : 'Excluir'}
+                            </button>
+                        </div>
+                    </div>
+                </>
+            )}
+        </ModalInferiorAdmin>
     );
 }

@@ -10,7 +10,9 @@ import {
 } from '../data/apiTimes.js';
 import './timesAdmin.css';
 
-/* Times — os três times da SEMAC. Restrito a DIRETOR_SITE/PRESIDENTE.
+/* Times — os três times da SEMAC. Bloco da sub-aba Gamificação de
+   Informações SEMAC, restrito a DIRETOR_SITE/PRESIDENTE (quem monta ou
+   não este componente é o InformacoesSemac.jsx).
 
    O participante descobre o time em /time, link do QR code do cartão
    entregue no evento. Enquanto o interruptor estiver desligado, quem
@@ -101,12 +103,12 @@ export default function TimesAdmin() {
 
     if (!painel) {
         return (
-            <div className="conteudoTimesAdmin">
+            <section className="blocoInfoSemac" aria-label="Times">
                 <CabecalhoTimesAdmin />
                 {erro
                     ? <p className="avisoErroAdmin" role="alert">{erro}</p>
                     : <p className="estadoCarregandoParticipantesAdmin">Carregando times…</p>}
-            </div>
+            </section>
         );
     }
 
@@ -114,7 +116,7 @@ export default function TimesAdmin() {
     const foraDoSorteio = Math.max(painel.participantesElegiveis - painel.sorteados, 0);
 
     return (
-        <div className="conteudoTimesAdmin">
+        <section className="blocoInfoSemac" aria-label="Times">
             <CabecalhoTimesAdmin />
 
             {erro && <p className="avisoErroAdmin" role="alert">{erro}</p>}
@@ -280,19 +282,19 @@ export default function TimesAdmin() {
             <p className="notaRodapeTimesAdmin">
                 Mascote: PNG ou SVG de até 2MB, de preferência quadrado com fundo transparente — aparece num círculo.
             </p>
-        </div>
+        </section>
     );
 }
 
 function CabecalhoTimesAdmin() {
     return (
-        <header className="cabecalhoSecaoFinancas">
+        <div className="cabecalhoBlocoInfoSemac cabecalhoBlocoTimesTermoInfoSemac">
             <div>
-                <h1 className="tituloSecaoFinancas">Times</h1>
-                <p className="subtituloSecaoFinancas">
+                <h2 className="tituloBlocoInfoSemac">Times</h2>
+                <p className="notaBlocoInfoSemac">
                     Sorteio, nomes e mascotes — o participante descobre o time pelo QR code do cartão (semac.cc/time)
                 </p>
             </div>
-        </header>
+        </div>
     );
 }

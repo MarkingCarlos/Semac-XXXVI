@@ -1197,6 +1197,12 @@
     margin: 0;
 }
 
+/* Times e Termo começam direto com faixas e cartões, sem parágrafo de
+   ajuda entre o cabeçalho e o conteúdo — o respiro vem daqui. */
+.cabecalhoBlocoTimesTermoInfoSemac {
+    margin-bottom: 18px;
+}
+
 .notaBlocoInfoSemac {
     margin: 0.35rem 0 0;
     font-size: 0.78rem;
@@ -1411,7 +1417,10 @@
     gap: 1rem;
     margin-top: 1rem;
 }
-
+.btnFiltroConteudo{
+    display: flex;
+    justify-content: space-between;
+}
 .cartaoConquistaInfoSemac {
     background-color: rgba(0, 0, 0, 0.22);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1546,9 +1555,9 @@
     line-height: 1.5;
 }
 
-@media (max-width: 480px) {
-    .gradeConquistasInfoSemac { grid-template-columns: 1fr; }
-}
+/*@media (max-width: 480px) {*/
+/*    .gradeConquistasInfoSemac { grid-template-columns: 1fr; }*/
+/*}*/
 
 /* ── Conquistas de um participante (modal de revogação) ─────────── */
 .tituloModalConquistasAdmin {
@@ -1650,7 +1659,8 @@
    exclusão. Amarelo em vez do rosa dela: as duas são irreversíveis e
    ficam lado a lado, então precisam ser distinguíveis no susto. */
 .botaoConfirmarInicioConteudo,
-.botaoConfirmarInicioConteudo:hover {
+.botaoConfirmarInicioConteudo:hover,
+.botaoAcaoItemModalInferiorAdmin.botaoConfirmarInicioConteudo {
     color: var(--vermelhoAuxDiretoria);
     background: var(--AmareloAuxApoio);
     border-color: var(--AmareloAuxApoio);
@@ -1667,15 +1677,38 @@
     white-space: nowrap;
 }
 
-/* ── Brindes: sub-abas Brindes / Sorteios ─────────────────────── */
+/* ── Conteúdo: sub-abas Eventos / Brindes / Sorteios ──────────── */
 
-.conteudoDoacoesAdmin > .listaSubabasAdmin {
+.conteudoConteudoAdmin > .listaSubabasAdmin {
     display: inline-flex;
     margin-bottom: 16px;
 }
 
+/* Mobile: as pílulas acima somem (o seletor com modal assume) — esta
+   regra precisa vencer o display da de cima, por isso o seletor a mais. */
+@media (max-width: 820px) {
+    .conteudoConteudoAdmin > .listaSubabasAdmin.listaPilulasSeletorModalSubabas {
+        display: none;
+    }
+}
+
+.conteudoConteudoAdmin > .botaoAtivoSeletorModalSubabas {
+    margin-bottom: 16px;
+}
+
+@media (max-width: 740px) {
+    .conteudoConteudoAdmin > .botaoAtivoSeletorModalSubabas {
+        margin-bottom: 16px;
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+
+/* Barra de filtro + ações de cada sub-aba, logo abaixo das pílulas. */
+.barraFerramentasEventosConteudo,
 .barraFerramentasBrindesAdmin {
-    justify-content: flex-end;
+    justify-content: space-between;
     margin-bottom: 16px;
 }
 

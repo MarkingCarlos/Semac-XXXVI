@@ -3,24 +3,23 @@ import PainelLateral from '../../Financas/components/PainelLateral.jsx';
 import { normalizar } from '../../Financas/utils/moeda.js';
 import { listarBrindes, criarBrinde, atualizarBrinde, excluirBrinde } from '../data/apiBrindes.js';
 import { listarSorteios } from '../../Sorteio/data/apiSorteio.js';
-import { listarEventos } from '../data/apiEventos.js';
 import SorteiosBrindes from './SorteiosBrindes.jsx';
+import ListaItensMobileAdmin from '../../../components/ListaItensMobileAdmin/ListaItensMobileAdmin.jsx';
+import ModalInferiorAdmin from '../../../components/ModalInferiorAdmin/ModalInferiorAdmin.jsx';
 
-/* Brindes — duas sub-abas:
-   - "Brindes": tabela `brinde` (nome, quantidade, sorteio). Todo brinde
+/* Brindes e Sorteios — duas sub-abas da seção Conteúdo, que decide qual
+   está ativa (`subabaAtiva`):
+   - "brindes": tabela `brinde` (nome, quantidade, sorteio). Todo brinde
      pertence a um sorteio. `quantidadeEntregue` vem calculada pelo
      backend (entregas já confirmadas) e não é editável aqui.
-   - "Sorteios": CRUD de `sorteio` (nome + evento), em SorteiosBrindes.jsx.
-   A lista de sorteios mora aqui porque as duas sub-abas precisam dela. */
+   - "sorteios": CRUD de `sorteio` (nome + evento), em SorteiosBrindes.jsx.
+   A lista de sorteios mora aqui porque as duas sub-abas precisam dela; o
+   Conteúdo renderiza este componente no mesmo lugar para as duas, então
+   trocar entre elas não recarrega nada. Os eventos vêm do Admin. */
 
 const FORMULARIO_VAZIO = { nome: '', quantidade: '', sorteioId: '' };
 
-const SUBABAS_BRINDES = [
-    { id: 'brindes', rotulo: 'Brindes' },
-    { id: 'sorteios', rotulo: 'Sorteios' },
-];
-
-export default function Brindes() {
+export default function Brindes({ subabaAtiva, eventos }) {
     const [brindes, setBrindes] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState('');
@@ -32,10 +31,19 @@ export default function Brindes() {
     const [idConfirmandoExclusao, setIdConfirmandoExclusao] = useState(null);
     const [filtro, setFiltro] = useState('');
 
-    const [subabaAtivaBrindes, setSubabaAtivaBrindes] = useState('brindes');
     const [sorteios, setSorteios] = useState([]);
     const [carregandoSorteios, setCarregandoSorteios] = useState(true);
-    const [eventos, setEventos] = useState([]);
+
+    /* Mobile: brinde aberto no modal de detalhes. Só o id, buscado na
+       lista a cada render: o modal some sozinho depois de uma exclusão. */
+    const [idBrindeDetalhado, setIdBrindeDetalhado] = useState(null);
+    const brindeDetalhado = brindes.find((b) => b.id === idBrindeDetalhado) ?? null;
+
+    // Fechar o modal descarta um "toque de novo para confirmar" pendente.
+    const fecharDetalhesBrinde = () => {
+        setIdBrindeDetalhado(null);
+        setIdConfirmandoExclusao(null);
+    };
 
     useEffect(() => {
         let ativo = true;
@@ -52,9 +60,6 @@ export default function Brindes() {
             .then((lista) => { if (ativo) setSorteios(lista); })
             .catch((e) => { if (ativo) setErro(e.message); })
             .finally(() => { if (ativo) setCarregandoSorteios(false); });
-        listarEventos()
-            .then((lista) => { if (ativo) setEventos(lista); })
-            .catch((e) => { if (ativo) setErro(e.message); });
         return () => { ativo = false; };
     }, []);
 
@@ -128,32 +133,8 @@ export default function Brindes() {
     };
 
     return (
-        <div className="conteudoDoacoesAdmin">
-            <header className="cabecalhoSecaoFinancas">
-                <div>
-                    <h1 className="tituloSecaoFinancas">Brindes</h1>
-                    <p className="subtituloSecaoFinancas">
-                        Prêmios e os sorteios em que cada um será entregue
-                    </p>
-                </div>
-            </header>
-
-            <div className="listaSubabasAdmin" role="tablist">
-                {SUBABAS_BRINDES.map((subaba) => (
-                    <button
-                        key={subaba.id}
-                        type="button"
-                        role="tab"
-                        aria-selected={subabaAtivaBrindes === subaba.id}
-                        className={`botaoSubabaAdmin${subabaAtivaBrindes === subaba.id ? ' botaoSubabaAdminAtivo' : ''}`}
-                        onClick={() => setSubabaAtivaBrindes(subaba.id)}
-                    >
-                        {subaba.rotulo}
-                    </button>
-                ))}
-            </div>
-
-            {subabaAtivaBrindes === 'sorteios' && (
+        <>
+            {subabaAtiva === 'sorteios' && (
                 <SorteiosBrindes
                     sorteios={sorteios}
                     eventos={eventos}
@@ -162,7 +143,7 @@ export default function Brindes() {
                 />
             )}
 
-            {subabaAtivaBrindes === 'brindes' && (<>
+            {subabaAtiva === 'brindes' && (<>
                 <div className="controlesCabecalhoFinancas barraFerramentasBrindesAdmin">
                     <div className="filtroTabelaFinancas">
                         <span className="iconeFiltroFinancas">
@@ -187,7 +168,20 @@ export default function Brindes() {
             {erro && <p className="avisoErroAdmin" role="alert">{erro}</p>}
 
             <div className="envelopeTabelaFinancas">
-                <table className="tabelaFinancas">
+                {/* Mobile: só os nomes; o toque abre o modal de detalhes. */}
+                <ListaItensMobileAdmin
+                    itens={carregando ? [] : brindesFiltrados}
+                    textoVazio={
+                        carregando
+                            ? 'Carregando brindes…'
+                            : filtro.trim()
+                                ? 'Nenhum brinde encontrado para esse filtro.'
+                                : 'Nenhum brinde cadastrado ainda.'
+                    }
+                    aoSelecionar={(brinde) => { setErro(''); setIdBrindeDetalhado(brinde.id); }}
+                />
+
+                <table className="tabelaFinancas tabelaOcultaMobileAdmin">
                     <thead>
                         <tr>
                             <th>Brinde</th>
@@ -268,6 +262,65 @@ export default function Brindes() {
             </div>
             </>)}
 
+            {/* ── Modal de detalhes do brinde (mobile) ───────────
+                Mesmas colunas e ações da tabela; "Editar" fecha o modal
+                antes de abrir o painel, para não empilhar. */}
+            {brindeDetalhado && (
+                <ModalInferiorAdmin
+                    titulo={brindeDetalhado.nome}
+                    subtitulo={nomeDoSorteio(brindeDetalhado)}
+                    aoFechar={fecharDetalhesBrinde}
+                >
+                    {(fecharDetalhes) => {
+                        const restante = brindeDetalhado.quantidade - brindeDetalhado.quantidadeEntregue;
+                        const confirmandoExclusao = idConfirmandoExclusao === brindeDetalhado.id;
+                        return (
+                            <>
+                                <dl className="listaDetalhesItemModalInferiorAdmin">
+                                    <div className="linhaDetalheItemModalInferiorAdmin">
+                                        <dt className="rotuloDetalheItemModalInferiorAdmin">Sorteio</dt>
+                                        <dd className="valorDetalheItemModalInferiorAdmin">{nomeDoSorteio(brindeDetalhado)}</dd>
+                                    </div>
+                                    <div className="linhaDetalheItemModalInferiorAdmin">
+                                        <dt className="rotuloDetalheItemModalInferiorAdmin">Quantidade</dt>
+                                        <dd className="valorDetalheItemModalInferiorAdmin">{brindeDetalhado.quantidade}</dd>
+                                    </div>
+                                    <div className="linhaDetalheItemModalInferiorAdmin">
+                                        <dt className="rotuloDetalheItemModalInferiorAdmin">Entregues</dt>
+                                        <dd className="valorDetalheItemModalInferiorAdmin">{brindeDetalhado.quantidadeEntregue}</dd>
+                                    </div>
+                                    <div className="linhaDetalheItemModalInferiorAdmin">
+                                        <dt className="rotuloDetalheItemModalInferiorAdmin">Restante</dt>
+                                        <dd className="valorDetalheItemModalInferiorAdmin">{restante > 0 ? restante : 'Esgotado'}</dd>
+                                    </div>
+                                </dl>
+
+                                {erro && <p className="avisoErroAdmin" role="alert">{erro}</p>}
+
+                                <div className="grupoAcoesItemModalInferiorAdmin">
+                                    <button
+                                        type="button"
+                                        className="botaoAcaoItemModalInferiorAdmin botaoAcaoPrincipalItemModalInferiorAdmin"
+                                        onClick={() => fecharDetalhes(() => abrirEdicaoBrinde(brindeDetalhado))}
+                                    >
+                                        Editar
+                                    </button>
+                                    <div className="linhaAcoesDestrutivasItemModalInferiorAdmin">
+                                        <button
+                                            type="button"
+                                            className={`botaoAcaoItemModalInferiorAdmin botaoAcaoPerigoItemModalInferiorAdmin ${confirmandoExclusao ? 'botaoAcaoConfirmandoItemModalInferiorAdmin' : ''}`}
+                                            onClick={() => removerBrinde(brindeDetalhado.id)}
+                                        >
+                                            {confirmandoExclusao ? 'Toque de novo para excluir' : 'Excluir'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </>
+                        );
+                    }}
+                </ModalInferiorAdmin>
+            )}
+
             <PainelLateral
                 aberto={painelAberto}
                 titulo={idEmEdicao !== null ? 'Editar brinde' : 'Novo brinde'}
@@ -339,6 +392,6 @@ export default function Brindes() {
                     </div>
                 </form>
             </PainelLateral>
-        </div>
+        </>
     );
 }

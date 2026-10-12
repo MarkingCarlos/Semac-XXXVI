@@ -209,6 +209,12 @@
     transition: border-color 0.15s;
 }
 
+@media screen and (max-width: 768px) {
+    .filtroTabelaFinancas {
+        width: 100%;
+    }
+}
+
 .filtroTabelaFinancas:focus-within {
     border-color: rgba(252, 248, 245, 0.32);
 }

@@ -1,0 +1,238 @@
+/* Modal de baixo para cima do /admin (ModalInferiorAdmin.jsx), no mesmo
+   desenho dos modais do dashboard (modalTopoDashboard.css). */
+
+/* fixed + inset 0 + 100dvh: no iPhone, 100vh deixa a barra do Safari
+   cortar o painel e a tela "trava". */
+.sobreposicaoModalInferiorAdmin {
+    position: fixed;
+    inset: 0;
+    height: 100dvh;
+    z-index: 1200;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+    background: rgba(20, 0, 8, 0.55);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    animation: surgirSobreposicaoModalInferiorAdmin 0.25s ease both;
+}
+
+.sobreposicaoSaindoModalInferiorAdmin {
+    animation: sumirSobreposicaoModalInferiorAdmin 0.26s ease both;
+}
+
+.painelModalInferiorAdmin {
+    width: 100%;
+    max-height: 86dvh;
+    display: flex;
+    flex-direction: column;
+    background: var(--vermelhoEscuro);
+    border-radius: 15px 15px 0 0;
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.45);
+    color: #fcf8f5;
+    font-family: var(--fonteCorpoMontserrat);
+    animation: subirPainelModalInferiorAdmin 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.painelSaindoModalInferiorAdmin {
+    animation: descerPainelModalInferiorAdmin 0.26s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+.cabecalhoModalInferiorAdmin {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 18px 14px;
+    border-bottom: 1px solid rgba(252, 248, 245, 0.08);
+}
+
+.textosCabecalhoModalInferiorAdmin {
+    min-width: 0;
+}
+
+.tituloModalInferiorAdmin {
+    margin: 0;
+    font-family: var(--fonteTituloBungee);
+    font-weight: 400;
+    font-size: 1.1rem;
+    line-height: 1.15;
+    color: #fcf8f5;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+}
+
+.subtituloModalInferiorAdmin {
+    margin: 6px 0 0;
+    font-size: 0.8rem;
+    color: rgba(252, 248, 245, 0.6);
+    overflow-wrap: anywhere;
+}
+
+.botaoFecharModalInferiorAdmin {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(252, 248, 245, 0.08);
+    color: #fcf8f5;
+    cursor: pointer;
+}
+
+.botaoFecharModalInferiorAdmin:focus-visible {
+    outline: 2px solid var(--AmareloAuxApoio);
+    outline-offset: 2px;
+}
+
+.corpoModalInferiorAdmin {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 16px 16px calc(24px + env(safe-area-inset-bottom));
+}
+
+@keyframes subirPainelModalInferiorAdmin {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+}
+
+@keyframes descerPainelModalInferiorAdmin {
+    from { transform: translateY(0); }
+    to   { transform: translateY(100%); }
+}
+
+@keyframes surgirSobreposicaoModalInferiorAdmin {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes sumirSobreposicaoModalInferiorAdmin {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sobreposicaoModalInferiorAdmin,
+    .sobreposicaoSaindoModalInferiorAdmin,
+    .painelModalInferiorAdmin,
+    .painelSaindoModalInferiorAdmin {
+        animation: none;
+    }
+}
+
+/* ── Miolo dos modais de detalhes (lista de dados + ações) ─────
+   Usado pelos modais de detalhes de Pessoas e Conteúdo. */
+
+
+.listaDetalhesItemModalInferiorAdmin {
+    margin: 0 0 18px;
+}
+
+.linhaDetalheItemModalInferiorAdmin {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 11px 0;
+    border-bottom: 1px solid rgba(252, 248, 245, 0.07);
+}
+
+.rotuloDetalheItemModalInferiorAdmin {
+    flex: 0 0 auto;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(252, 248, 245, 0.5);
+}
+
+.valorDetalheItemModalInferiorAdmin {
+    margin: 0;
+    min-width: 0;
+    text-align: right;
+    font-size: 0.9rem;
+    color: #fcf8f5;
+    overflow-wrap: anywhere;
+}
+
+.linkTelefoneItemModalInferiorAdmin {
+    color: var(--AmareloAuxApoio);
+    text-decoration: none;
+}
+
+.notaItemModalInferiorAdmin {
+    margin: -6px 0 18px;
+    font-size: 0.78rem;
+    color: rgba(252, 248, 245, 0.55);
+}
+
+/* ── Modal de detalhes: ações ─────────────────────────────────── */
+
+.grupoAcoesItemModalInferiorAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Ações que não se desfazem fácil ficam lado a lado no fim, separadas
+   das de rotina. */
+.linhaAcoesDestrutivasItemModalInferiorAdmin {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px;
+    margin-top: 6px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(252, 248, 245, 0.08);
+}
+
+.botaoAcaoItemModalInferiorAdmin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 48px;
+    padding: 0 16px;
+    border: 1px solid rgba(252, 248, 245, 0.12);
+    border-radius: 12px;
+    background: rgba(252, 248, 245, 0.05);
+    color: #fcf8f5;
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.botaoAcaoItemModalInferiorAdmin:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
+.botaoAcaoItemModalInferiorAdmin:focus-visible {
+    outline: 2px solid var(--AmareloAuxApoio);
+    outline-offset: 2px;
+}
+
+.botaoAcaoPrincipalItemModalInferiorAdmin {
+    background: var(--AmareloAuxApoio);
+    border-color: var(--AmareloAuxApoio);
+    color: var(--vermelhoEscuro);
+}
+
+.botaoAcaoPerigoItemModalInferiorAdmin {
+    color: #f5a3b0;
+    border-color: rgba(245, 163, 176, 0.35);
+}
+
+/* Segundo toque pendente: destaca para não ser confirmado no susto. */
+.botaoAcaoConfirmandoItemModalInferiorAdmin {
+    background: #c0392b;
+    border-color: #c0392b;
+    color: #fff;
+}

@@ -2,7 +2,10 @@ import { useState, useEffect } from 'preact/hooks';
 import PainelLateral from '../../Financas/components/PainelLateral.jsx';
 import CampoMoeda from '../../Financas/components/CampoMoeda.jsx';
 import { formatarCentavos } from '../../Financas/utils/moeda.js';
-import { temAcessoFinanceiro } from '../../../auth/sessao.js';
+import { temAcessoFinanceiro, lerSessao } from '../../../auth/sessao.js';
+import TimesAdmin from './TimesAdmin.jsx';
+import TermoAdmin from './TermoAdmin.jsx';
+import SeletorModalSubabas from '../../../components/SeletorModalSubabas/SeletorModalSubabas.jsx';
 import {
     listarTiposInscricao,
     criarTipoInscricao,
@@ -64,7 +67,9 @@ import {
    6. Cotas de patrocínio (tabela `cota`), nível + valor;
    7. Conquistas (tabela `conquista`) — só edição: cada conquista nasce de
       uma regra em código (CatalogoConquistas, no backend) e é criada no
-      boot. Aqui se define como ela aparece e se já vale.
+      boot. Aqui se define como ela aparece e se já vale;
+   8. Times (TimesAdmin.jsx) e 9. Termo (TermoAdmin.jsx), só para
+      DIRETOR_SITE/PRESIDENTE — os mesmos papéis que o backend aceita.
    Valores de ingresso/cota/meta em centavos na interface, convertidos na
    borda da API. Xp mínimo do nível é inteiro puro, sem conversão.
 
@@ -142,6 +147,7 @@ const SUBABAS = [
 
 export default function InformacoesSemac() {
     const podeVerFinanceiras = temAcessoFinanceiro();
+    const podeGerenciarTimesTermo = ['DIRETOR_SITE', 'PRESIDENTE'].includes(lerSessao()?.role);
     const subabasVisiveis = SUBABAS.filter((subaba) => podeVerFinanceiras || !subaba.somenteFinanceiro);
 
     const [tipos, setTipos] = useState([]);
@@ -679,20 +685,14 @@ export default function InformacoesSemac() {
                 </div>
             </header>
 
-            <div className="listaSubabasAdmin" role="tablist">
-                {subabasVisiveis.map((subaba) => (
-                    <button
-                        key={subaba.id}
-                        type="button"
-                        role="tab"
-                        aria-selected={subabaAtiva === subaba.id}
-                        className={`botaoSubabaAdmin${subabaAtiva === subaba.id ? ' botaoSubabaAdminAtivo' : ''}`}
-                        onClick={() => setSubabaAtiva(subaba.id)}
-                    >
-                        {subaba.rotulo}
-                    </button>
-                ))}
-            </div>
+            {/* Pílulas no desktop; no mobile, uma pílula só que abre um modal de baixo para cima. */}
+            <SeletorModalSubabas
+                subabas={subabasVisiveis}
+                subabaAtiva={subabaAtiva}
+                aoTrocar={setSubabaAtiva}
+                tituloModal="Informações SEMAC"
+                rotuloAcessivel="Sub-abas de Informações SEMAC"
+            />
 
             {/* ══ Sub-aba: Configurações financeiras (parte 1) ══════════
                 Dividida em duas partes porque o bloco de Cotas está no fim
@@ -823,8 +823,7 @@ export default function InformacoesSemac() {
                     <div>
                         <h2 className="tituloBlocoInfoSemac">Camiseta avulsa</h2>
                         <p className="notaBlocoInfoSemac">
-                            Quanto custa cada camiseta além das inclusas no ingresso. É o preço
-                            oferecido na etapa de camiseta do cadastro.
+                            Quanto custa cada camiseta além das inclusas no ingresso.
                         </p>
                     </div>
                 </div>
@@ -1224,6 +1223,12 @@ export default function InformacoesSemac() {
                     </div>
                 )}
             </section>
+
+            {/* ── Times e Termo ───────────────────────────────── */}
+            {podeGerenciarTimesTermo && (<>
+                <TimesAdmin />
+                <TermoAdmin />
+            </>)}
             </>)}
 
             {/* ══ Sub-aba: Configurações financeiras (parte 2) ══════════
@@ -1234,8 +1239,7 @@ export default function InformacoesSemac() {
                     <div>
                         <h2 className="tituloBlocoInfoSemac">Cotas de patrocínio</h2>
                         <p className="notaBlocoInfoSemac">
-                            Benefícios e cores de cada cota seguem definidos no código —
-                            aqui se gerencia o valor exibido na página /cotas.
+                            Benefícios e cores de cada cota seguem definidos no código
                         </p>
                     </div>
                     <button

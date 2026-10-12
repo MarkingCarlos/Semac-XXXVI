@@ -18,6 +18,8 @@ import { createPortal } from 'preact/compat'
 import { atribuirRole, definirAtivo, desconfirmarParticipante, excluirParticipante } from './data/apiParticipantes.js'
 import { temAcessoGestaoParticipantes } from '../../auth/sessao.js'
 import ModalEditarParticipante from './ModalEditarParticipante.jsx'
+import ListaItensMobileAdmin from '../../components/ListaItensMobileAdmin/ListaItensMobileAdmin.jsx'
+import ModalInferiorAdmin from '../../components/ModalInferiorAdmin/ModalInferiorAdmin.jsx'
 
 // Papéis de comissão e seus rótulos amigáveis (espelham o enum Role).
 const PAPEIS_COMISSAO = [
@@ -53,6 +55,19 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
     /* Corrigir nome, e-mail, RA e telefone: só diretoria de site e
        presidência (ver SecurityConfig). */
     const podeEditarDadosMembro = temAcessoGestaoParticipantes()
+    /* Mobile: membro aberto no modal de detalhes. Só o id, buscado na
+       lista a cada render: desconfirmar ou excluir tira a pessoa da
+       comissão, e o modal some sozinho. */
+    const [idMembroDetalhado, setIdMembroDetalhado] = useState(null)
+    const membroDetalhado = comissao.find(m => m.id === idMembroDetalhado) ?? null
+
+    // Fechar o modal descarta um "toque de novo para confirmar" pendente.
+    function fecharDetalhesMembro() {
+        setIdMembroDetalhado(null)
+        setIdConfirmandoDesativar(null)
+        setIdConfirmandoExcluir(null)
+        setIdConfirmandoDesconfirmar(null)
+    }
 
     const filtrados = useMemo(() =>
         comissao.filter(membro =>
@@ -136,7 +151,14 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
 
             {erroAcao && <p class="avisoErroModalParticipantesAdmin">{erroAcao}</p>}
 
-            <div class="scrollTabelaAdmin">
+            {/* Mobile: só os nomes; o toque abre o modal de detalhes. */}
+            <ListaItensMobileAdmin
+                itens={filtrados}
+                textoVazio="Nenhum membro da comissão encontrado."
+                aoSelecionar={membro => { setErroAcao(''); setIdMembroDetalhado(membro.id) }}
+            />
+
+            <div class="scrollTabelaAdmin tabelaOcultaMobileAdmin">
                 <table class="tabelaAdmin">
                     <thead>
                         <tr>
@@ -278,6 +300,24 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
                 Exibindo {filtrados.length} de {comissao.length} membros
             </div>
 
+            {membroDetalhado && (
+                <ModalDetalhesMembro
+                    membro={membroDetalhado}
+                    aoFechar={fecharDetalhesMembro}
+                    erro={erroAcao}
+                    processando={idProcessando === membroDetalhado.id}
+                    podeEditarDadosMembro={podeEditarDadosMembro}
+                    aoEditarDados={membro => { setErroAcao(''); setMembroEmEdicaoDados(membro) }}
+                    aoAlterarFuncao={membro => { setErroAcao(''); setMembroEmEdicao(membro) }}
+                    aoDesconfirmar={desconfirmar}
+                    confirmandoDesconfirmar={idConfirmandoDesconfirmar === membroDetalhado.id}
+                    aoAlternarAtivo={alternarAtivo}
+                    confirmandoDesativar={idConfirmandoDesativar === membroDetalhado.id}
+                    aoExcluir={excluir}
+                    confirmandoExcluir={idConfirmandoExcluir === membroDetalhado.id}
+                />
+            )}
+
             {membroEmEdicaoDados && (
                 <ModalEditarParticipante
                     pessoa={membroEmEdicaoDados}
@@ -294,6 +334,118 @@ export default function TabelaComissao({ comissao, aoAtualizar, aoExcluir }) {
                 />
             )}
         </div>
+    )
+}
+
+// ── Modal de detalhes (mobile) ──────────────────────────────────
+// No mobile a tabela vira uma lista de nomes; este modal mostra o resto
+// das colunas e as mesmas ações, com texto em vez de só ícone. As ações
+// que abrem outro modal fecham este antes, para não empilhar.
+function ModalDetalhesMembro({
+    membro, aoFechar, erro, processando,
+    podeEditarDadosMembro, aoEditarDados, aoAlterarFuncao,
+    aoDesconfirmar, confirmandoDesconfirmar,
+    aoAlternarAtivo, confirmandoDesativar,
+    aoExcluir, confirmandoExcluir,
+}) {
+    const digitosTelefone = membro.telefone?.replace(/\D/g, '')
+
+    return (
+        <ModalInferiorAdmin titulo={membro.nome} subtitulo={membro.email} aoFechar={aoFechar}>
+            {fecharDetalhes => (
+                <>
+                    <dl class="listaDetalhesItemModalInferiorAdmin">
+                        <div class="linhaDetalheItemModalInferiorAdmin">
+                            <dt class="rotuloDetalheItemModalInferiorAdmin">Função</dt>
+                            <dd class="valorDetalheItemModalInferiorAdmin">
+                                <span class="badgeFuncaoComissaoAdmin">{ROTULO_ROLE[membro.role] ?? membro.role}</span>
+                            </dd>
+                        </div>
+                        <div class="linhaDetalheItemModalInferiorAdmin">
+                            <dt class="rotuloDetalheItemModalInferiorAdmin">RA</dt>
+                            <dd class="valorDetalheItemModalInferiorAdmin">{membro.ra ?? '—'}</dd>
+                        </div>
+                        <div class="linhaDetalheItemModalInferiorAdmin">
+                            <dt class="rotuloDetalheItemModalInferiorAdmin">Telefone</dt>
+                            <dd class="valorDetalheItemModalInferiorAdmin">
+                                {digitosTelefone
+                                    ? <a class="linkTelefoneItemModalInferiorAdmin" href={`tel:${digitosTelefone}`}>{textoTelefone(membro.telefone)}</a>
+                                    : '—'}
+                            </dd>
+                        </div>
+                        <div class="linhaDetalheItemModalInferiorAdmin">
+                            <dt class="rotuloDetalheItemModalInferiorAdmin">Conta</dt>
+                            <dd class="valorDetalheItemModalInferiorAdmin">
+                                <span class={`badgeContaAdmin ${membro.ativo ? 'badgeContaAtivoAdmin' : 'badgeContaInativoAdmin'}`}>
+                                    {membro.ativo ? 'Ativo' : 'Inativo'}
+                                </span>
+                            </dd>
+                        </div>
+                    </dl>
+
+                    {erro && <p class="avisoErroModalParticipantesAdmin">{erro}</p>}
+
+                    <div class="grupoAcoesItemModalInferiorAdmin">
+                        <button
+                            type="button"
+                            class="botaoAcaoItemModalInferiorAdmin botaoAcaoPrincipalItemModalInferiorAdmin"
+                            onClick={() => fecharDetalhes(() => aoAlterarFuncao(membro))}
+                        >
+                            Alterar função
+                        </button>
+                        {podeEditarDadosMembro && (
+                            <button
+                                type="button"
+                                class="botaoAcaoItemModalInferiorAdmin"
+                                onClick={() => fecharDetalhes(() => aoEditarDados(membro))}
+                            >
+                                Editar dados
+                            </button>
+                        )}
+                        {/* Reativar é direto e não destrói nada: fica com as de rotina. */}
+                        {!membro.ativo && (
+                            <button
+                                type="button"
+                                class="botaoAcaoItemModalInferiorAdmin"
+                                disabled={processando}
+                                onClick={() => aoAlternarAtivo(membro)}
+                            >
+                                Reativar
+                            </button>
+                        )}
+
+                        <div class="linhaAcoesDestrutivasItemModalInferiorAdmin">
+                            <button
+                                type="button"
+                                class={`botaoAcaoItemModalInferiorAdmin botaoAcaoPerigoItemModalInferiorAdmin ${confirmandoDesconfirmar ? 'botaoAcaoConfirmandoItemModalInferiorAdmin' : ''}`}
+                                disabled={processando}
+                                onClick={() => aoDesconfirmar(membro)}
+                            >
+                                {confirmandoDesconfirmar ? 'Toque de novo para desconfirmar' : 'Desconfirmar'}
+                            </button>
+                            {membro.ativo && (
+                                <button
+                                    type="button"
+                                    class={`botaoAcaoItemModalInferiorAdmin botaoAcaoPerigoItemModalInferiorAdmin ${confirmandoDesativar ? 'botaoAcaoConfirmandoItemModalInferiorAdmin' : ''}`}
+                                    disabled={processando}
+                                    onClick={() => aoAlternarAtivo(membro)}
+                                >
+                                    {confirmandoDesativar ? 'Toque de novo para desativar' : 'Desativar'}
+                                </button>
+                            )}
+                            <button
+                                type="button"
+                                class={`botaoAcaoItemModalInferiorAdmin botaoAcaoPerigoItemModalInferiorAdmin ${confirmandoExcluir ? 'botaoAcaoConfirmandoItemModalInferiorAdmin' : ''}`}
+                                disabled={processando}
+                                onClick={() => aoExcluir(membro)}
+                            >
+                                {confirmandoExcluir ? 'Toque de novo para excluir' : 'Excluir'}
+                            </button>
+                        </div>
+                    </div>
+                </>
+            )}
+        </ModalInferiorAdmin>
     )
 }
 

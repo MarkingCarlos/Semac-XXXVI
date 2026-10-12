@@ -2,8 +2,10 @@ import { useState } from 'preact/hooks';
 import PainelLateral from '../../Financas/components/PainelLateral.jsx';
 import { normalizar } from '../../Financas/utils/moeda.js';
 import { criarSorteio, atualizarSorteio, excluirSorteio } from '../../Sorteio/data/apiSorteio.js';
+import ListaItensMobileAdmin from '../../../components/ListaItensMobileAdmin/ListaItensMobileAdmin.jsx';
+import ModalInferiorAdmin from '../../../components/ModalInferiorAdmin/ModalInferiorAdmin.jsx';
 
-/* Sub-aba "Sorteios" da seção Brindes — tabela `sorteio` (nome + evento).
+/* Sub-aba "Sorteios" da seção Conteúdo — tabela `sorteio` (nome + evento).
    Um evento pode ter vários sorteios; cada brinde pertence a um. Os
    ganhadores (quem ganhou e quem realizou) são gravados pela tela
    /sorteio e aparecem aqui, só leitura, ao abrir um sorteio.
@@ -29,6 +31,17 @@ export default function SorteiosBrindes({ sorteios, eventos, carregando, aoAlter
     const [sorteioEmEdicao, setSorteioEmEdicao] = useState(null);
     const [idConfirmandoExclusaoSorteio, setIdConfirmandoExclusaoSorteio] = useState(null);
     const [filtroSorteios, setFiltroSorteios] = useState('');
+
+    /* Mobile: sorteio aberto no modal de detalhes. Só o id, buscado na
+       lista a cada render: o modal some sozinho depois de uma exclusão. */
+    const [idSorteioDetalhado, setIdSorteioDetalhado] = useState(null);
+    const sorteioDetalhado = sorteios.find((s) => s.id === idSorteioDetalhado) ?? null;
+
+    // Fechar o modal descarta um "toque de novo para confirmar" pendente.
+    const fecharDetalhesSorteio = () => {
+        setIdSorteioDetalhado(null);
+        setIdConfirmandoExclusaoSorteio(null);
+    };
 
     const sorteiosFiltrados = filtroSorteios.trim()
         ? sorteios.filter((sorteio) =>
@@ -116,7 +129,20 @@ export default function SorteiosBrindes({ sorteios, eventos, carregando, aoAlter
             {erroSorteios && !painelSorteioAberto && <p className="avisoErroAdmin" role="alert">{erroSorteios}</p>}
 
             <div className="envelopeTabelaFinancas">
-                <table className="tabelaFinancas">
+                {/* Mobile: só os nomes; o toque abre o modal de detalhes. */}
+                <ListaItensMobileAdmin
+                    itens={carregando ? [] : sorteiosFiltrados}
+                    textoVazio={
+                        carregando
+                            ? 'Carregando sorteios…'
+                            : filtroSorteios.trim()
+                                ? 'Nenhum sorteio encontrado para esse filtro.'
+                                : 'Nenhum sorteio cadastrado ainda.'
+                    }
+                    aoSelecionar={(sorteio) => { setErroSorteios(''); setIdSorteioDetalhado(sorteio.id); }}
+                />
+
+                <table className="tabelaFinancas tabelaOcultaMobileAdmin">
                     <thead>
                         <tr>
                             <th>Sorteio</th>
@@ -197,6 +223,67 @@ export default function SorteiosBrindes({ sorteios, eventos, carregando, aoAlter
                     </tbody>
                 </table>
             </div>
+
+            {/* ── Modal de detalhes do sorteio (mobile) ──────────
+                Mesmas colunas e ações da tabela; "Editar" fecha o modal
+                antes de abrir o painel, para não empilhar. */}
+            {sorteioDetalhado && (
+                <ModalInferiorAdmin
+                    titulo={sorteioDetalhado.nome}
+                    subtitulo={sorteioDetalhado.eventoNome}
+                    aoFechar={fecharDetalhesSorteio}
+                >
+                    {(fecharDetalhes) => {
+                        const confirmandoExclusao = idConfirmandoExclusaoSorteio === sorteioDetalhado.id;
+                        return (
+                            <>
+                                <dl className="listaDetalhesItemModalInferiorAdmin">
+                                    <div className="linhaDetalheItemModalInferiorAdmin">
+                                        <dt className="rotuloDetalheItemModalInferiorAdmin">Evento</dt>
+                                        <dd className="valorDetalheItemModalInferiorAdmin">
+                                            <span className="celulaEventoSorteiosBrindes">
+                                                <span>{sorteioDetalhado.eventoNome}</span>
+                                                <span className="dataEventoSorteiosBrindes">
+                                                    {formatarDataHoraSorteio(sorteioDetalhado.eventoDataHoraInicio)}
+                                                </span>
+                                            </span>
+                                        </dd>
+                                    </div>
+                                    <div className="linhaDetalheItemModalInferiorAdmin">
+                                        <dt className="rotuloDetalheItemModalInferiorAdmin">Brindes</dt>
+                                        <dd className="valorDetalheItemModalInferiorAdmin">{sorteioDetalhado.quantidadeBrindes}</dd>
+                                    </div>
+                                    <div className="linhaDetalheItemModalInferiorAdmin">
+                                        <dt className="rotuloDetalheItemModalInferiorAdmin">Entregues</dt>
+                                        <dd className="valorDetalheItemModalInferiorAdmin">{sorteioDetalhado.quantidadeEntregue}</dd>
+                                    </div>
+                                </dl>
+
+                                {erroSorteios && <p className="avisoErroAdmin" role="alert">{erroSorteios}</p>}
+
+                                <div className="grupoAcoesItemModalInferiorAdmin">
+                                    <button
+                                        type="button"
+                                        className="botaoAcaoItemModalInferiorAdmin botaoAcaoPrincipalItemModalInferiorAdmin"
+                                        onClick={() => fecharDetalhes(() => abrirEdicaoSorteio(sorteioDetalhado))}
+                                    >
+                                        Editar e ver ganhadores
+                                    </button>
+                                    <div className="linhaAcoesDestrutivasItemModalInferiorAdmin">
+                                        <button
+                                            type="button"
+                                            className={`botaoAcaoItemModalInferiorAdmin botaoAcaoPerigoItemModalInferiorAdmin ${confirmandoExclusao ? 'botaoAcaoConfirmandoItemModalInferiorAdmin' : ''}`}
+                                            onClick={() => removerSorteio(sorteioDetalhado.id)}
+                                        >
+                                            {confirmandoExclusao ? 'Toque de novo para excluir' : 'Excluir'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </>
+                        );
+                    }}
+                </ModalInferiorAdmin>
+            )}
 
             <PainelLateral
                 aberto={painelSorteioAberto}

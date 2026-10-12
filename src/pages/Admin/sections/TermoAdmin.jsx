@@ -3,7 +3,9 @@ import { listarPalavrasTermo, salvarPalavraTermo } from '../data/apiTermo.js';
 import './termoAdmin.css';
 
 /* Termo — as quatro palavras do jogo em /termo, uma por dia do evento
-   (tabela `termo_palavra`). Restrito a DIRETOR_SITE/PRESIDENTE.
+   (tabela `termo_palavra`). Bloco da sub-aba Gamificação de Informações
+   SEMAC, restrito a DIRETOR_SITE/PRESIDENTE (quem monta ou não este
+   componente é o InformacoesSemac.jsx).
 
    A data de cada dia é o que decide qual palavra está valendo: o servidor
    compara com a data de hoje e não precisa de ninguém virando chave
@@ -101,15 +103,15 @@ export default function TermoAdmin() {
     const diasDefinidos = dias.filter((d) => d.definida).length;
 
     return (
-        <div className="conteudoTermoAdmin">
-            <header className="cabecalhoSecaoFinancas">
+        <section className="blocoInfoSemac" aria-label="Termo">
+            <div className="cabecalhoBlocoInfoSemac cabecalhoBlocoTimesTermoInfoSemac">
                 <div>
-                    <h1 className="tituloSecaoFinancas">Termo</h1>
-                    <p className="subtituloSecaoFinancas">
+                    <h2 className="tituloBlocoInfoSemac">Termo</h2>
+                    <p className="notaBlocoInfoSemac">
                         A palavra de cada dia do jogo em /termo — 5 letras, acertar vale 5 XP
                     </p>
                 </div>
-            </header>
+            </div>
 
             {erro && <p className="avisoErroAdmin" role="alert">{erro}</p>}
 
@@ -204,6 +206,6 @@ export default function TermoAdmin() {
                     })}
                 </div>
             )}
-        </div>
+        </section>
     );
 }

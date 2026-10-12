@@ -24,6 +24,8 @@ import { temAcessoDiretoria, temAcessoGestaoParticipantes } from '../../auth/ses
 import ModalConquistasParticipante from './ModalConquistasParticipante.jsx'
 import ModalAdicionarParticipante from './ModalAdicionarParticipante.jsx'
 import ModalEditarParticipante from './ModalEditarParticipante.jsx'
+import ListaItensMobileAdmin from '../../components/ListaItensMobileAdmin/ListaItensMobileAdmin.jsx'
+import ModalInferiorAdmin from '../../components/ModalInferiorAdmin/ModalInferiorAdmin.jsx'
 
 const ANO_ATUAL = new Date().getFullYear()
 
@@ -224,6 +226,18 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
        diretoria de site e a presidência (ver SecurityConfig). */
     const podeEditarParticipante = temAcessoGestaoParticipantes()
     const [participanteEmEdicao, setParticipanteEmEdicao] = useState(null)
+    /* Mobile: participante aberto no modal de detalhes. Guarda só o id e
+       busca na lista a cada render, para o modal refletir na hora uma
+       desconfirmação e sumir sozinho depois de uma exclusão. */
+    const [idParticipanteDetalhado, setIdParticipanteDetalhado] = useState(null)
+    const participanteDetalhado = participantes.find(p => p.id === idParticipanteDetalhado) ?? null
+
+    // Fechar o modal descarta um "toque de novo para confirmar" pendente.
+    function fecharDetalhesParticipante() {
+        setIdParticipanteDetalhado(null)
+        setIdConfirmandoExcluir(null)
+        setIdConfirmandoDesconfirmar(null)
+    }
 
     // Com o switch desligado, ordem alfabética (padrão). Ligado, mais
     // recentes primeiro por inscritoEm — cadastros antigos sem essa data
@@ -319,7 +333,18 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
             {erroExclusao && <p class="avisoErroModalParticipantesAdmin">{erroExclusao}</p>}
             {erroDesconfirmar && <p class="avisoErroModalParticipantesAdmin">{erroDesconfirmar}</p>}
 
-            <div class="scrollTabelaAdmin">
+            {/* Mobile: só os nomes; o toque abre o modal de detalhes. */}
+            <ListaItensMobileAdmin
+                itens={filtrados}
+                textoVazio="Nenhum participante encontrado."
+                aoSelecionar={participante => {
+                    setErroExclusao('')
+                    setErroDesconfirmar('')
+                    setIdParticipanteDetalhado(participante.id)
+                }}
+            />
+
+            <div class="scrollTabelaAdmin tabelaOcultaMobileAdmin">
                 <table class="tabelaAdmin">
                     <thead>
                         <tr>
@@ -364,6 +389,25 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
                 Exibindo {filtrados.length} de {participantes.length} participantes
             </div>
 
+            {participanteDetalhado && (
+                <ModalDetalhesParticipante
+                    participante={participanteDetalhado}
+                    aoFechar={fecharDetalhesParticipante}
+                    erro={erroExclusao || erroDesconfirmar}
+                    podeVerConquistas={podeVerConquistas}
+                    podeEditarParticipante={podeEditarParticipante}
+                    aoAbrirConfirmacao={setParticipanteEmConfirmacao}
+                    aoEditarParticipante={setParticipanteEmEdicao}
+                    aoVerConquistas={setParticipanteVendoConquistas}
+                    aoDesconfirmar={desconfirmar}
+                    confirmandoDesconfirmar={idConfirmandoDesconfirmar === participanteDetalhado.id}
+                    processandoDesconfirmar={idProcessandoDesconfirmar === participanteDetalhado.id}
+                    aoExcluir={excluir}
+                    confirmandoExcluir={idConfirmandoExcluir === participanteDetalhado.id}
+                    processandoExcluir={idProcessandoExcluir === participanteDetalhado.id}
+                />
+            )}
+
             {cadastroManualAberto && (
                 <ModalAdicionarParticipante
                     aoFechar={() => setCadastroManualAberto(false)}
@@ -394,6 +438,126 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
                 />
             )}
         </div>
+    )
+}
+
+// ── Modal de detalhes (mobile) ──────────────────────────────────
+// No mobile a tabela vira uma lista de nomes; este modal mostra o resto
+// das colunas e as mesmas ações, agora com texto em vez de só ícone.
+// As ações que abrem outro modal fecham este antes, para não empilhar.
+function ModalDetalhesParticipante({
+    participante, aoFechar, erro,
+    podeVerConquistas, podeEditarParticipante,
+    aoAbrirConfirmacao, aoEditarParticipante, aoVerConquistas,
+    aoDesconfirmar, confirmandoDesconfirmar, processandoDesconfirmar,
+    aoExcluir, confirmandoExcluir, processandoExcluir,
+}) {
+    const confirmado = participante.role === 'PARTICIPANTE'
+    const digitosTelefone = participante.telefone?.replace(/\D/g, '')
+
+    return (
+        <ModalInferiorAdmin titulo={participante.nome} subtitulo={participante.email} aoFechar={aoFechar}>
+            {fecharDetalhes => (
+                <>
+                    <dl class="listaDetalhesItemModalInferiorAdmin">
+                        <div class="linhaDetalheItemModalInferiorAdmin">
+                            <dt class="rotuloDetalheItemModalInferiorAdmin">Inscrição</dt>
+                            <dd class="valorDetalheItemModalInferiorAdmin">
+                                {confirmado
+                                    ? <span class="badgeConfirmadoParticipantesAdmin">Confirmado</span>
+                                    : 'Aguardando confirmação'}
+                            </dd>
+                        </div>
+                        <div class="linhaDetalheItemModalInferiorAdmin">
+                            <dt class="rotuloDetalheItemModalInferiorAdmin">RA</dt>
+                            <dd class="valorDetalheItemModalInferiorAdmin">{participante.ra ?? '—'}</dd>
+                        </div>
+                        <div class="linhaDetalheItemModalInferiorAdmin">
+                            <dt class="rotuloDetalheItemModalInferiorAdmin">Telefone</dt>
+                            <dd class="valorDetalheItemModalInferiorAdmin">
+                                {digitosTelefone
+                                    ? <a class="linkTelefoneItemModalInferiorAdmin" href={`tel:${digitosTelefone}`}>{textoTelefone(participante.telefone)}</a>
+                                    : '—'}
+                            </dd>
+                        </div>
+                        <div class="linhaDetalheItemModalInferiorAdmin">
+                            <dt class="rotuloDetalheItemModalInferiorAdmin">Conta</dt>
+                            <dd class="valorDetalheItemModalInferiorAdmin">
+                                <span class={`badgeContaAdmin ${participante.ativo ? 'badgeContaAtivoAdmin' : 'badgeContaInativoAdmin'}`}>
+                                    {participante.ativo ? 'Ativo' : 'Inativo'}
+                                </span>
+                            </dd>
+                        </div>
+                        <div class="linhaDetalheItemModalInferiorAdmin">
+                            <dt class="rotuloDetalheItemModalInferiorAdmin">Ingresso</dt>
+                            <dd class="valorDetalheItemModalInferiorAdmin">{participante.tipoInscricao?.nome ?? '—'}</dd>
+                        </div>
+                        <div class="linhaDetalheItemModalInferiorAdmin">
+                            <dt class="rotuloDetalheItemModalInferiorAdmin">Nível</dt>
+                            <dd class="valorDetalheItemModalInferiorAdmin">
+                                {participante.nivel ? `${participante.nivel.nome} (${participante.xp ?? 0} xp)` : '—'}
+                            </dd>
+                        </div>
+                    </dl>
+                    <p class="notaItemModalInferiorAdmin">{formatarDataInscricao(participante.inscritoEm)}</p>
+
+                    {erro && <p class="avisoErroModalParticipantesAdmin">{erro}</p>}
+
+                    <div class="grupoAcoesItemModalInferiorAdmin">
+                        <button
+                            type="button"
+                            class="botaoAcaoItemModalInferiorAdmin botaoAcaoPrincipalItemModalInferiorAdmin"
+                            onClick={() => fecharDetalhes(() => aoAbrirConfirmacao(participante))}
+                        >
+                            {confirmado ? 'Alterar papel e ingresso' : 'Confirmar inscrição'}
+                        </button>
+                        {podeEditarParticipante && (
+                            <button
+                                type="button"
+                                class="botaoAcaoItemModalInferiorAdmin"
+                                onClick={() => fecharDetalhes(() => aoEditarParticipante(participante))}
+                            >
+                                Editar dados e minicursos
+                            </button>
+                        )}
+                        {podeVerConquistas && confirmado && (
+                            <button
+                                type="button"
+                                class="botaoAcaoItemModalInferiorAdmin"
+                                onClick={() => fecharDetalhes(() => aoVerConquistas(participante))}
+                            >
+                                Conquistas
+                            </button>
+                        )}
+
+                        <div class="linhaAcoesDestrutivasItemModalInferiorAdmin">
+                            {confirmado && (
+                                <button
+                                    type="button"
+                                    class={`botaoAcaoItemModalInferiorAdmin botaoAcaoPerigoItemModalInferiorAdmin ${confirmandoDesconfirmar ? 'botaoAcaoConfirmandoItemModalInferiorAdmin' : ''}`}
+                                    disabled={processandoDesconfirmar}
+                                    onClick={() => aoDesconfirmar(participante)}
+                                >
+                                    {processandoDesconfirmar
+                                        ? 'Desconfirmando...'
+                                        : confirmandoDesconfirmar ? 'Toque de novo para desconfirmar' : 'Desconfirmar'}
+                                </button>
+                            )}
+                            <button
+                                type="button"
+                                class={`botaoAcaoItemModalInferiorAdmin botaoAcaoPerigoItemModalInferiorAdmin ${confirmandoExcluir ? 'botaoAcaoConfirmandoItemModalInferiorAdmin' : ''}`}
+                                disabled={processandoExcluir}
+                                onClick={() => aoExcluir(participante)}
+                            >
+                                {processandoExcluir
+                                    ? 'Excluindo...'
+                                    : confirmandoExcluir ? 'Toque de novo para excluir' : 'Excluir'}
+                            </button>
+                        </div>
+                    </div>
+                </>
+            )}
+        </ModalInferiorAdmin>
     )
 }
 
