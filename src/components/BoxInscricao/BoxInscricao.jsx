@@ -497,11 +497,17 @@ export default function BoxInscricao() {
             if (arquivoComprovante) {
                 const formData = new FormData()
                 formData.append('arquivo', arquivoComprovante)
-                await apiFetch(`${API_URL}/api/inscricao/${uuid}/comprovante`, {
+                const respostaComprovante = await apiFetch(`${API_URL}/api/inscricao/${uuid}/comprovante`, {
                     method: 'POST',
                     body: formData,
                     timeout: 60000, // upload de arquivo: janela maior que o padrão
                 })
+                // Formato não aceito ou limite de envios: a pessoa já existe,
+                // então tentar de novo só reenvia o arquivo.
+                if (!respostaComprovante.ok) {
+                    const corpo = await respostaComprovante.json().catch(() => null)
+                    throw new Error(corpo?.mensagem || 'Erro ao enviar o comprovante. Tente novamente.')
+                }
             }
 
             setEtapa(5)

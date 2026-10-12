@@ -42,8 +42,10 @@ async function lerRespostaOuFalhar(resposta, mensagemErro) {
     return resposta.json();
 }
 
+/* GET exige login (traz o valor de cada doação); o site público usa
+   /api/doador/resumo-publico. */
 export async function listarDoadores() {
-    const resposta = await apiFetch(ROTA_DOADORES);
+    const resposta = await apiFetch(ROTA_DOADORES, { headers: cabecalhosAuth() });
     const lista = await lerRespostaOuFalhar(resposta, 'Falha ao carregar doações.');
     return lista.map(deResposta);
 }
