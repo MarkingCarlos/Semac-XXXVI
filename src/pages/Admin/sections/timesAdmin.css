@@ -1,0 +1,255 @@
+/* Seção TimesAdmin do /admin — interruptor da revelação, sorteio e os
+   três cartões de time. Botões, campos e a faixa de resumo vêm do
+   financeiro (financas.css) e do admin.css; aqui só o que é próprio. */
+
+.avisoSucessoTimesAdmin {
+    margin: 0 0 18px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: rgba(82, 171, 177, 0.16);
+    border: 1px solid rgba(82, 171, 177, 0.45);
+    color: #c9eef0;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* ── Interruptor e sorteio ───────────────────────────────────── */
+
+.faixaControlesTimesAdmin {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.cartaoInterruptorTimesAdmin,
+.cartaoSorteioTimesAdmin {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 20px;
+    border-radius: 14px;
+    background: rgba(61, 1, 24, 0.35);
+    border: 1px solid rgba(252, 248, 245, 0.08);
+}
+
+.cartaoInterruptorTimesAdmin {
+    cursor: pointer;
+    position: relative;
+}
+
+/* O checkbox fica invisível por cima do trilho: continua acessível por
+   teclado e leitor de tela, e o trilho desenha o estado. */
+.entradaInterruptorTimesAdmin {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.trilhoInterruptorTimesAdmin {
+    flex-shrink: 0;
+    position: relative;
+    width: 48px;
+    height: 26px;
+    border-radius: 999px;
+    background: rgba(252, 248, 245, 0.18);
+    transition: background-color 0.2s ease;
+}
+
+.trilhoInterruptorTimesAdmin::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #edecec;
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.entradaInterruptorTimesAdmin:checked + .trilhoInterruptorTimesAdmin {
+    background: #E79839;
+}
+
+.entradaInterruptorTimesAdmin:checked + .trilhoInterruptorTimesAdmin::after {
+    transform: translateX(22px);
+}
+
+.entradaInterruptorTimesAdmin:focus-visible + .trilhoInterruptorTimesAdmin {
+    outline: 2px solid #edecec;
+    outline-offset: 2px;
+}
+
+.entradaInterruptorTimesAdmin:disabled + .trilhoInterruptorTimesAdmin {
+    opacity: 0.5;
+}
+
+.textoInterruptorTimesAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.8rem;
+    color: rgba(252, 248, 245, 0.7);
+}
+
+.textoInterruptorTimesAdmin strong {
+    font-family: var(--fonteTituloBungee);
+    font-weight: 400;
+    font-size: 0.95rem;
+    color: #edecec;
+}
+
+.cartaoSorteioTimesAdmin {
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.textoSorteioTimesAdmin {
+    flex: 1 1 200px;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: rgba(252, 248, 245, 0.75);
+}
+
+.textoAlertaSorteioTimesAdmin {
+    color: #f6c98f;
+    font-weight: 600;
+}
+
+.acoesSorteioTimesAdmin {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* ── Cartões dos times ───────────────────────────────────────── */
+
+.listaCartoesTimesAdmin {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+.cartaoTimeTimesAdmin {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 26px 18px 18px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: rgba(61, 1, 24, 0.35);
+    border: 1px solid rgba(252, 248, 245, 0.08);
+}
+
+.faixaCorCartaoTimesAdmin {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 6px;
+    background: var(--corTimeAdmin);
+}
+
+.circuloMascoteTimesAdmin {
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    background: var(--corTimeAdmin);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--corTimeAdmin) 35%, transparent);
+}
+
+.imgMascoteTimesAdmin {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Mesmo encaixe de /time (time.css, .imgMascoteContidoTime). */
+.imgMascoteContidoTimesAdmin {
+    box-sizing: border-box;
+    object-fit: contain;
+    background: #F7F7F7;
+}
+
+.semMascoteTimesAdmin {
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.7rem;
+    line-height: 1.2;
+    text-align: center;
+    color: rgba(252, 248, 245, 0.85);
+}
+
+.formularioNomeTimesAdmin {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.entradaNomeTimesAdmin {
+    text-transform: uppercase;
+    font-family: var(--fonteTituloBungee);
+    letter-spacing: 0.04em;
+}
+
+.acoesCartaoTimesAdmin {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.rotuloUploadMascoteTimesAdmin {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+}
+
+.rotuloUploadMascoteTimesAdmin input[type="file"] {
+    display: none;
+}
+
+.listaNumerosTimesAdmin {
+    width: 100%;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.listaNumerosTimesAdmin div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 10px 6px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.18);
+}
+
+.listaNumerosTimesAdmin dt {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: rgba(252, 248, 245, 0.5);
+}
+
+.listaNumerosTimesAdmin dd {
+    margin: 0;
+    font-family: var(--fonteTituloBungee);
+    font-size: 1.05rem;
+    color: #edecec;
+    font-variant-numeric: tabular-nums;
+}
+
+.notaRodapeTimesAdmin {
+    margin: 16px 0 0;
+    font-size: 0.75rem;
+    color: rgba(252, 248, 245, 0.55);
+}

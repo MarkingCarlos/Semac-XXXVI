@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'preact/hooks'
 import { useLocation } from 'wouter'
 import { salvarSessao, temAcessoFinanceiro, temAcessoPrevisao, temAcessoAdmin, temAcessoParticipante } from '../../auth/sessao.js'
 import { apiFetch } from '../../lib/apiFetch.js'
+import { lerConfiguracaoInscricao } from '../../pages/Admin/data/apiConfiguracaoInscricao.js'
 import { criarPagamentoCartao } from './apiPagamento.js'
 import { carregarMercadoPago } from './lib/carregarMercadoPago.js'
 import ModalRecuperarSenha from './ModalRecuperarSenha.jsx'
@@ -45,6 +46,8 @@ function destinoPosLogin(rotaRetorno) {
         if (rotaRetorno === '/financeiro' && temAcessoPrevisao())            return rotaRetorno
         if (ROTAS_ADMIN.includes(rotaRetorno) && temAcessoAdmin())          return rotaRetorno
         if (rotaRetorno === '/participantes' && temAcessoParticipante())     return rotaRetorno
+        // QR code do cartão do evento: volta direto para a revelação do time
+        if (rotaRetorno === '/time' && temAcessoParticipante())              return rotaRetorno
     }
     if (temAcessoAdmin())        return '/admin'
     if (temAcessoParticipante()) return '/participantes'
@@ -112,7 +115,25 @@ export default function BoxInscricao() {
     const [, navigate] = useLocation()
     const { tab: tabInicial, next: rotaRetorno } = lerParametrosNavegacao()
 
-    const [aba,       setAba]       = useState(tabInicial === 'entrar' ? 'entrar' : 'inscricao')
+    const [abaEscolhida, setAbaEscolhida] = useState(tabInicial === 'entrar' ? 'entrar' : 'inscricao')
+
+    /* Interruptor "Inscreva-se" do /admin (Informações SEMAC). null enquanto
+       carrega. Fechadas, a caixa vira só login: a aba "Inscrever-se" some e
+       nem um link antigo com ?tab=inscricao abre o formulário — o backend
+       também recusa o cadastro. Enquanto carrega, mostra o login para o
+       formulário de inscrição não piscar e sumir. */
+    const [inscricoesAbertas, setInscricoesAbertas] = useState(null)
+    const aba = inscricoesAbertas === true ? abaEscolhida : 'entrar'
+
+    useEffect(() => {
+        let ativo = true
+        lerConfiguracaoInscricao(new Date().getFullYear())
+            .then((abertas) => { if (ativo) setInscricoesAbertas(abertas) })
+            /* Falha de rede não pode travar quem quer se inscrever; se
+               estiverem fechadas, o backend recusa o envio. */
+            .catch(() => { if (ativo) setInscricoesAbertas(true) })
+        return () => { ativo = false }
+    }, [])
     const [abaSaindo, setAbaSaindo] = useState(false)
     const [recuperarSenhaAberto, setRecuperarSenhaAberto] = useState(false)
     const [etapa,     setEtapa]     = useState(1)
@@ -312,7 +333,7 @@ export default function BoxInscricao() {
         setFeedback(null)
         setAbaSaindo(true)
         setTimeout(() => {
-            setAba(novaAba)
+            setAbaEscolhida(novaAba)
             if (novaAba === 'inscricao') { setEtapa(1); setSubEtapaDados('identificacao') }
             setAbaSaindo(false)
         }, 200)
@@ -567,18 +588,20 @@ export default function BoxInscricao() {
         <div class={`boxInscricao${aba === 'entrar' ? ' boxInscricaoAbaEntrar' : ''}`}>
 
             {/* ── Abas ───────────────────────────────────────────── */}
-            <div class="abasInscricao">
-                <button
-                    class={`abaInscricao ${aba === 'inscricao' ? 'abaInscricaoAtiva' : ''}`}
-                    onClick={() => trocarAba('inscricao')}
-                >
-                    Inscrever-se
-                </button>
+            <div class={`abasInscricao${inscricoesAbertas === true ? '' : ' abasInscricaoSoEntrar'}`}>
+                {inscricoesAbertas === true && (
+                    <button
+                        class={`abaInscricao ${aba === 'inscricao' ? 'abaInscricaoAtiva' : ''}`}
+                        onClick={() => trocarAba('inscricao')}
+                    >
+                        Inscrever-se
+                    </button>
+                )}
                 <button
                     class={`abaInscricao ${aba === 'entrar' ? 'abaInscricaoAtiva' : ''}`}
                     onClick={() => trocarAba('entrar')}
                 >
-                    Entrar
+                    Bem-vindo de volta
                 </button>
             </div>
 

@@ -20,6 +20,7 @@ const ConjuntosCotacao = lazy(() => import('./pages/Financas/conjuntos/Conjuntos
 const ConjuntoDetalhe = lazy(() => import('./pages/Financas/conjuntos/ConjuntoDetalhe.jsx'));
 // import Ranking from "./pages/Ranking/paginaRanking.jsx";
 const Participantes = lazy(() => import('./pages/Participantes/Participantes.jsx'));
+const PaginaTime = lazy(() => import('./pages/Time/time.jsx'));
 
 function CarregandoRota() {
     return (
@@ -73,6 +74,14 @@ function RotaParticipantes() {
         : <Redirect to="/inscricoes?tab=entrar&next=/participantes" />;
 }
 
+/* /time é o link do QR code do cartão do evento: quem não está logado
+   entra e volta direto para a revelação do time. */
+function RotaTime() {
+    return temAcessoParticipante()
+        ? <PaginaTime />
+        : <Redirect to="/inscricoes?tab=entrar&next=/time" />;
+}
+
 function RotaCheckin() {
     return temAcessoAdmin()
         ? <Checkin />
@@ -97,6 +106,7 @@ render(
             <Route path="/cotas"><PaginaCotas /></Route>
             <Route path="/participantes"><RotaParticipantes /></Route>
             <Route path="/checkin"><RotaCheckin /></Route>
+            <Route path="/time"><RotaTime /></Route>
             <Route path="/termo"><Termo/></Route>
             <Route path="/sorteio"><RotaSorteio/></Route>
             {/*<Route path="/ranking"><Ranking /></Route>*/}

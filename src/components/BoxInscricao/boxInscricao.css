@@ -30,6 +30,11 @@
     margin-bottom: 1.5rem;
 }
 
+/* Inscrições fechadas: só a aba "Entrar", ocupando a largura toda. */
+.abasInscricaoSoEntrar {
+    grid-template-columns: 1fr;
+}
+
 .abaInscricao {
     background: none;
     border: none;

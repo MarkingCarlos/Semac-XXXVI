@@ -10,6 +10,7 @@ import Conteudo from './sections/Conteudo.jsx';
 import Brindes from './sections/Brindes.jsx';
 import InformacoesSemac from './sections/InformacoesSemac.jsx';
 import Termo from './sections/TermoAdmin.jsx';
+import TimesAdmin from './sections/TimesAdmin.jsx';
 import Mensagens from './sections/Mensagens.jsx';
 import Pessoas from './sections/Pessoas.jsx';
 import MenuFabModulos from '../../components/MenuFabModulos/MenuFabModulos.jsx';
@@ -32,6 +33,7 @@ const SECOES = [
     { id: 'pessoas', rotulo: 'Pessoas', marca: 'P', classeMarcador: 'marcadorAmareloMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
     { id: 'informacoes', rotulo: 'Informações SEMAC', marca: 'IS', classeMarcador: 'marcadorAzulMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO'] },
     { id: 'termo', rotulo: 'Termo', marca: 'T', classeMarcador: 'marcadorRosaMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
+    { id: 'times', rotulo: 'Times', marca: 'TM', classeMarcador: 'marcadorAzulMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
     { id: 'mensagens', rotulo: 'Mensagens', marca: 'M', classeMarcador: 'marcadorVermelhoMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
 ];
 
@@ -213,6 +215,7 @@ export default function Admin() {
                     )}
                     {secaoAtiva === 'informacoes' && <InformacoesSemac />}
                     {secaoAtiva === 'termo' && <Termo />}
+                    {secaoAtiva === 'times' && <TimesAdmin />}
                     {secaoAtiva === 'mensagens' && <Mensagens />}
                 </section>
             </main>

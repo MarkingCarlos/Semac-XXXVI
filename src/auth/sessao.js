@@ -137,6 +137,12 @@ export function temAcessoGestaoParticipantes() {
     return !!sessao && PAPEIS_GESTAO_PARTICIPANTES.includes(sessao.role) && !sessaoExpirada();
 }
 
+/* Qualquer sessão com token ainda válido, com ou sem papel — inclui quem
+   está com a inscrição aguardando confirmação. Usado pelo botão da Home. */
+export function temSessaoValida() {
+    return !sessaoExpirada();
+}
+
 export function temAcessoParticipante() {
     const sessao = lerSessao();
     return !!sessao && PAPEIS_PARTICIPANTE.includes(sessao.role) && !sessaoExpirada();
