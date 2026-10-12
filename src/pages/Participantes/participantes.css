@@ -683,7 +683,7 @@
 
 .gradeCardsModalMinicursosParticipantes {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit,  1fr);
   gap: 12px;
   align-items: stretch;
 }
@@ -735,6 +735,7 @@
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .botaoEscolherCardOpcaoModalMinicursosParticipantes,
