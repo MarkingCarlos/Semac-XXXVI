@@ -1425,6 +1425,7 @@
 @media (max-width: 768px) {
   .tituloCardAtividadeAgendaParticipantes {
     font-size: 12px;
+    text-align: left;
   }
   .detalheCardAtividadeAgendaParticipantes {
     text-align: left;
