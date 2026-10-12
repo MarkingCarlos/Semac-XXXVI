@@ -51,6 +51,15 @@ function formatarReais(valor) {
     return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 }
 
+// inscritoEm vem null para cadastros anteriores à coluna (V22).
+function formatarDataInscricao(inscritoEm) {
+    if (!inscritoEm) return 'Data de inscrição não registrada'
+    const dataInscricao = new Date(inscritoEm)
+    const dia = dataInscricao.toLocaleDateString('pt-BR')
+    const hora = dataInscricao.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+    return `Inscrito em ${dia} às ${hora}`
+}
+
 // Papéis de comissão escolhidos no dropdown quando a categoria é "Membro".
 const PAPEIS_COMISSAO = [
     { valor: 'MEMBRO',             rotulo: 'Membro' },
@@ -494,6 +503,9 @@ function ModalConfirmarParticipante({ participante, aoFechar, aoConfirmado }) {
                         <h3 class="tituloModalParticipantesAdmin">Confirmar inscrição</h3>
                         <p class="subtituloModalParticipantesAdmin">
                             Defina o papel de <strong>{participante.nome}</strong> no sistema.
+                            <span class="textoDataInscricaoModalAdmin">
+                                {formatarDataInscricao(participante.inscritoEm)}
+                            </span>
                         </p>
 
                         {participante.formaPagamento === 'CARTAO' ? (

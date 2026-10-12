@@ -838,6 +838,12 @@
     color: rgba(237, 236, 236, 0.6);
 }
 .subtituloModalParticipantesAdmin strong { color: var(--Branco); }
+.textoDataInscricaoModalAdmin {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.78rem;
+    color: rgba(237, 236, 236, 0.45);
+}
 
 /* Modal de confirmação com espaço extra pro preview do comprovante */
 .modalConfirmarComComprovanteAdmin { max-width: 480px; }
