@@ -20,7 +20,7 @@ export default function SecaoAgendaParticipantes({
             <div className="cabecalhoSecaoAgendaParticipantes">
                 <span className="tituloSecaoAgendaParticipantes">AGENDA</span>
                 <span className="subtituloSecaoAgendaParticipantes">
-                    Suas atividades da semana: as palestras abertas a todos os inscritos e os minicursos que você escolheu.
+                    Suas atividades da semana
                 </span>
             </div>
 
