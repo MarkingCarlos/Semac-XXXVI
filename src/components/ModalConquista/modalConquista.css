@@ -115,6 +115,7 @@
    já conquistou. */
 .painelModalConquista:not(.painelDesbloqueadaModalConquista) .nomeModalConquista {
     color: rgba(252, 248, 245, 0.75);
+    margin-top: 10px;
 }
 .painelModalConquista:not(.painelDesbloqueadaModalConquista) .pontosModalConquista {
     color: rgba(231, 152, 57, 0.7);
