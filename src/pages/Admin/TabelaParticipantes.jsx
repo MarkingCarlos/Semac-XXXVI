@@ -74,6 +74,30 @@ const PAPEIS_COMISSAO = [
 ]
 
 
+// Dias escolhidos pelo diarista, no formato do backend ('SEG 26/10'),
+// separados por ' · '. null para quem não tem ingresso de diária. Se
+// ainda faltam dias a escolher, avisa quantos; `dias` nulo vale como uma
+// diária, mesma regra do backend (DiaIngressoService.diasContratados).
+const ROTULOS_DIA_SEMANA_INGRESSO = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB']
+
+function textoDiasIngresso(participante) {
+    if (!participante.tipoInscricao?.porDia) return null
+    const diasContratados = participante.dias >= 1 ? participante.dias : 1
+    const diasEscolhidos = (participante.diasIngresso ?? []).map(dataIso => {
+        const [ano, mes, dia] = dataIso.split('-').map(Number)
+        const diaSemana = ROTULOS_DIA_SEMANA_INGRESSO[new Date(ano, mes - 1, dia).getDay()]
+        return `${diaSemana} ${String(dia).padStart(2, '0')}/${String(mes).padStart(2, '0')}`
+    })
+
+    if (diasEscolhidos.length === 0) {
+        return `Ainda não escolheu (${diasContratados} ${diasContratados === 1 ? 'diária' : 'diárias'})`
+    }
+    const faltam = diasContratados - diasEscolhidos.length
+    return faltam > 0
+        ? `${diasEscolhidos.join(' · ')} (falta escolher ${faltam})`
+        : diasEscolhidos.join(' · ')
+}
+
 // Formata o telefone salvo (só dígitos) para exibição: (00) 00000-0000
 // (celular) ou (00) 0000-0000 (fixo). '—' se não houver telefone.
 function textoTelefone(telefone) {
@@ -92,6 +116,7 @@ function LinhaParticipante({
     podeEditarParticipante, aoEditarParticipante,
 }) {
     const confirmado = participante.role === 'PARTICIPANTE'
+    const diasIngresso = textoDiasIngresso(participante)
 
     return (
         <tr>
@@ -106,7 +131,10 @@ function LinhaParticipante({
                     {participante.ativo ? 'Ativo' : 'Inativo'}
                 </span>
             </td>
-            <td class="celulaIngressoParticipantesAdmin">{participante.tipoInscricao?.nome ?? '—'}</td>
+            <td class="celulaIngressoParticipantesAdmin">
+                {participante.tipoInscricao?.nome ?? '—'}
+                {diasIngresso && <span class="diasIngressoParticipantesAdmin">{diasIngresso}</span>}
+            </td>
             <td class="celulaNivelParticipantesAdmin">
                 {participante.nivel ? `${participante.nivel.nome} (${participante.xp ?? 0} xp)` : '—'}
             </td>
@@ -454,6 +482,7 @@ function ModalDetalhesParticipante({
 }) {
     const confirmado = participante.role === 'PARTICIPANTE'
     const digitosTelefone = participante.telefone?.replace(/\D/g, '')
+    const diasIngresso = textoDiasIngresso(participante)
 
     return (
         <ModalInferiorAdmin titulo={participante.nome} subtitulo={participante.email} aoFechar={aoFechar}>
@@ -492,6 +521,12 @@ function ModalDetalhesParticipante({
                             <dt class="rotuloDetalheItemModalInferiorAdmin">Ingresso</dt>
                             <dd class="valorDetalheItemModalInferiorAdmin">{participante.tipoInscricao?.nome ?? '—'}</dd>
                         </div>
+                        {diasIngresso && (
+                            <div class="linhaDetalheItemModalInferiorAdmin">
+                                <dt class="rotuloDetalheItemModalInferiorAdmin">Dias escolhidos</dt>
+                                <dd class="valorDetalheItemModalInferiorAdmin">{diasIngresso}</dd>
+                            </div>
+                        )}
                         <div class="linhaDetalheItemModalInferiorAdmin">
                             <dt class="rotuloDetalheItemModalInferiorAdmin">Nível</dt>
                             <dd class="valorDetalheItemModalInferiorAdmin">

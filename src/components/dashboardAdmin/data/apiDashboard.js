@@ -14,6 +14,7 @@ async function lerOuFalhar(caminho, mensagemErro) {
 }
 
 /* { capacidadeTotal, inscritosTotal, vagasRestantesTotal,
+     participantesTotal, participantesSemMinicurso,
      minicursos: [{ id, nome, dataHoraInicio, local, capacidade, inscritos, vagasRestantes }] } */
 export function buscarMinicursosDashboard() {
     return lerOuFalhar('/minicursos', 'Não foi possível carregar as vagas dos minicursos.');

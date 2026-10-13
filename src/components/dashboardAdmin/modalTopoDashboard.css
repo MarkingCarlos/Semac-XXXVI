@@ -184,6 +184,11 @@
     color: rgba(252, 248, 245, 0.6);
 }
 
+/* Linha inteira abaixo dos totais do modal de vagas, encostada neles. */
+.itemSemMinicursoModalVagasMinicursos {
+    margin: -10px 0 20px;
+}
+
 .listaModalDashboard {
     display: flex;
     flex-direction: column;

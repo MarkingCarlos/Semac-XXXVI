@@ -1154,6 +1154,14 @@
     white-space: nowrap;
 }
 
+/* Dias escolhidos pelo diarista, embaixo do nome do ingresso. */
+.diasIngressoParticipantesAdmin {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
 .avisoVazioIngressoModalAdmin {
     margin: 0.5rem 0 0;
     padding: 0.85rem 1rem;

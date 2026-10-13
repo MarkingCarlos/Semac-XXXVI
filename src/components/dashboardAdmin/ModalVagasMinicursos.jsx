@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useState } from 'preact/hooks';
 import ModalTopoDashboard from './ModalTopoDashboard.jsx';
+import { usarConsultaPeriodica } from './usarConsultaPeriodica.js';
 import { buscarInscritosMinicursoDashboard } from './data/apiDashboard.js';
 import { formatarDiaHora, porcentagem } from './formatoDashboard.js';
 
@@ -7,10 +8,14 @@ import { formatarDiaHora, porcentagem } from './formatoDashboard.js';
    um e, ao escolher um, quem está inscrito nele.
 
    Props:
-     dados    — resposta de GET /api/dashboard/minicursos
+     dados    — resposta de GET /api/dashboard/minicursos (o pai já a
+                atualiza periodicamente)
      aoFechar — () => void */
 export default function ModalVagasMinicursos({ dados, aoFechar }) {
-    const [minicursoSelecionado, setMinicursoSelecionado] = useState(null);
+    /* Só o id, buscado nos dados a cada render: assim a ocupação do
+       minicurso aberto acompanha as atualizações do pai. */
+    const [idMinicursoSelecionado, setIdMinicursoSelecionado] = useState(null);
+    const minicursoSelecionado = dados.minicursos.find((m) => m.id === idMinicursoSelecionado) ?? null;
 
     /* Uma casca só para as duas telas: trocar de tela muda título e
        conteúdo sem refazer a animação de descida. */
@@ -20,12 +25,12 @@ export default function ModalVagasMinicursos({ dados, aoFechar }) {
             subtitulo={minicursoSelecionado
                 ? `${minicursoSelecionado.inscritos} de ${minicursoSelecionado.capacidade} vagas preenchidas`
                 : `${dados.vagasRestantesTotal} vagas restantes`}
-            aoVoltar={minicursoSelecionado ? () => setMinicursoSelecionado(null) : null}
+            aoVoltar={minicursoSelecionado ? () => setIdMinicursoSelecionado(null) : null}
             aoFechar={aoFechar}
         >
             {minicursoSelecionado
-                ? <InscritosMinicurso key={minicursoSelecionado.id} minicurso={minicursoSelecionado} />
-                : <ListaMinicursos dados={dados} aoEscolher={setMinicursoSelecionado} />}
+                ? <InscritosMinicurso key={minicursoSelecionado.id} minicursoId={minicursoSelecionado.id} />
+                : <ListaMinicursos dados={dados} aoEscolher={(minicurso) => setIdMinicursoSelecionado(minicurso.id)} />}
         </ModalTopoDashboard>
     );
 }
@@ -47,6 +52,19 @@ function ListaMinicursos({ dados, aoEscolher }) {
                     <span className="valorResumoTotaisModalDashboard">{dados.vagasRestantesTotal}</span>
                     <span className="rotuloResumoTotaisModalDashboard">Restantes</span>
                 </div>
+            </div>
+
+            {/* Diaristas sem minicurso nos dias do ingresso já vêm fora
+                da conta pelo backend. */}
+            <div className="itemResumoTotaisModalDashboard itemSemMinicursoModalVagasMinicursos">
+                <span className="valorResumoTotaisModalDashboard">
+                    {dados.participantesSemMinicurso}/{dados.participantesTotal}
+                </span>
+                <span className="rotuloResumoTotaisModalDashboard">
+                    {dados.participantesSemMinicurso === 1
+                        ? 'Participante ainda sem minicurso'
+                        : 'Participantes ainda sem minicurso'}
+                </span>
             </div>
 
             {dados.minicursos.length === 0 ? (
@@ -103,20 +121,15 @@ function ListaMinicursos({ dados, aoEscolher }) {
     );
 }
 
-/* Participantes com vaga no minicurso, carregados sob demanda. */
-function InscritosMinicurso({ minicurso }) {
-    const [inscritos, setInscritos] = useState(null);
-    const [erro, setErro] = useState('');
+/* Participantes com vaga no minicurso, carregados sob demanda e
+   atualizados periodicamente enquanto a tela está aberta. */
+function InscritosMinicurso({ minicursoId }) {
+    const { dados: inscritos, erro } = usarConsultaPeriodica(
+        () => buscarInscritosMinicursoDashboard(minicursoId),
+        true
+    );
 
-    useEffect(() => {
-        let ativo = true;
-        buscarInscritosMinicursoDashboard(minicurso.id)
-            .then((lista) => { if (ativo) setInscritos(lista); })
-            .catch((e) => { if (ativo) setErro(e.message); });
-        return () => { ativo = false; };
-    }, [minicurso.id]);
-
-    if (erro) return <p className="estadoModalDashboard erroModalDashboard">{erro}</p>;
+    if (erro && !inscritos) return <p className="estadoModalDashboard erroModalDashboard">{erro}</p>;
     if (!inscritos) return <p className="estadoModalDashboard">Carregando inscritos...</p>;
     if (inscritos.length === 0) return <p className="estadoModalDashboard">Ninguém inscrito ainda.</p>;
 

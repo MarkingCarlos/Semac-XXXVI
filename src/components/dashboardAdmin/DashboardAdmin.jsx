@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import ModalVagasMinicursos from './ModalVagasMinicursos.jsx';
 import ModalRankingCompleto from './ModalRankingCompleto.jsx';
 import ModalLeiturasQr from './ModalLeiturasQr.jsx';
+import ModalSorteiosRealizados from './ModalSorteiosRealizados.jsx';
 import { usarConsultaPeriodica } from './usarConsultaPeriodica.js';
 import {
     buscarMinicursosDashboard,
     buscarRankingDashboard,
     buscarCheckinsDashboard,
 } from './data/apiDashboard.js';
+import { listarSorteios } from '../../pages/Sorteio/data/apiSorteio.js';
 import { porcentagem } from './formatoDashboard.js';
 import './dashboardAdmin.css';
 
@@ -16,20 +18,22 @@ import './dashboardAdmin.css';
    detalhe. No mobile os cards viram um carrossel com pontos de navegação;
    no desktop ficam lado a lado.
 
-   A leitura de QR se atualiza sozinha (ver usarConsultaPeriodica); vagas
-   e ranking são carregados ao abrir a seção. */
+   Todos os cards se atualizam sozinhos (ver usarConsultaPeriodica), e os
+   modais, que recebem os dados daqui, acompanham. */
 export default function DashboardAdmin() {
-    const minicursos = usarConsultaPeriodica(buscarMinicursosDashboard);
-    const ranking = usarConsultaPeriodica(buscarRankingDashboard);
+    const minicursos = usarConsultaPeriodica(buscarMinicursosDashboard, true);
+    const ranking = usarConsultaPeriodica(buscarRankingDashboard, true);
     const checkins = usarConsultaPeriodica(buscarCheckinsDashboard, true);
+    const sorteios = usarConsultaPeriodica(listarSorteios, true);
 
-    const [modalAberto, setModalAberto] = useState(null); // null | 'minicursos' | 'ranking' | 'qr'
+    const [modalAberto, setModalAberto] = useState(null); // null | 'minicursos' | 'ranking' | 'qr' | 'sorteios'
     const fecharModal = () => setModalAberto(null);
 
     const cards = [
         <CardVagasMinicursos key="minicursos" consulta={minicursos} aoAbrir={() => setModalAberto('minicursos')} />,
         <CardTopRanking key="ranking" consulta={ranking} aoAbrir={() => setModalAberto('ranking')} />,
         <CardLeituraQr key="qr" consulta={checkins} aoAbrir={() => setModalAberto('qr')} />,
+        <CardSorteiosRealizados key="sorteios" consulta={sorteios} aoAbrir={() => setModalAberto('sorteios')} />,
     ];
 
     return (
@@ -44,6 +48,9 @@ export default function DashboardAdmin() {
             )}
             {modalAberto === 'qr' && checkins.dados && (
                 <ModalLeiturasQr dados={checkins.dados} aoFechar={fecharModal} />
+            )}
+            {modalAberto === 'sorteios' && sorteios.dados && (
+                <ModalSorteiosRealizados sorteios={sorteios.dados} aoFechar={fecharModal} />
             )}
         </section>
     );
@@ -246,6 +253,30 @@ function CardLeituraQr({ consulta, aoAbrir }) {
                 </>
             ) : (
                 <span className="vazioCardDashboard">Nenhum evento acontecendo agora.</span>
+            )}
+        </CardDashboard>
+    );
+}
+
+/* Realizado = sorteio com ao menos um ganhador registrado. */
+function CardSorteiosRealizados({ consulta, aoAbrir }) {
+    const sorteios = consulta.dados ?? [];
+    const realizados = sorteios.filter((sorteio) => sorteio.ganhadores.length > 0).length;
+    return (
+        <CardDashboard
+            titulo="Sorteios"
+            subtitulo={`${realizados}/${sorteios.length} sorteios realizados`}
+            consulta={consulta}
+            aoAbrir={aoAbrir}
+            rotuloAbrir={`${realizados} de ${sorteios.length} sorteios realizados. Abrir ganhadores por sorteio`}
+        >
+            {sorteios.length === 0 ? (
+                <span className="vazioCardDashboard">Nenhum sorteio cadastrado.</span>
+            ) : (
+                <BarraProgressoCardDashboard
+                    valor={porcentagem(realizados, sorteios.length)}
+                    rotulo={`${realizados} de ${sorteios.length} sorteios realizados`}
+                />
             )}
         </CardDashboard>
     );
