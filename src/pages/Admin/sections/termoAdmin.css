@@ -1,4 +1,5 @@
-/* Seção TermoAdmin do /admin — as quatro palavras do jogo, uma por dia.
+/* Seção TermoAdmin do /admin — os quatro dias do jogo, cada um com sua
+   data e suas palavras.
    Aproveita a tipografia e os campos do financeiro (financas.css); aqui só
    o que é próprio da lista de dias. */
 
@@ -61,13 +62,93 @@
     gap: 10px;
 }
 
-/* A palavra em caixa alta e espaçada: são 5 letras, e conferir letra a
-   letra antes de salvar importa mais aqui do que em qualquer outro campo
-   do admin — ninguém vai poder reler depois. */
-.entradaPalavraTermoAdmin {
+/* Data e botão lado a lado; o campo ocupa o que sobrar. */
+.formularioDataDiaTermoAdmin {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.formularioDataDiaTermoAdmin .campoFormularioFinancas {
+    flex: 1;
+}
+
+.formularioDataDiaTermoAdmin .botaoFantasmaFinancas:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    border-color: rgba(252, 248, 245, 0.25);
+    color: #edecec;
+}
+
+/* As palavras em caixa alta e espaçadas: conferir letra a letra antes de
+   salvar importa mais aqui do que em qualquer outro campo do admin —
+   ninguém vai poder reler depois. */
+.entradaPalavrasTermoAdmin {
     text-transform: uppercase;
-    letter-spacing: 0.35em;
+    letter-spacing: 0.2em;
     font-family: var(--fonteTituloBungee);
+    resize: vertical;
+    min-height: 72px;
+}
+
+.entradaPalavrasTermoAdmin:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.entradaPalavrasTermoAdmin::placeholder {
+    text-transform: none;
+    letter-spacing: normal;
+    font-family: var(--fonteCorpoMontserrat);
+}
+
+/* As palavras já cadastradas — sem o texto delas, que não volta da API. */
+.listaPalavrasDiaTermoAdmin {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.itemPalavraDiaTermoAdmin {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.12);
+}
+
+.textoPalavraDiaTermoAdmin {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.8125rem;
+}
+
+.botaoRemoverPalavraTermoAdmin {
+    background: transparent;
+    color: #edecec;
+    border: 1px solid rgba(252, 248, 245, 0.25);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.18s ease, color 0.18s ease;
+}
+
+.botaoRemoverPalavraTermoAdmin:hover:not(:disabled) {
+    border-color: #E79839;
+    color: #E79839;
+}
+
+.botaoRemoverPalavraTermoAdmin:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 .acoesDiaTermoAdmin {

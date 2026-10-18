@@ -1,17 +1,20 @@
 import "./termo.css";
 import { useState, useEffect, useRef } from "preact/hooks";
 import { useLocation } from "wouter";
-import { palavraExisteTermo } from "../../data/palavrasValidasTermo.js";
-import { lerEstadoTermo, enviarPalpiteTermo, PalpiteInvalidoErro } from "./apiTermo.js";
+import { lerEstadoTermo, enviarPalpiteTermo, palavraValidaTermo, PalpiteInvalidoErro } from "./apiTermo.js";
 import { temAcessoParticipante } from "../../auth/sessao.js";
 
 /* Jogo do Termo.
 
-   A palavra do dia não está aqui, e esse é o ponto: ela vive só no banco e
-   no servidor (ver TermoService, no java_api). O que esta tela faz é mandar
-   o palpite para a API e pintar o padrão de cores que volta. Antes a
-   palavra era uma constante neste arquivo — ou seja, estava no bundle,
+   A palavra secreta não está aqui, e esse é o ponto: ela vive só no banco
+   e no servidor (ver TermoService, no java_api). O que esta tela faz é
+   mandar o palpite para a API e pintar o padrão de cores que volta. Antes
+   a palavra era uma constante neste arquivo — ou seja, estava no bundle,
    legível no DevTools.
+
+   Cada participante joga contra uma palavra sorteada entre as do dia, de
+   5 a 10 letras. Da palavra, a tela só fica sabendo o tamanho (`tamanho`
+   em GET /hoje), que é o que a grade precisa para se desenhar.
 
    O limite de 6 tentativas também é do servidor: recarregar a página
    retoma a partida onde parou em vez de recomeçar.
@@ -27,8 +30,11 @@ const TECLADO = [
 ];
 
 const TOTAL_TENTATIVAS = 6;
-const TAMANHO_PALAVRA = 5;
-const ATRASO_REVELACAO_MS = 5 * 90 + 350;
+/* Até o GET /hoje responder, a grade vazia aparece com o tamanho clássico. */
+const TAMANHO_PADRAO_TERMO = 5;
+
+/* A revelação vira uma célula a cada 90ms; palavra maior demora mais. */
+const atrasoRevelacaoMs = (tamanho) => tamanho * 90 + 350;
 
 /* Sair do jogo devolve a pessoa à área do participante, de onde o Termo é
    aberto pelo card da aba Desafios — não à home do site. */
@@ -56,18 +62,19 @@ const paraLinhaGrade = ({ palpite, resultado }) => ({
    presentes fora de lugar consomem as ocorrências que sobraram. Sem isso
    "AAABB" contra "ABCDE" marcaria três amarelos para um único A. */
 const calcularResultadoTreino = (palpite, secreta) => {
-    const estado = Array(TAMANHO_PALAVRA).fill("A");
-    const usados = Array(TAMANHO_PALAVRA).fill(false);
+    const tamanho = secreta.length;
+    const estado = Array(tamanho).fill("A");
+    const usados = Array(tamanho).fill(false);
 
-    for (let i = 0; i < TAMANHO_PALAVRA; i++) {
+    for (let i = 0; i < tamanho; i++) {
         if (palpite[i] === secreta[i]) {
             estado[i] = "C";
             usados[i] = true;
         }
     }
-    for (let i = 0; i < TAMANHO_PALAVRA; i++) {
+    for (let i = 0; i < tamanho; i++) {
         if (estado[i] === "C") continue;
-        for (let j = 0; j < TAMANHO_PALAVRA; j++) {
+        for (let j = 0; j < tamanho; j++) {
             if (!usados[j] && secreta[j] === palpite[i]) {
                 estado[i] = "P";
                 usados[j] = true;
@@ -91,9 +98,10 @@ const Termo = () => {
     const [erroCarregamento, setErroCarregamento] = useState("");
     const [disponivel, setDisponivel] = useState(false);
     const [ultimoDia, setUltimoDia] = useState(false);
+    const [tamanho, setTamanho] = useState(TAMANHO_PADRAO_TERMO);
 
     const [tentativas, setTentativas] = useState([]);
-    const [atual, setAtual] = useState(Array(TAMANHO_PALAVRA).fill(""));
+    const [atual, setAtual] = useState(Array(TAMANHO_PADRAO_TERMO).fill(""));
     const [cursor, setCursor] = useState(0);
     const [fim, setFim] = useState(null);
     const [palavraRevelada, setPalavraRevelada] = useState("");
@@ -144,6 +152,10 @@ const Termo = () => {
                 if (!ativo || !estado) return;
                 setDisponivel(estado.disponivel);
                 setUltimoDia(estado.ultimoDia);
+                if (estado.tamanho) {
+                    setTamanho(estado.tamanho);
+                    setAtual(Array(estado.tamanho).fill(""));
+                }
                 setTentativas((estado.tentativas ?? []).map(paraLinhaGrade));
                 if (estado.encerrado) {
                     setFim(estado.venceu ? "ganhou" : "perdeu");
@@ -186,7 +198,7 @@ const Termo = () => {
     };
 
     const moverCursor = (delta) => {
-        setCursor((c) => Math.max(0, Math.min(TAMANHO_PALAVRA - 1, c + delta)));
+        setCursor((c) => Math.max(0, Math.min(tamanho - 1, c + delta)));
     };
 
     const digitarLetra = (letra) => {
@@ -195,7 +207,7 @@ const Termo = () => {
             arr[cursor] = letra;
             return arr;
         });
-        setCursor((c) => Math.min(TAMANHO_PALAVRA - 1, c + 1));
+        setCursor((c) => Math.min(tamanho - 1, c + 1));
     };
 
     const apagar = () => {
@@ -216,8 +228,11 @@ const Termo = () => {
         setCursor(nc);
     };
 
+    /* Pelo tamanho da linha atual, e não por `tamanho`: o treino pode
+       começar dentro do carregamento (`?treino=1`), ainda com o closure do
+       primeiro render, quando `tamanho` era o padrão. */
     const limparGrade = () => {
-        setAtual(Array(TAMANHO_PALAVRA).fill(""));
+        setAtual((prev) => prev.map(() => ""));
         setCursor(0);
     };
 
@@ -237,13 +252,19 @@ const Termo = () => {
         limparGrade();
     };
 
-    /* Palpite de treino: conferido aqui, sem rede. A palavra do dia é
-       aceita mesmo fora do dicionário, igual ao servidor faz — "SEMAC" e
-       "CYBER" não constam em dicionário nenhum. */
-    const enviarTreino = (palpite) => {
-        if (palpite !== palavraRevelada && !palavraExisteTermo(palpite)) {
-            recusarPalpite("Palavra não encontrada");
-            return;
+    /* Palpite de treino: conferido aqui, sem gastar tentativa no banco. Só
+       a existência da palavra é perguntada ao servidor, que é quem tem o
+       dicionário. A palavra do dia é aceita mesmo fora dele, igual ao
+       servidor faz — "SEMAC" e "CYBER" não constam em dicionário nenhum. */
+    const enviarTreino = async (palpite) => {
+        if (palpite !== palavraRevelada) {
+            setBloqueado(true);
+            const valida = await palavraValidaTermo(palpite);
+            setBloqueado(false);
+            if (!valida) {
+                recusarPalpite("Palavra não encontrada");
+                return;
+            }
         }
 
         const resultado = calcularResultadoTreino(palpite, palavraRevelada);
@@ -260,7 +281,7 @@ const Termo = () => {
             if (venceu || novasTentativas.length >= TOTAL_TENTATIVAS) {
                 setFimTreino(venceu ? "ganhou" : "perdeu");
             }
-        }, ATRASO_REVELACAO_MS);
+        }, atrasoRevelacaoMs(tamanho));
     };
 
     const enviar = async () => {
@@ -276,21 +297,15 @@ const Termo = () => {
             return;
         }
 
-        /* Pré-checagem local só para responder na hora a "EEEEE" sem ida ao
-           servidor. Quem decide de verdade é o servidor, que revalida com a
-           mesma lista — a checagem daqui é contornável. */
-        if (!palavraExisteTermo(palavra)) {
-            recusarPalpite("Palavra não encontrada");
-            return;
-        }
-
+        /* Quem diz se a palavra existe é o servidor: palavra fora do
+           dicionário volta 422, cai no catch abaixo e não gasta tentativa. */
         setBloqueado(true);
         try {
             const resposta = await enviarPalpiteTermo(palavra);
             if (!resposta) return;
 
             setTentativas((prev) => [...prev, paraLinhaGrade({ palpite: palavra, resultado: resposta.resultado })]);
-            setAtual(Array(TAMANHO_PALAVRA).fill(""));
+            setAtual(Array(tamanho).fill(""));
             setCursor(0);
             setUltimoDia(resposta.ultimoDia);
 
@@ -303,7 +318,7 @@ const Termo = () => {
                     setPalavraRevelada(resposta.palavra ?? "");
                     setXpGanho(resposta.xpGanho ?? 0);
                 }
-            }, ATRASO_REVELACAO_MS);
+            }, atrasoRevelacaoMs(tamanho));
         } catch (e) {
             setBloqueado(false);
             /* 422: o servidor não conhece a palavra. Não gastou tentativa,
@@ -356,7 +371,7 @@ const Termo = () => {
     for (let i = 0; i < TOTAL_TENTATIVAS; i++) {
         if (i < tentativasVisiveis.length) linhas.push({ tipo: "enviada", ...tentativasVisiveis[i] });
         else if (i === linhaAtivaIndex && !fimVisivel) linhas.push({ tipo: "ativa", letras: atual });
-        else linhas.push({ tipo: "vazia", letras: Array(TAMANHO_PALAVRA).fill("") });
+        else linhas.push({ tipo: "vazia", letras: Array(tamanho).fill("") });
     }
 
     /* Textos do fim de jogo. A derrota muda de recado no último dia: não há
@@ -425,7 +440,9 @@ const Termo = () => {
 
                     <span className="spanRotuloTentativaTermo">TENTATIVA {rotuloTentativa} DE {TOTAL_TENTATIVAS}</span>
 
-                    <div className="divGradeTermo">
+                    {/* O tamanho vai para o CSS, que encolhe as células para
+                        caber até 10 letras na largura do celular. */}
+                    <div className="divGradeTermo" style={{ "--letrasPalavraTermo": String(tamanho) }}>
                         {linhas.map((linha, li) => (
                             <div
                                 key={li < tentativasVisiveis.length ? `linha-enviada-${li}` : `linha-pendente-${li}`}
@@ -493,7 +510,8 @@ const Termo = () => {
                     <div className="divCartaoAjudaTermo" onClick={(e) => e.stopPropagation()}>
                         <div className="tituloAjudaTermo">COMO JOGAR</div>
                         <p className="textoAjudaTermo">
-                            Adivinhe a palavra do dia em 6 tentativas. Cada palpite precisa ter 5 letras.
+                            Adivinhe a sua palavra do dia em 6 tentativas. Cada participante recebe uma
+                            palavra diferente, de 5 a 10 letras — a grade mostra quantas tem a sua.
                             Acertar vale 5 XP.
                         </p>
                         <div className="divLinhaLegendaAjudaTermo">

@@ -118,15 +118,26 @@
     text-transform: uppercase;
 }
 
+/* A palavra tem de 5 a 10 letras: --letrasPalavraTermo vem do termo.jsx.
+   A célula fica no tamanho de sempre enquanto couber e encolhe para que a
+   linha inteira caiba na largura útil — a tela menos os 16px de padding
+   de cada lado do conteúdo, limitada a 560px no desktop. */
 .divGradeTermo {
+    --letrasPalavraTermo: 5;
+    --vaoCelulaTermo: 7px;
+    --ladoCelulaTermo: max(24px, min(
+        58px,
+        13.5vw,
+        calc((min(100vw - 32px, 560px) - (var(--letrasPalavraTermo) - 1) * var(--vaoCelulaTermo)) / var(--letrasPalavraTermo))
+    ));
     display: flex;
     flex-direction: column;
-    gap: 7px;
+    gap: var(--vaoCelulaTermo);
 }
 
 .divLinhaGradeTermo {
     display: flex;
-    gap: 7px;
+    gap: var(--vaoCelulaTermo);
 }
 
 .linhaTremendoTermo {
@@ -134,14 +145,14 @@
 }
 
 .divCelulaTermo {
-    width: clamp(48px, 13.5vw, 58px);
-    height: clamp(48px, 13.5vw, 58px);
+    width: var(--ladoCelulaTermo);
+    height: var(--ladoCelulaTermo);
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: var(--fonteTituloBungee);
-    font-size: clamp(1.8rem, 2vw, 2rem);
+    font-size: calc(var(--ladoCelulaTermo) * 0.55);
     color: var(--Branco);
     background: rgba(237, 236, 236, 0.06);
     border: 2px solid rgba(237, 236, 236, 0.18);

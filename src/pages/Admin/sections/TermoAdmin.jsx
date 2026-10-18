@@ -1,34 +1,60 @@
 import { useState, useEffect } from 'preact/hooks';
-import { listarPalavrasTermo, salvarPalavraTermo } from '../data/apiTermo.js';
+import {
+    listarDiasTermoAdmin,
+    salvarDataDiaTermo,
+    adicionarPalavrasTermo,
+    removerPalavraTermo,
+} from '../data/apiTermo.js';
 import './termoAdmin.css';
 
-/* Termo — as quatro palavras do jogo em /termo, uma por dia do evento
-   (tabela `termo_palavra`). Bloco da sub-aba Gamificação de Informações
-   SEMAC, restrito a DIRETOR_SITE/PRESIDENTE (quem monta ou não este
-   componente é o InformacoesSemac.jsx).
+/* Termo — os quatro dias do jogo em /termo (tabelas `termo_dia` e
+   `termo_palavra`). Bloco da sub-aba Gamificação de Informações SEMAC,
+   restrito a DIRETOR_SITE/PRESIDENTE (quem monta ou não este componente é
+   o InformacoesSemac.jsx).
 
-   A data de cada dia é o que decide qual palavra está valendo: o servidor
-   compara com a data de hoje e não precisa de ninguém virando chave
-   durante a semana.
+   Cada dia tem uma data e quantas palavras a diretoria quiser, de 5 a 10
+   letras. Quando o participante abre o jogo no dia, o servidor sorteia
+   uma delas para ele, sempre entre as que menos gente recebeu: ninguém
+   repete a palavra de outro enquanto houver palavra livre.
 
-   A palavra cadastrada NÃO volta na leitura — a API só informa se aquele
-   dia já tem uma definida. É de propósito: a palavra não sai do servidor
-   nem para quem a cadastrou, senão bastaria uma conta de diretoria para
-   descobri-la. Quem esquecer qual era cadastra outra. */
+   A data de cada dia é o que decide qual está valendo: o servidor compara
+   com a data de hoje e não precisa de ninguém virando chave durante a
+   semana.
+
+   As palavras cadastradas NÃO voltam na leitura — a API só informa o
+   tamanho de cada uma e quantos participantes a receberam. É de propósito:
+   a palavra não sai do servidor nem para quem a cadastrou, senão bastaria
+   uma conta de diretoria para descobri-la. */
 
 const ANO_ATUAL = new Date().getFullYear();
 const TOTAL_DIAS = 4;
-const TAMANHO_PALAVRA = 5;
+const TAMANHO_MINIMO_PALAVRA = 5;
+const TAMANHO_MAXIMO_PALAVRA = 10;
 
-/* Só letras, sem acento e em maiúsculas — é assim que o servidor grava e
-   compara. Evita cadastrar "CAFÉS" e o jogador nunca conseguir digitar. */
+/* Sem acento e em maiúsculas — é assim que o servidor grava e compara.
+   Evita cadastrar "CAFÉS" e o jogador nunca conseguir digitar. */
 const normalizarPalavra = (texto) =>
     texto
         .normalize('NFD')
         .replace(/[̀-ͯ]/g, '')
-        .replace(/[^a-zA-Z]/g, '')
-        .toUpperCase()
-        .slice(0, TAMANHO_PALAVRA);
+        .toUpperCase();
+
+/* O campo aceita uma lista colada: uma por linha, ou separadas por
+   vírgula, ponto e vírgula ou espaço. Palavra com hífen, número ou fora do
+   tamanho volta em `invalidas` — melhor recusar do que cadastrar
+   "GUARDACHUVA" sem a pessoa perceber. */
+const separarPalavras = (texto) => {
+    const palavras = [];
+    const invalidas = [];
+    texto.split(/[\s,;]+/).filter(Boolean).forEach((bruta) => {
+        const palavra = normalizarPalavra(bruta);
+        const tamanhoValido = palavra.length >= TAMANHO_MINIMO_PALAVRA
+            && palavra.length <= TAMANHO_MAXIMO_PALAVRA;
+        if (/^[A-Z]+$/.test(palavra) && tamanhoValido) palavras.push(palavra);
+        else invalidas.push(bruta);
+    });
+    return { palavras, invalidas };
+};
 
 const formatarData = (data) => {
     if (!data) return '—';
@@ -36,25 +62,29 @@ const formatarData = (data) => {
     return `${dia}/${mes}/${ano}`;
 };
 
+const rotuloJogadores = (total) => (total === 1 ? '1 jogador' : `${total} jogadores`);
+
 export default function TermoAdmin() {
     const [dias, setDias] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState('');
 
-    /* Rascunho por dia: { data, palavra }. Separado de `dias` porque a
-       palavra nunca vem da API — o campo nasce sempre vazio. */
+    /* Rascunho por dia: { data, palavras }. `palavras` é o texto do campo
+       de novas palavras — nasce sempre vazio, porque as já cadastradas
+       nunca vêm da API. */
     const [rascunhos, setRascunhos] = useState({});
     const [diaSalvando, setDiaSalvando] = useState(null);
-    const [diaSalvo, setDiaSalvo] = useState(null);
+    const [palavraRemovendo, setPalavraRemovendo] = useState(null);
+    const [avisoSalvo, setAvisoSalvo] = useState(null);
 
     useEffect(() => {
         let ativo = true;
-        listarPalavrasTermo(ANO_ATUAL)
+        listarDiasTermoAdmin(ANO_ATUAL)
             .then((lista) => {
                 if (!ativo) return;
                 setDias(lista);
                 setRascunhos(Object.fromEntries(
-                    lista.map((d) => [d.dia, { data: d.data ?? '', palavra: '' }]),
+                    lista.map((d) => [d.dia, { data: d.data ?? '', palavras: '' }]),
                 ));
             })
             .catch((e) => { if (ativo) setErro(e.message); })
@@ -64,35 +94,26 @@ export default function TermoAdmin() {
 
     const alterarRascunho = (dia, campo, valor) => {
         setRascunhos((prev) => ({ ...prev, [dia]: { ...prev[dia], [campo]: valor } }));
-        setDiaSalvo(null);
+        setAvisoSalvo(null);
     };
 
-    const salvarDia = async (dia) => {
-        const rascunho = rascunhos[dia] ?? { data: '', palavra: '' };
-        const palavra = normalizarPalavra(rascunho.palavra);
+    const substituirDia = (salvo) => {
+        setDias((prev) => prev.map((d) => (d.dia === salvo.dia ? salvo : d)));
+    };
 
+    const salvarData = async (dia) => {
+        const rascunho = rascunhos[dia] ?? { data: '', palavras: '' };
         if (!rascunho.data) {
             setErro(`Informe a data do dia ${dia}.`);
-            return;
-        }
-        if (palavra.length !== TAMANHO_PALAVRA) {
-            setErro(`A palavra do dia ${dia} precisa ter ${TAMANHO_PALAVRA} letras.`);
             return;
         }
 
         setErro('');
         setDiaSalvando(dia);
         try {
-            const salvo = await salvarPalavraTermo(dia, {
-                ano: ANO_ATUAL,
-                data: rascunho.data,
-                palavra,
-            });
-            setDias((prev) => prev.map((d) => (d.dia === dia ? salvo : d)));
-            /* Limpa o campo depois de salvar: a palavra não fica na tela
-               nem na memória do navegador mais do que o necessário. */
-            setRascunhos((prev) => ({ ...prev, [dia]: { data: salvo.data, palavra: '' } }));
-            setDiaSalvo(dia);
+            const salvo = await salvarDataDiaTermo(dia, { ano: ANO_ATUAL, data: rascunho.data });
+            substituirDia(salvo);
+            setAvisoSalvo({ dia, texto: `Data do dia ${dia} salva.` });
         } catch (e) {
             setErro(e.message);
         } finally {
@@ -100,7 +121,54 @@ export default function TermoAdmin() {
         }
     };
 
-    const diasDefinidos = dias.filter((d) => d.definida).length;
+    const adicionarPalavras = async (dia) => {
+        const rascunho = rascunhos[dia] ?? { data: '', palavras: '' };
+        const { palavras, invalidas } = separarPalavras(rascunho.palavras);
+
+        if (invalidas.length > 0) {
+            setErro(`Cada palavra precisa ter de ${TAMANHO_MINIMO_PALAVRA} a ${TAMANHO_MAXIMO_PALAVRA} letras, `
+                + `sem hífen nem número: ${invalidas.join(', ')}.`);
+            return;
+        }
+        if (palavras.length === 0) {
+            setErro(`Digite ao menos uma palavra para o dia ${dia}.`);
+            return;
+        }
+
+        setErro('');
+        setDiaSalvando(dia);
+        try {
+            const salvo = await adicionarPalavrasTermo(dia, { ano: ANO_ATUAL, palavras });
+            substituirDia(salvo);
+            /* Limpa o campo depois de salvar: as palavras não ficam na tela
+               nem na memória do navegador mais do que o necessário. */
+            setRascunhos((prev) => ({ ...prev, [dia]: { ...prev[dia], palavras: '' } }));
+            setAvisoSalvo({
+                dia,
+                texto: palavras.length === 1 ? '1 palavra adicionada.' : `${palavras.length} palavras adicionadas.`,
+            });
+        } catch (e) {
+            setErro(e.message);
+        } finally {
+            setDiaSalvando(null);
+        }
+    };
+
+    const removerPalavra = async (id) => {
+        setErro('');
+        setAvisoSalvo(null);
+        setPalavraRemovendo(id);
+        try {
+            substituirDia(await removerPalavraTermo(id));
+        } catch (e) {
+            setErro(e.message);
+        } finally {
+            setPalavraRemovendo(null);
+        }
+    };
+
+    const diasComPalavras = dias.filter((d) => d.data && d.palavras.length > 0).length;
+    const totalPalavras = dias.reduce((soma, d) => soma + d.palavras.length, 0);
 
     return (
         <section className="blocoInfoSemac" aria-label="Termo">
@@ -108,7 +176,8 @@ export default function TermoAdmin() {
                 <div>
                     <h2 className="tituloBlocoInfoSemac">Termo</h2>
                     <p className="notaBlocoInfoSemac">
-                        A palavra de cada dia do jogo em /termo — 5 letras, acertar vale 5 XP
+                        As palavras de cada dia do jogo em /termo — de 5 a 10 letras, uma sorteada para cada
+                        participante; acertar vale 5 XP
                     </p>
                 </div>
             </div>
@@ -116,46 +185,52 @@ export default function TermoAdmin() {
             {erro && <p className="avisoErroAdmin" role="alert">{erro}</p>}
 
             <p className="avisoSigiloTermoAdmin">
-                A palavra não volta na leitura, nem aqui: depois de salva, só o servidor a conhece.
-                Se esquecer qual era, cadastre outra.
+                Cada participante recebe uma palavra diferente enquanto houver palavra livre no dia; se houver
+                mais gente que palavras, elas se repetem por igual. As palavras não voltam na leitura, nem aqui:
+                depois de salvas, só o servidor as conhece.
             </p>
 
             <div className="faixaResumoAdmin">
                 <div className="itemResumoAdmin">
-                    <span className="rotuloItemResumoAdmin">Dias definidos</span>
+                    <span className="rotuloItemResumoAdmin">Dias com palavras</span>
                     <strong className="valorItemResumoAdmin valorDestaqueAdmin">
-                        {diasDefinidos} de {TOTAL_DIAS}
+                        {diasComPalavras} de {TOTAL_DIAS}
                     </strong>
+                </div>
+                <div className="itemResumoAdmin">
+                    <span className="rotuloItemResumoAdmin">Palavras cadastradas</span>
+                    <strong className="valorItemResumoAdmin">{totalPalavras}</strong>
                 </div>
             </div>
 
-            {carregando && <p className="estadoCarregandoParticipantesAdmin">Carregando palavras…</p>}
+            {carregando && <p className="estadoCarregandoParticipantesAdmin">Carregando dias…</p>}
 
             {!carregando && (
                 <div className="listaDiasTermoAdmin">
                     {dias.map((d) => {
-                        const rascunho = rascunhos[d.dia] ?? { data: '', palavra: '' };
+                        const rascunho = rascunhos[d.dia] ?? { data: '', palavras: '' };
                         const salvandoEste = diaSalvando === d.dia;
+                        const temData = Boolean(d.data);
                         return (
-                            <form
-                                key={d.dia}
-                                className="cartaoDiaTermoAdmin"
-                                onSubmit={(evento) => { evento.preventDefault(); salvarDia(d.dia); }}
-                            >
+                            <div key={d.dia} className="cartaoDiaTermoAdmin">
                                 <div className="cabecalhoDiaTermoAdmin">
                                     <span className="rotuloDiaTermoAdmin">Dia {d.dia}</span>
                                     <span
-                                        className={d.definida
+                                        className={temData && d.palavras.length > 0
                                             ? 'etiquetaStatusTermoAdmin etiquetaDefinidaTermoAdmin'
                                             : 'etiquetaStatusTermoAdmin'}
                                     >
-                                        {d.definida ? `Definida · ${formatarData(d.data)}` : 'Não definida'}
+                                        {temData
+                                            ? `${d.palavras.length} ${d.palavras.length === 1 ? 'palavra' : 'palavras'} · ${formatarData(d.data)}`
+                                            : 'Sem data'}
                                     </span>
                                 </div>
-
-                                <div className="camposDiaTermoAdmin">
+                                <form
+                                    className="formularioDataDiaTermoAdmin"
+                                    onSubmit={(evento) => { evento.preventDefault(); salvarData(d.dia); }}
+                                >
                                     <label className="campoFormularioFinancas">
-                                        <span className="rotuloCampoFinancas">Data</span>
+
                                         <input
                                             className="entradaFormularioFinancas"
                                             type="date"
@@ -164,44 +239,76 @@ export default function TermoAdmin() {
                                             required
                                         />
                                     </label>
-
-                                    <label className="campoFormularioFinancas">
-                                        <span className="rotuloCampoFinancas">
-                                            {d.definida ? 'Nova palavra' : 'Palavra'}
-                                        </span>
-                                        {/* Sempre obrigatória, mesmo para só trocar a data:
-                                            como a palavra não pode ser lida de volta, não há
-                                            como o servidor "manter a atual" sem que alguém a
-                                            digite de novo. */}
-                                        <input
-                                            className="entradaFormularioFinancas entradaPalavraTermoAdmin"
-                                            type="text"
-                                            inputMode="text"
-                                            autoComplete="off"
-                                            spellcheck={false}
-                                            maxLength={TAMANHO_PALAVRA}
-                                            placeholder="5 letras"
-                                            value={rascunho.palavra}
-                                            onInput={(e) => alterarRascunho(
-                                                d.dia, 'palavra', normalizarPalavra(e.currentTarget.value),
-                                            )}
-                                        />
-                                    </label>
-                                </div>
-
-                                <div className="acoesDiaTermoAdmin">
-                                    {diaSalvo === d.dia && (
-                                        <span className="avisoSalvoTermoAdmin">Palavra do dia {d.dia} salva.</span>
-                                    )}
                                     <button
                                         type="submit"
-                                        className="botaoPrimarioFinancas"
-                                        disabled={salvandoEste}
+                                        className="botaoFantasmaFinancas"
+                                        disabled={salvandoEste || rascunho.data === (d.data ?? '')}
                                     >
-                                        {salvandoEste ? 'Salvando…' : 'Salvar dia'}
+                                        Salvar data
                                     </button>
-                                </div>
-                            </form>
+                                </form>
+
+                                {d.palavras.length > 0 && (
+                                    <ul className="listaPalavrasDiaTermoAdmin">
+                                        {d.palavras.map((palavra, indice) => (
+                                            <li key={palavra.id} className="itemPalavraDiaTermoAdmin">
+                                                <span className="textoPalavraDiaTermoAdmin">
+                                                    <strong>Palavra {indice + 1}</strong>
+                                                    {' · '}{palavra.tamanho} letras
+                                                    {' · '}{rotuloJogadores(palavra.jogadores)}
+                                                </span>
+                                                {/* Palavra já sorteada fica: apagá-la levaria junto
+                                                    o jogo e as tentativas de quem a recebeu. */}
+                                                <button
+                                                    type="button"
+                                                    className="botaoRemoverPalavraTermoAdmin"
+                                                    disabled={palavra.jogadores > 0 || palavraRemovendo === palavra.id}
+                                                    title={palavra.jogadores > 0
+                                                        ? 'Já sorteada para um participante — não pode ser removida'
+                                                        : 'Remover palavra'}
+                                                    onClick={() => removerPalavra(palavra.id)}
+                                                >
+                                                    {palavraRemovendo === palavra.id ? 'Removendo…' : 'Remover'}
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+
+                                <form
+                                    className="camposDiaTermoAdmin"
+                                    onSubmit={(evento) => { evento.preventDefault(); adicionarPalavras(d.dia); }}
+                                >
+                                    <label className="campoFormularioFinancas">
+                                        <span className="rotuloCampoFinancas">Novas palavras</span>
+                                        <textarea
+                                            className="entradaFormularioFinancas entradaPalavrasTermoAdmin"
+                                            rows={3}
+                                            autoComplete="off"
+                                            spellcheck={false}
+                                            disabled={!temData}
+                                            placeholder={temData
+                                                ? 'Uma por linha, ou separadas por vírgula'
+                                                : 'Salve a data do dia antes'}
+                                            value={rascunho.palavras}
+                                            onInput={(e) => alterarRascunho(d.dia, 'palavras', e.currentTarget.value)}
+                                        />
+                                    </label>
+
+                                    <div className="acoesDiaTermoAdmin">
+                                        {avisoSalvo?.dia === d.dia && (
+                                            <span className="avisoSalvoTermoAdmin">{avisoSalvo.texto}</span>
+                                        )}
+                                        <button
+                                            type="submit"
+                                            className="botaoPrimarioFinancas"
+                                            disabled={!temData || salvandoEste || !rascunho.palavras.trim()}
+                                        >
+                                            {salvandoEste ? 'Salvando…' : 'Adicionar'}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
                         );
                     })}
                 </div>

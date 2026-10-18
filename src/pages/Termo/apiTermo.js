@@ -1,7 +1,7 @@
 /* Acesso ao jogo do Termo (tabelas `termo_palavra`, `termo_jogo`,
    `termo_tentativa`).
 
-   A palavra do dia não trafega: o palpite vai para a API e volta só o
+   A palavra secreta não trafega: o palpite vai para a API e volta só o
    padrão de cores (`resultado`, uma letra por posição — C certo,
    P presente, A ausente). O campo `palavra` só vem preenchido quando o
    jogo acabou, para a tela de fim revelar a resposta.
@@ -27,8 +27,9 @@ async function mensagemDeErro(resposta, padrao) {
 }
 
 /* Estado do jogo de hoje, já com as tentativas anteriores: reabrir a
-   página retoma a partida onde parou. `disponivel` false = hoje não é dia
-   de Termo. */
+   página retoma a partida onde parou. `tamanho` é quantas letras tem a
+   palavra sorteada para a pessoa (5 a 10). `disponivel` false = hoje não é
+   dia de Termo. */
 export async function lerEstadoTermo() {
     const resposta = await apiFetch(`${ROTA}/hoje`, { headers: cabecalhosAuth() });
     if (tratarErroAuth(resposta, ROTA_RETORNO)) return null;
@@ -68,4 +69,22 @@ export async function enviarPalpiteTermo(palpite) {
         throw new Error(await mensagemDeErro(resposta, 'Não foi possível enviar o palpite.'));
     }
     return resposta.json();
+}
+
+/* Se a palavra está no dicionário de palpites. Só o modo treino usa: a
+   partida valendo já é validada pelo próprio POST /palpite. O dicionário
+   (5 a 10 letras) é grande demais para ir no bundle, por isso a consulta.
+
+   Falha de rede conta como válida — no treino nada está em jogo, e travar
+   a rodada por isso seria pior do que aceitar uma palavra inventada. */
+export async function palavraValidaTermo(palavra) {
+    try {
+        const resposta = await apiFetch(`${ROTA}/validar?palavra=${encodeURIComponent(palavra)}`, {
+            headers: cabecalhosAuth(),
+        });
+        if (!resposta.ok) return true;
+        return (await resposta.json()).valida;
+    } catch {
+        return true;
+    }
 }

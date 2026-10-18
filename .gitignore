@@ -27,3 +27,6 @@ dist-ssr
 .agents
 /.impeccable/
 /.mcp.json
+/brag-output
+/.codex/hooks.json
+/PRODUCT.md
