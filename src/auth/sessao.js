@@ -38,6 +38,11 @@ const PAPEIS_DIRETORIA = PAPEIS_ADMIN.filter((papel) => papel !== 'MEMBRO');
    backend (SecurityConfig). */
 const PAPEIS_DASHBOARD = ['PRESIDENTE', 'DIRETOR_SITE'];
 
+/* Quem configura a sub-aba Gamificação de Informações SEMAC (xp, níveis,
+   conquistas, times e Termo). Espelha PAPEIS_GAMIFICACAO do backend
+   (SecurityConfig). */
+const PAPEIS_GAMIFICACAO = ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO'];
+
 /* Quem corrige o cadastro de outra pessoa (nome, e-mail, RA, telefone) e
    coloca/tira participante de minicurso no /admin. Espelha
    PAPEIS_GESTAO_PARTICIPANTES do backend (SecurityConfig). */
@@ -128,6 +133,11 @@ export function temAcessoDiretoria() {
 export function temAcessoDashboard() {
     const sessao = lerSessao();
     return !!sessao && PAPEIS_DASHBOARD.includes(sessao.role) && !sessaoExpirada();
+}
+
+export function temAcessoGamificacao() {
+    const sessao = lerSessao();
+    return !!sessao && PAPEIS_GAMIFICACAO.includes(sessao.role) && !sessaoExpirada();
 }
 
 /* Esconde o botão "Editar dados e minicursos" das tabelas de Pessoas de

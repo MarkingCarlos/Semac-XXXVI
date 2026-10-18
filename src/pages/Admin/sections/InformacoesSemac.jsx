@@ -2,7 +2,7 @@ import { useState, useEffect } from 'preact/hooks';
 import PainelLateral from '../../Financas/components/PainelLateral.jsx';
 import CampoMoeda from '../../Financas/components/CampoMoeda.jsx';
 import { formatarCentavos } from '../../Financas/utils/moeda.js';
-import { temAcessoFinanceiro, lerSessao } from '../../../auth/sessao.js';
+import { temAcessoFinanceiro, temAcessoGamificacao } from '../../../auth/sessao.js';
 import TimesAdmin from './TimesAdmin.jsx';
 import TermoAdmin from './TermoAdmin.jsx';
 import SeletorModalSubabas from '../../../components/SeletorModalSubabas/SeletorModalSubabas.jsx';
@@ -147,7 +147,7 @@ const SUBABAS = [
 
 export default function InformacoesSemac() {
     const podeVerFinanceiras = temAcessoFinanceiro();
-    const podeGerenciarTimesTermo = ['DIRETOR_SITE', 'PRESIDENTE'].includes(lerSessao()?.role);
+    const podeGerenciarTimesTermo = temAcessoGamificacao();
     const subabasVisiveis = SUBABAS.filter((subaba) => podeVerFinanceiras || !subaba.somenteFinanceiro);
 
     const [tipos, setTipos] = useState([]);
