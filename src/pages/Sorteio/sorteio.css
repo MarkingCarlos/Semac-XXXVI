@@ -1,478 +1,443 @@
-.divPaginaSorteio {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    width: 100%;
-    padding: 2.5rem 1.5rem;
-    background-color: var(--vermelhoEscuro);
+/* Painel do organizador (/sorteio). Ferramenta de PC, longe do público:
+   lista à esquerda, controle do sorteio selecionado à direita. Mesmo
+   vermelho do telão, para quem opera reconhecer as duas telas como uma. */
+
+.mainPainelSorteio {
     position: relative;
     z-index: 51;
+    min-height: 100dvh;
     box-sizing: border-box;
+    padding: clamp(24px, 4vh, 48px) clamp(20px, 4vw, 64px) 48px;
+    background: var(--vermelhoEscuro);
+    color: var(--Branco);
+    font-family: var(--fonteCorpoMontserrat);
+    /* O index.css centraliza o texto do site público. */
+    text-align: left;
 }
 
-.divPainelSorteio {
-    width: min(1100px, 94vw);
-    min-height: min(680px, 88vh);
-    background-color: var(--vermelhoAuxDiretoria);
-    border-radius: 24px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+.mainPainelSorteio ::selection {
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoEscuro);
 }
+
+/* ── Cabeçalho ───────────────────────────────────────────────── */
 
 .headerPainelSorteio {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
-    gap: 1rem;
-    padding: 1.75rem 2.25rem 0.5rem;
+    flex-wrap: wrap;
+    gap: 16px 32px;
+    margin: 0 auto 36px;
 }
 
 .divTituloPainelSorteio {
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
+    gap: 6px;
 }
 
-.h1TituloPainelSorteio {
-    font-family: var(--fonteTituloBungee);
-    font-size: clamp(1.6rem, 3.4vw, 2.6rem);
-    color: var(--Branco);
-    text-transform: uppercase;
-    margin: 0;
-}
-
-.spanSubtituloPainelSorteio {
-    font-family: var(--fonteCorpoMontserrat);
-    font-size: 0.85rem;
-    color: rgba(237, 236, 236, 0.65);
-}
-
-.botaoVoltarPainelSorteio {
-    font-family: var(--fonteTituloBungee);
-    font-size: 0.7rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--Branco);
-    background: rgba(237, 236, 236, 0.12);
-    border: 1px solid rgba(237, 236, 236, 0.3);
-    border-radius: 10px;
-    padding: 0.6rem 1rem;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
-}
-
-.botaoVoltarPainelSorteio:hover {
-    background: rgba(237, 236, 236, 0.2);
-    border-color: var(--AmareloAuxApoio);
-}
-
-.divCorpoPainelSorteio {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-    padding: 1rem 2.25rem 2.25rem;
-    gap: 1rem;
-}
-
-.pAvisoErroSorteio {
+.linkVoltarAdminPainelSorteio {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    margin-bottom: 4px;
     font-family: var(--fonteCorpoMontserrat);
     font-size: 0.9rem;
-    color: var(--AmareloAuxApoio);
-    background: rgba(161, 5, 53, 0.4);
-    border: 1px solid rgba(231, 152, 57, 0.4);
-    border-radius: 10px;
-    padding: 0.75rem 1rem;
-    margin: 0;
+    font-weight: 600;
+    color: rgba(237, 236, 236, 0.75);
+    text-decoration: none;
+    transition: color 0.15s ease;
 }
 
-.pAvisoVazioSorteio {
-    font-family: var(--fonteCorpoMontserrat);
-    font-size: 0.95rem;
-    color: rgba(237, 236, 236, 0.65);
-    text-align: center;
-    padding: 3rem 1rem;
-}
-
-.divRodapeMarcaSorteio {
-    height: 44px;
-    background-color: var(--vermelhoDiretoria);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--fonteCorpoMontserrat);
-    font-size: 0.7rem;
-    letter-spacing: 0.04em;
-    color: rgba(237, 236, 236, 0.7);
-}
-
-/* ── Passo 1: escolher evento ─────────────────────────────────── */
-
-.divListaEventosSorteio {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.botaoCartaoEventoSorteio {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    background: rgba(237, 236, 236, 0.06);
-    border: 2px solid rgba(237, 236, 236, 0.15);
-    border-radius: 14px;
-    padding: 1rem 1.4rem;
-    cursor: pointer;
-    text-align: left;
-    transition: background 0.2s, border-color 0.2s, transform 0.15s;
-}
-
-.botaoCartaoEventoSorteio:hover {
-    background: rgba(237, 236, 236, 0.12);
-    border-color: var(--AmareloAuxApoio);
-    transform: translateY(-1px);
-}
-
-.spanNomeCartaoEventoSorteio {
-    font-family: var(--fonteTituloBungee);
-    font-size: 1rem;
+.linkVoltarAdminPainelSorteio:hover {
     color: var(--Branco);
 }
 
-.spanHorarioCartaoEventoSorteio {
-    font-family: var(--fonteCorpoMontserrat);
-    font-weight: 700;
-    font-size: 0.8rem;
-    color: var(--AmareloAuxApoio);
-    white-space: nowrap;
+.linkVoltarAdminPainelSorteio:focus-visible {
+    outline: 2px solid var(--Branco);
+    outline-offset: 3px;
+    border-radius: 4px;
 }
 
-/* ── Passo 2: escolher brinde ─────────────────────────────────── */
-
-.ulFilaBrindesSorteio {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    margin: 0;
-    padding: 0;
-}
-
-.liItemFilaBrindesSorteio {
-    display: flex;
-    align-items: center;
-    gap: 0.9rem;
-    min-height: 52px;
-    border-radius: 14px;
-    padding: 0.8rem 1.1rem;
-    background: rgba(237, 236, 236, 0.06);
-    border: 2px solid rgba(237, 236, 236, 0.15);
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
-}
-
-.liItemFilaBrindesSorteio:hover {
-    background: rgba(237, 236, 236, 0.1);
-}
-
-.itemFilaSelecionadoSorteio {
-    background: var(--Branco);
-    border-color: var(--AmareloAuxApoio);
-}
-
-.itemFilaEsgotadoSorteio {
-    opacity: 0.45;
+.linkVoltarAdminPainelSorteio[aria-disabled="true"] {
     cursor: not-allowed;
-}
-
-.spanIndiceItemFilaSorteio {
-    font-family: var(--fonteTituloBungee);
-    font-size: 0.75rem;
-    color: rgba(237, 236, 236, 0.45);
-    min-width: 22px;
-}
-
-.itemFilaSelecionadoSorteio .spanIndiceItemFilaSorteio {
-    color: var(--rosaMarketing);
-}
-
-.divInfoItemFilaSorteio {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-}
-
-.spanNomeItemFilaSorteio {
-    font-family: var(--fonteTituloBungee);
-    font-size: 0.95rem;
-    color: var(--Branco);
-}
-
-.itemFilaSelecionadoSorteio .spanNomeItemFilaSorteio {
-    color: var(--vermelhoAuxDiretoria);
-}
-
-.spanLegendaItemFilaSorteio {
-    font-family: var(--fonteCorpoMontserrat);
-    font-size: 0.75rem;
-    color: rgba(237, 236, 236, 0.55);
-}
-
-.itemFilaSelecionadoSorteio .spanLegendaItemFilaSorteio {
-    color: rgba(115, 8, 53, 0.7);
-}
-
-.spanEstadoItemFilaSorteio {
-    font-family: var(--fonteTituloBungee);
-    font-size: 0.65rem;
-    color: rgba(237, 236, 236, 0.4);
-    white-space: nowrap;
-}
-
-.itemFilaSelecionadoSorteio .spanEstadoItemFilaSorteio {
-    color: var(--rosaMarketing);
-}
-
-.divRodapeEscolherBrindeSorteio {
-    display: flex;
-    flex-direction: column;
-    gap: 0.7rem;
-    padding-top: 0.5rem;
-}
-
-.divResumoBrindeSelecionadoSorteio {
-    background: var(--vermelhoDiretoria);
-    border-radius: 14px;
-    padding: 0.8rem 1.1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-}
-
-.spanRotuloBrindeSelecionadoSorteio {
-    font-family: var(--fonteCorpoMontserrat);
-    font-size: 0.75rem;
+    opacity: 0.5;
     color: rgba(237, 236, 236, 0.75);
 }
 
-.spanNomeBrindeSelecionadoSorteio {
+.h1TituloPainelSorteio {
+    margin: 0;
     font-family: var(--fonteTituloBungee);
+    font-weight: 400;
+    font-size: clamp(1.8rem, 3.4vw, 2.75rem);
+    line-height: 1.05;
+    color: var(--Branco);
+}
+
+.pDiaPainelSorteio {
+    margin: 0;
     font-size: 0.95rem;
-    color: var(--AmareloAuxApoio);
+    font-weight: 500;
+    color: rgba(237, 236, 236, 0.7);
 }
 
-.botaoSortearSorteio {
-    min-height: 56px;
-    border: none;
-    border-radius: 10px;
-    background-color: var(--AmareloAuxApoio);
-    color: var(--vermelhoAuxDiretoria);
-    font-family: var(--fonteTituloBungee);
-    font-size: 1.1rem;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: transform 0.15s, filter 0.15s;
-}
-
-.botaoSortearSorteio:hover:not(:disabled) {
-    transform: scale(1.02);
-    filter: brightness(1.08);
-}
-
-.botaoSortearSorteio:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-/* ── Passo 3: sorteio (girando / revelado) ────────────────────── */
-
-.divConteudoGirandoSorteio {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1.6rem;
-    padding: 1rem 0.5rem;
-}
-
-.spanRotuloSorteandoSorteio {
-    font-family: var(--fonteTituloBungee);
-    font-size: 0.75rem;
-    letter-spacing: 0.14em;
-    color: var(--AmareloAuxApoio);
-}
-
-.spanBrindeSorteandoSorteio {
-    font-family: var(--fonteTituloBungee);
-    font-size: clamp(1.3rem, 3vw, 1.8rem);
-    color: var(--Branco);
-    text-align: center;
+.pDiaPainelSorteio::first-letter {
     text-transform: uppercase;
 }
 
-.divJanelaRoloSorteio {
-    width: 100%;
-    position: relative;
-    height: 150px;
-    border-radius: 20px;
-    overflow: hidden;
-    background-color: var(--vermelhoDiretoria);
-    border: 4px solid rgba(237, 236, 236, 0.25);
-}
-
-.divJanelaRoloSorteio::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(10, 10, 10, 0.45), transparent 38%, transparent 62%, rgba(10, 10, 10, 0.45));
-    z-index: 2;
-    pointer-events: none;
-}
-
-.divFaixaRoloSorteio {
-    transition-property: transform;
-}
-
-.divItemRoloSorteio {
-    height: 150px;
+.divTelaoPainelSorteio {
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 0 1.5rem;
+    gap: 14px;
 }
 
-.spanNomeItemRoloSorteio {
-    font-family: var(--fonteTituloBungee);
-    font-size: clamp(1.6rem, 4vw, 2.4rem);
-    line-height: 1.1;
-    color: var(--Branco);
-    text-align: center;
-    text-transform: uppercase;
-}
-
-.divConteudoRevelacaoSorteio {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+.spanStatusTelaoPainelSorteio {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 1.1rem;
-    padding: 1rem 0.5rem;
-    text-align: center;
-}
-
-.spanRotuloGanhouSorteio {
-    font-family: var(--fonteTituloBungee);
-    font-size: 0.85rem;
-    letter-spacing: 0.14em;
-    color: var(--AmareloAuxApoio);
-    animation: riseInSorteio 0.4s ease-out both;
-}
-
-.divCartaoGanhadorSorteio {
-    background-color: var(--vermelhoDiretoria);
-    border-radius: 25px;
-    padding: 1.5rem 2.5rem;
-    animation: popInSorteio 0.6s ease-out 0.1s both;
-}
-
-.spanNomeGanhadorSorteio {
-    font-family: var(--fonteTituloBungee);
-    font-size: clamp(1.8rem, 4.5vw, 2.6rem);
-    line-height: 1.08;
-    color: var(--Branco);
-    text-align: center;
-    display: block;
-    text-transform: uppercase;
-}
-
-.spanDicaRetiradaSorteio {
-    font-family: var(--fonteCorpoMontserrat);
+    gap: 8px;
     font-size: 0.9rem;
-    color: rgba(237, 236, 236, 0.8);
-    animation: riseInSorteio 0.4s ease-out 0.3s both;
+    font-weight: 600;
+    color: rgba(237, 236, 236, 0.75);
 }
 
-.divBotoesRevelacaoSorteio {
+.spanStatusTelaoPainelSorteio::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid rgba(237, 236, 236, 0.55);
+    box-sizing: border-box;
+}
+
+.statusTelaoConectadoPainelSorteio {
+    color: var(--Branco);
+}
+
+.statusTelaoConectadoPainelSorteio::before {
+    border-color: var(--AmareloAuxApoio);
+    background: var(--AmareloAuxApoio);
+}
+
+/* ── Corpo: lista + controle ─────────────────────────────────── */
+
+.divCorpoPainelSorteio {
+    display: grid;
+    grid-template-columns: minmax(300px, 420px) minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(24px, 3vw, 48px);
+    margin: 0 auto;
+}
+
+.h2ListaPainelSorteio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--Branco);
+}
+
+.spanContagemListaPainelSorteio {
+    min-width: 24px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: rgba(237, 236, 236, 0.14);
+    font-size: 0.8rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.ulListaPainelSorteio {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.botaoItemListaPainelSorteio {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+        "nome status"
+        "evento evento";
+    align-items: baseline;
+    gap: 4px 16px;
+    padding: 14px 16px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: rgba(237, 236, 236, 0.05);
+    color: var(--Branco);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.botaoItemListaPainelSorteio:hover:not(:disabled) {
+    background: rgba(237, 236, 236, 0.1);
+}
+
+.botaoItemListaPainelSorteio:focus-visible {
+    outline: 2px solid var(--AmareloAuxApoio);
+    outline-offset: 2px;
+}
+
+.botaoItemListaPainelSorteio:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.itemSelecionadoListaPainelSorteio,
+.itemSelecionadoListaPainelSorteio:hover:not(:disabled) {
+    border-color: var(--AmareloAuxApoio);
+    background: rgba(231, 152, 57, 0.12);
+}
+
+.spanNomeItemListaPainelSorteio {
+    grid-area: nome;
+    font-size: 1.05rem;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.spanEventoItemListaPainelSorteio {
+    grid-area: evento;
+    display: flex;
+    gap: 10px;
+    font-size: 0.85rem;
+    line-height: 1.35;
+    color: rgba(237, 236, 236, 0.7);
+}
+
+.spanHoraItemListaPainelSorteio {
+    flex-shrink: 0;
+    font-weight: 700;
+    color: var(--Branco);
+    font-variant-numeric: tabular-nums;
+}
+
+.spanStatusItemListaPainelSorteio {
+    grid-area: status;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--AmareloAuxApoio);
+    white-space: nowrap;
+}
+
+.itemEntregueListaPainelSorteio .spanNomeItemListaPainelSorteio {
+    color: rgba(237, 236, 236, 0.75);
+}
+
+.itemEntregueListaPainelSorteio .spanStatusItemListaPainelSorteio {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 600;
+    color: rgba(237, 236, 236, 0.65);
+}
+
+/* ── Controle do sorteio selecionado ─────────────────────────── */
+
+.sectionControlePainelSorteio {
+    position: sticky;
+    top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: clamp(24px, 3vw, 40px);
+    border-radius: 18px;
+    background: var(--vermelhoAuxDiretoria);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+}
+
+.pVazioControlePainelSorteio {
+    margin: auto 0;
+    max-width: 42ch;
+    font-size: 1rem;
+    line-height: 1.55;
+    color: rgba(237, 236, 236, 0.75);
+}
+
+.divCabecalhoControlePainelSorteio {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.h2BrindeControlePainelSorteio {
+    margin: 0;
+    font-family: var(--fonteTituloBungee);
+    font-weight: 400;
+    font-size: clamp(1.9rem, 3.6vw, 3rem);
+    line-height: 1.02;
+    color: var(--AmareloAuxApoio);
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+}
+
+.pEventoControlePainelSorteio {
+    margin: 0;
+    max-width: 60ch;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: rgba(237, 236, 236, 0.75);
+}
+
+.pConcorrendoControlePainelSorteio {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.spanForaControlePainelSorteio {
+    font-weight: 500;
+    color: rgba(237, 236, 236, 0.7);
+}
+
+.divAcoesControlePainelSorteio {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.85rem;
-    margin-top: 0.4rem;
-    animation: riseInSorteio 0.4s ease-out 0.4s both;
+    align-items: center;
+    gap: 12px;
 }
 
-.botaoEntregueSorteio {
-    min-height: 52px;
-    padding: 0 1.5rem;
-    border: none;
-    border-radius: 10px;
-    background-color: var(--azulConteudo);
+.pDicaControlePainelSorteio,
+.pAndamentoControlePainelSorteio {
+    margin: 0;
+    max-width: 56ch;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: rgba(237, 236, 236, 0.8);
+}
+
+.pAndamentoControlePainelSorteio {
+    font-weight: 600;
     color: var(--Branco);
+}
+
+.divResultadoControlePainelSorteio {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(237, 236, 236, 0.18);
+}
+
+.pNomeResultadoControlePainelSorteio {
+    margin: 0;
     font-family: var(--fonteTituloBungee);
-    font-size: 0.85rem;
-    text-transform: uppercase;
+    font-weight: 400;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    line-height: 1.08;
+    color: var(--Branco);
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+}
+
+.pDetalheResultadoControlePainelSorteio {
+    margin: 0;
+    max-width: 56ch;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: rgba(237, 236, 236, 0.7);
+}
+
+/* ── Botões ──────────────────────────────────────────────────── */
+
+.botaoPrimarioPainelSorteio,
+.botaoSecundarioPainelSorteio {
+    min-height: 48px;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: filter 0.15s;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
 
-.botaoEntregueSorteio:hover:not(:disabled) {
-    filter: brightness(1.1);
+.botaoPrimarioPainelSorteio {
+    border: none;
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoEscuro);
 }
 
-.botaoEntregueSorteio:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+.botaoPrimarioPainelSorteio:hover:not(:disabled) {
+    background: #f0a44a;
 }
 
-.botaoAusenteSorteio {
-    min-height: 52px;
-    padding: 0 1.5rem;
-    border-radius: 10px;
-    border: 2px solid rgba(237, 236, 236, 0.6);
+.botaoPrimarioPainelSorteio:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+.botaoSecundarioPainelSorteio {
+    border: 1px solid rgba(237, 236, 236, 0.4);
     background: transparent;
     color: var(--Branco);
-    font-family: var(--fonteTituloBungee);
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: border-color 0.2s, color 0.2s;
 }
 
-.botaoAusenteSorteio:hover:not(:disabled) {
-    border-color: var(--AmareloAuxApoio);
-    color: var(--AmareloAuxApoio);
+.botaoSecundarioPainelSorteio:hover:not(:disabled) {
+    border-color: var(--Branco);
+    background: rgba(237, 236, 236, 0.08);
 }
 
-.botaoAusenteSorteio:disabled {
-    opacity: 0.6;
+.botaoPrimarioPainelSorteio:focus-visible,
+.botaoSecundarioPainelSorteio:focus-visible {
+    outline: 2px solid var(--Branco);
+    outline-offset: 3px;
+}
+
+.botaoPrimarioPainelSorteio:disabled,
+.botaoSecundarioPainelSorteio:disabled {
     cursor: not-allowed;
+    opacity: 0.5;
 }
 
-.imgConfeteTelaSorteio {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
-    pointer-events: none;
-    z-index: 999;
+/* ── Avisos ──────────────────────────────────────────────────── */
+
+.pVazioPainelSorteio {
+    margin: 0;
+    padding: 20px 0;
+    max-width: 42ch;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: rgba(237, 236, 236, 0.75);
 }
 
-@keyframes riseInSorteio {
-    from { opacity: 0; transform: translateY(18px); }
-    to { opacity: 1; transform: translateY(0); }
+.pErroPainelSorteio {
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(231, 152, 57, 0.14);
+    font-size: 0.92rem;
+    line-height: 1.45;
+    color: #f6c486;
 }
 
-@keyframes popInSorteio {
-    0% { opacity: 0; transform: scale(0.78); }
-    60% { opacity: 1; transform: scale(1.04); }
-    100% { opacity: 1; transform: scale(1); }
+@media (max-width: 860px) {
+    .divCorpoPainelSorteio {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .sectionControlePainelSorteio {
+        position: static;
+        order: -1;
+        min-height: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .botaoItemListaPainelSorteio,
+    .botaoPrimarioPainelSorteio,
+    .botaoSecundarioPainelSorteio,
+    .linkVoltarAdminPainelSorteio {
+        transition: none;
+    }
 }

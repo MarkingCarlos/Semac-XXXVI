@@ -1,7 +1,7 @@
 /* Camada de acesso à API de brindes (tabela `brinde`). Gerenciada na
    aba "Brindes" do /admin. Todo brinde pertence a um sorteio
-   (`sorteioId`). `quantidadeEntregue` vem calculada pelo backend
-   (contagem de entregas vinculadas) — não é editável aqui. */
+   (`sorteioId`). Cada brinde é uma unidade: `entregue` vem calculado
+   pelo backend (há entrega vinculada) — não é editável aqui. */
 
 import { apiFetch } from '../../../lib/apiFetch.js';
 import { cabecalhosAuth } from '../../../auth/sessao.js';
@@ -12,7 +12,6 @@ const ROTA = `${API_URL}/api/brinde`;
 function paraRequisicao(brinde) {
     return {
         nome: brinde.nome,
-        quantidade: Number(brinde.quantidade),
         sorteioId: Number(brinde.sorteioId),
     };
 }

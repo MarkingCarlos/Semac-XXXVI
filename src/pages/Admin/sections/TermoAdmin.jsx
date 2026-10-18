@@ -175,19 +175,13 @@ export default function TermoAdmin() {
             <div className="cabecalhoBlocoInfoSemac cabecalhoBlocoTimesTermoInfoSemac">
                 <div>
                     <h2 className="tituloBlocoInfoSemac">Termo</h2>
-                    <p className="notaBlocoInfoSemac">
-                        As palavras de cada dia do jogo em /termo — de 5 a 10 letras, uma sorteada para cada
-                        participante; acertar vale 5 XP
-                    </p>
                 </div>
             </div>
 
             {erro && <p className="avisoErroAdmin" role="alert">{erro}</p>}
 
             <p className="avisoSigiloTermoAdmin">
-                Cada participante recebe uma palavra diferente enquanto houver palavra livre no dia; se houver
-                mais gente que palavras, elas se repetem por igual. As palavras não voltam na leitura, nem aqui:
-                depois de salvas, só o servidor as conhece.
+                Cada participante recebe uma palavra diferente.
             </p>
 
             <div className="faixaResumoAdmin">
@@ -257,19 +251,31 @@ export default function TermoAdmin() {
                                                     {' · '}{palavra.tamanho} letras
                                                     {' · '}{rotuloJogadores(palavra.jogadores)}
                                                 </span>
-                                                {/* Palavra já sorteada fica: apagá-la levaria junto
-                                                    o jogo e as tentativas de quem a recebeu. */}
-                                                <button
-                                                    type="button"
-                                                    className="botaoRemoverPalavraTermoAdmin"
-                                                    disabled={palavra.jogadores > 0 || palavraRemovendo === palavra.id}
-                                                    title={palavra.jogadores > 0
-                                                        ? 'Já sorteada para um participante — não pode ser removida'
-                                                        : 'Remover palavra'}
-                                                    onClick={() => removerPalavra(palavra.id)}
-                                                >
-                                                    {palavraRemovendo === palavra.id ? 'Removendo…' : 'Remover'}
-                                                </button>
+                                                <div className="divAcoesPalavraTermoAdmin">
+                                                    {/* Abre o jogo contra esta palavra em nova guia,
+                                                        sem gravar jogo nem creditar xp. */}
+                                                    <a
+                                                        className="botaoTestarPalavraTermoAdmin"
+                                                        href={`/termo/teste?palavra=${palavra.id}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                    >
+                                                        Testar
+                                                    </a>
+                                                    {/* Palavra já sorteada fica: apagá-la levaria junto
+                                                        o jogo e as tentativas de quem a recebeu. */}
+                                                    <button
+                                                        type="button"
+                                                        className="botaoRemoverPalavraTermoAdmin"
+                                                        disabled={palavra.jogadores > 0 || palavraRemovendo === palavra.id}
+                                                        title={palavra.jogadores > 0
+                                                            ? 'Já sorteada para um participante — não pode ser removida'
+                                                            : 'Remover palavra'}
+                                                        onClick={() => removerPalavra(palavra.id)}
+                                                    >
+                                                        {palavraRemovendo === palavra.id ? 'Removendo…' : 'Remover'}
+                                                    </button>
+                                                </div>
                                             </li>
                                         ))}
                                     </ul>

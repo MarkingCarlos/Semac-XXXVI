@@ -12,26 +12,35 @@ import {
 import { lerEscolhaMinicursos, salvarEscolhaMinicursos } from '../data/apiEscolhaMinicursos.js';
 import ModalPerguntasDebateAdmin from '../ModalPerguntasDebateAdmin.jsx';
 import { lerSessao } from '../../../auth/sessao.js';
+import { listarSorteios, criarSorteioComBrinde, excluirSorteio } from '../../Sorteio/data/apiSorteio.js';
 import Brindes from './Brindes.jsx';
 import SeletorModalSubabas from '../../../components/SeletorModalSubabas/SeletorModalSubabas.jsx';
 import ListaItensMobileAdmin from '../../../components/ListaItensMobileAdmin/ListaItensMobileAdmin.jsx';
 import ModalInferiorAdmin from '../../../components/ModalInferiorAdmin/ModalInferiorAdmin.jsx';
 
-/* Conteúdo — três sub-abas:
+/* Conteúdo — duas sub-abas:
    - "Eventos": tabela `evento` com seu tipo (`tipo_evento`) e palestrantes
      (`palestrante`, vínculo recriado a cada gravação). A lista de eventos
      é carregada e mantida pelo Admin; aqui ficam o formulário de evento e
-     os painéis de gerenciamento dos tipos de evento e das trilhas.
-   - "Brindes" e "Sorteios": em Brindes.jsx. Ficam aqui porque todo
-     sorteio pertence a um evento.
-   Cada sub-aba tem seus papéis: o restante da diretoria cuida de brindes
-   e sorteios, mas não mexe na programação. */
+     os painéis de gerenciamento dos tipos de evento e das trilhas. Os
+     sorteios de cada evento são cadastrados no próprio painel de edição.
+   - "Brindes": em Brindes.jsx.
+   Toda a diretoria vê e edita os eventos; criar, excluir, iniciar e abrir
+   a escolha de minicursos ficam com PAPEIS_GESTAO_EVENTOS (mesma regra
+   do SecurityConfig). MEMBRO só vê Brindes. */
+
+const PAPEIS_GESTAO_EVENTOS = ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO'];
 
 const SUBABAS_CONTEUDO = [
-    { id: 'eventos', rotulo: 'Eventos', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO'] },
+    {
+        id: 'eventos',
+        rotulo: 'Eventos',
+        papeis: [...PAPEIS_GESTAO_EVENTOS, 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING'],
+    },
     { id: 'brindes', rotulo: 'Brindes' },
-    { id: 'sorteios', rotulo: 'Sorteios' },
 ];
+
+const NOVO_SORTEIO_EVENTO_VAZIO = { brinde: '' };
 
 const EVENTO_VAZIO = {
     nome: '',
@@ -63,6 +72,7 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
         (subaba) => !subaba.papeis || subaba.papeis.includes(roleAtual),
     );
     const podeVerEventos = subabasVisiveisConteudo.some((subaba) => subaba.id === 'eventos');
+    const podeGerenciarEventos = PAPEIS_GESTAO_EVENTOS.includes(roleAtual);
     const [subabaAtivaConteudo, setSubabaAtivaConteudo] = useState(subabasVisiveisConteudo[0].id);
 
     const [filtro, setFiltro] = useState('');
@@ -105,6 +115,15 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
     /* Mobile: evento aberto no modal de detalhes. Só o id, buscado na
        lista a cada render: o modal reflete na hora o "iniciado" e some
        sozinho depois de uma exclusão. */
+    /* Sorteios do evento aberto no painel de edição. Cada um é salvo na
+       hora, com sua própria chamada — não espera o "Salvar alterações". */
+    const [sorteiosEvento, setSorteiosEvento] = useState([]);
+    const [carregandoSorteiosEvento, setCarregandoSorteiosEvento] = useState(false);
+    const [novoSorteioEvento, setNovoSorteioEvento] = useState(null);
+    const [salvandoSorteioEvento, setSalvandoSorteioEvento] = useState(false);
+    const [erroSorteioEvento, setErroSorteioEvento] = useState('');
+    const [idSorteioConfirmandoExclusao, setIdSorteioConfirmandoExclusao] = useState(null);
+
     const [idEventoDetalhado, setIdEventoDetalhado] = useState(null);
     const eventoDetalhado = eventos.find((ev) => ev.id === idEventoDetalhado) ?? null;
 
@@ -126,9 +145,11 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
         listarTrilhas()
             .then((lista) => { if (ativo) setTrilhas(lista); })
             .catch(() => { if (ativo) setErroTrilha('Não foi possível carregar as trilhas.'); });
-        lerEscolhaMinicursos(ANO_ATUAL)
-            .then((aberta) => { if (ativo) setEscolhaMinicursosAberta(aberta); })
-            .catch((e) => { if (ativo) setErroEscolhaMinicursos(e.message); });
+        if (podeGerenciarEventos) {
+            lerEscolhaMinicursos(ANO_ATUAL)
+                .then((aberta) => { if (ativo) setEscolhaMinicursosAberta(aberta); })
+                .catch((e) => { if (ativo) setErroEscolhaMinicursos(e.message); });
+        }
         return () => { ativo = false; };
     }, []);
 
@@ -155,6 +176,7 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
         setFormulario(EVENTO_VAZIO);
         setIdEmEdicao(null);
         setErroAcao('');
+        limparSorteiosEvento();
         setPainelAberto(true);
     };
 
@@ -168,7 +190,69 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
         });
         setIdEmEdicao(evento.id);
         setErroAcao('');
+        carregarSorteiosEvento(evento.id);
         setPainelAberto(true);
+    };
+
+    // ── Sorteios do evento em edição ──────────────────────────────
+    const limparSorteiosEvento = () => {
+        setSorteiosEvento([]);
+        setNovoSorteioEvento(null);
+        setErroSorteioEvento('');
+        setIdSorteioConfirmandoExclusao(null);
+    };
+
+    /* A API lista todos os sorteios; aqui ficam só os deste evento. */
+    const carregarSorteiosEvento = (eventoId) => {
+        limparSorteiosEvento();
+        setCarregandoSorteiosEvento(true);
+        listarSorteios()
+            .then((lista) => setSorteiosEvento(lista.filter((sorteio) => sorteio.eventoId === eventoId)))
+            .catch((e) => setErroSorteioEvento(e.message))
+            .finally(() => setCarregandoSorteiosEvento(false));
+    };
+
+    const salvarSorteioEvento = async () => {
+        const brinde = novoSorteioEvento.brinde.trim();
+        if (!brinde) {
+            setErroSorteioEvento('Informe o que vai ser sorteado.');
+            return;
+        }
+        setSalvandoSorteioEvento(true);
+        setErroSorteioEvento('');
+        try {
+            const criado = await criarSorteioComBrinde({ eventoId: idEmEdicao, brinde });
+            setSorteiosEvento((anteriores) => [...anteriores, criado]);
+            setNovoSorteioEvento(null);
+        } catch (e) {
+            setErroSorteioEvento(e.message);
+        } finally {
+            setSalvandoSorteioEvento(false);
+        }
+    };
+
+    /* O campo do sorteio está dentro do formulário do evento: Enter nele
+       salvaria o evento. Aqui ele salva o sorteio. */
+    const teclaCampoSorteioEvento = (e) => {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        salvarSorteioEvento();
+    };
+
+    const removerSorteioEvento = async (id) => {
+        if (idSorteioConfirmandoExclusao !== id) {
+            setIdSorteioConfirmandoExclusao(id);
+            return;
+        }
+        setErroSorteioEvento('');
+        try {
+            await excluirSorteio(id);
+            setSorteiosEvento((anteriores) => anteriores.filter((sorteio) => sorteio.id !== id));
+        } catch (e) {
+            setErroSorteioEvento(e.message);
+        } finally {
+            setIdSorteioConfirmandoExclusao(null);
+        }
     };
 
     const adicionarPalestrante = () => {
@@ -362,11 +446,7 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                 rotuloAcessivel="Sub-abas de Conteúdo"
             />
 
-            {/* Uma única instância para as duas sub-abas: trocar entre
-                Brindes e Sorteios mantém o estado e não recarrega. */}
-            {(subabaAtivaConteudo === 'brindes' || subabaAtivaConteudo === 'sorteios') && (
-                <Brindes subabaAtiva={subabaAtivaConteudo} eventos={eventos} />
-            )}
+            {subabaAtivaConteudo === 'brindes' && <Brindes />}
 
             {subabaAtivaConteudo === 'eventos' && (<>
                 <div className="controlesCabecalhoFinancas barraFerramentasEventosConteudo">
@@ -394,36 +474,40 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                         </button>
                     </div>
 
-                    <button type="button" className="botaoPrimarioFinancas" onClick={abrirNovoEvento}>
-                        + Novo evento
-                    </button>
+                    {podeGerenciarEventos && (
+                        <button type="button" className="botaoPrimarioFinancas" onClick={abrirNovoEvento}>
+                            + Novo evento
+                        </button>
+                    )}
                 </div>
 
             {erro && <p className="avisoErroAdmin" role="alert">{erro}</p>}
             {erroAcao && <p className="avisoErroAdmin" role="alert">{erroAcao}</p>}
 
-            {erroEscolhaMinicursos && <p className="avisoErroAdmin" role="alert">{erroEscolhaMinicursos}</p>}
-            <section className="cartaoEscolhaMinicursosConteudo" aria-label="Escolha de minicursos">
-                <div className="textoEscolhaMinicursosConteudo">
-                    <span className="rotuloEscolhaMinicursosConteudo">Escolha de minicursos</span>
-                    <p className="notaEscolhaMinicursosConteudo">
-                        Fechada, ninguém entra nem sai de minicurso no /participantes — quem já está inscrito continua inscrito.
-                    </p>
-                </div>
-                <label className="campoCheckboxEscolhaMinicursosConteudo">
-                    <input
-                        type="checkbox"
-                        checked={Boolean(escolhaMinicursosAberta)}
-                        disabled={escolhaMinicursosAberta === null || salvandoEscolhaMinicursos}
-                        onInput={(e) => alternarEscolhaMinicursos(e.currentTarget.checked)}
-                    />
-                    <span>
-                        {escolhaMinicursosAberta === null
-                            ? 'Carregando…'
-                            : escolhaMinicursosAberta ? 'Liberada' : 'Fechada'}
-                    </span>
-                </label>
-            </section>
+            {podeGerenciarEventos && erroEscolhaMinicursos && <p className="avisoErroAdmin" role="alert">{erroEscolhaMinicursos}</p>}
+            {podeGerenciarEventos && (
+                <section className="cartaoEscolhaMinicursosConteudo" aria-label="Escolha de minicursos">
+                    <div className="textoEscolhaMinicursosConteudo">
+                        <span className="rotuloEscolhaMinicursosConteudo">Escolha de minicursos</span>
+                        <p className="notaEscolhaMinicursosConteudo">
+                            Fechada, ninguém entra nem sai de minicurso no /participantes — quem já está inscrito continua inscrito.
+                        </p>
+                    </div>
+                    <label className="campoCheckboxEscolhaMinicursosConteudo">
+                        <input
+                            type="checkbox"
+                            checked={Boolean(escolhaMinicursosAberta)}
+                            disabled={escolhaMinicursosAberta === null || salvandoEscolhaMinicursos}
+                            onInput={(e) => alternarEscolhaMinicursos(e.currentTarget.checked)}
+                        />
+                        <span>
+                            {escolhaMinicursosAberta === null
+                                ? 'Carregando…'
+                                : escolhaMinicursosAberta ? 'Liberada' : 'Fechada'}
+                        </span>
+                    </label>
+                </section>
+            )}
 
             <div className="envelopeTabelaFinancas">
                 {/* Mobile: só os nomes; o toque abre o modal de detalhes. */}
@@ -502,7 +586,7 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                                         {/* Some depois de iniciado: o marco não se desfaz, então
                                             oferecer o clique de novo seria oferecer nada. A hora
                                             fica visível na coluna de data. */}
-                                        {!evento.horaIniciado && (
+                                        {podeGerenciarEventos && !evento.horaIniciado && (
                                             <button
                                                 type="button"
                                                 className={
@@ -553,29 +637,31 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                                                 <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
                                             </svg>
                                         </button>
-                                        <button
-                                            type="button"
-                                            className={
-                                                idConfirmandoExclusao === evento.id
-                                                    ? 'botaoAcaoLinhaFinancas botaoConfirmarExclusaoFinancas'
-                                                    : 'botaoAcaoLinhaFinancas'
-                                            }
-                                            aria-label={
-                                                idConfirmandoExclusao === evento.id
-                                                    ? `Confirmar exclusão do evento ${evento.nome}`
-                                                    : `Excluir evento ${evento.nome}`
-                                            }
-                                            title={
-                                                idConfirmandoExclusao === evento.id
-                                                    ? 'Clique novamente para confirmar'
-                                                    : 'Excluir'
-                                            }
-                                            onClick={() => removerEvento(evento.id)}
-                                        >
-                                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-                                            </svg>
-                                        </button>
+                                        {podeGerenciarEventos && (
+                                            <button
+                                                type="button"
+                                                className={
+                                                    idConfirmandoExclusao === evento.id
+                                                        ? 'botaoAcaoLinhaFinancas botaoConfirmarExclusaoFinancas'
+                                                        : 'botaoAcaoLinhaFinancas'
+                                                }
+                                                aria-label={
+                                                    idConfirmandoExclusao === evento.id
+                                                        ? `Confirmar exclusão do evento ${evento.nome}`
+                                                        : `Excluir evento ${evento.nome}`
+                                                }
+                                                title={
+                                                    idConfirmandoExclusao === evento.id
+                                                        ? 'Clique novamente para confirmar'
+                                                        : 'Excluir'
+                                                }
+                                                onClick={() => removerEvento(evento.id)}
+                                            >
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                                </svg>
+                                            </button>
+                                        )}
                                     </div>
                                 </td>
                             </tr>
@@ -596,6 +682,7 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                     confirmandoInicio={idConfirmandoInicio === eventoDetalhado.id}
                     aoExcluir={removerEvento}
                     confirmandoExclusao={idConfirmandoExclusao === eventoDetalhado.id}
+                    podeGerenciar={podeGerenciarEventos}
                 />
             )}
 
@@ -781,6 +868,120 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                                 </div>
                             </div>
                         ))}
+                    </div>
+
+                    {/* Sorteios do evento: o que vai ser sorteado (um item cada).
+                        Salvos na hora, fora do "Salvar alterações" do evento —
+                        por isso só aparecem num evento que já existe. */}
+                    <div className="campoFormularioFinancas">
+                        <div className="cabecalhoPalestrantesConteudo">
+                            <label className="rotuloCampoFinancas semMargemInferiorAdmin">Sorteios</label>
+                            {idEmEdicao !== null && novoSorteioEvento === null && (
+                                <button
+                                    type="button"
+                                    className="botaoFantasmaFinancas botaoMiniAdmin"
+                                    onClick={() => { setErroSorteioEvento(''); setNovoSorteioEvento(NOVO_SORTEIO_EVENTO_VAZIO); }}
+                                >
+                                    + Adicionar sorteio
+                                </button>
+                            )}
+                        </div>
+
+                        {idEmEdicao === null && (
+                            <p className="avisoVazioPalestrantesConteudo">Salve o evento para adicionar sorteios.</p>
+                        )}
+
+                        {idEmEdicao !== null && carregandoSorteiosEvento && (
+                            <p className="avisoVazioPalestrantesConteudo">Carregando sorteios…</p>
+                        )}
+
+                        {idEmEdicao !== null && !carregandoSorteiosEvento
+                            && sorteiosEvento.length === 0 && novoSorteioEvento === null && (
+                            <p className="avisoVazioPalestrantesConteudo">Nenhum sorteio neste evento.</p>
+                        )}
+
+                        {sorteiosEvento.length > 0 && (
+                            <ul className="listaSorteiosEventoConteudo">
+                                {sorteiosEvento.map((sorteio) => {
+                                    const confirmandoExclusaoSorteio = idSorteioConfirmandoExclusao === sorteio.id;
+                                    const temEntregas = sorteio.quantidadeEntregue > 0;
+                                    return (
+                                        <li key={sorteio.id} className="itemSorteioEventoConteudo">
+                                            <span className="textoSorteioEventoConteudo">
+                                                <strong>{sorteio.nome}</strong>
+                                            </span>
+                                            {temEntregas && (
+                                                <span className="seloSorteadoEventoConteudo">já sorteado</span>
+                                            )}
+                                            {/* Com ganhador registrado não sai: levaria junto o
+                                                histórico de quem ganhou. */}
+                                            <button
+                                                type="button"
+                                                className={
+                                                    confirmandoExclusaoSorteio
+                                                        ? 'botaoAcaoLinhaFinancas botaoConfirmarExclusaoFinancas'
+                                                        : 'botaoAcaoLinhaFinancas'
+                                                }
+                                                disabled={temEntregas}
+                                                aria-label={
+                                                    confirmandoExclusaoSorteio
+                                                        ? `Confirmar remoção do sorteio ${sorteio.nome}`
+                                                        : `Remover sorteio ${sorteio.nome}`
+                                                }
+                                                title={
+                                                    temEntregas
+                                                        ? 'Já tem ganhador — não pode ser removido'
+                                                        : confirmandoExclusaoSorteio
+                                                            ? 'Clique novamente para confirmar'
+                                                            : 'Remover'
+                                                }
+                                                onClick={() => removerSorteioEvento(sorteio.id)}
+                                            >
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <line x1="18" y1="6" x2="6" y2="18" />
+                                                    <line x1="6" y1="6" x2="18" y2="18" />
+                                                </svg>
+                                            </button>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        )}
+
+                        {novoSorteioEvento !== null && (
+                            <div className="cartaoPalestranteConteudo">
+                                <div className="campoFormularioFinancas">
+                                    <input
+                                        className="entradaFormularioFinancas"
+                                        placeholder="O que vai ser sorteado *"
+                                        aria-label="O que vai ser sorteado"
+                                        autoFocus
+                                        value={novoSorteioEvento.brinde}
+                                        onInput={(e) => setNovoSorteioEvento({ ...novoSorteioEvento, brinde: e.currentTarget.value })}
+                                        onKeyDown={teclaCampoSorteioEvento}
+                                    />
+                                </div>
+                                <div className="acoesNovoSorteioEventoConteudo">
+                                    <button
+                                        type="button"
+                                        className="botaoFantasmaFinancas botaoMiniAdmin"
+                                        onClick={() => { setNovoSorteioEvento(null); setErroSorteioEvento(''); }}
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="botaoPrimarioFinancas botaoMiniAdmin"
+                                        disabled={salvandoSorteioEvento}
+                                        onClick={salvarSorteioEvento}
+                                    >
+                                        {salvandoSorteioEvento ? 'Salvando…' : 'Salvar sorteio'}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {erroSorteioEvento && <p className="avisoErroAdmin" role="alert">{erroSorteioEvento}</p>}
                     </div>
 
                     <div className="rodapeFormularioFinancas">
@@ -993,6 +1194,7 @@ function ModalDetalhesEvento({
     aoEditar, aoVerPerguntas,
     aoIniciar, confirmandoInicio,
     aoExcluir, confirmandoExclusao,
+    podeGerenciar,
 }) {
     const horarioEvento = evento.horaInicio
         ? `${evento.horaInicio}${evento.horaFim ? `–${evento.horaFim}` : ''}`
@@ -1053,25 +1255,28 @@ function ModalDetalhesEvento({
                             </button>
                         )}
 
-                        <div className="linhaAcoesDestrutivasItemModalInferiorAdmin">
-                            {/* Some depois de iniciado: o marco não se desfaz. */}
-                            {!evento.horaIniciado && (
+                        {/* Iniciar e excluir só para quem gerencia a programação. */}
+                        {podeGerenciar && (
+                            <div className="linhaAcoesDestrutivasItemModalInferiorAdmin">
+                                {/* Some depois de iniciado: o marco não se desfaz. */}
+                                {!evento.horaIniciado && (
+                                    <button
+                                        type="button"
+                                        className={`botaoAcaoItemModalInferiorAdmin ${confirmandoInicio ? 'botaoConfirmarInicioConteudo' : ''}`}
+                                        onClick={() => aoIniciar(evento.id)}
+                                    >
+                                        {confirmandoInicio ? 'Toque de novo para iniciar' : 'Iniciar evento'}
+                                    </button>
+                                )}
                                 <button
                                     type="button"
-                                    className={`botaoAcaoItemModalInferiorAdmin ${confirmandoInicio ? 'botaoConfirmarInicioConteudo' : ''}`}
-                                    onClick={() => aoIniciar(evento.id)}
+                                    className={`botaoAcaoItemModalInferiorAdmin botaoAcaoPerigoItemModalInferiorAdmin ${confirmandoExclusao ? 'botaoAcaoConfirmandoItemModalInferiorAdmin' : ''}`}
+                                    onClick={() => aoExcluir(evento.id)}
                                 >
-                                    {confirmandoInicio ? 'Toque de novo para iniciar' : 'Iniciar evento'}
+                                    {confirmandoExclusao ? 'Toque de novo para excluir' : 'Excluir'}
                                 </button>
-                            )}
-                            <button
-                                type="button"
-                                className={`botaoAcaoItemModalInferiorAdmin botaoAcaoPerigoItemModalInferiorAdmin ${confirmandoExclusao ? 'botaoAcaoConfirmandoItemModalInferiorAdmin' : ''}`}
-                                onClick={() => aoExcluir(evento.id)}
-                            >
-                                {confirmandoExclusao ? 'Toque de novo para excluir' : 'Excluir'}
-                            </button>
-                        </div>
+                            </div>
+                        )}
                     </div>
                 </>
             )}

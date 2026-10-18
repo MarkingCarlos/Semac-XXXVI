@@ -9,6 +9,7 @@
 import { useState, useEffect } from 'preact/hooks';
 import { Link } from 'wouter';
 import { buscarPerfil, atualizarPerfil } from '../data/apiPerfil.js';
+import { listarSorteios } from '../../Sorteio/data/apiSorteio.js';
 import { temAcessoDashboard } from '../../../auth/sessao.js';
 import DashboardAdmin from '../../../components/dashboardAdmin/DashboardAdmin.jsx';
 import './inicio.css';
@@ -24,6 +25,14 @@ const LABEL_FUNCAO = {
     PRESIDENTE: 'Presidente',
 };
 
+/* Data local em 'YYYY-MM-DD' — mesmo critério da /sorteio para "hoje". */
+function hojeIsoInicio() {
+    const agora = new Date();
+    const mes = String(agora.getMonth() + 1).padStart(2, '0');
+    const dia = String(agora.getDate()).padStart(2, '0');
+    return `${agora.getFullYear()}-${mes}-${dia}`;
+}
+
 export default function Inicio({ podeAcessarFinanceiro = false, podeVerPrevisao = false, podeGerenciarDoacoes = false }) {
     const [perfil, setPerfil] = useState(null);
     const [carregando, setCarregando] = useState(true);
@@ -34,6 +43,10 @@ export default function Inicio({ podeAcessarFinanceiro = false, podeVerPrevisao 
     const [salvando, setSalvando] = useState(false);
     const [erroSalvar, setErroSalvar] = useState('');
     const [sucesso, setSucesso] = useState(false);
+
+    /* Sorteios de hoje, para o card de atalho dizer o que tem para sortear.
+       null = ainda carregando ou falhou; o card funciona do mesmo jeito. */
+    const [sorteiosHoje, setSorteiosHoje] = useState(null);
 
     // Aplica os dados carregados (ou recém-salvos) como base do formulário.
     function aplicarPerfil(dados) {
@@ -47,6 +60,18 @@ export default function Inicio({ podeAcessarFinanceiro = false, podeVerPrevisao 
             .then((dados) => { if (ativo && dados) aplicarPerfil(dados); })
             .catch(() => { if (ativo) setErroCarregar('Não foi possível carregar seu perfil. Tente recarregar a página.'); })
             .finally(() => { if (ativo) setCarregando(false); });
+        return () => { ativo = false; };
+    }, []);
+
+    useEffect(() => {
+        let ativo = true;
+        const hoje = hojeIsoInicio();
+        listarSorteios()
+            .then((lista) => {
+                if (!ativo) return;
+                setSorteiosHoje(lista.filter((sorteio) => (sorteio.eventoDataHoraInicio || '').slice(0, 10) === hoje));
+            })
+            .catch(() => {});
         return () => { ativo = false; };
     }, []);
 
@@ -83,6 +108,21 @@ export default function Inicio({ podeAcessarFinanceiro = false, podeVerPrevisao 
 
     const primeiroNome = perfil.nome.trim().split(/\s+/)[0];
     const funcao = LABEL_FUNCAO[perfil.role] ?? 'Comissão';
+
+    /* Ainda pendentes = sem ganhador registrado. */
+    const pendentesHoje = sorteiosHoje?.filter((sorteio) => sorteio.quantidadeEntregue === 0) ?? [];
+    const subtituloCardIrSorteio = sorteiosHoje === null
+        ? 'Tela de sorteio dos brindes'
+        : pendentesHoje.length === 0
+            ? 'Nada para sortear hoje'
+            : `${pendentesHoje.length} ${pendentesHoje.length === 1 ? 'sorteio pendente' : 'sorteios pendentes'} hoje`;
+    const textoSorteiosHoje = sorteiosHoje === null
+        ? 'Escolha o sorteio, gire e registre quem ganhou.'
+        : pendentesHoje.length > 0
+            ? pendentesHoje.map((sorteio) => sorteio.nome).join(', ')
+            : sorteiosHoje.length > 0
+                ? 'Todos os sorteios de hoje já têm ganhador.'
+                : 'Os sorteios são cadastrados no evento, em Conteúdo.';
 
     return (
         <div className="conteudoInicio">
@@ -122,6 +162,20 @@ export default function Inicio({ podeAcessarFinanceiro = false, podeVerPrevisao 
 
 
             {temAcessoDashboard() && <DashboardAdmin />}
+
+            {/* Atalho para a /sorteio, no visual dos cards da dashboard e logo
+                abaixo do carrossel. Fica fora da DashboardAdmin de propósito:
+                a dashboard é só da presidência e da diretoria de site, mas
+                toda a comissão realiza sorteios. */}
+            <div className="gradeCardIrSorteioInicio">
+                <Link href="/sorteio" className="cardDashboard cardIrSorteioInicio">
+                    <span className="tituloCardDashboard">Realizar sorteio</span>
+                    <span className="subtituloCardDashboard">{subtituloCardIrSorteio}</span>
+                    <span className="conteudoCardDashboard">
+                        <span className="textoSorteiosHojeInicio">{textoSorteiosHoje}</span>
+                    </span>
+                </Link>
+            </div>
 
             <form className="formularioPerfilInicio" onSubmit={salvar}>
                 <p className="divisorFormularioFinancas">Seus dados</p>

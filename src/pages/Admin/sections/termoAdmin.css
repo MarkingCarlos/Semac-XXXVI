@@ -87,7 +87,7 @@
     text-transform: uppercase;
     letter-spacing: 0.2em;
     font-family: var(--fonteTituloBungee);
-    resize: vertical;
+    resize: none;
     min-height: 72px;
 }
 
@@ -127,6 +127,14 @@
     font-size: 0.8125rem;
 }
 
+.divAcoesPalavraTermoAdmin {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Link com cara de botão: abre o modo teste em nova guia. */
+.botaoTestarPalavraTermoAdmin,
 .botaoRemoverPalavraTermoAdmin {
     background: transparent;
     color: #edecec;
@@ -141,6 +149,11 @@
     transition: border-color 0.18s ease, color 0.18s ease;
 }
 
+.botaoTestarPalavraTermoAdmin {
+    text-decoration: none;
+}
+
+.botaoTestarPalavraTermoAdmin:hover,
 .botaoRemoverPalavraTermoAdmin:hover:not(:disabled) {
     border-color: #E79839;
     color: #E79839;

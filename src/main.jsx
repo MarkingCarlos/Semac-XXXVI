@@ -15,6 +15,7 @@ const PaginaCotas = lazy(() => import('./pages/PaginaCotas/PaginaCotas.jsx'));
 const Checkin = lazy(() => import('./components/qrcode/ModalQrCode.jsx'));
 const Termo = lazy(() => import('./pages/Termo/termo.jsx'));
 const Sorteio = lazy(() => import('./pages/Sorteio/sorteio.jsx'));
+const TelaoSorteio = lazy(() => import('./pages/Sorteio/telaoSorteio.jsx'));
 const Financas = lazy(() => import('./pages/Financas/Financas.jsx'));
 const ConjuntosCotacao = lazy(() => import('./pages/Financas/conjuntos/ConjuntosCotacao.jsx'));
 const ConjuntoDetalhe = lazy(() => import('./pages/Financas/conjuntos/ConjuntoDetalhe.jsx'));
@@ -68,6 +69,14 @@ function RotaAdmin() {
         : <Redirect to="/inscricoes?tab=entrar&next=/admin" />;
 }
 
+/* Modo teste do Termo, aberto em nova guia pelo botão "Testar" do
+   /admin -> Termo. Mesmo público que cadastra as palavras. */
+function RotaTesteTermo() {
+    return temAcessoFinanceiro()
+        ? <Termo modoTeste />
+        : <Redirect to="/inscricoes?tab=entrar&next=/admin" />;
+}
+
 function RotaParticipantes() {
     return temAcessoParticipante()
         ? <Participantes />
@@ -94,6 +103,13 @@ function RotaSorteio() {
         : <Redirect to="/inscricoes?tab=entrar&next=/sorteio" />;
 }
 
+/* Guia projetada no telão, aberta pelo painel do /sorteio. Mesmo público. */
+function RotaTelaoSorteio() {
+    return temAcessoAdmin()
+        ? <TelaoSorteio />
+        : <Redirect to="/inscricoes?tab=entrar&next=/sorteio" />;
+}
+
 render(
     <Suspense fallback={<CarregandoRota />}>
         <Switch>
@@ -107,7 +123,9 @@ render(
             <Route path="/participantes"><RotaParticipantes /></Route>
             <Route path="/checkin"><RotaCheckin /></Route>
             <Route path="/time"><RotaTime /></Route>
+            <Route path="/termo/teste"><RotaTesteTermo/></Route>
             <Route path="/termo"><Termo/></Route>
+            <Route path="/sorteio/telao"><RotaTelaoSorteio/></Route>
             <Route path="/sorteio"><RotaSorteio/></Route>
             {/*<Route path="/ranking"><Ranking /></Route>*/}
             <Route><App /></Route>

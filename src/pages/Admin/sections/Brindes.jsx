@@ -3,23 +3,20 @@ import PainelLateral from '../../Financas/components/PainelLateral.jsx';
 import { normalizar } from '../../Financas/utils/moeda.js';
 import { listarBrindes, criarBrinde, atualizarBrinde, excluirBrinde } from '../data/apiBrindes.js';
 import { listarSorteios } from '../../Sorteio/data/apiSorteio.js';
-import SorteiosBrindes from './SorteiosBrindes.jsx';
 import ListaItensMobileAdmin from '../../../components/ListaItensMobileAdmin/ListaItensMobileAdmin.jsx';
 import ModalInferiorAdmin from '../../../components/ModalInferiorAdmin/ModalInferiorAdmin.jsx';
 
-/* Brindes e Sorteios — duas sub-abas da seção Conteúdo, que decide qual
-   está ativa (`subabaAtiva`):
-   - "brindes": tabela `brinde` (nome, quantidade, sorteio). Todo brinde
-     pertence a um sorteio. `quantidadeEntregue` vem calculada pelo
-     backend (entregas já confirmadas) e não é editável aqui.
-   - "sorteios": CRUD de `sorteio` (nome + evento), em SorteiosBrindes.jsx.
-   A lista de sorteios mora aqui porque as duas sub-abas precisam dela; o
-   Conteúdo renderiza este componente no mesmo lugar para as duas, então
-   trocar entre elas não recarrega nada. Os eventos vêm do Admin. */
+/* Brindes — sub-aba da seção Conteúdo: tabela `brinde` (nome, sorteio).
+   Todo brinde pertence a um sorteio e é uma unidade só: `entregue` vem
+   calculado pelo backend (entrega já confirmada) e não é editável aqui.
 
-const FORMULARIO_VAZIO = { nome: '', quantidade: '', sorteioId: '' };
+   Os sorteios são cadastrados no painel de edição do evento (Conteúdo →
+   Eventos → Editar), que já cria um brinde junto; aqui dá para renomear,
+   mover ou pôr mais de um brinde no mesmo sorteio. */
 
-export default function Brindes({ subabaAtiva, eventos }) {
+const FORMULARIO_VAZIO = { nome: '', sorteioId: '' };
+
+export default function Brindes() {
     const [brindes, setBrindes] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState('');
@@ -63,15 +60,6 @@ export default function Brindes({ subabaAtiva, eventos }) {
         return () => { ativo = false; };
     }, []);
 
-    /* A quantidade de brindes por sorteio é calculada no backend; depois
-       de mexer num brinde, recarrega a lista para a outra sub-aba ficar
-       certa. Falha aqui não atrapalha o que já foi salvo. */
-    const recarregarSorteios = () => {
-        listarSorteios().then(setSorteios).catch(() => {});
-    };
-
-    /* Nome do sorteio vem da lista local, e não do brinde, para refletir
-       na hora uma renomeação feita na sub-aba Sorteios. */
     const nomeDoSorteio = (brinde) =>
         sorteios.find((sorteio) => sorteio.id === brinde.sorteioId)?.nome ?? brinde.sorteioNome;
 
@@ -88,7 +76,7 @@ export default function Brindes({ subabaAtiva, eventos }) {
     };
 
     const abrirEdicaoBrinde = (brinde) => {
-        setFormulario({ nome: brinde.nome, quantidade: brinde.quantidade, sorteioId: String(brinde.sorteioId) });
+        setFormulario({ nome: brinde.nome, sorteioId: String(brinde.sorteioId) });
         setIdEmEdicao(brinde.id);
         setErro('');
         setPainelAberto(true);
@@ -107,7 +95,6 @@ export default function Brindes({ subabaAtiva, eventos }) {
                 setBrindes([...brindes, criado]);
             }
             setPainelAberto(false);
-            recarregarSorteios();
         } catch (e) {
             setErro(e.message);
         } finally {
@@ -124,7 +111,6 @@ export default function Brindes({ subabaAtiva, eventos }) {
         try {
             await excluirBrinde(id);
             setBrindes(brindes.filter((b) => b.id !== id));
-            recarregarSorteios();
         } catch (e) {
             setErro(e.message);
         } finally {
@@ -134,36 +120,26 @@ export default function Brindes({ subabaAtiva, eventos }) {
 
     return (
         <>
-            {subabaAtiva === 'sorteios' && (
-                <SorteiosBrindes
-                    sorteios={sorteios}
-                    eventos={eventos}
-                    carregando={carregandoSorteios}
-                    aoAlterarSorteios={setSorteios}
-                />
-            )}
-
-            {subabaAtiva === 'brindes' && (<>
-                <div className="controlesCabecalhoFinancas barraFerramentasBrindesAdmin">
-                    <div className="filtroTabelaFinancas">
-                        <span className="iconeFiltroFinancas">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
-                            </svg>
-                        </span>
-                        <input
-                            className="entradaFiltroFinancas"
-                            type="search"
-                            placeholder="Filtrar por brinde ou sorteio…"
-                            value={filtro}
-                            onInput={(e) => setFiltro(e.currentTarget.value)}
-                            aria-label="Filtrar brindes por nome ou sorteio"
-                        />
-                    </div>
-                    <button type="button" className="botaoPrimarioFinancas" onClick={abrirNovoBrinde}>
-                        + Novo brinde
-                    </button>
+            <div className="controlesCabecalhoFinancas barraFerramentasBrindesAdmin">
+                <div className="filtroTabelaFinancas">
+                    <span className="iconeFiltroFinancas">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+                        </svg>
+                    </span>
+                    <input
+                        className="entradaFiltroFinancas"
+                        type="search"
+                        placeholder="Filtrar por brinde ou sorteio…"
+                        value={filtro}
+                        onInput={(e) => setFiltro(e.currentTarget.value)}
+                        aria-label="Filtrar brindes por nome ou sorteio"
+                    />
                 </div>
+                <button type="button" className="botaoPrimarioFinancas" onClick={abrirNovoBrinde}>
+                    + Novo brinde
+                </button>
+            </div>
 
             {erro && <p className="avisoErroAdmin" role="alert">{erro}</p>}
 
@@ -186,21 +162,19 @@ export default function Brindes({ subabaAtiva, eventos }) {
                         <tr>
                             <th>Brinde</th>
                             <th>Sorteio</th>
-                            <th>Quantidade</th>
-                            <th>Entregues</th>
-                            <th>Restante</th>
+                            <th>Status</th>
                             <th aria-label="Ações" />
                         </tr>
                     </thead>
                     <tbody>
                         {carregando && (
                             <tr>
-                                <td colSpan={6} className="celulaVaziaFinancas">Carregando brindes…</td>
+                                <td colSpan={4} className="celulaVaziaFinancas">Carregando brindes…</td>
                             </tr>
                         )}
                         {!carregando && brindesFiltrados.length === 0 && (
                             <tr>
-                                <td colSpan={6} className="celulaVaziaFinancas">
+                                <td colSpan={4} className="celulaVaziaFinancas">
                                     {filtro.trim()
                                         ? 'Nenhum brinde encontrado para esse filtro.'
                                         : 'Nenhum brinde cadastrado ainda.'}
@@ -208,14 +182,11 @@ export default function Brindes({ subabaAtiva, eventos }) {
                             </tr>
                         )}
                         {!carregando && brindesFiltrados.map((brinde) => {
-                            const restante = brinde.quantidade - brinde.quantidadeEntregue;
                             return (
                                 <tr key={brinde.id}>
                                     <td><span className="nomeDoadorDoacoes">{brinde.nome}</span></td>
                                     <td>{nomeDoSorteio(brinde)}</td>
-                                    <td>{brinde.quantidade}</td>
-                                    <td>{brinde.quantidadeEntregue}</td>
-                                    <td>{restante > 0 ? restante : 'Esgotado'}</td>
+                                    <td>{brinde.entregue ? 'Entregue' : 'Disponível'}</td>
                                     <td>
                                         <div className="grupoAcoesLinhaFinancas">
                                             <button
@@ -260,7 +231,6 @@ export default function Brindes({ subabaAtiva, eventos }) {
                     </tbody>
                 </table>
             </div>
-            </>)}
 
             {/* ── Modal de detalhes do brinde (mobile) ───────────
                 Mesmas colunas e ações da tabela; "Editar" fecha o modal
@@ -272,7 +242,6 @@ export default function Brindes({ subabaAtiva, eventos }) {
                     aoFechar={fecharDetalhesBrinde}
                 >
                     {(fecharDetalhes) => {
-                        const restante = brindeDetalhado.quantidade - brindeDetalhado.quantidadeEntregue;
                         const confirmandoExclusao = idConfirmandoExclusao === brindeDetalhado.id;
                         return (
                             <>
@@ -282,16 +251,8 @@ export default function Brindes({ subabaAtiva, eventos }) {
                                         <dd className="valorDetalheItemModalInferiorAdmin">{nomeDoSorteio(brindeDetalhado)}</dd>
                                     </div>
                                     <div className="linhaDetalheItemModalInferiorAdmin">
-                                        <dt className="rotuloDetalheItemModalInferiorAdmin">Quantidade</dt>
-                                        <dd className="valorDetalheItemModalInferiorAdmin">{brindeDetalhado.quantidade}</dd>
-                                    </div>
-                                    <div className="linhaDetalheItemModalInferiorAdmin">
-                                        <dt className="rotuloDetalheItemModalInferiorAdmin">Entregues</dt>
-                                        <dd className="valorDetalheItemModalInferiorAdmin">{brindeDetalhado.quantidadeEntregue}</dd>
-                                    </div>
-                                    <div className="linhaDetalheItemModalInferiorAdmin">
-                                        <dt className="rotuloDetalheItemModalInferiorAdmin">Restante</dt>
-                                        <dd className="valorDetalheItemModalInferiorAdmin">{restante > 0 ? restante : 'Esgotado'}</dd>
+                                        <dt className="rotuloDetalheItemModalInferiorAdmin">Status</dt>
+                                        <dd className="valorDetalheItemModalInferiorAdmin">{brindeDetalhado.entregue ? 'Entregue' : 'Disponível'}</dd>
                                     </div>
                                 </dl>
 
@@ -339,19 +300,6 @@ export default function Brindes({ subabaAtiva, eventos }) {
                     </div>
 
                     <div className="campoFormularioFinancas">
-                        <label className="rotuloCampoFinancas" htmlFor="campoQuantidadeBrinde">Quantidade *</label>
-                        <input
-                            id="campoQuantidadeBrinde"
-                            className="entradaFormularioFinancas"
-                            type="number"
-                            min="1"
-                            required
-                            value={formulario.quantidade}
-                            onInput={(e) => setFormulario({ ...formulario, quantidade: e.currentTarget.value })}
-                        />
-                    </div>
-
-                    <div className="campoFormularioFinancas">
                         <label className="rotuloCampoFinancas" htmlFor="campoSorteioBrinde">Sorteio *</label>
                         <select
                             id="campoSorteioBrinde"
@@ -369,7 +317,7 @@ export default function Brindes({ subabaAtiva, eventos }) {
                         </select>
                         {!carregandoSorteios && sorteios.length === 0 && (
                             <span className="dicaCampoSorteiosBrindes">
-                                Nenhum sorteio cadastrado — crie um na sub-aba Sorteios primeiro.
+                                Nenhum sorteio cadastrado — adicione pelo evento, em Eventos → Editar.
                             </span>
                         )}
                     </div>

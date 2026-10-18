@@ -491,6 +491,7 @@
     width: 100%;
     box-sizing: border-box;
     transition: border-color 0.16s ease;
+    color-scheme: dark;
 }
 
 .entradaFormularioFinancas:focus {
@@ -508,7 +509,6 @@
 }
 
 .entradaFormularioFinancas::-webkit-calendar-picker-indicator {
-    filter: invert(1);
     cursor: pointer;
 }
 

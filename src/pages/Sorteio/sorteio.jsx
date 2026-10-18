@@ -1,411 +1,476 @@
 import "./sorteio.css";
 import { useState, useEffect, useRef } from "preact/hooks";
-import gifConfete from "../../assets/confete.gif";
+import { Link } from "wouter";
 import { listarBrindes } from "../Admin/data/apiBrindes.js";
 import { listarSorteios, listarElegiveis, registrarGanhador } from "./data/apiSorteio.js";
+import {
+    abrirCanalTelaoSorteio,
+    DURACAO_GIRO_TELAO_MS,
+    ESTADO_INICIAL_TELAO,
+    INTERVALO_PRESENCA_TELAO_MS,
+    NOME_JANELA_TELAO_SORTEIO,
+    ROTA_TELAO_SORTEIO,
+} from "./canalTelaoSorteio.js";
 
-/* Fluxo de 3 passos: escolher um dos sorteios do dia (cadastrados no
-   /admin, aba Brindes → Sorteios) → escolher um brinde desse sorteio →
-   girar o rolo entre quem está com presença confirmada no evento do
-   sorteio. O vencedor é sorteado no front (resposta instantânea); só a
-   confirmação final (ENTREGUE) é persistida, com quem realizou. */
+/* Painel do organizador (/sorteio), usado no PC da comissão longe do
+   público. Lista os sorteios do dia (cada um é um brinde); escolher um
+   prepara o telão e "Sortear no telão" gira a lista na guia projetada
+   (/sorteio/telao). O ganhador é decidido aqui e só a confirmação
+   ("Entregue") é gravada, com quem realizou.
 
-const ALTURA_ITEM_ROLO = 150;
-const QUANTIDADE_ITENS_ROLO = 24;
-const DURACAO_GIRO_MS = 3800;
+   O telão não tem controles: "Entregue" e "Ausente, girar de novo" ficam
+   só neste painel. As duas guias conversam por canalTelaoSorteio.js. */
 
-function hojeISO() {
+/* Sem batimento do telão por esse tempo, ele é dado como fechado. */
+const TOLERANCIA_PRESENCA_TELAO_MS = INTERVALO_PRESENCA_TELAO_MS * 2.5;
+
+/* Telão recém-aberto: espera ele avisar que carregou antes de girar. */
+const ESPERA_ABERTURA_TELAO_MS = 5000;
+
+function hojeIsoPainelSorteio() {
     const agora = new Date();
-    const ano = agora.getFullYear();
     const mes = String(agora.getMonth() + 1).padStart(2, "0");
     const dia = String(agora.getDate()).padStart(2, "0");
-    return `${ano}-${mes}-${dia}`;
+    return `${agora.getFullYear()}-${mes}-${dia}`;
 }
 
-function montarRolo(candidatos, vencedor) {
-    const rolo = [];
-    for (let i = 0; i < QUANTIDADE_ITENS_ROLO; i++) {
-        rolo.push(candidatos[Math.floor(Math.random() * candidatos.length)]);
-    }
-    rolo.push(vencedor);
-    return rolo;
+function formatarDiaPainelSorteio() {
+    return new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
 }
+
+/* "2026-10-18T15:00:00" → "15:00" */
+const horaDoEvento = (iso) => (iso || "").slice(11, 16);
 
 const Sorteio = () => {
-    const [passo, setPasso] = useState("listaSorteios");
-
-    // Passo 1 — sorteio
     const [sorteios, setSorteios] = useState([]);
-    const [carregandoSorteios, setCarregandoSorteios] = useState(true);
-    const [erroSorteios, setErroSorteios] = useState("");
-    const [sorteioEscolhido, setSorteioEscolhido] = useState(null);
-
-    // Passo 2 — brinde
     const [brindes, setBrindes] = useState([]);
-    const [carregandoBrindes, setCarregandoBrindes] = useState(true);
-    const [erroBrindes, setErroBrindes] = useState("");
-    const [brindeEscolhido, setBrindeEscolhido] = useState(null);
-    const [carregandoSorteio, setCarregandoSorteio] = useState(false);
-    const [erroSorteio, setErroSorteio] = useState("");
+    const [carregando, setCarregando] = useState(true);
+    const [erroCarregar, setErroCarregar] = useState("");
 
-    // Passo 3 — sorteio
+    const [idSelecionado, setIdSelecionado] = useState(null);
     const [elegiveis, setElegiveis] = useState([]);
+    const [carregandoElegiveis, setCarregandoElegiveis] = useState(false);
+
+    /* Fluxo do sorteio selecionado:
+       'preparado' → 'aguardandoTelao' (abrindo a guia) → 'girando' → 'revelado'.
+       'semCandidatos' quando todos os presentes já ganharam ou saíram como ausentes. */
+    const [fase, setFase] = useState("preparado");
     const [foraDaRodada, setForaDaRodada] = useState([]);
-    const [fase, setFase] = useState("girando");
-    const [rolo, setRolo] = useState([]);
-    const [deslocamento, setDeslocamento] = useState(0);
-    const [duracaoTransicao, setDuracaoTransicao] = useState("0s");
     const [ganhador, setGanhador] = useState(null);
-    const [confeteKey, setConfeteKey] = useState(0);
-    const [mostrarConfete, setMostrarConfete] = useState(false);
-    const [registrandoGanhador, setRegistrandoGanhador] = useState(false);
-    const [erroRegistro, setErroRegistro] = useState("");
-    const [semCandidatos, setSemCandidatos] = useState(false);
+    const [registrando, setRegistrando] = useState(false);
+    const [erroAcao, setErroAcao] = useState("");
 
+    const [telaoConectado, setTelaoConectado] = useState(false);
+
+    const canalRef = useRef(null);
+    const estadoTelaoRef = useRef(ESTADO_INICIAL_TELAO);
+    const ultimoSinalTelaoRef = useRef(0);
+    const giroPendenteRef = useRef(null);
+    const idGiroAtualRef = useRef(0);
     const timersRef = useRef([]);
+    /* O canal chama a versão mais recente do tratador, com o estado atual. */
+    const tratarMensagemRef = useRef(() => {});
 
-    function limparTimers() {
+    const limparTimers = () => {
         timersRef.current.forEach(clearTimeout);
         timersRef.current = [];
-    }
+    };
 
-    function agendar(fn, ms) {
-        timersRef.current.push(setTimeout(fn, ms));
-    }
+    const publicarNoTelao = (estado) => {
+        estadoTelaoRef.current = estado;
+        canalRef.current?.enviar({ tipo: "estado", estado });
+    };
 
-    useEffect(() => limparTimers, []);
+    async function carregarSorteiosEBrindes() {
+        const [listaSorteios, listaBrindes] = await Promise.all([listarSorteios(), listarBrindes()]);
+        setSorteios(listaSorteios);
+        setBrindes(listaBrindes);
+    }
 
     useEffect(() => {
         let ativo = true;
-        listarSorteios()
-            .then((lista) => { if (ativo) setSorteios(lista); })
-            .catch((e) => { if (ativo) setErroSorteios(e.message); })
-            .finally(() => { if (ativo) setCarregandoSorteios(false); });
-        return () => { ativo = false; };
+        carregarSorteiosEBrindes()
+            .catch((e) => { if (ativo) setErroCarregar(e.message); })
+            .finally(() => { if (ativo) setCarregando(false); });
+
+        const canal = abrirCanalTelaoSorteio((mensagem) => tratarMensagemRef.current(mensagem));
+        canalRef.current = canal;
+        /* Painel recarregado: um telão que já estava aberto volta para a
+           espera, porque o sorteio em andamento se perdeu com o recarregamento. */
+        canal.enviar({ tipo: "estado", estado: estadoTelaoRef.current });
+
+        const verificarPresenca = setInterval(() => {
+            setTelaoConectado(Date.now() - ultimoSinalTelaoRef.current < TOLERANCIA_PRESENCA_TELAO_MS);
+        }, 1000);
+
+        return () => {
+            ativo = false;
+            clearInterval(verificarPresenca);
+            canal.fechar();
+            limparTimers();
+        };
     }, []);
 
-    useEffect(() => {
-        let ativo = true;
-        listarBrindes()
-            .then((lista) => { if (ativo) setBrindes(lista); })
-            .catch((e) => { if (ativo) setErroBrindes(e.message); })
-            .finally(() => { if (ativo) setCarregandoBrindes(false); });
-        return () => { ativo = false; };
-    }, []);
-
-    /* eventoDataHoraInicio chega como "2026-10-05T14:00:00". */
+    const hoje = hojeIsoPainelSorteio();
     const sorteiosDeHoje = sorteios
-        .filter((sorteio) => (sorteio.eventoDataHoraInicio || "").slice(0, 10) === hojeISO())
+        .filter((sorteio) => (sorteio.eventoDataHoraInicio || "").slice(0, 10) === hoje)
         .sort((a, b) => a.eventoDataHoraInicio.localeCompare(b.eventoDataHoraInicio));
 
-    const brindesDoSorteio = brindes.filter((brinde) => brinde.sorteioId === sorteioEscolhido?.id);
+    const sorteioSelecionado = sorteiosDeHoje.find((sorteio) => sorteio.id === idSelecionado) ?? null;
+    const ganhadorRegistrado = sorteioSelecionado?.ganhadores?.[0] ?? null;
+    /* Cada sorteio tem um brinde; é ele que vai na entrega. */
+    const brindeDoSorteio = sorteioSelecionado
+        ? brindes.find((brinde) => brinde.sorteioId === sorteioSelecionado.id && !brinde.entregue)
+            ?? brindes.find((brinde) => brinde.sorteioId === sorteioSelecionado.id)
+            ?? null
+        : null;
+    const candidatos = elegiveis.filter((pessoa) => !foraDaRodada.includes(pessoa.id));
+    const sorteioEmAndamento = fase === "aguardandoTelao" || fase === "girando";
 
-    function escolherSorteio(sorteio) {
-        setSorteioEscolhido(sorteio);
-        setErroSorteio("");
-        setPasso("brinde");
-    }
-
-    function voltarParaSorteios() {
-        setPasso("listaSorteios");
-        setSorteioEscolhido(null);
-        setBrindeEscolhido(null);
-    }
-
-    function escolherBrinde(brinde) {
-        if (brinde.quantidade - brinde.quantidadeEntregue <= 0) return;
-        setBrindeEscolhido(brinde);
-    }
-
-    function girar(poolAtual, foraAtual) {
+    function revelar(idGiro) {
+        if (idGiro !== idGiroAtualRef.current) return;
         limparTimers();
-        const candidatos = poolAtual.filter((p) => !foraAtual.includes(p.id));
-        if (candidatos.length === 0) {
-            setSemCandidatos(true);
-            setGanhador(null);
-            setFase("revelado");
+        setFase("revelado");
+        publicarNoTelao({ ...estadoTelaoRef.current, fase: "revelado" });
+    }
+
+    tratarMensagemRef.current = (mensagem) => {
+        switch (mensagem?.tipo) {
+            case "telaoAberto":
+                ultimoSinalTelaoRef.current = Date.now();
+                setTelaoConectado(true);
+                canalRef.current?.enviar({ tipo: "estado", estado: estadoTelaoRef.current });
+                if (giroPendenteRef.current) {
+                    const pendente = giroPendenteRef.current;
+                    giroPendenteRef.current = null;
+                    iniciarGiro(pendente.pool);
+                }
+                break;
+            case "telaoPresente":
+                ultimoSinalTelaoRef.current = Date.now();
+                if (!telaoConectado) setTelaoConectado(true);
+                break;
+            case "telaoFechado":
+                ultimoSinalTelaoRef.current = 0;
+                setTelaoConectado(false);
+                break;
+            case "giroConcluido":
+                revelar(mensagem.idGiro);
+                break;
+            default:
+                break;
+        }
+    };
+
+    function abrirTelao() {
+        window.open(ROTA_TELAO_SORTEIO, NOME_JANELA_TELAO_SORTEIO);
+    }
+
+    async function selecionarSorteio(sorteio) {
+        if (sorteioEmAndamento || sorteio.id === idSelecionado) return;
+        limparTimers();
+        setIdSelecionado(sorteio.id);
+        setFase("preparado");
+        setForaDaRodada([]);
+        setGanhador(null);
+        setErroAcao("");
+        setElegiveis([]);
+
+        /* Sorteio já entregue não mexe no telão: ele continua mostrando o
+           último ganhador até um sorteio pendente ser preparado. */
+        if (sorteio.quantidadeEntregue > 0) return;
+
+        setCarregandoElegiveis(true);
+        try {
+            const pool = await listarElegiveis(sorteio.id);
+            setElegiveis(pool);
+            publicarNoTelao({
+                ...ESTADO_INICIAL_TELAO,
+                fase: "preparado",
+                brinde: sorteio.nome,
+                eventoNome: sorteio.eventoNome,
+                eventoHora: horaDoEvento(sorteio.eventoDataHoraInicio),
+                nomes: pool.map((pessoa) => pessoa.nome),
+            });
+        } catch (e) {
+            setErroAcao(e.message);
+        } finally {
+            setCarregandoElegiveis(false);
+        }
+    }
+
+    function iniciarGiro(pool) {
+        if (pool.length === 0) {
+            setFase("semCandidatos");
             return;
         }
-        setSemCandidatos(false);
-        const vencedor = candidatos[Math.floor(Math.random() * candidatos.length)];
+        const vencedor = pool[Math.floor(Math.random() * pool.length)];
+        const idGiro = Date.now();
+        idGiroAtualRef.current = idGiro;
         setGanhador(vencedor);
-        setRolo(montarRolo(candidatos, vencedor));
         setFase("girando");
-        setDeslocamento(0);
-        setDuracaoTransicao("0s");
-        setMostrarConfete(false);
-        setErroRegistro("");
-
-        agendar(() => {
-            setDeslocamento(-(QUANTIDADE_ITENS_ROLO) * ALTURA_ITEM_ROLO);
-            setDuracaoTransicao("3.6s cubic-bezier(0.16,1,0.3,1)");
-        }, 60);
-        agendar(() => {
-            setFase("revelado");
-            setConfeteKey((k) => k + 1);
-            setMostrarConfete(true);
-            agendar(() => setMostrarConfete(false), 2490);
-        }, DURACAO_GIRO_MS);
+        publicarNoTelao({
+            ...estadoTelaoRef.current,
+            fase: "girando",
+            /* Sem os ausentes da rodada: a roleta e a contagem do telão acompanham. */
+            nomes: pool.map((pessoa) => pessoa.nome),
+            vencedorNome: vencedor.nome,
+            idGiro,
+        });
+        /* Reserva: se o telão fechar no meio, o painel revela sozinho. */
+        timersRef.current.push(setTimeout(() => revelar(idGiro), DURACAO_GIRO_TELAO_MS + 3000));
     }
 
-    async function iniciarSorteio() {
-        if (!sorteioEscolhido || !brindeEscolhido) return;
-        setErroSorteio("");
-        setCarregandoSorteio(true);
-        try {
-            const pool = await listarElegiveis(sorteioEscolhido.id);
-            if (!pool.length) {
-                setErroSorteio(
-                    "Não há participantes com presença confirmada no evento deste sorteio (ou todos já ganharam algum brinde)."
-                );
-                return;
-            }
-            setElegiveis(pool);
-            setForaDaRodada([]);
-            setPasso("sorteio");
-            girar(pool, []);
-        } catch (e) {
-            setErroSorteio(e.message);
-        } finally {
-            setCarregandoSorteio(false);
+    function sortear(pool) {
+        setErroAcao("");
+        if (pool.length === 0) {
+            setFase("semCandidatos");
+            return;
         }
+        if (telaoConectado) {
+            iniciarGiro(pool);
+            return;
+        }
+        /* Telão fechado: abre a guia e gira assim que ela avisar que
+           carregou (ou depois da espera, se o aviso não vier). */
+        giroPendenteRef.current = { pool };
+        setFase("aguardandoTelao");
+        abrirTelao();
+        timersRef.current.push(setTimeout(() => {
+            if (!giroPendenteRef.current) return;
+            giroPendenteRef.current = null;
+            iniciarGiro(pool);
+        }, ESPERA_ABERTURA_TELAO_MS));
     }
 
     function marcarAusente() {
         const novaFora = [...foraDaRodada, ganhador.id];
         setForaDaRodada(novaFora);
-        girar(elegiveis, novaFora);
+        setGanhador(null);
+        sortear(elegiveis.filter((pessoa) => !novaFora.includes(pessoa.id)));
     }
 
     async function confirmarEntrega() {
-        if (!ganhador) return;
-        setRegistrandoGanhador(true);
-        setErroRegistro("");
+        if (!ganhador || !brindeDoSorteio) return;
+        setRegistrando(true);
+        setErroAcao("");
         try {
             await registrarGanhador({
-                sorteioId: sorteioEscolhido.id,
-                brindeId: brindeEscolhido.id,
+                sorteioId: sorteioSelecionado.id,
+                brindeId: brindeDoSorteio.id,
                 participanteId: ganhador.id,
             });
-            const listaAtualizada = await listarBrindes();
-            setBrindes(listaAtualizada);
-            limparTimers();
-            setPasso("brinde");
-            setBrindeEscolhido(null);
-            setElegiveis([]);
-            setForaDaRodada([]);
+            await carregarSorteiosEBrindes();
+            /* O telão fica no ganhador; o painel passa a mostrar o sorteio como entregue. */
+            setFase("preparado");
             setGanhador(null);
-            setFase("girando");
-            setMostrarConfete(false);
+            setForaDaRodada([]);
+            setElegiveis([]);
         } catch (e) {
-            setErroRegistro(e.message);
+            setErroAcao(e.message);
         } finally {
-            setRegistrandoGanhador(false);
+            setRegistrando(false);
         }
     }
 
-    function voltarParaBrindes() {
-        limparTimers();
-        setPasso("brinde");
-        setElegiveis([]);
-        setForaDaRodada([]);
-        setGanhador(null);
-        setFase("girando");
-        setMostrarConfete(false);
-    }
-
     return (
-        <div className="divPaginaSorteio">
-            {mostrarConfete && (
-                <img key={confeteKey} src={gifConfete} alt="confete" className="imgConfeteTelaSorteio" />
-            )}
-
-            <div className="divPainelSorteio">
-                <header className="headerPainelSorteio">
-                    <div className="divTituloPainelSorteio">
-                        <h1 className="h1TituloPainelSorteio">
-                            {passo === "listaSorteios" && "Escolher sorteio"}
-                            {passo === "brinde" && "Escolher brinde"}
-                            {passo === "sorteio" && "Sorteio"}
-                        </h1>
-                        {passo === "brinde" && sorteioEscolhido && (
-                            <span className="spanSubtituloPainelSorteio">
-                                {sorteioEscolhido.nome} · {sorteioEscolhido.eventoNome}
-                            </span>
-                        )}
-                        {passo === "sorteio" && (
-                            <span className="spanSubtituloPainelSorteio">SEMAC XXXVI</span>
-                        )}
-                    </div>
-                    {passo === "brinde" && (
-                        <button type="button" className="botaoVoltarPainelSorteio" onClick={voltarParaSorteios}>
-                            ← Trocar sorteio
+        <main className="mainPainelSorteio">
+            <header className="headerPainelSorteio">
+                <div className="divTituloPainelSorteio">
+                    {/* Sair no meio do giro perde o sorteio, como recarregar. */}
+                    <Link
+                        href="/admin"
+                        className="linkVoltarAdminPainelSorteio"
+                        aria-disabled={sorteioEmAndamento}
+                        onClick={(e) => { if (sorteioEmAndamento) e.preventDefault(); }}
+                    >
+                        ← Voltar ao painel
+                    </Link>
+                    <h1 className="h1TituloPainelSorteio">Sorteio de brindes</h1>
+                    <p className="pDiaPainelSorteio">{formatarDiaPainelSorteio()}</p>
+                </div>
+                <div className="divTelaoPainelSorteio">
+                    <span
+                        className={`spanStatusTelaoPainelSorteio ${telaoConectado ? "statusTelaoConectadoPainelSorteio" : ""}`}
+                        role="status"
+                    >
+                        {telaoConectado ? "Telão conectado" : "Telão fechado"}
+                    </span>
+                    {!telaoConectado && (
+                        <button type="button" className="botaoSecundarioPainelSorteio" onClick={abrirTelao}>
+                            Abrir telão
                         </button>
-                    )}
-                    {passo === "sorteio" && (
-                        <button type="button" className="botaoVoltarPainelSorteio" onClick={voltarParaBrindes}>
-                            ← Voltar
-                        </button>
-                    )}
-                </header>
-
-                <div className="divCorpoPainelSorteio">
-                    {passo === "listaSorteios" && (
-                        <>
-                            {erroSorteios && <p className="pAvisoErroSorteio" role="alert">{erroSorteios}</p>}
-                            {carregandoSorteios && <p className="pAvisoVazioSorteio">Carregando sorteios…</p>}
-                            {!carregandoSorteios && sorteiosDeHoje.length === 0 && (
-                                <p className="pAvisoVazioSorteio">
-                                    Nenhum sorteio programado para hoje — cadastre em /admin, aba Brindes → Sorteios.
-                                </p>
-                            )}
-                            {!carregandoSorteios && sorteiosDeHoje.length > 0 && (
-                                <div className="divListaEventosSorteio">
-                                    {sorteiosDeHoje.map((sorteio) => (
-                                        <button
-                                            key={sorteio.id}
-                                            type="button"
-                                            className="botaoCartaoEventoSorteio"
-                                            onClick={() => escolherSorteio(sorteio)}
-                                        >
-                                            <span className="spanNomeCartaoEventoSorteio">{sorteio.nome}</span>
-                                            <span className="spanHorarioCartaoEventoSorteio">
-                                                {sorteio.eventoDataHoraInicio.slice(11, 16)} · {sorteio.eventoNome}
-                                            </span>
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </>
-                    )}
-
-                    {passo === "brinde" && (
-                        <>
-                            {erroBrindes && <p className="pAvisoErroSorteio" role="alert">{erroBrindes}</p>}
-                            {erroSorteio && <p className="pAvisoErroSorteio" role="alert">{erroSorteio}</p>}
-                            {carregandoBrindes && <p className="pAvisoVazioSorteio">Carregando brindes…</p>}
-                            {!carregandoBrindes && brindesDoSorteio.length === 0 && (
-                                <p className="pAvisoVazioSorteio">
-                                    Nenhum brinde neste sorteio — adicione em /admin, na aba Brindes.
-                                </p>
-                            )}
-                            {!carregandoBrindes && brindesDoSorteio.length > 0 && (
-                                <ul className="ulFilaBrindesSorteio">
-                                    {brindesDoSorteio.map((brinde, indice) => {
-                                        const restante = brinde.quantidade - brinde.quantidadeEntregue;
-                                        const esgotado = restante <= 0;
-                                        const selecionado = brindeEscolhido?.id === brinde.id;
-                                        const classes = ["liItemFilaBrindesSorteio"];
-                                        if (selecionado) classes.push("itemFilaSelecionadoSorteio");
-                                        if (esgotado) classes.push("itemFilaEsgotadoSorteio");
-                                        return (
-                                            <li
-                                                key={brinde.id}
-                                                className={classes.join(" ")}
-                                                onClick={() => escolherBrinde(brinde)}
-                                            >
-                                                <span className="spanIndiceItemFilaSorteio">{indice + 1}.</span>
-                                                <div className="divInfoItemFilaSorteio">
-                                                    <span className="spanNomeItemFilaSorteio">{brinde.nome}</span>
-                                                    <span className="spanLegendaItemFilaSorteio">
-                                                        {esgotado ? "Esgotado" : `${restante} disponível(is)`}
-                                                    </span>
-                                                </div>
-                                                <span className="spanEstadoItemFilaSorteio">
-                                                    {esgotado ? "ESGOTADO" : selecionado ? "SELECIONADO" : "NA FILA"}
-                                                </span>
-                                            </li>
-                                        );
-                                    })}
-                                </ul>
-                            )}
-
-                            <div className="divRodapeEscolherBrindeSorteio">
-                                <div className="divResumoBrindeSelecionadoSorteio">
-                                    <span className="spanRotuloBrindeSelecionadoSorteio">
-                                        Selecionado para o próximo sorteio
-                                    </span>
-                                    <span className="spanNomeBrindeSelecionadoSorteio">
-                                        {brindeEscolhido ? brindeEscolhido.nome : "—"}
-                                    </span>
-                                </div>
-                                <button
-                                    type="button"
-                                    className="botaoSortearSorteio"
-                                    disabled={!brindeEscolhido || carregandoSorteio}
-                                    onClick={iniciarSorteio}
-                                >
-                                    {carregandoSorteio ? "Carregando…" : "Sortear"}
-                                </button>
-                            </div>
-                        </>
-                    )}
-
-                    {passo === "sorteio" && fase === "girando" && (
-                        <div className="divConteudoGirandoSorteio">
-                            <div className="divTituloPainelSorteio" style={{ alignItems: "center" }}>
-                                <span className="spanRotuloSorteandoSorteio">SORTEANDO</span>
-                                <span className="spanBrindeSorteandoSorteio">{brindeEscolhido?.nome}</span>
-                            </div>
-                            <div className="divJanelaRoloSorteio">
-                                <div
-                                    className="divFaixaRoloSorteio"
-                                    style={{ transform: `translateY(${deslocamento}px)`, transitionDuration: duracaoTransicao }}
-                                >
-                                    {rolo.map((item, indice) => (
-                                        <div key={indice} className="divItemRoloSorteio">
-                                            <span className="spanNomeItemRoloSorteio">{item.nome}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {passo === "sorteio" && fase === "revelado" && (
-                        <div className="divConteudoRevelacaoSorteio">
-                            {semCandidatos ? (
-                                <p className="pAvisoErroSorteio" role="alert">
-                                    Todos os elegíveis já foram marcados como ausentes nesse sorteio. Volte e
-                                    escolha outro brinde.
-                                </p>
-                            ) : (
-                                <>
-                                    <span className="spanRotuloGanhouSorteio">GANHOU {brindeEscolhido?.nome}</span>
-                                    <div className="divCartaoGanhadorSorteio">
-                                        <span className="spanNomeGanhadorSorteio">{ganhador?.nome}</span>
-                                    </div>
-                                    <span className="spanDicaRetiradaSorteio">
-                                        Venha até a mesa da comissão para retirar
-                                    </span>
-                                    {erroRegistro && <p className="pAvisoErroSorteio" role="alert">{erroRegistro}</p>}
-                                    <div className="divBotoesRevelacaoSorteio">
-                                        <button
-                                            type="button"
-                                            className="botaoEntregueSorteio"
-                                            disabled={registrandoGanhador}
-                                            onClick={confirmarEntrega}
-                                        >
-                                            {registrandoGanhador ? "Registrando…" : "Entregue · Voltar para escolher"}
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="botaoAusenteSorteio"
-                                            disabled={registrandoGanhador}
-                                            onClick={marcarAusente}
-                                        >
-                                            Ausente — girar de novo
-                                        </button>
-                                    </div>
-                                </>
-                            )}
-                        </div>
                     )}
                 </div>
+            </header>
 
-                <div className="divRodapeMarcaSorteio">XXXVI Semana da Computação · IBILCE/UNESP</div>
+            <div className="divCorpoPainelSorteio">
+                <section className="sectionListaPainelSorteio" aria-labelledby="tituloListaPainelSorteio">
+                    <h2 id="tituloListaPainelSorteio" className="h2ListaPainelSorteio">
+                        Sorteios de hoje
+                        {!carregando && sorteiosDeHoje.length > 0 && (
+                            <span className="spanContagemListaPainelSorteio">{sorteiosDeHoje.length}</span>
+                        )}
+                    </h2>
+
+                    {carregando && <p className="pVazioPainelSorteio">Carregando sorteios…</p>}
+                    {erroCarregar && <p className="pErroPainelSorteio" role="alert">{erroCarregar}</p>}
+                    {!carregando && !erroCarregar && sorteiosDeHoje.length === 0 && (
+                        <p className="pVazioPainelSorteio">
+                            Nenhum sorteio cadastrado para hoje. Adicione no evento, em /admin, Conteúdo, Eventos, Editar.
+                        </p>
+                    )}
+
+                    {sorteiosDeHoje.length > 0 && (
+                        <ul className="ulListaPainelSorteio">
+                            {sorteiosDeHoje.map((sorteio) => {
+                                const entregue = sorteio.quantidadeEntregue > 0;
+                                const selecionado = sorteio.id === idSelecionado;
+                                return (
+                                    <li key={sorteio.id}>
+                                        <button
+                                            type="button"
+                                            className={[
+                                                "botaoItemListaPainelSorteio",
+                                                selecionado ? "itemSelecionadoListaPainelSorteio" : "",
+                                                entregue ? "itemEntregueListaPainelSorteio" : "",
+                                            ].join(" ")}
+                                            aria-pressed={selecionado}
+                                            disabled={sorteioEmAndamento && !selecionado}
+                                            onClick={() => selecionarSorteio(sorteio)}
+                                        >
+                                            <span className="spanNomeItemListaPainelSorteio">{sorteio.nome}</span>
+                                            <span className="spanEventoItemListaPainelSorteio">
+                                                <span className="spanHoraItemListaPainelSorteio">
+                                                    {horaDoEvento(sorteio.eventoDataHoraInicio)}
+                                                </span>
+                                                {sorteio.eventoNome}
+                                            </span>
+                                            <span className="spanStatusItemListaPainelSorteio">
+                                                {entregue
+                                                    ? `Entregue para ${sorteio.ganhadores?.[0]?.participanteNome ?? "—"}`
+                                                    : "Disponível"}
+                                            </span>
+                                        </button>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    )}
+                </section>
+
+                <section className="sectionControlePainelSorteio" aria-live="polite">
+                    {!sorteioSelecionado && (
+                        <p className="pVazioControlePainelSorteio">
+                            Escolha um sorteio da lista. O telão passa a mostrar o brinde e quem está concorrendo.
+                        </p>
+                    )}
+
+                    {sorteioSelecionado && (
+                        <>
+                            <div className="divCabecalhoControlePainelSorteio">
+                                <h2 className="h2BrindeControlePainelSorteio">{sorteioSelecionado.nome}</h2>
+                            </div>
+
+                            {ganhadorRegistrado && (
+                                <div className="divResultadoControlePainelSorteio">
+                                    <p className="pNomeResultadoControlePainelSorteio">{ganhadorRegistrado.participanteNome}</p>
+                                    <p className="pDetalheResultadoControlePainelSorteio">
+                                        Recebeu o brinde, sorteado por {ganhadorRegistrado.organizadorNome}.
+                                    </p>
+                                </div>
+                            )}
+
+                            {!ganhadorRegistrado && (
+                                <>
+                                    <p className="pConcorrendoControlePainelSorteio">
+                                        {carregandoElegiveis
+                                            ? "Buscando quem está presente…"
+                                            : `${candidatos.length} ${candidatos.length === 1 ? "presente concorrendo" : "presentes concorrendo"}`}
+                                        {foraDaRodada.length > 0 && !carregandoElegiveis && (
+                                            <span className="spanForaControlePainelSorteio">
+                                                {" "}({foraDaRodada.length} {foraDaRodada.length === 1 ? "ausente" : "ausentes"} nesta rodada)
+                                            </span>
+                                        )}
+                                    </p>
+
+                                    {!brindeDoSorteio && (
+                                        <p className="pErroPainelSorteio" role="alert">
+                                            Este sorteio não tem brinde cadastrado. Remova e adicione de novo pelo evento.
+                                        </p>
+                                    )}
+
+                                    {(fase === "preparado" || fase === "semCandidatos") && brindeDoSorteio && (
+                                        <div className="divAcoesControlePainelSorteio">
+                                            {fase === "semCandidatos" ? (
+                                                <p className="pErroPainelSorteio" role="alert">
+                                                    Ninguém mais pode concorrer: todos os presentes já ganharam um brinde
+                                                    ou foram marcados como ausentes nesta rodada.
+                                                </p>
+                                            ) : (
+                                                <button
+                                                    type="button"
+                                                    className="botaoPrimarioPainelSorteio"
+                                                    disabled={carregandoElegiveis || candidatos.length === 0}
+                                                    onClick={() => sortear(candidatos)}
+                                                >
+                                                    Sortear no telão
+                                                </button>
+                                            )}
+                                            {!carregandoElegiveis && elegiveis.length === 0 && fase === "preparado" && (
+                                                <p className="pDicaControlePainelSorteio">
+                                                    Ninguém com presença confirmada neste evento ainda (ou todos já ganharam
+                                                    um brinde). Registre as presenças no /checkin.
+                                                </p>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {fase === "aguardandoTelao" && (
+                                        <p className="pAndamentoControlePainelSorteio">
+                                            Abrindo o telão… arraste a nova guia para o projetor. O giro começa assim que ela carregar.
+                                        </p>
+                                    )}
+
+                                    {fase === "girando" && (
+                                        <p className="pAndamentoControlePainelSorteio">Sorteando no telão…</p>
+                                    )}
+
+                                    {fase === "revelado" && ganhador && (
+                                        <div className="divResultadoControlePainelSorteio">
+                                            <p className="pNomeResultadoControlePainelSorteio">{ganhador.nome}</p>
+                                            <p className="pDetalheResultadoControlePainelSorteio">
+                                                Parou no telão. Confirme a entrega se a pessoa estiver na sala.
+                                            </p>
+                                            <div className="divAcoesControlePainelSorteio">
+                                                <button
+                                                    type="button"
+                                                    className="botaoPrimarioPainelSorteio"
+                                                    disabled={registrando}
+                                                    onClick={confirmarEntrega}
+                                                >
+                                                    {registrando ? "Registrando…" : "Entregue"}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="botaoSecundarioPainelSorteio"
+                                                    disabled={registrando}
+                                                    onClick={marcarAusente}
+                                                >
+                                                    Ausente, girar de novo
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+
+                            {erroAcao && <p className="pErroPainelSorteio" role="alert">{erroAcao}</p>}
+                        </>
+                    )}
+                </section>
             </div>
-        </div>
+        </main>
     );
 };
 

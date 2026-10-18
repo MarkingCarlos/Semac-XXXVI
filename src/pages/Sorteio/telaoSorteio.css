@@ -1,0 +1,310 @@
+/* Guia projetada no telão (/sorteio/telao). Composição e encenação da
+   referência tela-publico.html, na paleta oficial do index.css. Lida de
+   longe, então tudo é grande e o contraste é alto. */
+
+.mainTelaoSorteio {
+    --gutterTelao: clamp(20px, 4vw, 64px);
+
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    height: 100dvh;
+    overflow: hidden;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    padding: 48px var(--gutterTelao);
+    background: var(--vermelhoEscuro);
+    color: var(--Branco);
+    font-family: var(--fonteCorpoMontserrat);
+    text-align: center;
+}
+
+.mainTelaoSorteio ::selection {
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoEscuro);
+}
+
+/* ── Antes do primeiro sorteio ───────────────────────────────── */
+
+.divAguardandoTelaoSorteio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.h1MarcaAguardandoTelaoSorteio {
+    margin: 0;
+    font-family: var(--fonteTituloBungee);
+    font-weight: 400;
+    font-size: clamp(3rem, 9vw, 6rem);
+    line-height: 1;
+    color: var(--Branco);
+}
+
+.pAguardandoTelaoSorteio {
+    margin: 0;
+    font-size: clamp(1.2rem, 2.2vw, 1.9rem);
+    font-weight: 500;
+    color: rgba(237, 236, 236, 0.72);
+}
+
+/* ── Topo: marca e palestra ──────────────────────────────────── */
+
+.divTopoTelaoSorteio {
+    position: absolute;
+    top: 32px;
+    left: var(--gutterTelao);
+    right: var(--gutterTelao);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(237, 236, 236, 0.75);
+}
+
+.bMarcaTopoTelaoSorteio {
+    font-family: var(--fonteTituloBungee);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--AmareloAuxApoio);
+}
+
+/* ── O que está valendo ──────────────────────────────────────── */
+
+.divValendoTelaoSorteio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.smallValendoTelaoSorteio {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(237, 236, 236, 0.8);
+}
+
+.spanPremioTelaoSorteio {
+    font-family: var(--fonteTituloBungee);
+    font-weight: 400;
+    font-size: clamp(36px, 5vw, 72px);
+    line-height: 1;
+    color: #fff;
+    text-wrap: balance;
+}
+
+.pConcorrendoTelaoSorteio {
+    margin: 0;
+    font-size: clamp(18px, 1.8vw, 26px);
+    font-weight: 600;
+    color: rgba(237, 236, 236, 0.85);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Preparo e contagem ──────────────────────────────────────── */
+
+.spanPrepareTelaoSorteio {
+    font-family: var(--fonteTituloBungee);
+    font-weight: 400;
+    font-size: clamp(28px, 3.4vw, 48px);
+    color: var(--AmareloAuxApoio);
+    animation: pulsarTelaoSorteio 1.2s ease-in-out infinite;
+}
+
+/* O key no número recria o elemento a cada segundo e reinicia o "pop". */
+.spanNumeroContagemTelaoSorteio {
+    font-family: var(--fonteTituloBungee);
+    font-weight: 400;
+    font-size: clamp(160px, 26vw, 360px);
+    line-height: 1;
+    color: var(--AmareloAuxApoio);
+    animation: estourarNumeroTelaoSorteio 1s ease-out both;
+}
+
+/* ── Roleta ──────────────────────────────────────────────────── */
+
+.divRoletaTelaoSorteio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    width: min(1000px, 100%);
+}
+
+.spanRotuloRoletaTelaoSorteio {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(237, 236, 236, 0.85);
+    animation: pulsarTelaoSorteio 0.8s ease-in-out infinite;
+}
+
+.divCaixaRoletaTelaoSorteio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 220px;
+    box-sizing: border-box;
+    padding: 24px 32px;
+    border-radius: 28px;
+    background: var(--vermelhoAuxDiretoria);
+    border: 4px solid rgba(255, 255, 255, 0.18);
+    animation: tremerRoletaTelaoSorteio 0.18s linear infinite;
+}
+
+.spanNomeRoletaTelaoSorteio {
+    font-family: var(--fonteTituloBungee);
+    font-weight: 400;
+    font-size: clamp(44px, 7vw, 104px);
+    line-height: 1.05;
+    color: #fff;
+    opacity: 0.9;
+    overflow-wrap: anywhere;
+}
+
+.caixaTravadaRoletaTelaoSorteio {
+    border-color: var(--AmareloAuxApoio);
+    animation: brilharRoletaTelaoSorteio 1s ease-in-out infinite;
+}
+
+.caixaTravadaRoletaTelaoSorteio .spanNomeRoletaTelaoSorteio {
+    color: var(--AmareloAuxApoio);
+    opacity: 1;
+}
+
+/* ── Revelação ───────────────────────────────────────────────── */
+
+.divRevelacaoTelaoSorteio {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    animation: subirRevelacaoTelaoSorteio 0.7s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+.spanParabensTelaoSorteio {
+    font-family: var(--fonteTituloBungee);
+    font-weight: 400;
+    font-size: clamp(28px, 3vw, 44px);
+    color: #fff;
+}
+
+.spanGanhadorTelaoSorteio {
+    max-width: 92vw;
+    font-family: var(--fonteTituloBungee);
+    font-weight: 400;
+    font-size: clamp(56px, 9vw, 140px);
+    line-height: 1;
+    color: var(--AmareloAuxApoio);
+    text-shadow: 0 8px 0 var(--vermelhoDiretoria);
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+}
+
+.spanLevaTelaoSorteio {
+    font-size: clamp(18px, 1.6vw, 24px);
+    color: rgba(237, 236, 236, 0.9);
+}
+
+.strongPremioLevaTelaoSorteio {
+    color: #fff;
+}
+
+/* ── Confete ─────────────────────────────────────────────────── */
+
+.divConfeteTelaoSorteio {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.iConfeteTelaoSorteio {
+    position: absolute;
+    top: 0;
+    border-radius: 2px;
+    animation: cairConfeteTelaoSorteio linear infinite;
+}
+
+/* ── Dica de tela cheia ──────────────────────────────────────── */
+
+.pDicaTelaCheiaTelaoSorteio {
+    position: absolute;
+    bottom: clamp(20px, 3.5vh, 40px);
+    left: 0;
+    right: 0;
+    margin: 0;
+    font-size: 0.95rem;
+    color: rgba(237, 236, 236, 0.6);
+}
+
+.kbdTeclaTelaoSorteio {
+    display: inline-block;
+    margin: 0 0.25em;
+    padding: 0.1em 0.5em;
+    border: 1px solid rgba(237, 236, 236, 0.45);
+    border-radius: 6px;
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.9em;
+    font-weight: 700;
+    color: var(--Branco);
+}
+
+/* ── Animações ───────────────────────────────────────────────── */
+
+@keyframes estourarNumeroTelaoSorteio {
+    0% { transform: scale(2.4); opacity: 0; }
+    25% { transform: scale(1); opacity: 1; }
+    80% { transform: scale(0.92); opacity: 1; }
+    100% { transform: scale(0.6); opacity: 0; }
+}
+
+@keyframes pulsarTelaoSorteio {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
+}
+
+@keyframes tremerRoletaTelaoSorteio {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+}
+
+@keyframes brilharRoletaTelaoSorteio {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(231, 152, 57, 0); }
+    50% { box-shadow: 0 0 60px 8px rgba(231, 152, 57, 0.45); }
+}
+
+@keyframes subirRevelacaoTelaoSorteio {
+    0% { transform: translateY(40px) scale(0.9); opacity: 0; }
+    100% { transform: none; opacity: 1; }
+}
+
+@keyframes cairConfeteTelaoSorteio {
+    0% { transform: translateY(-12vh) rotate(0); }
+    100% { transform: translateY(115vh) rotate(760deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mainTelaoSorteio *,
+    .mainTelaoSorteio *::before,
+    .mainTelaoSorteio *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}

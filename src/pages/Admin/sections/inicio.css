@@ -115,6 +115,41 @@
     }
 }
 
+/* ── Card de atalho para a /sorteio ──────────────────────────── */
+
+/* Mesma grade do trilhoCarrosselCardsDashboard, mas com auto-fill: com
+   um card só, ele ocupa a largura de uma coluna em vez de esticar. No
+   celular a coluna vira a largura toda, igual aos slides do carrossel. */
+.gradeCardIrSorteioInicio {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 20px;
+    margin-bottom: 34px;
+}
+
+/* Logo abaixo da dashboard: o espaço entre as duas linhas é o mesmo gap
+   de 20px da grade de cards, e não os 34px que separam seções. */
+.secaoDashboardAdmin + .gradeCardIrSorteioInicio {
+    margin-top: -14px;
+}
+
+/* O cardDashboard foi feito para <button>; aqui é um link. */
+.cardIrSorteioInicio {
+    text-decoration: none;
+}
+
+.textoSorteiosHojeInicio {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #fff;
+}
+
 /* ── Formulário ───────────────────────────────────────────────── */
 
 .formularioPerfilInicio {

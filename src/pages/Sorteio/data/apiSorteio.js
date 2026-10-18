@@ -1,5 +1,5 @@
 /* Camada de acesso à API de sorteios (tabelas `sorteio` / `ganhadores_sorteio`).
-   O CRUD (nome + evento) é usado pelo /admin, aba Brindes → Sorteios; a
+   O cadastro é feito no /admin, no painel de edição do evento; a
    realização (elegíveis + entrega) pela tela /sorteio. `registrarGanhador`
    exige sessão (o backend identifica quem realizou pelo token). */
 
@@ -38,6 +38,18 @@ export async function criarSorteio(sorteio) {
         body: JSON.stringify(paraRequisicao(sorteio)),
     });
     return lerOuFalhar(resposta, 'Falha ao criar o sorteio.');
+}
+
+/* Cadastro rápido do painel de edição do evento (/admin -> Conteúdo ->
+   Eventos): cria o sorteio e o brinde de uma vez, com o nome do que vai
+   ser sorteado. */
+export async function criarSorteioComBrinde({ eventoId, brinde }) {
+    const resposta = await apiFetch(`${ROTA}/com-brinde`, {
+        method: 'POST',
+        headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ eventoId: Number(eventoId), brinde }),
+    });
+    return lerOuFalhar(resposta, 'Falha ao adicionar o sorteio.');
 }
 
 export async function atualizarSorteio(id, sorteio) {

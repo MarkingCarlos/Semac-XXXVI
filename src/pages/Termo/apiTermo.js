@@ -71,6 +71,39 @@ export async function enviarPalpiteTermo(palpite) {
     return resposta.json();
 }
 
+/* Modo teste (/termo/teste?palavra={id}), aberto pelo botão "Testar" do
+   /admin -> Termo. Só DIRETOR_SITE/PRESIDENTE. Nada é gravado: sem jogo,
+   sem tentativa no banco e sem xp — as 6 tentativas são contadas na tela.
+   A palavra não volta em resposta nenhuma, nem ao perder. */
+
+const ROTA_RETORNO_TESTE = '/admin';
+
+/* Só o tamanho da palavra, para a grade se montar. */
+export async function lerTesteTermo(palavraId) {
+    const resposta = await apiFetch(`${ROTA}/teste/${palavraId}`, { headers: cabecalhosAuth() });
+    if (tratarErroAuth(resposta, ROTA_RETORNO_TESTE)) return null;
+    if (!resposta.ok) {
+        throw new Error(await mensagemDeErro(resposta, 'Não foi possível abrir o teste.'));
+    }
+    return resposta.json();
+}
+
+export async function enviarPalpiteTesteTermo(palavraId, palpite) {
+    const resposta = await apiFetch(`${ROTA}/teste/palpite`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...cabecalhosAuth() },
+        body: JSON.stringify({ palavraId, palpite }),
+    });
+    if (tratarErroAuth(resposta, ROTA_RETORNO_TESTE)) return null;
+    if (resposta.status === 422) {
+        throw new PalpiteInvalidoErro(await mensagemDeErro(resposta, 'Palavra não encontrada'));
+    }
+    if (!resposta.ok) {
+        throw new Error(await mensagemDeErro(resposta, 'Não foi possível enviar o palpite.'));
+    }
+    return resposta.json();
+}
+
 /* Se a palavra está no dicionário de palpites. Só o modo treino usa: a
    partida valendo já é validada pelo próprio POST /palpite. O dicionário
    (5 a 10 letras) é grande demais para ir no bundle, por isso a consulta.

@@ -1,7 +1,14 @@
 import "./termo.css";
 import { useState, useEffect, useRef } from "preact/hooks";
 import { useLocation } from "wouter";
-import { lerEstadoTermo, enviarPalpiteTermo, palavraValidaTermo, PalpiteInvalidoErro } from "./apiTermo.js";
+import {
+    lerEstadoTermo,
+    enviarPalpiteTermo,
+    palavraValidaTermo,
+    lerTesteTermo,
+    enviarPalpiteTesteTermo,
+    PalpiteInvalidoErro,
+} from "./apiTermo.js";
 import { temAcessoParticipante } from "../../auth/sessao.js";
 
 /* Jogo do Termo.
@@ -21,7 +28,14 @@ import { temAcessoParticipante } from "../../auth/sessao.js";
 
    A exceção é o modo treino (ver abaixo): depois que a partida valendo
    acaba, a API já revelou a palavra, então uma rodada extra pode ser
-   conferida aqui mesmo — sem ida ao servidor e, portanto, sem xp. */
+   conferida aqui mesmo — sem ida ao servidor e, portanto, sem xp.
+
+   Outra é o modo teste (`modoTeste`, rota /termo/teste?palavra={id}),
+   aberto pelo botão "Testar" do /admin -> Termo: a diretoria joga contra
+   uma palavra cadastrada para conferir se está tudo certo. O servidor
+   confere o palpite mas não grava nada, e por isso as 6 tentativas são
+   contadas aqui — perdeu, pode tentar de novo, o que o participante não
+   pode. A palavra não é revelada nem ao perder. */
 
 const TECLADO = [
     ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -39,6 +53,7 @@ const atrasoRevelacaoMs = (tamanho) => tamanho * 90 + 350;
 /* Sair do jogo devolve a pessoa à área do participante, de onde o Termo é
    aberto pelo card da aba Desafios — não à home do site. */
 const ROTA_SAIDA_TERMO = "/participantes?tab=desafios";
+const ROTA_SAIDA_TESTE_TERMO = "/admin";
 
 const semAcento = (str) => str.normalize("NFD").replace(/[̀-ͯ]/g, "");
 
@@ -91,8 +106,13 @@ const calcularResultadoTreino = (palpite, secreta) => {
 const querTreinoPelaUrl = () =>
     new URLSearchParams(window.location.search).get("treino") === "1";
 
-const Termo = () => {
+const palavraIdTestePelaUrl = () =>
+    Number(new URLSearchParams(window.location.search).get("palavra")) || null;
+
+const Termo = ({ modoTeste = false }) => {
     const [, navegar] = useLocation();
+    const rotaSaida = modoTeste ? ROTA_SAIDA_TESTE_TERMO : ROTA_SAIDA_TERMO;
+    const [palavraIdTeste] = useState(palavraIdTestePelaUrl);
 
     const [carregando, setCarregando] = useState(true);
     const [erroCarregamento, setErroCarregamento] = useState("");
@@ -136,16 +156,38 @@ const Termo = () => {
     /* Jogar credita xp, então é preciso estar logado como participante. Sem
        sessão, manda para o login com volta para cá. */
     useEffect(() => {
+        if (modoTeste) return; // quem barra o teste é a RotaTesteTermo (main.jsx)
         if (!temAcessoParticipante()) {
             window.location.replace(`/inscricoes?tab=entrar&next=${encodeURIComponent("/termo")}`);
         }
+    }, []);
+
+    /* Teste: só o tamanho da palavra escolhida no /admin. */
+    useEffect(() => {
+        if (!modoTeste) return;
+        if (!palavraIdTeste) {
+            setErroCarregamento("Nenhuma palavra escolhida para testar.");
+            setCarregando(false);
+            return;
+        }
+        let ativo = true;
+        lerTesteTermo(palavraIdTeste)
+            .then((teste) => {
+                if (!ativo || !teste) return;
+                setDisponivel(true);
+                setTamanho(teste.tamanho);
+                setAtual(Array(teste.tamanho).fill(""));
+            })
+            .catch((e) => { if (ativo) setErroCarregamento(e.message); })
+            .finally(() => { if (ativo) setCarregando(false); });
+        return () => { ativo = false; };
     }, []);
 
     /* Estado inicial: dia de hoje e a partida em andamento, se houver.
        Sem sessão não vale nem pedir — o efeito acima já está mandando a
        pessoa para o login. */
     useEffect(() => {
-        if (!temAcessoParticipante()) return;
+        if (modoTeste || !temAcessoParticipante()) return;
         let ativo = true;
         lerEstadoTermo()
             .then((estado) => {
@@ -284,6 +326,39 @@ const Termo = () => {
         }, atrasoRevelacaoMs(tamanho));
     };
 
+    /* Palpite de teste: o servidor confere contra a palavra escolhida mas
+       não grava nada, então quem conta as tentativas e decide o fim é a
+       tela. */
+    const enviarTeste = async (palpite) => {
+        setBloqueado(true);
+        try {
+            const resposta = await enviarPalpiteTesteTermo(palavraIdTeste, palpite);
+            if (!resposta) return;
+
+            const novasTentativas = [...tentativas, paraLinhaGrade({ palpite, resultado: resposta.resultado })];
+            setTentativas(novasTentativas);
+            limparGrade();
+
+            setTimeout(() => {
+                setBloqueado(false);
+                if (resposta.venceu || novasTentativas.length >= TOTAL_TENTATIVAS) {
+                    setFim(resposta.venceu ? "ganhou" : "perdeu");
+                }
+            }, atrasoRevelacaoMs(tamanho));
+        } catch (e) {
+            setBloqueado(false);
+            if (e instanceof PalpiteInvalidoErro) recusarPalpite(e.message);
+            else mostrarToast(e.message);
+        }
+    };
+
+    /* Admin pode jogar quantas vezes quiser — participante não. */
+    const reiniciarTeste = () => {
+        setTentativas([]);
+        setFim(null);
+        limparGrade();
+    };
+
     const enviar = async () => {
         if (atual.some((l) => l === "")) {
             recusarPalpite("Palavra incompleta");
@@ -294,6 +369,10 @@ const Termo = () => {
 
         if (modoTreino) {
             enviarTreino(palavra);
+            return;
+        }
+        if (modoTeste) {
+            enviarTeste(palavra);
             return;
         }
 
@@ -391,7 +470,7 @@ const Termo = () => {
             {toast && <div className="divToastErroTermo">{toast}</div>}
 
             <div className="divCabecalhoTermo">
-                <button className="botaoVoltarTermo" onClick={() => navegar(ROTA_SAIDA_TERMO)}>&#x2190;</button>
+                <button className="botaoVoltarTermo" onClick={() => navegar(rotaSaida)}>&#x2190;</button>
                 <h1 className="tituloTermo">TERMO</h1>
                 <button className="botaoAjudaTermo" onClick={() => setAjudaAberta(true)}>?</button>
             </div>
@@ -428,6 +507,12 @@ const Termo = () => {
 
             {!carregando && !erroCarregamento && disponivel && (
                 <div className="divConteudoJogoTermo">
+
+                    {modoTeste && (
+                        <div className="divAvisoTreinoTermo">
+                            <span className="spanAvisoTreinoTermo">MODO TESTE · NÃO VALE PONTOS</span>
+                        </div>
+                    )}
 
                     {modoTreino && (
                         <div className="divAvisoTreinoTermo">
@@ -534,7 +619,7 @@ const Termo = () => {
             {/* Fim da partida valendo. Quem acertou pode repetir a mesma
                 palavra no treino — não muda pontuação, é só para tentar
                 outros caminhos até a resposta. */}
-            {!modoTreino && fim && (
+            {!modoTreino && !modoTeste && fim && (
                 <div className="divSobreposicaoFimTermo">
                     <div className="divCartaoFimTermo">
                         <div className={`tituloFimTermo ${fim === "ganhou" ? "venceuFimTermo" : "perdeuFimTermo"}`}>
@@ -561,6 +646,30 @@ const Termo = () => {
 
                         <button className="botaoReiniciarFimTermo" onClick={() => navegar(ROTA_SAIDA_TERMO)}>
                             VOLTAR AOS DESAFIOS
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Fim de um teste do admin: sem xp e sem revelar a palavra —
+                quem não acertou pode tentar de novo. */}
+            {modoTeste && fim && (
+                <div className="divSobreposicaoFimTermo">
+                    <div className="divCartaoFimTermo">
+                        <div className={`tituloFimTermo ${fim === "ganhou" ? "venceuFimTermo" : "perdeuFimTermo"}`}>
+                            {fim === "ganhou" ? "VOCÊ ACERTOU!" : "NÃO ACERTOU"}
+                        </div>
+
+                        <p className="textoFimTermo">
+                            Teste não vale pontos e não conta como jogada de participante.
+                        </p>
+
+                        <button className="botaoJogarDeNovoFimTermo" onClick={reiniciarTeste}>
+                            {fim === "ganhou" ? "JOGAR DE NOVO" : "TENTAR NOVAMENTE"}
+                        </button>
+
+                        <button className="botaoReiniciarFimTermo" onClick={() => navegar(ROTA_SAIDA_TESTE_TERMO)}>
+                            VOLTAR AO ADMIN
                         </button>
                     </div>
                 </div>
