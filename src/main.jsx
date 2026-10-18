@@ -3,7 +3,7 @@ import { lazy, Suspense } from 'preact/compat'
 import './index.css'
 import { App } from './app.jsx'
 import { Switch, Route, Redirect } from 'wouter'
-import { temAcessoFinanceiro, temAcessoPrevisao, temAcessoAdmin, temAcessoParticipante } from './auth/sessao.js'
+import { temAcessoFinanceiro, temAcessoPrevisao, temAcessoAdmin, temAcessoParticipante, temAcessoGamificacao } from './auth/sessao.js'
 
 /* Páginas carregadas sob demanda (uma por rota): a home pública (`App`,
    acima) não precisa esperar o JS do /admin, /financeiro, /participantes,
@@ -72,7 +72,7 @@ function RotaAdmin() {
 /* Modo teste do Termo, aberto em nova guia pelo botão "Testar" do
    /admin -> Termo. Mesmo público que cadastra as palavras. */
 function RotaTesteTermo() {
-    return temAcessoFinanceiro()
+    return temAcessoGamificacao()
         ? <Termo modoTeste />
         : <Redirect to="/inscricoes?tab=entrar&next=/admin" />;
 }
