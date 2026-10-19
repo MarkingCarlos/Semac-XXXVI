@@ -1,5 +1,5 @@
 /* =================================================================
-   crachaImpresso.css — um crachá de 55 × 83,5 mm. Tudo em mm para a
+   crachaImpresso.css — um crachá de 50 × 75,91 mm. Tudo em mm para a
    impressão sair no tamanho real; na tela, 1 mm ≈ 3,78 px.
    Posições medidas na arte limpa (quadro cinza de ~16% a ~84% da largura
    e de ~27,5% a ~81% da altura).
@@ -7,8 +7,8 @@
 
 .cartaoCrachaImpresso {
     position: relative;
-    width: 55mm;
-    height: 83.5mm;
+    width: 50mm;
+    height: 75.91mm;
     overflow: hidden;
     background: #7a0a2c;
     -webkit-print-color-adjust: exact;
@@ -27,10 +27,10 @@
    por causa do raio que invade o canto superior direito. */
 .divNomeCrachaImpresso {
     position: absolute;
-    left: 13.55mm;
-    top: 27.5mm;
-    width: 28mm;
-    height: 12mm;
+    left: 12.32mm;
+    top: 25mm;
+    width: 25.45mm;
+    height: 10.91mm;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -46,13 +46,13 @@
     display: block;
 }
 
-/* Mesmo lugar e tamanho do QR da arte de referência (~23,6 mm). */
+/* Mesmo lugar e tamanho do QR da arte de referência (~21,45 mm). */
 .divQrCodeCrachaImpresso {
     position: absolute;
-    left: 16.2mm;
-    top: 41.1mm;
-    width: 23.6mm;
-    height: 23.6mm;
+    left: 14.73mm;
+    top: 37.36mm;
+    width: 21.45mm;
+    height: 21.45mm;
 }
 
 .divQrCodeCrachaImpresso svg {
@@ -63,15 +63,15 @@
 
 .divRotuloPalestranteCrachaImpresso {
     position: absolute;
-    left: 13.55mm;
-    top: 41.1mm;
-    width: 28mm;
-    height: 23.6mm;
+    left: 12.32mm;
+    top: 37.36mm;
+    width: 25.45mm;
+    height: 21.45mm;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Anton', sans-serif;
-    font-size: 4.8mm;
+    font-size: 4.36mm;
     letter-spacing: 0.04em;
     color: #730835;
 }

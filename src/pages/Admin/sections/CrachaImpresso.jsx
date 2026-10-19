@@ -1,4 +1,4 @@
-// Um crachá impresso de 55 × 83,5 mm: a arte limpa de fundo, o nome em
+// Um crachá impresso de 50 × 75,91 mm: a arte limpa de fundo, o nome em
 // duas linhas no quadro cinza e, embaixo, o QR de check-in (o mesmo uuid
 // do crachá digital — ver QrCrachaParticipantes.jsx). Palestrante não tem
 // uuid, então no lugar do QR vai o texto "PALESTRANTE".
@@ -10,8 +10,8 @@
 
 import './crachaImpresso.css';
 
-const LARGURA_NOME_CRACHA_MM = 28;
-const TAMANHO_MAXIMO_FONTE_NOME_MM = 5;
+const LARGURA_NOME_CRACHA_MM = 25.45;
+const TAMANHO_MAXIMO_FONTE_NOME_MM = 4.55;
 
 // Partículas que não contam como "segundo nome": "Maria de Souza" vira
 // MARIA / SOUZA, não MARIA / DE.

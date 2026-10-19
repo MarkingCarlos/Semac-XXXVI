@@ -74,8 +74,8 @@ function dividirEmFolhas(lista) {
 
 // Marcas de corte na margem da folha, prolongando as linhas da grade.
 function MarcasCorteFolhaCrachas() {
-    const posicoesVerticaisMm = Array.from({ length: COLUNAS_FOLHA_CRACHAS + 1 }, (_, i) => i * 55);
-    const posicoesHorizontaisMm = Array.from({ length: 4 }, (_, i) => i * 83.5);
+    const posicoesVerticaisMm = Array.from({ length: COLUNAS_FOLHA_CRACHAS + 1 }, (_, i) => i * 50);
+    const posicoesHorizontaisMm = Array.from({ length: 4 }, (_, i) => i * 75.91);
     return (
         <>
             {posicoesVerticaisMm.map((x) => (
