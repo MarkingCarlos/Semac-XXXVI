@@ -22,6 +22,15 @@
     display: none;
 }
 
+/* Só o card de minicursos (DashboardMinicursosAdmin): com um card só, ele
+   ocupa a largura de uma coluna em vez de esticar — mesma grade do card
+   "Realizar sorteio" do Início. */
+.gradeCardMinicursosDashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 20px;
+}
+
 /* ── Card ────────────────────────────────────────────────────── */
 
 .cardDashboard {

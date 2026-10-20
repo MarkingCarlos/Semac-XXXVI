@@ -3,6 +3,7 @@ import StatsGrid from '../StatsGrid.jsx';
 import TabelaParticipantes from '../TabelaParticipantes.jsx';
 import TabelaComissao from '../TabelaComissao.jsx';
 import Crachas from './Crachas.jsx';
+import Certificados from './Certificados.jsx';
 
 /* Invólucro da aba "Pessoas" do /admin. Reúne participantes e comissão
    numa entrada só da navbar, que já estava cheia.
@@ -17,12 +18,14 @@ import Crachas from './Crachas.jsx';
 
    "Crachás" gera os crachás impressos e busca os próprios dados
    (GET /api/cracha) — inclui palestrantes, que não estão nas outras
-   listas. */
+   listas. "Certificados" gera os PDFs dos palestrantes (GET
+   /api/certificado), um por palestrante em cada evento. */
 
 const SUBABAS = [
     { id: 'participantes', rotulo: 'Participantes' },
     { id: 'comissao', rotulo: 'Comissão' },
     { id: 'crachas', rotulo: 'Crachás' },
+    { id: 'certificados', rotulo: 'Certificados' },
 ];
 
 export default function Pessoas({
@@ -105,6 +108,7 @@ export default function Pessoas({
             )}
 
             {subabaAtiva === 'crachas' && <Crachas />}
+            {subabaAtiva === 'certificados' && <Certificados />}
         </div>
     );
 }

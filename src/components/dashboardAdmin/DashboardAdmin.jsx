@@ -56,6 +56,27 @@ export default function DashboardAdmin() {
     );
 }
 
+/* Só o card de vagas em minicursos, para quem não vê a dashboard inteira
+   (diretoria de conteúdo). Componente à parte porque cada
+   usarConsultaPeriodica consulta ao montar: as outras rotas da dashboard
+   dariam 403 a cada atualização. */
+export function DashboardMinicursosAdmin() {
+    const minicursos = usarConsultaPeriodica(buscarMinicursosDashboard, true);
+    const [modalAberto, setModalAberto] = useState(false);
+
+    return (
+        <section className="secaoDashboardAdmin" aria-label="Vagas em minicursos">
+            <div className="gradeCardMinicursosDashboard">
+                <CardVagasMinicursos consulta={minicursos} aoAbrir={() => setModalAberto(true)} />
+            </div>
+
+            {modalAberto && minicursos.dados && (
+                <ModalVagasMinicursos dados={minicursos.dados} aoFechar={() => setModalAberto(false)} />
+            )}
+        </section>
+    );
+}
+
 /* ── Carrossel (mobile) / grade (desktop) ───────────────────────── */
 
 function CarrosselCardsDashboard({ cards }) {

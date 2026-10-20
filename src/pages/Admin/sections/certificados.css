@@ -1,0 +1,94 @@
+/* =================================================================
+   certificados.css — subaba Certificados (aba Pessoas do /admin).
+   Lista com seleção, botões por linha e prévia do PDF num iframe.
+   ================================================================= */
+
+.controlesListaCertificados {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.listaCertificados {
+    list-style: none;
+    margin: 0;
+    padding: 0.25rem 0;
+    max-height: 460px;
+    overflow-y: auto;
+}
+
+.itemCertificados {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.9rem;
+}
+
+.itemCertificados:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.caixaSelecaoCertificados {
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--AmareloAuxApoio);
+    cursor: pointer;
+}
+
+.divTextosItemCertificados {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.spanNomePalestranteCertificados {
+    font-weight: 600;
+}
+
+.spanEventoCertificados {
+    font-size: 0.75rem;
+    opacity: 0.6;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.blocoPreviaCertificados {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.topoPreviaCertificados {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+/* Proporção do A4 deitado (297 × 210) + espaço da barra do leitor de PDF. */
+.iframePreviaCertificados {
+    width: 100%;
+    max-width: 900px;
+    aspect-ratio: 297 / 225;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+@media (max-width: 640px) {
+    .itemCertificados {
+        flex-wrap: wrap;
+        padding: 0.55rem 1rem;
+    }
+
+    .divTextosItemCertificados {
+        flex-basis: calc(100% - 2rem);
+    }
+}

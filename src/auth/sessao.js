@@ -38,6 +38,11 @@ const PAPEIS_DIRETORIA = PAPEIS_ADMIN.filter((papel) => papel !== 'MEMBRO');
    backend (SecurityConfig). */
 const PAPEIS_DASHBOARD = ['PRESIDENTE', 'DIRETOR_SITE'];
 
+/* Quem vê o card "Vagas restantes em minicursos" (com a lista de inscritos
+   de cada minicurso): a dashboard mais a diretoria de conteúdo, que cuida
+   da programação. Espelha PAPEIS_DASHBOARD_MINICURSOS do backend. */
+const PAPEIS_DASHBOARD_MINICURSOS = [...PAPEIS_DASHBOARD, 'DIRETOR_CONTEUDO'];
+
 /* Quem configura a sub-aba Gamificação de Informações SEMAC (xp, níveis,
    conquistas, times e Termo). Espelha PAPEIS_GAMIFICACAO do backend
    (SecurityConfig). */
@@ -133,6 +138,11 @@ export function temAcessoDiretoria() {
 export function temAcessoDashboard() {
     const sessao = lerSessao();
     return !!sessao && PAPEIS_DASHBOARD.includes(sessao.role) && !sessaoExpirada();
+}
+
+export function temAcessoDashboardMinicursos() {
+    const sessao = lerSessao();
+    return !!sessao && PAPEIS_DASHBOARD_MINICURSOS.includes(sessao.role) && !sessaoExpirada();
 }
 
 export function temAcessoGamificacao() {
