@@ -2,7 +2,7 @@
    crachas.css — subaba Crachás (aba Pessoas do /admin).
    Tela: lista com seleção + prévia em tamanho real.
    Impressão: só o portal com as folhas A4 aparece (9 crachás de
-   50 × 75,91 mm em 3 × 3, sem espaço entre eles, com marcas de corte na
+   60 × 91,09 mm em 3 × 3, sem espaço entre eles, com marcas de corte na
    margem prolongando as linhas da grade).
    ================================================================= */
 
@@ -95,17 +95,17 @@
     break-after: auto;
 }
 
-/* 3 × 50 = 150 mm de largura e 3 × 75,91 = 227,73 mm de altura,
+/* 3 × 60 = 180 mm de largura e 3 × 91,09 = 273,28 mm de altura,
    centralizados na folha. */
 .gradeFolhaCrachas {
     position: absolute;
-    left: 30mm;
-    top: 34.64mm;
-    width: 150mm;
-    height: 227.73mm;
+    left: 15mm;
+    top: 11.86mm;
+    width: 180mm;
+    height: 273.28mm;
     display: grid;
-    grid-template-columns: repeat(3, 50mm);
-    grid-template-rows: repeat(3, 75.91mm);
+    grid-template-columns: repeat(3, 60mm);
+    grid-template-rows: repeat(3, 91.09mm);
 }
 
 .marcaCorteVerticalTopoFolhaCrachas,

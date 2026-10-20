@@ -74,8 +74,8 @@ function dividirEmFolhas(lista) {
 
 // Marcas de corte na margem da folha, prolongando as linhas da grade.
 function MarcasCorteFolhaCrachas() {
-    const posicoesVerticaisMm = Array.from({ length: COLUNAS_FOLHA_CRACHAS + 1 }, (_, i) => i * 50);
-    const posicoesHorizontaisMm = Array.from({ length: 4 }, (_, i) => i * 75.91);
+    const posicoesVerticaisMm = Array.from({ length: COLUNAS_FOLHA_CRACHAS + 1 }, (_, i) => i * 60);
+    const posicoesHorizontaisMm = Array.from({ length: 4 }, (_, i) => i * 91.09);
     return (
         <>
             {posicoesVerticaisMm.map((x) => (
@@ -164,7 +164,7 @@ export default function Crachas() {
                 <div>
                     <h1 class="tituloSecaoFinancas">Crachás</h1>
                     <p class="subtituloSecaoFinancas">
-                        Crachás impressos de 5,5 × 8,35 cm com o QR de check-in, 9 por folha A4
+                        Crachás impressos de 6 × 9,11 cm com o QR de check-in, 9 por folha A4
                     </p>
                 </div>
                 <button
