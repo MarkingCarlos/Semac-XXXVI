@@ -2398,3 +2398,76 @@
   .botaoMandarPerguntaSheetDetalheEventoParticipantes,
   .botaoPrimarioModalPerguntaDebateParticipantes { transition: none; }
 }
+
+/* ── Mostra Técnica (aba Desafios) ──────────────────────────────
+   Progresso de visitas aos stands — ver BlocoMostraDesafiosParticipantes.jsx. */
+
+.trilhaProgressoMostraDesafiosParticipantes {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(252, 248, 245, 0.15);
+  overflow: hidden;
+}
+
+.preenchimentoProgressoMostraDesafiosParticipantes {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--AmareloAuxApoio);
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.listaTrabalhosMostraDesafiosParticipantes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.itemTrabalhoMostraDesafiosParticipantes {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.marcadorTrabalhoMostraDesafiosParticipantes {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1.5px solid rgba(252, 248, 245, 0.4);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.itemVisitadoMostraDesafiosParticipantes .marcadorTrabalhoMostraDesafiosParticipantes {
+  border-color: var(--azulConteudo);
+  background: var(--azulConteudo);
+  color: var(--brancoQuenteParticipantes);
+}
+
+.textoTrabalhoMostraDesafiosParticipantes {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.tituloTrabalhoMostraDesafiosParticipantes {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.itemVisitadoMostraDesafiosParticipantes .tituloTrabalhoMostraDesafiosParticipantes {
+  opacity: 0.65;
+}
+
+.detalheTrabalhoMostraDesafiosParticipantes {
+  font-size: 11px;
+  color: rgba(252, 248, 245, 0.7);
+}

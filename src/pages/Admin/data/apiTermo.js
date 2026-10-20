@@ -5,10 +5,9 @@
    Cada dia tem uma data e um conjunto de palavras (5 a 10 letras); cada
    participante recebe uma delas por sorteio quando abre o jogo.
 
-   A leitura NÃO devolve as palavras — só o tamanho de cada uma e quantos
-   participantes a receberam. É de propósito: nem quem cadastrou a lê de
-   volta pela API, mesmo critério do `codigoDefinido` do tipo de ingresso.
-   Quem esquecer qual era remove e cadastra de novo. */
+   A leitura devolve cada palavra com o texto, o tamanho e quantos
+   participantes a receberam. A rota é só da diretoria; a tela mostra a
+   palavra mascarada até alguém clicar em "Mostrar". */
 
 import { cabecalhosAuth } from '../../../auth/sessao.js';
 import { apiFetch } from '../../../lib/apiFetch.js';

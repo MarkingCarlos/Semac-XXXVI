@@ -81,8 +81,7 @@
 }
 
 /* As palavras em caixa alta e espaçadas: conferir letra a letra antes de
-   salvar importa mais aqui do que em qualquer outro campo do admin —
-   ninguém vai poder reler depois. */
+   salvar evita cadastrar errado e ter que remover depois. */
 .entradaPalavrasTermoAdmin {
     text-transform: uppercase;
     letter-spacing: 0.2em;
@@ -102,7 +101,7 @@
     font-family: var(--fonteCorpoMontserrat);
 }
 
-/* As palavras já cadastradas — sem o texto delas, que não volta da API. */
+/* As palavras já cadastradas — mascaradas até clicar em "Mostrar". */
 .listaPalavrasDiaTermoAdmin {
     list-style: none;
     margin: 0;
@@ -123,8 +122,29 @@
 }
 
 .textoPalavraDiaTermoAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
     font-family: var(--fonteCorpoMontserrat);
     font-size: 0.8125rem;
+}
+
+/* Mesma tipografia do campo de novas palavras, para conferir letra a letra. */
+.strongPalavraSecretaTermoAdmin {
+    font-family: var(--fonteTituloBungee);
+    font-weight: normal;
+    letter-spacing: 0.2em;
+    overflow-wrap: anywhere;
+}
+
+.strongPalavraMascaradaTermoAdmin {
+    opacity: 0.6;
+}
+
+.spanDetalhesPalavraTermoAdmin {
+    font-size: 0.75rem;
+    opacity: 0.75;
 }
 
 .divAcoesPalavraTermoAdmin {
@@ -134,6 +154,7 @@
 }
 
 /* Link com cara de botão: abre o modo teste em nova guia. */
+.botaoMostrarPalavraTermoAdmin,
 .botaoTestarPalavraTermoAdmin,
 .botaoRemoverPalavraTermoAdmin {
     background: transparent;
@@ -153,6 +174,7 @@
     text-decoration: none;
 }
 
+.botaoMostrarPalavraTermoAdmin:hover,
 .botaoTestarPalavraTermoAdmin:hover,
 .botaoRemoverPalavraTermoAdmin:hover:not(:disabled) {
     border-color: #E79839;

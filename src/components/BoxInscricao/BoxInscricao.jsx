@@ -48,6 +48,9 @@ function destinoPosLogin(rotaRetorno) {
         if (rotaRetorno === '/participantes' && temAcessoParticipante())     return rotaRetorno
         // QR code do cartão do evento: volta direto para a revelação do time
         if (rotaRetorno === '/time' && temAcessoParticipante())              return rotaRetorno
+        // QR code do stand da Mostra Técnica: volta para registrar a visita.
+        // Só o formato /mostra/<codigo>, nada de rota arbitrária.
+        if (/^\/mostra\/[A-Za-z0-9]+$/.test(rotaRetorno) && temAcessoParticipante()) return rotaRetorno
     }
     if (temAcessoAdmin())        return '/admin'
     if (temAcessoParticipante()) return '/participantes'

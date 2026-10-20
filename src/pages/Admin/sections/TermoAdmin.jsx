@@ -21,10 +21,9 @@ import './termoAdmin.css';
    com a data de hoje e não precisa de ninguém virando chave durante a
    semana.
 
-   As palavras cadastradas NÃO voltam na leitura — a API só informa o
-   tamanho de cada uma e quantos participantes a receberam. É de propósito:
-   a palavra não sai do servidor nem para quem a cadastrou, senão bastaria
-   uma conta de diretoria para descobri-la. */
+   As palavras cadastradas voltam na leitura, mas aparecem mascaradas até
+   alguém clicar em "Mostrar" — assim não vazam num compartilhamento de
+   tela durante reunião. */
 
 const ANO_ATUAL = new Date().getFullYear();
 const TOTAL_DIAS = 4;
@@ -70,12 +69,24 @@ export default function TermoAdmin() {
     const [erro, setErro] = useState('');
 
     /* Rascunho por dia: { data, palavras }. `palavras` é o texto do campo
-       de novas palavras — nasce sempre vazio, porque as já cadastradas
-       nunca vêm da API. */
+       de novas palavras — nasce sempre vazio; as já cadastradas ficam na
+       lista acima dele. */
     const [rascunhos, setRascunhos] = useState({});
     const [diaSalvando, setDiaSalvando] = useState(null);
     const [palavraRemovendo, setPalavraRemovendo] = useState(null);
     const [avisoSalvo, setAvisoSalvo] = useState(null);
+    /* Ids das palavras reveladas com "Mostrar". Não persiste: recarregar
+       a página mascara todas de novo. */
+    const [palavrasVisiveisTermoAdmin, setPalavrasVisiveisTermoAdmin] = useState(() => new Set());
+
+    const alternarVisibilidadePalavra = (id) => {
+        setPalavrasVisiveisTermoAdmin((prev) => {
+            const proximo = new Set(prev);
+            if (proximo.has(id)) proximo.delete(id);
+            else proximo.add(id);
+            return proximo;
+        });
+    };
 
     useEffect(() => {
         let ativo = true;
@@ -244,40 +255,59 @@ export default function TermoAdmin() {
 
                                 {d.palavras.length > 0 && (
                                     <ul className="listaPalavrasDiaTermoAdmin">
-                                        {d.palavras.map((palavra, indice) => (
-                                            <li key={palavra.id} className="itemPalavraDiaTermoAdmin">
-                                                <span className="textoPalavraDiaTermoAdmin">
-                                                    <strong>Palavra {indice + 1}</strong>
-                                                    {' · '}{palavra.tamanho} letras
-                                                    {' · '}{rotuloJogadores(palavra.jogadores)}
-                                                </span>
-                                                <div className="divAcoesPalavraTermoAdmin">
-                                                    {/* Abre o jogo contra esta palavra em nova guia,
-                                                        sem gravar jogo nem creditar xp. */}
-                                                    <a
-                                                        className="botaoTestarPalavraTermoAdmin"
-                                                        href={`/termo/teste?palavra=${palavra.id}`}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                    >
-                                                        Testar
-                                                    </a>
-                                                    {/* Palavra já sorteada fica: apagá-la levaria junto
-                                                        o jogo e as tentativas de quem a recebeu. */}
-                                                    <button
-                                                        type="button"
-                                                        className="botaoRemoverPalavraTermoAdmin"
-                                                        disabled={palavra.jogadores > 0 || palavraRemovendo === palavra.id}
-                                                        title={palavra.jogadores > 0
-                                                            ? 'Já sorteada para um participante — não pode ser removida'
-                                                            : 'Remover palavra'}
-                                                        onClick={() => removerPalavra(palavra.id)}
-                                                    >
-                                                        {palavraRemovendo === palavra.id ? 'Removendo…' : 'Remover'}
-                                                    </button>
-                                                </div>
-                                            </li>
-                                        ))}
+                                        {d.palavras.map((palavra) => {
+                                            const palavraVisivel = palavrasVisiveisTermoAdmin.has(palavra.id);
+                                            return (
+                                                <li key={palavra.id} className="itemPalavraDiaTermoAdmin">
+                                                    <span className="textoPalavraDiaTermoAdmin">
+                                                        <strong
+                                                            className={palavraVisivel
+                                                                ? 'strongPalavraSecretaTermoAdmin'
+                                                                : 'strongPalavraSecretaTermoAdmin strongPalavraMascaradaTermoAdmin'}
+                                                            aria-label={palavraVisivel ? undefined : `Palavra oculta de ${palavra.tamanho} letras`}
+                                                        >
+                                                            {palavraVisivel ? palavra.palavra : '•'.repeat(palavra.tamanho)}
+                                                        </strong>
+                                                        <span className="spanDetalhesPalavraTermoAdmin">
+                                                            {palavra.tamanho} letras · {rotuloJogadores(palavra.jogadores)}
+                                                        </span>
+                                                    </span>
+                                                    <div className="divAcoesPalavraTermoAdmin">
+                                                        <button
+                                                            type="button"
+                                                            className="botaoMostrarPalavraTermoAdmin"
+                                                            aria-pressed={palavraVisivel}
+                                                            onClick={() => alternarVisibilidadePalavra(palavra.id)}
+                                                        >
+                                                            {palavraVisivel ? 'Ocultar' : 'Mostrar'}
+                                                        </button>
+                                                        {/* Abre o jogo contra esta palavra em nova guia,
+                                                            sem gravar jogo nem creditar xp. */}
+                                                        <a
+                                                            className="botaoTestarPalavraTermoAdmin"
+                                                            href={`/termo/teste?palavra=${palavra.id}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                        >
+                                                            Testar
+                                                        </a>
+                                                        {/* Palavra já sorteada fica: apagá-la levaria junto
+                                                            o jogo e as tentativas de quem a recebeu. */}
+                                                        <button
+                                                            type="button"
+                                                            className="botaoRemoverPalavraTermoAdmin"
+                                                            disabled={palavra.jogadores > 0 || palavraRemovendo === palavra.id}
+                                                            title={palavra.jogadores > 0
+                                                                ? 'Já sorteada para um participante — não pode ser removida'
+                                                                : 'Remover palavra'}
+                                                            onClick={() => removerPalavra(palavra.id)}
+                                                        >
+                                                            {palavraRemovendo === palavra.id ? 'Removendo…' : 'Remover'}
+                                                        </button>
+                                                    </div>
+                                                </li>
+                                            );
+                                        })}
                                     </ul>
                                 )}
 

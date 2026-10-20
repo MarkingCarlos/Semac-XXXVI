@@ -3,7 +3,9 @@
    Dois blocos, nessa ordem — diários primeiro (valem mais, ainda por vir)
    e básicos depois (sempre disponíveis; o Termo é o primeiro deles). O
    catálogo e o estado de cada desafio vêm de
-   data/desafiosParticipantes.js; aqui só se desenha. */
+   data/desafiosParticipantes.js; aqui só se desenha. Por último, o
+   progresso da Mostra Técnica (BlocoMostraDesafiosParticipantes), que
+   carrega os próprios dados. */
 
 import {
     CATEGORIA_DIARIO_DESAFIOS,
@@ -15,6 +17,7 @@ import {
     SITUACAO_FINALIZADO_DESAFIOS,
     SITUACAO_INDISPONIVEL_DESAFIOS,
 } from '../data/desafiosParticipantes.js';
+import BlocoMostraDesafiosParticipantes from './BlocoMostraDesafiosParticipantes.jsx';
 
 /* Etiqueta e rótulo do botão por situação. Só quem tem `acao` vira card
    clicável — encerrado, finalizado e indisponível não levam a lugar nenhum.
@@ -135,6 +138,7 @@ export default function SecaoDesafiosParticipantes({ desafios, carregando, erro,
                             vazio="Nenhum desafio básico disponível no momento."
                             onAbrir={onAbrir}
                         />
+                        <BlocoMostraDesafiosParticipantes />
                     </>
                 )}
             </div>

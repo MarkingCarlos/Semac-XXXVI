@@ -2,7 +2,7 @@ import { render } from 'preact'
 import { lazy, Suspense } from 'preact/compat'
 import './index.css'
 import { App } from './app.jsx'
-import { Switch, Route, Redirect } from 'wouter'
+import { Switch, Route, Redirect, useParams } from 'wouter'
 import { temAcessoFinanceiro, temAcessoPrevisao, temAcessoAdmin, temAcessoParticipante, temAcessoGamificacao } from './auth/sessao.js'
 
 /* Páginas carregadas sob demanda (uma por rota): a home pública (`App`,
@@ -22,6 +22,7 @@ const ConjuntoDetalhe = lazy(() => import('./pages/Financas/conjuntos/ConjuntoDe
 // import Ranking from "./pages/Ranking/paginaRanking.jsx";
 const Participantes = lazy(() => import('./pages/Participantes/Participantes.jsx'));
 const PaginaTime = lazy(() => import('./pages/Time/time.jsx'));
+const PaginaVisitaMostra = lazy(() => import('./pages/Mostra/PaginaVisitaMostra.jsx'));
 
 function CarregandoRota() {
     return (
@@ -91,6 +92,15 @@ function RotaTime() {
         : <Redirect to="/inscricoes?tab=entrar&next=/time" />;
 }
 
+/* /mostra/<codigo> é o link do QR code de cada stand da Mostra Técnica:
+   quem não está logado entra e volta direto para registrar a visita. */
+function RotaVisitaMostra() {
+    const { codigo } = useParams();
+    return temAcessoParticipante()
+        ? <PaginaVisitaMostra />
+        : <Redirect to={`/inscricoes?tab=entrar&next=${encodeURIComponent(`/mostra/${codigo}`)}`} />;
+}
+
 function RotaCheckin() {
     return temAcessoAdmin()
         ? <Checkin />
@@ -123,6 +133,7 @@ render(
             <Route path="/participantes"><RotaParticipantes /></Route>
             <Route path="/checkin"><RotaCheckin /></Route>
             <Route path="/time"><RotaTime /></Route>
+            <Route path="/mostra/:codigo"><RotaVisitaMostra /></Route>
             <Route path="/termo/teste"><RotaTesteTermo/></Route>
             <Route path="/termo"><Termo/></Route>
             <Route path="/sorteio/telao"><RotaTelaoSorteio/></Route>

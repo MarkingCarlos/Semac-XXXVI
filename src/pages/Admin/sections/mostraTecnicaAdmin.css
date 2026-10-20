@@ -1,0 +1,273 @@
+/* Seção MostraTecnicaAdmin do /admin — os trabalhos dos stands e os QR
+   codes. Aproveita a tipografia e os campos do financeiro (financas.css)
+   e a moldura de cartão do termoAdmin.css; aqui só o que é próprio. */
+
+.textoExplicacaoMostraAdmin {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    opacity: 0.75;
+    margin: 0 0 18px;
+    max-width: 62ch;
+}
+
+/* Título largo, apresentadores no meio, stand estreito. Quebra em coluna
+   no celular. */
+.formularioNovoTrabalhoMostraAdmin {
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr;
+    gap: 10px;
+    align-items: end;
+    padding: 18px;
+    margin-bottom: 16px;
+    border: 1px solid var(--AmareloAuxApoio);
+    border-radius: 14px;
+    background: var(--vermelhoAux2Participantes);
+}
+
+.acoesFormularioMostraAdmin {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 720px) {
+    .formularioNovoTrabalhoMostraAdmin {
+        grid-template-columns: 1fr;
+    }
+}
+
+.avisoSalvoMostraAdmin {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.75rem;
+    color: #ffffff;
+}
+
+.textoVazioMostraAdmin {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.8125rem;
+    opacity: 0.7;
+}
+
+.listaTrabalhosMostraAdmin {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.itemTrabalhoMostraAdmin {
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.12);
+}
+
+.linhaTrabalhoMostraAdmin {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.textoTrabalhoMostraAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1 1 240px;
+}
+
+.tituloTrabalhoMostraAdmin {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.875rem;
+    overflow-wrap: anywhere;
+}
+
+.detalhesTrabalhoMostraAdmin {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.75rem;
+    opacity: 0.75;
+}
+
+.divAcoesTrabalhoMostraAdmin {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Mesmo visual dos botões "Testar"/"Remover" do Termo. */
+.botaoAcaoTrabalhoMostraAdmin {
+    background: transparent;
+    color: #edecec;
+    border: 1px solid rgba(252, 248, 245, 0.25);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.18s ease, color 0.18s ease;
+}
+
+.botaoAcaoTrabalhoMostraAdmin:hover:not(:disabled) {
+    border-color: #E79839;
+    color: #E79839;
+}
+
+.botaoAcaoTrabalhoMostraAdmin:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.botaoConfirmarRemocaoMostraAdmin {
+    border-color: #E79839;
+    color: #E79839;
+}
+
+.formularioEdicaoTrabalhoMostraAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.divPreviaQrMostraAdmin {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.divSvgPreviaQrMostraAdmin {
+    width: 140px;
+    height: 140px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.divSvgPreviaQrMostraAdmin svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.divLinkPreviaQrMostraAdmin {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    min-width: 0;
+}
+
+.codeLinkQrMostraAdmin {
+    font-size: 0.75rem;
+    overflow-wrap: anywhere;
+    opacity: 0.85;
+}
+
+/* ── Folhas de impressão ────────────────────────────────────────────
+   Uma A4 por trabalho. Escondidas na tela; no @media print só aparecem
+   com a classe imprimindoMostraAdmin no <body> (ver MostraTecnicaAdmin.jsx).
+   Os seletores com `body.imprimindoMostraAdmin` vencem o @media print
+   global do crachas.css por especificidade. */
+
+.portalImpressaoMostraAdmin {
+    display: none;
+}
+
+.folhaA4MostraAdmin {
+    width: 210mm;
+    height: 297mm;
+    box-sizing: border-box;
+    padding: 22mm 20mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: #111111;
+    background: #ffffff;
+    break-after: page;
+    page-break-after: always;
+}
+
+.rotuloEventoFolhaMostraAdmin {
+    font-family: var(--fonteTituloBungee);
+    font-size: 5mm;
+    letter-spacing: 0.08em;
+    color: #730835;
+}
+
+.standFolhaMostraAdmin {
+    margin-top: 6mm;
+    font-family: var(--fonteTituloBungee);
+    font-size: 14mm;
+    line-height: 1;
+    color: #730835;
+}
+
+.tituloFolhaMostraAdmin {
+    margin: 8mm 0 0;
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 9mm;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.apresentadoresFolhaMostraAdmin {
+    margin: 4mm 0 0;
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 5.5mm;
+}
+
+.divQrFolhaMostraAdmin {
+    width: 120mm;
+    height: 120mm;
+    margin-top: auto;
+}
+
+.divQrFolhaMostraAdmin svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.instrucaoFolhaMostraAdmin {
+    margin: 8mm 0 0;
+    max-width: 150mm;
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 5mm;
+    line-height: 1.4;
+}
+
+/* Para digitar à mão se a câmera não ler. */
+.linkFolhaMostraAdmin {
+    margin-top: auto;
+    font-family: monospace;
+    font-size: 4mm;
+    color: #555555;
+}
+
+@media print {
+    body.imprimindoMostraAdmin > *:not(.portalImpressaoMostraAdmin) {
+        display: none !important;
+    }
+
+    body.imprimindoMostraAdmin > .portalImpressaoMostraAdmin {
+        display: block !important;
+    }
+
+    body.imprimindoMostraAdmin .folhaA4MostraAdmin {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
