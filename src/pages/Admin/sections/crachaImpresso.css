@@ -62,17 +62,41 @@
     height: 100%;
 }
 
-.divRotuloPalestranteCrachaImpresso {
+/* -----------------------------------------------------------------
+   Comissão e palestrante: arte fundoCrachaComissao.jpg, com o quadro
+   cinza de ~16% a ~84% da largura e de ~32% a ~74,5% da altura.
+   Posições copiadas do exemplo da arte (nome em ~36–47 mm, rótulo em
+   ~57,5–62 mm).
+   ----------------------------------------------------------------- */
+
+.divNomeCrachaEquipeImpresso {
     position: absolute;
-    left: 14.78mm;
-    top: 44.83mm;
+    left: 14.73mm;
+    top: 34.2mm;
     width: 30.54mm;
-    height: 25.74mm;
+    height: 15mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bungee', sans-serif;
+    line-height: 1.25;
+    color: #000000;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.divRotuloPerfilCrachaEquipeImpresso {
+    position: absolute;
+    left: 14.73mm;
+    top: 55mm;
+    width: 30.54mm;
+    height: 9.5mm;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Anton', sans-serif;
-    font-size: 5.23mm;
-    letter-spacing: 0.04em;
-    color: #730835;
+    font-family: 'Bungee', sans-serif;
+    line-height: 1;
+    color: #a10535;
+    white-space: nowrap;
 }

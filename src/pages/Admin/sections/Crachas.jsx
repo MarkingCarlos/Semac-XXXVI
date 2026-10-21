@@ -21,7 +21,7 @@ const CRACHAS_POR_FOLHA = 9;
 const COLUNAS_FOLHA_CRACHAS = 3;
 const QUANTIDADE_PREVIA_CRACHAS = 6;
 
-const URL_FONTE_ANTON = 'https://fonts.googleapis.com/css2?family=Anton&display=block';
+const URL_FONTES_CRACHA = 'https://fonts.googleapis.com/css2?family=Anton&family=Bungee&display=block';
 
 const FILTROS_PERFIL_CRACHAS = [
     { id: 'TODOS', rotulo: 'Todos' },
@@ -39,20 +39,21 @@ const ROTULO_PERFIL_CRACHA = {
 // Pessoa e palestrante vêm de tabelas diferentes e os ids podem coincidir.
 const chaveCracha = (pessoa) => `${pessoa.perfil}-${pessoa.id}`;
 
-// Anton só é usada aqui: carrega sob demanda e espera ficar pronta, porque
-// o tamanho do nome é medido com ela (CrachaImpresso.jsx).
-async function carregarFonteAnton() {
-    if (!document.querySelector(`link[href="${URL_FONTE_ANTON}"]`)) {
-        const linkFonteAnton = document.createElement('link');
-        linkFonteAnton.rel = 'stylesheet';
-        linkFonteAnton.href = URL_FONTE_ANTON;
-        document.head.appendChild(linkFonteAnton);
+// Anton (participante) e Bungee (comissão/palestrante) só são usadas aqui:
+// carrega sob demanda e espera ficarem prontas, porque o tamanho do nome é
+// medido com elas (CrachaImpresso.jsx).
+async function carregarFontesCracha() {
+    if (!document.querySelector(`link[href="${URL_FONTES_CRACHA}"]`)) {
+        const linkFontesCracha = document.createElement('link');
+        linkFontesCracha.rel = 'stylesheet';
+        linkFontesCracha.href = URL_FONTES_CRACHA;
+        document.head.appendChild(linkFontesCracha);
         await new Promise((resolver) => {
-            linkFonteAnton.onload = resolver;
-            linkFonteAnton.onerror = resolver;
+            linkFontesCracha.onload = resolver;
+            linkFontesCracha.onerror = resolver;
         });
     }
-    await document.fonts.load('100px Anton');
+    await Promise.all([document.fonts.load('100px Anton'), document.fonts.load('100px Bungee')]);
 }
 
 // QR em preto com fundo transparente: o cinza da arte faz a zona de
@@ -107,7 +108,7 @@ export default function Crachas() {
         let ativo = true;
         (async () => {
             try {
-                const [lista] = await Promise.all([listarCrachas(), carregarFonteAnton()]);
+                const [lista] = await Promise.all([listarCrachas(), carregarFontesCracha()]);
                 const uuids = lista.map((pessoa) => pessoa.uuid).filter(Boolean);
                 const svgs = await Promise.all(uuids.map(gerarSvgQrCode));
                 if (!ativo) return;
@@ -132,7 +133,7 @@ export default function Crachas() {
     const pessoasParaImprimir = pessoasFiltradas.filter((pessoa) => !chavesDesmarcadas.has(chaveCracha(pessoa)));
     const folhasCrachas = dividirEmFolhas(pessoasParaImprimir);
     const quantidadeSemQrCode = pessoasParaImprimir
-        .filter((pessoa) => pessoa.perfil !== 'PALESTRANTE' && !pessoa.uuid).length;
+        .filter((pessoa) => pessoa.perfil === 'PARTICIPANTE' && !pessoa.uuid).length;
 
     function alternarPessoa(pessoa) {
         setChavesDesmarcadas((anteriores) => {
@@ -234,7 +235,7 @@ export default function Crachas() {
                                 />
                                 <span class="spanNomePessoaCrachas">{pessoa.nome}</span>
                                 <span class="spanPerfilPessoaCrachas">{ROTULO_PERFIL_CRACHA[pessoa.perfil]}</span>
-                                {pessoa.perfil !== 'PALESTRANTE' && !pessoa.uuid && (
+                                {pessoa.perfil === 'PARTICIPANTE' && !pessoa.uuid && (
                                     <span class="spanSemQrPessoaCrachas">sem QR</span>
                                 )}
                             </label>
