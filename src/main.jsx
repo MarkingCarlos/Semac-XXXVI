@@ -3,7 +3,7 @@ import { lazy, Suspense } from 'preact/compat'
 import './index.css'
 import { App } from './app.jsx'
 import { Switch, Route, Redirect, useParams } from 'wouter'
-import { temAcessoFinanceiro, temAcessoPrevisao, temAcessoAdmin, temAcessoParticipante, temAcessoGamificacao } from './auth/sessao.js'
+import { temAcessoFinanceiro, temAcessoPrevisao, temAcessoAdmin, temAcessoParticipante, temAcessoGamificacao, temAcessoDiretoria } from './auth/sessao.js'
 
 /* Páginas carregadas sob demanda (uma por rota): a home pública (`App`,
    acima) não precisa esperar o JS do /admin, /financeiro, /participantes,
@@ -16,6 +16,8 @@ const Checkin = lazy(() => import('./components/qrcode/ModalQrCode.jsx'));
 const Termo = lazy(() => import('./pages/Termo/termo.jsx'));
 const Sorteio = lazy(() => import('./pages/Sorteio/sorteio.jsx'));
 const TelaoSorteio = lazy(() => import('./pages/Sorteio/telaoSorteio.jsx'));
+const PainelDebate = lazy(() => import('./pages/Debate/painelDebate.jsx'));
+const TelaoDebate = lazy(() => import('./pages/Debate/telaoDebate.jsx'));
 const Financas = lazy(() => import('./pages/Financas/Financas.jsx'));
 const ConjuntosCotacao = lazy(() => import('./pages/Financas/conjuntos/ConjuntosCotacao.jsx'));
 const ConjuntoDetalhe = lazy(() => import('./pages/Financas/conjuntos/ConjuntoDetalhe.jsx'));
@@ -120,6 +122,24 @@ function RotaTelaoSorteio() {
         : <Redirect to="/inscricoes?tab=entrar&next=/sorteio" />;
 }
 
+/* Telão do debate: painel do controlador (/debate/<id>) e a guia
+   projetada (/debate/<id>/telao), abertos pelo /admin -> Conteúdo. Mesmo
+   público que lê as perguntas do debate (diretoria e presidência), já que
+   o painel lista as perguntas do público. */
+function RotaPainelDebate() {
+    const { id } = useParams();
+    return temAcessoDiretoria()
+        ? <PainelDebate />
+        : <Redirect to={`/inscricoes?tab=entrar&next=${encodeURIComponent(`/debate/${id}`)}`} />;
+}
+
+function RotaTelaoDebate() {
+    const { id } = useParams();
+    return temAcessoDiretoria()
+        ? <TelaoDebate />
+        : <Redirect to={`/inscricoes?tab=entrar&next=${encodeURIComponent(`/debate/${id}`)}`} />;
+}
+
 render(
     <Suspense fallback={<CarregandoRota />}>
         <Switch>
@@ -138,6 +158,8 @@ render(
             <Route path="/termo"><Termo/></Route>
             <Route path="/sorteio/telao"><RotaTelaoSorteio/></Route>
             <Route path="/sorteio"><RotaSorteio/></Route>
+            <Route path="/debate/:id/telao"><RotaTelaoDebate/></Route>
+            <Route path="/debate/:id"><RotaPainelDebate/></Route>
             {/*<Route path="/ranking"><Ranking /></Route>*/}
             <Route><App /></Route>
         </Switch>

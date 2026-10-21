@@ -1,0 +1,327 @@
+/* Painel do controlador do debate (/debate/<id>). Ferramenta de notebook,
+   longe do público: prévia do telão e controles à esquerda, perguntas à
+   direita. Mesmo vermelho do telão, como no painel do sorteio. */
+
+@import url('https://fonts.googleapis.com/css2?family=Bungee&family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+.mainPainelDebate {
+    position: relative;
+    z-index: 51;
+    min-height: 100dvh;
+    box-sizing: border-box;
+    padding: clamp(20px, 3vh, 40px) clamp(16px, 3vw, 48px) 48px;
+    background: #730835;
+    color: #FCF8F5;
+    font-family: 'Montserrat', sans-serif;
+    /* O index.css centraliza o texto do site público. */
+    text-align: left;
+}
+
+/* ── Cabeçalho ───────────────────────────────────────────────── */
+
+.headerPainelDebate {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px 32px;
+    margin-bottom: 20px;
+}
+
+.divTituloPainelDebate {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.linkVoltarAdminPainelDebate {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(252, 248, 245, 0.7);
+    text-decoration: none;
+}
+
+.linkVoltarAdminPainelDebate:hover { color: #E79839; }
+
+.h1TituloPainelDebate {
+    margin: 4px 0 0;
+    font-family: 'Bungee', sans-serif;
+    font-weight: 400;
+    font-size: clamp(1.4rem, 2.4vw, 2rem);
+    color: #E79839;
+}
+
+.pNomeDebatePainelDebate {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.divStatusTelaoPainelDebate {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.spanStatusTelaoPainelDebate {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(252, 248, 245, 0.7);
+}
+
+.spanStatusTelaoPainelDebate::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(252, 248, 245, 0.35);
+}
+
+.statusTelaoConectadoPainelDebate { color: #FCF8F5; }
+.statusTelaoConectadoPainelDebate::before { background: #52ABB1; }
+
+.botaoAbrirTelaoPainelDebate {
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.95rem;
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: none;
+    background: #E79839;
+    color: #730835;
+    cursor: pointer;
+}
+
+.botaoAbrirTelaoPainelDebate:hover { background: #f0a84a; }
+
+.pDicaAbrirTelaoPainelDebate,
+.pAvisoPainelDebate {
+    margin: 0 0 16px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.pDicaAbrirTelaoPainelDebate { background: rgba(10, 10, 10, 0.25); }
+.pAvisoPainelDebate { background: rgba(231, 152, 57, 0.15); color: #E79839; font-weight: 600; }
+
+/* ── Corpo ───────────────────────────────────────────────────── */
+
+.divCorpoPainelDebate {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(320px, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+@media (max-width: 960px) {
+    .divCorpoPainelDebate { grid-template-columns: minmax(0, 1fr); }
+}
+
+.sectionTelaPainelDebate,
+.sectionPerguntasPainelDebate {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+}
+
+.divPreviaTelaoPainelDebate {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid rgba(252, 248, 245, 0.2);
+}
+
+.divGrupoBotoesPainelDebate {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.botaoTelaPainelDebate,
+.botaoTimerPainelDebate,
+.botaoTimerPrincipalPainelDebate {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.85rem;
+    padding: 11px 16px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    color: #FCF8F5;
+    cursor: pointer;
+    transition: border-color 0.25s, background 0.25s;
+    max-width: 100%;
+}
+
+.botaoTelaPainelDebate { background: #A10535; }
+.botaoFalaAPainelDebate { background: #B13571; }
+.botaoFalaBPainelDebate { background: #469197; }
+.botaoTimerPainelDebate { background: #850735; }
+.botaoTimerPrincipalPainelDebate { background: #E79839; color: #730835; min-width: 160px; justify-content: center; }
+
+.botaoTelaPainelDebate:hover,
+.botaoTimerPainelDebate:hover:not(:disabled) { border-color: #E79839; }
+.botaoTimerPrincipalPainelDebate:hover { background: #f0a84a; }
+
+.botaoAtivoPainelDebate { border-color: #FCF8F5; }
+
+.botaoTimerPainelDebate:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.kbdTeclaPainelDebate {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 5px;
+    border: 1px solid currentColor;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    opacity: 0.75;
+}
+
+.spanConfigTimerPainelDebate {
+    font-size: 0.8rem;
+    color: rgba(252, 248, 245, 0.65);
+}
+
+/* ── Perguntas ───────────────────────────────────────────────── */
+
+.spanRotuloPainelDebate {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    color: #E79839;
+}
+
+.divPerguntaAtivaPainelDebate,
+.divNovaPerguntaPainelDebate,
+.divListaPerguntasPainelDebate {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+    border-radius: 14px;
+    background: rgba(10, 10, 10, 0.18);
+}
+
+.pPerguntaAtivaPainelDebate {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.textareaNovaPerguntaPainelDebate {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    line-height: 1.35;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 2px solid rgba(252, 248, 245, 0.2);
+    background: #850735;
+    color: #FCF8F5;
+    resize: vertical;
+    outline: none;
+}
+
+.textareaNovaPerguntaPainelDebate:focus { border-color: #E79839; }
+.textareaNovaPerguntaPainelDebate::placeholder { color: rgba(252, 248, 245, 0.5); }
+
+.divCabecalhoListaPainelDebate {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.ulPerguntasPainelDebate {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.liPerguntaPainelDebate {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #850735;
+    border: 2px solid transparent;
+}
+
+.liPerguntaAtivaPainelDebate { background: #A10535; border-color: #E79839; }
+.liPerguntaExibidaPainelDebate .pTextoPerguntaPainelDebate { opacity: 0.6; }
+
+.pTextoPerguntaPainelDebate {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.spanSeloExibidaPainelDebate {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(231, 152, 57, 0.6);
+    color: #E79839;
+    font-size: 0.68rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.botaoExibirPerguntaPainelDebate,
+.botaoRemoverPerguntaPainelDebate {
+    flex-shrink: 0;
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.75rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.botaoExibirPerguntaPainelDebate { background: #E79839; color: #730835; }
+.botaoExibirPerguntaPainelDebate:hover { background: #f0a84a; }
+.botaoRemoverPerguntaPainelDebate { background: transparent; color: #FCF8F5; }
+.botaoRemoverPerguntaPainelDebate:hover:not(:disabled) { border-color: #E79839; }
+.botaoRemoverPerguntaPainelDebate:disabled { opacity: 0.5; cursor: default; }
+
+.pVazioPainelDebate {
+    margin: 0;
+    font-size: 0.85rem;
+    color: rgba(252, 248, 245, 0.55);
+}
+
+.pErroPainelDebate {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #F4C27F;
+}

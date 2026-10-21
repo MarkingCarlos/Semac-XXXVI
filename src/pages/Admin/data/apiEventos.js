@@ -44,11 +44,25 @@ function deResposta(evento) {
            do evento. Vazio enquanto ninguém marcou. */
         horaIniciado: separarDataHora(evento.iniciadoEm).hora,
         capacidadeMaxima: evento.capacidadeMaxima,
+        /* Na ordem do formulário — no debate, o 1º é o participante A.
+           `versaoFoto` só serve para furar o cache do <img> logo depois
+           de trocar a foto (ver urlFotoPalestrante). */
         palestrantes: (evento.palestrantes || []).map((p) => ({
             id: p.id,
             nome: p.nome,
             descricao: p.descricao || '',
+            cargo: p.cargo || '',
+            temFoto: Boolean(p.temFoto),
+            versaoFoto: 0,
+            // Enquadramento na moldura do telão (ver Debate/enquadramentoFotoPalestrante.js)
+            fotoPosX: Number(p.fotoPosX ?? 50),
+            fotoPosY: Number(p.fotoPosY ?? 50),
+            fotoZoom: Number(p.fotoZoom ?? 1),
         })),
+        /* Timer do telão do debate. O formulário edita a fala em minutos
+           (aceita 2,5) e o alerta em segundos; o backend guarda segundos. */
+        debateTempoFalaMin: String((evento.debateTempoFalaSeg ?? 180) / 60),
+        debateAlertaSeg: String(evento.debateAlertaSeg ?? 30),
     };
 }
 
@@ -67,7 +81,17 @@ function paraRequisicao(evento) {
             id: p.id ?? null,
             nome: p.nome,
             descricao: p.descricao || null,
+            cargo: p.cargo || null,
+            fotoPosX: p.fotoPosX ?? null,
+            fotoPosY: p.fotoPosY ?? null,
+            fotoZoom: p.fotoZoom ?? null,
         })),
+        debateTempoFalaSeg: evento.debateTempoFalaMin
+            ? Math.round(Number(String(evento.debateTempoFalaMin).replace(',', '.')) * 60)
+            : null,
+        debateAlertaSeg: evento.debateAlertaSeg !== '' && evento.debateAlertaSeg != null
+            ? Number(evento.debateAlertaSeg)
+            : null,
     };
 }
 
@@ -77,6 +101,11 @@ async function lerOuFalhar(resposta, mensagemPadrao) {
         throw new Error(corpo?.mensagem || mensagemPadrao);
     }
     return resposta.json();
+}
+
+export async function buscarEvento(id) {
+    const resposta = await apiFetch(`${ROTA}/${id}`);
+    return deResposta(await lerOuFalhar(resposta, 'Falha ao carregar o evento.'));
 }
 
 export async function listarEventos() {
@@ -126,5 +155,27 @@ export async function excluirEvento(id) {
     if (!resposta.ok) {
         const corpo = await resposta.json().catch(() => null);
         throw new Error(corpo?.mensagem || 'Falha ao excluir evento.');
+    }
+}
+
+/* Foto do palestrante (telão do debate). A rota é pública — vai direto
+   num <img src>. A URL é a mesma depois de uma troca, então `versao`
+   (qualquer número que mude) evita que a prévia mostre a antiga. */
+export function urlFotoPalestrante(id, versao = 0) {
+    return `${API_URL}/api/palestrante/${id}/foto${versao ? `?v=${versao}` : ''}`;
+}
+
+export async function enviarFotoPalestrante(id, arquivo) {
+    const formData = new FormData();
+    formData.append('arquivo', arquivo);
+    const resposta = await apiFetch(`${API_URL}/api/palestrante/${id}/foto`, {
+        method: 'POST',
+        headers: cabecalhosAuth(),
+        body: formData,
+        timeout: 60000, // upload de arquivo: janela maior que o padrão
+    });
+    if (!resposta.ok) {
+        const corpo = await resposta.json().catch(() => null);
+        throw new Error(corpo?.mensagem || 'Falha ao enviar a foto.');
     }
 }

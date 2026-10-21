@@ -1,0 +1,42 @@
+/* Guia do telão (/debate/<id>/telao). Tela travada: fixed + inset 0 +
+   100dvh, sem rolagem — o palco escala para caber. */
+
+.mainTelaoDebate {
+    position: fixed;
+    inset: 0;
+    height: 100dvh;
+    overflow: hidden;
+    z-index: 51;
+    background: #730835;
+    cursor: default;
+}
+
+.pAguardandoPainelTelaoDebate,
+.pDicaTelaCheiaTelaoDebate {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    padding: 10px 18px;
+    border-radius: 12px;
+    background: rgba(10, 10, 10, 0.55);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #FCF8F5;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.pAguardandoPainelTelaoDebate { top: 24px; }
+.pDicaTelaCheiaTelaoDebate { bottom: 24px; }
+
+.kbdTeclaTelaoDebate {
+    display: inline-block;
+    padding: 1px 8px;
+    margin: 0 4px;
+    border-radius: 6px;
+    border: 1px solid rgba(252, 248, 245, 0.4);
+    font-family: 'Bungee', sans-serif;
+    font-size: 13px;
+}

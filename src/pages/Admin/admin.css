@@ -338,6 +338,72 @@
     margin-bottom: 10px;
 }
 
+/* Foto do palestrante (telão do debate), no cartão do formulário */
+.linhaFotoPalestranteConteudo {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 12px;
+    margin-bottom: 14px;
+}
+
+/* Miniatura com o mesmo enquadramento do telão (quadrada) */
+.spanMolduraFotoPalestranteConteudo {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.imgFotoPalestranteConteudo {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.spanSemFotoPalestranteConteudo {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    border: 1px dashed rgba(252, 248, 245, 0.25);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.65rem;
+    color: rgba(252, 248, 245, 0.45);
+    text-align: center;
+}
+
+.labelBotaoFotoPalestranteConteudo {
+    cursor: pointer;
+}
+
+.inputArquivoFotoPalestranteConteudo {
+    display: none;
+}
+
+.spanFotoPendentePalestranteConteudo {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.72rem;
+    color: #E79839;
+}
+
+.avisoParticipantesTelaoDebateConteudo {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    color: #E79839;
+    margin: 0 0 8px;
+}
+
+/* O "abrir painel do telão" é um link com a cara dos botões da linha */
+a.botaoAcaoLinhaFinancas {
+    text-decoration: none;
+}
+
 /* Sorteios do evento, no painel de edição */
 .listaSorteiosEventoConteudo {
     list-style: none;

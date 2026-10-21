@@ -1,0 +1,388 @@
+/* Palco do telão do debate (PalcoTelaoDebate.jsx). Medidas em px do palco
+   de 1920×1080 — o componente escala o palco inteiro com transform, então
+   aqui nada é responsivo de propósito. As cores são as do protótipo. */
+
+@import url('https://fonts.googleapis.com/css2?family=Bungee&family=Montserrat:wght@500;600;700;800&display=swap');
+
+@keyframes pulsoWaveTelaoDebate {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+}
+
+.divFundoTelaoDebate {
+    position: absolute;
+    inset: 0;
+    background: #730835;
+    overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
+    color: #FCF8F5;
+    text-align: left;
+}
+
+/* ── Ondas nos cantos (fora do palco: acompanham a tela, não o 16:9) ── */
+
+.divWaveSuperiorTelaoDebate,
+.divWaveInferiorTelaoDebate {
+    position: absolute;
+    pointer-events: none;
+}
+
+.divWaveSuperiorTelaoDebate { top: 0; right: 0; }
+.divWaveInferiorTelaoDebate { bottom: 0; left: 0; }
+
+.imgWaveSuperiorTelaoDebate,
+.imgWaveInferiorTelaoDebate {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    animation: pulsoWaveTelaoDebate 4s ease-in-out infinite;
+}
+
+.imgWaveSuperiorTelaoDebate { top: 0; right: 0; transform-origin: top right; }
+.imgWaveInferiorTelaoDebate { bottom: 0; left: 0; transform-origin: bottom left; animation-delay: -2s; }
+
+@media (prefers-reduced-motion: reduce) {
+    .imgWaveSuperiorTelaoDebate,
+    .imgWaveInferiorTelaoDebate { animation: none; }
+}
+
+/* ── Palco 1920×1080 ─────────────────────────────────────────── */
+
+.divPalcoTelaoDebate {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 1920px;
+    height: 1080px;
+    transform-origin: center center;
+    overflow: hidden;
+}
+
+.headerTituloTelaoDebate {
+    position: absolute;
+    top: 56px;
+    left: 80px;
+    right: 80px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.imgLogoTelaoDebate {
+    height: 64px;
+    flex-shrink: 0;
+}
+
+.divTituloTelaoDebate {
+    min-width: 0;
+    padding-left: 40px;
+    border-left: 2px solid rgba(252, 248, 245, 0.3);
+}
+
+/* Quebra em até duas linhas — nome de debate longo não estoura a tela */
+.h1TituloTelaoDebate {
+    margin: 0;
+    font-family: 'Bungee', sans-serif;
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 1.15;
+    letter-spacing: 0.02em;
+    color: #E79839;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-wrap: balance;
+}
+
+.spanNomeDebateTelaoDebate {
+    color: #FCF8F5;
+}
+
+/* ── Cards dos participantes ─────────────────────────────────── */
+
+.cardParticipanteTelaoDebate {
+    position: absolute;
+    top: 190px;
+    width: 640px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    transform-origin: top center;
+}
+
+.cardParticipanteATelaoDebate { left: 200px; }
+.cardParticipanteBTelaoDebate { left: 1080px; }
+
+.divMolduraFotoParticipanteTelaoDebate {
+    position: relative;
+    width: 640px;
+    height: 640px;
+    border-radius: 25px;
+    overflow: hidden;
+}
+
+.cardParticipanteATelaoDebate .divMolduraFotoParticipanteTelaoDebate { background: #B13571; }
+.cardParticipanteBTelaoDebate .divMolduraFotoParticipanteTelaoDebate { background: #52ABB1; }
+
+.divDetalheMolduraParticipanteTelaoDebate {
+    position: absolute;
+    width: 340px;
+    height: 340px;
+    right: -110px;
+    bottom: -130px;
+    border-radius: 30px;
+    transform: rotate(20deg);
+}
+
+.cardParticipanteATelaoDebate .divDetalheMolduraParticipanteTelaoDebate { background: #962D60; }
+.cardParticipanteBTelaoDebate .divDetalheMolduraParticipanteTelaoDebate { background: #469197; }
+
+.divAreaFotoParticipanteTelaoDebate {
+    position: absolute;
+    inset: 28px;
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+/* object-fit, posição e zoom vêm do enquadramento salvo (inline) */
+.imgFotoParticipanteTelaoDebate {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.divInicialParticipanteTelaoDebate {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.12);
+    font-family: 'Bungee', sans-serif;
+    font-size: 280px;
+    color: rgba(252, 248, 245, 0.85);
+}
+
+.divTextosParticipanteTelaoDebate {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.divNomeParticipanteTelaoDebate {
+    font-family: 'Bungee', sans-serif;
+    font-size: 60px;
+    line-height: 1.05;
+    text-wrap: balance;
+}
+
+.divCargoParticipanteTelaoDebate {
+    font-size: 28px;
+    font-weight: 500;
+}
+
+/* ── VS ──────────────────────────────────────────────────────── */
+
+.divVsTelaoDebate {
+    position: absolute;
+    left: 960px;
+    top: 510px;
+    width: 180px;
+    height: 180px;
+    margin-left: -90px;
+    margin-top: -90px;
+    border-radius: 50%;
+    background: #E79839;
+    color: #730835;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bungee', sans-serif;
+    font-size: 64px;
+    transition: opacity 0.4s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+}
+
+/* ── Pergunta em destaque ────────────────────────────────────── */
+
+.divPerguntaDestaqueTelaoDebate {
+    position: absolute;
+    left: 200px;
+    right: 200px;
+    top: 190px;
+    bottom: 150px;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+}
+
+.divCaixaPerguntaDestaqueTelaoDebate {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 80px 96px;
+    border-radius: 25px;
+    background: #A10535;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+}
+
+.divDetalheCaixaPerguntaTelaoDebate {
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    right: -150px;
+    bottom: -200px;
+    border-radius: 30px;
+    background: #850735;
+    transform: rotate(20deg);
+}
+
+.divRotuloPerguntaDestaqueTelaoDebate {
+    position: relative;
+    font-family: 'Bungee', sans-serif;
+    font-size: 40px;
+    letter-spacing: 0.06em;
+    color: #E79839;
+}
+
+.divTextoPerguntaDestaqueTelaoDebate {
+    position: relative;
+    font-size: 76px;
+    font-weight: 800;
+    line-height: 1.2;
+    color: #FCF8F5;
+    text-wrap: balance;
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ── Pergunta resumida (visão geral) ─────────────────────────── */
+
+.divPerguntaResumoTelaoDebate {
+    position: absolute;
+    left: 200px;
+    right: 200px;
+    top: 140px;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.divCaixaPerguntaResumoTelaoDebate {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 18px 28px;
+    border-radius: 25px;
+    background: #A10535;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.divRotuloPerguntaResumoTelaoDebate {
+    font-family: 'Bungee', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.06em;
+    color: #E79839;
+    flex-shrink: 0;
+}
+
+.divTextoPerguntaResumoTelaoDebate {
+    min-width: 0;
+    flex: 1;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: #FCF8F5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ── Timer ───────────────────────────────────────────────────── */
+
+.divTimerTelaoDebate {
+    position: absolute;
+    top: 200px;
+    width: 760px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    pointer-events: none;
+}
+
+.divRotuloTimerTelaoDebate {
+    font-family: 'Bungee', sans-serif;
+    font-size: 40px;
+    letter-spacing: 0.06em;
+    color: #E79839;
+}
+
+.divDigitosTimerTelaoDebate {
+    font-family: 'Bungee', sans-serif;
+    font-size: 260px;
+    line-height: 1;
+    letter-spacing: 0.01em;
+    font-variant-numeric: tabular-nums;
+}
+
+.divTrilhoBarraTimerTelaoDebate {
+    width: 100%;
+    height: 20px;
+    border-radius: 9999px;
+    background: rgba(252, 248, 245, 0.2);
+    overflow: hidden;
+}
+
+.divBarraTimerTelaoDebate {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.25s linear, background 0.3s;
+}
+
+.divPausadoTimerTelaoDebate {
+    font-family: 'Bungee', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.08em;
+    color: #FCF8F5;
+}
+
+.divPerguntaTimerTelaoDebate {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 12px;
+    padding: 28px 32px;
+    border-radius: 25px;
+    background: #A10535;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: opacity 0.4s ease;
+}
+
+.divRotuloPerguntaTimerTelaoDebate {
+    font-family: 'Bungee', sans-serif;
+    font-size: 24px;
+    letter-spacing: 0.06em;
+    color: #E79839;
+}
+
+.divTextoPerguntaTimerTelaoDebate {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: #FCF8F5;
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

@@ -1,7 +1,14 @@
 import { useState, useEffect } from 'preact/hooks';
 import PainelLateral from '../../Financas/components/PainelLateral.jsx';
 import { normalizar } from '../../Financas/utils/moeda.js';
-import { criarEvento, atualizarEvento, excluirEvento, iniciarEvento } from '../data/apiEventos.js';
+import {
+    criarEvento,
+    atualizarEvento,
+    excluirEvento,
+    iniciarEvento,
+    enviarFotoPalestrante,
+    urlFotoPalestrante,
+} from '../data/apiEventos.js';
 import { listarTiposEvento, atualizarTipoEvento } from '../data/apiTipoEvento.js';
 import {
     listarTrilhas,
@@ -11,6 +18,11 @@ import {
 } from '../data/apiTrilha.js';
 import { lerEscolhaMinicursos, salvarEscolhaMinicursos } from '../data/apiEscolhaMinicursos.js';
 import ModalPerguntasDebateAdmin from '../ModalPerguntasDebateAdmin.jsx';
+import ModalEnquadramentoFotoPalestrante from '../ModalEnquadramentoFotoPalestrante.jsx';
+import {
+    ENQUADRAMENTO_PADRAO_FOTO_PALESTRANTE,
+    estiloEnquadramentoFoto,
+} from '../../Debate/enquadramentoFotoPalestrante.js';
 import { lerSessao } from '../../../auth/sessao.js';
 import { listarSorteios, criarSorteioComBrinde, excluirSorteio } from '../../Sorteio/data/apiSorteio.js';
 import Brindes from './Brindes.jsx';
@@ -20,7 +32,8 @@ import ModalInferiorAdmin from '../../../components/ModalInferiorAdmin/ModalInfe
 
 /* Conteúdo — duas sub-abas:
    - "Eventos": tabela `evento` com seu tipo (`tipo_evento`) e palestrantes
-     (`palestrante`, vínculo recriado a cada gravação). A lista de eventos
+     (`palestrante`, atualizado no lugar a cada gravação — preserva a
+     foto, que sobe à parte logo depois). A lista de eventos
      é carregada e mantida pelo Admin; aqui ficam o formulário de evento e
      os painéis de gerenciamento dos tipos de evento e das trilhas. Os
      sorteios de cada evento são cadastrados no próprio painel de edição.
@@ -53,7 +66,12 @@ const EVENTO_VAZIO = {
     horaFim: '',
     capacidadeMaxima: '',
     palestrantes: [],
+    debateTempoFalaMin: '3',
+    debateAlertaSeg: '30',
 };
+
+/* Rota do painel que controla o telão do debate (ver pages/Debate). */
+const rotaPainelDebate = (eventoId) => `/debate/${eventoId}`;
 
 const TIPO_VAZIO = { nome: '', pontos: '', exigeInscricao: false };
 const TRILHA_VAZIA = { nome: '' };
@@ -108,6 +126,9 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
     const [escolhaMinicursosAberta, setEscolhaMinicursosAberta] = useState(null);
     const [salvandoEscolhaMinicursos, setSalvandoEscolhaMinicursos] = useState(false);
     const [erroEscolhaMinicursos, setErroEscolhaMinicursos] = useState('');
+
+    // Palestrante (índice no formulário) com o ajuste de foto aberto
+    const [indiceEnquadramentoFotoAberto, setIndiceEnquadramentoFotoAberto] = useState(null);
 
     // Debate cujas perguntas estão abertas no modal (null = fechado)
     const [eventoPerguntasDebateAberto, setEventoPerguntasDebateAberto] = useState(null);
@@ -170,6 +191,12 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
     const eventosFiltrados = filtro.trim()
         ? eventos.filter((ev) => normalizar(ev.nome).includes(normalizar(filtro)))
         : eventos;
+
+    /* O bloco "Telão do debate" do formulário aparece pelo tipo
+       selecionado agora, não pelo salvo — trocar o tipo já mostra. */
+    const ehDebateFormulario = tiposEvento.some(
+        (tipo) => String(tipo.id) === String(formulario.tipoEventoId) && tipo.codigo === 'DEBATE',
+    );
 
     // ── Formulário de evento ──────────────────────────────────────
     const abrirNovoEvento = () => {
@@ -258,7 +285,7 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
     const adicionarPalestrante = () => {
         setFormulario({
             ...formulario,
-            palestrantes: [...formulario.palestrantes, { nome: '', descricao: '' }],
+            palestrantes: [...formulario.palestrantes, { nome: '', descricao: '', cargo: '' }],
         });
     };
 
@@ -270,6 +297,57 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
             ),
         });
     };
+
+    /* A foto escolhida fica guardada no palestrante (arquivoFoto) e só
+       sobe depois de "Salvar alterações": o palestrante novo ainda não tem
+       id no banco para receber o arquivo. */
+    const escolherFotoPalestrante = (indice, arquivo) => {
+        if (!arquivo) return;
+        setFormulario({
+            ...formulario,
+            palestrantes: formulario.palestrantes.map((p, i) => {
+                if (i !== indice) return p;
+                if (p.previaFoto) URL.revokeObjectURL(p.previaFoto);
+                // Foto nova começa centralizada: o ajuste da anterior não serve para ela
+                return {
+                    ...p,
+                    ...ENQUADRAMENTO_PADRAO_FOTO_PALESTRANTE,
+                    arquivoFoto: arquivo,
+                    previaFoto: URL.createObjectURL(arquivo),
+                };
+            }),
+        });
+    };
+
+    /* Sobe as fotos pendentes. A resposta do salvar traz os palestrantes
+       na mesma ordem do formulário, então o índice casa os dois. Falha de
+       upload não desfaz o evento já salvo: vira aviso. */
+    const enviarFotosPendentes = async (salvo) => {
+        const falhas = [];
+        const palestrantes = await Promise.all(salvo.palestrantes.map(async (palestrante, indice) => {
+            const arquivo = formulario.palestrantes[indice]?.arquivoFoto;
+            if (!arquivo) return palestrante;
+            try {
+                await enviarFotoPalestrante(palestrante.id, arquivo);
+                return { ...palestrante, temFoto: true, versaoFoto: Date.now() };
+            } catch (e) {
+                falhas.push(`${palestrante.nome}: ${e.message}`);
+                return palestrante;
+            }
+        }));
+        return { evento: { ...salvo, palestrantes }, falhas };
+    };
+
+    const aplicarEnquadramentoFoto = (indice, enquadramento) => {
+        setFormulario({
+            ...formulario,
+            palestrantes: formulario.palestrantes.map((p, i) => (i === indice ? { ...p, ...enquadramento } : p)),
+        });
+        setIndiceEnquadramentoFotoAberto(null);
+    };
+
+    const srcFotoFormulario = (palestrante) =>
+        palestrante.previaFoto || urlFotoPalestrante(palestrante.id, palestrante.versaoFoto);
 
     const removerPalestrante = (indice) => {
         setFormulario({
@@ -283,12 +361,28 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
         setSalvando(true);
         setErroAcao('');
         try {
-            if (idEmEdicao !== null) {
-                const atualizado = await atualizarEvento(idEmEdicao, formulario);
-                setEventos(eventos.map((ev) => (ev.id === idEmEdicao ? atualizado : ev)));
-            } else {
-                const criado = await criarEvento(formulario);
-                setEventos([...eventos, criado]);
+            const salvo = idEmEdicao !== null
+                ? await atualizarEvento(idEmEdicao, formulario)
+                : await criarEvento(formulario);
+            const { evento: comFotos, falhas } = await enviarFotosPendentes(salvo);
+            setEventos(idEmEdicao !== null
+                ? eventos.map((ev) => (ev.id === idEmEdicao ? comFotos : ev))
+                : [...eventos, comFotos]);
+            if (falhas.length > 0) {
+                // Evento salvo; o painel continua aberto (agora em modo
+                // edição) para tentar a foto de novo.
+                setIdEmEdicao(comFotos.id);
+                setFormulario({
+                    ...formulario,
+                    ...comFotos,
+                    palestrantes: comFotos.palestrantes.map((p, i) => ({
+                        ...p,
+                        arquivoFoto: formulario.palestrantes[i]?.arquivoFoto,
+                        previaFoto: formulario.palestrantes[i]?.previaFoto,
+                    })),
+                });
+                setErroAcao(`Evento salvo, mas a foto não subiu — ${falhas.join(' · ')}`);
+                return;
             }
             setPainelAberto(false);
         } catch (e) {
@@ -612,6 +706,21 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                                             </button>
                                         )}
                                         {evento.ehDebate && (
+                                            <a
+                                                className="botaoAcaoLinhaFinancas"
+                                                href={rotaPainelDebate(evento.id)}
+                                                target="_blank"
+                                                rel="noopener"
+                                                aria-label={`Abrir o painel do telão do debate ${evento.nome}`}
+                                                title="Abrir o painel do telão do debate"
+                                            >
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <rect x="2" y="3" width="20" height="14" rx="2" />
+                                                    <path d="M8 21h8M12 17v4" />
+                                                </svg>
+                                            </a>
+                                        )}
+                                        {evento.ehDebate && (
                                             <button
                                                 type="button"
                                                 className="botaoAcaoLinhaFinancas"
@@ -690,6 +799,16 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                 <ModalPerguntasDebateAdmin
                     evento={eventoPerguntasDebateAberto}
                     aoFechar={() => setEventoPerguntasDebateAberto(null)}
+                />
+            )}
+
+            {indiceEnquadramentoFotoAberto !== null && formulario.palestrantes[indiceEnquadramentoFotoAberto] && (
+                <ModalEnquadramentoFotoPalestrante
+                    srcFoto={srcFotoFormulario(formulario.palestrantes[indiceEnquadramentoFotoAberto])}
+                    nomePalestrante={formulario.palestrantes[indiceEnquadramentoFotoAberto].nome}
+                    enquadramento={formulario.palestrantes[indiceEnquadramentoFotoAberto]}
+                    aoAplicar={(enquadramento) => aplicarEnquadramentoFoto(indiceEnquadramentoFotoAberto, enquadramento)}
+                    aoFechar={() => setIndiceEnquadramentoFotoAberto(null)}
                 />
             )}
 
@@ -858,6 +977,15 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                                     />
                                 </div>
                                 <div className="campoFormularioFinancas">
+                                    <input
+                                        className="entradaFormularioFinancas"
+                                        placeholder="Cargo ou instituição"
+                                        maxLength={150}
+                                        value={palestrante.cargo}
+                                        onInput={(e) => alterarPalestrante(indice, 'cargo', e.currentTarget.value)}
+                                    />
+                                </div>
+                                <div className="campoFormularioFinancas">
                                     <textarea
                                         className="entradaFormularioFinancas"
                                         rows={2}
@@ -866,9 +994,91 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                                         onInput={(e) => alterarPalestrante(indice, 'descricao', e.currentTarget.value)}
                                     />
                                 </div>
+                                <div className="linhaFotoPalestranteConteudo">
+                                    {palestrante.previaFoto || palestrante.temFoto ? (
+                                        <span className="spanMolduraFotoPalestranteConteudo">
+                                            <img
+                                                className="imgFotoPalestranteConteudo"
+                                                src={srcFotoFormulario(palestrante)}
+                                                alt={`Foto de ${palestrante.nome || `palestrante ${indice + 1}`}`}
+                                                style={estiloEnquadramentoFoto(palestrante)}
+                                            />
+                                        </span>
+                                    ) : (
+                                        <span className="spanSemFotoPalestranteConteudo">Sem foto</span>
+                                    )}
+                                    <label className="botaoFantasmaFinancas botaoMiniAdmin labelBotaoFotoPalestranteConteudo">
+                                        {palestrante.previaFoto || palestrante.temFoto ? 'Trocar foto' : 'Enviar foto'}
+                                        <input
+                                            type="file"
+                                            accept="image/jpeg,image/png,image/webp"
+                                            className="inputArquivoFotoPalestranteConteudo"
+                                            onChange={(e) => {
+                                                escolherFotoPalestrante(indice, e.currentTarget.files?.[0]);
+                                                e.currentTarget.value = '';
+                                            }}
+                                        />
+                                    </label>
+                                    {(palestrante.previaFoto || palestrante.temFoto) && (
+                                        <button
+                                            type="button"
+                                            className="botaoFantasmaFinancas botaoMiniAdmin"
+                                            onClick={() => setIndiceEnquadramentoFotoAberto(indice)}
+                                        >
+                                            Ajustar enquadramento
+                                        </button>
+                                    )}
+                                    {palestrante.arquivoFoto && (
+                                        <span className="spanFotoPendentePalestranteConteudo">sobe ao salvar</span>
+                                    )}
+                                </div>
                             </div>
                         ))}
                     </div>
+
+                    {/* Timer do telão do debate (/debate/<id>/telao). O 1º
+                        palestrante é o participante A (esquerda), o 2º o B. */}
+                    {ehDebateFormulario && (
+                        <div className="campoFormularioFinancas">
+                            <label className="rotuloCampoFinancas">Telão do debate</label>
+                            <div className="linhaCamposConteudo">
+                                <div className="campoFormularioFinancas">
+                                    <label className="rotuloCampoFinancas" htmlFor="campoTempoFalaDebate">Tempo de fala (min) *</label>
+                                    <input
+                                        id="campoTempoFalaDebate"
+                                        className="entradaFormularioFinancas"
+                                        type="number"
+                                        min="0.5"
+                                        max="60"
+                                        step="0.5"
+                                        required
+                                        value={formulario.debateTempoFalaMin}
+                                        onInput={(e) => setFormulario({ ...formulario, debateTempoFalaMin: e.currentTarget.value })}
+                                    />
+                                </div>
+                                <div className="campoFormularioFinancas">
+                                    <label className="rotuloCampoFinancas" htmlFor="campoAlertaDebate">Alerta (s antes do fim) *</label>
+                                    <input
+                                        id="campoAlertaDebate"
+                                        className="entradaFormularioFinancas"
+                                        type="number"
+                                        min="0"
+                                        max="3600"
+                                        step="1"
+                                        required
+                                        value={formulario.debateAlertaSeg}
+                                        onInput={(e) => setFormulario({ ...formulario, debateAlertaSeg: e.currentTarget.value })}
+                                    />
+                                </div>
+                            </div>
+                            {formulario.palestrantes.length !== 2 && (
+                                <p className="avisoParticipantesTelaoDebateConteudo">
+                                    O telão mostra 2 participantes: o 1º palestrante à esquerda e o 2º à direita.
+                                    Este debate tem {formulario.palestrantes.length}.
+                                </p>
+                            )}
+                        </div>
+                    )}
 
                     {/* Sorteios do evento: o que vai ser sorteado (um item cada).
                         Salvos na hora, fora do "Salvar alterações" do evento —
@@ -983,6 +1193,10 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
 
                         {erroSorteioEvento && <p className="avisoErroAdmin" role="alert">{erroSorteioEvento}</p>}
                     </div>
+
+                    {/* Erro do salvar (ex.: alerta do debate maior que a fala,
+                        foto que não subiu) — visível sem fechar o painel. */}
+                    {erroAcao && <p className="avisoErroAdmin" role="alert">{erroAcao}</p>}
 
                     <div className="rodapeFormularioFinancas">
                         <button type="button" className="botaoFantasmaFinancas" onClick={() => setPainelAberto(false)}>
