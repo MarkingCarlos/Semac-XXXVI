@@ -5,7 +5,8 @@
    catálogo e o estado de cada desafio vêm de
    data/desafiosParticipantes.js; aqui só se desenha. Por último, o
    progresso da Mostra Técnica (BlocoMostraDesafiosParticipantes), que
-   carrega os próprios dados. */
+   carrega os próprios dados — oculto por enquanto, enquanto a interface
+   passa por ajustes (as visitas por QR seguem funcionando). */
 
 import {
     CATEGORIA_DIARIO_DESAFIOS,
@@ -17,7 +18,8 @@ import {
     SITUACAO_FINALIZADO_DESAFIOS,
     SITUACAO_INDISPONIVEL_DESAFIOS,
 } from '../data/desafiosParticipantes.js';
-import BlocoMostraDesafiosParticipantes from './BlocoMostraDesafiosParticipantes.jsx';
+// Oculto por enquanto (ajustes na interface) — descomentar aqui e no JSX abaixo para voltar.
+// import BlocoMostraDesafiosParticipantes from './BlocoMostraDesafiosParticipantes.jsx';
 
 /* Etiqueta e rótulo do botão por situação. Só quem tem `acao` vira card
    clicável — encerrado, finalizado e indisponível não levam a lugar nenhum.
@@ -138,7 +140,8 @@ export default function SecaoDesafiosParticipantes({ desafios, carregando, erro,
                             vazio="Nenhum desafio básico disponível no momento."
                             onAbrir={onAbrir}
                         />
-                        <BlocoMostraDesafiosParticipantes />
+                        {/* Mostra Técnica oculta por enquanto — ver o import no topo. */}
+                        {/* <BlocoMostraDesafiosParticipantes /> */}
                     </>
                 )}
             </div>
