@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
 import { Link, useLocation } from 'wouter';
-import { lerSessao, limparSessao, temAcessoFinanceiro, temAcessoPrevisao, temAcessoDoacao } from '../../auth/sessao.js';
+import { lerSessao, limparSessao, temAcessoFinanceiro, temAcessoPrevisao, temAcessoDoacao, temAcessoGestaoParticipantes } from '../../auth/sessao.js';
 import '../Financas/financas.css';
 import './admin.css';
 
@@ -119,7 +119,12 @@ export default function Admin() {
     const [carregandoComissao, setCarregandoComissao] = useState(true);
     const [erroComissao, setErroComissao] = useState(null);
 
+    // As listas só alimentam a aba Pessoas, e a API recusa (403) quem não a
+    // vê — então nem são pedidas para os outros papéis.
+    const podeVerPessoas = temAcessoGestaoParticipantes();
+
     useEffect(() => {
+        if (!podeVerPessoas) return;
         let ativo = true;
         listarParticipantes()
             .then((dados) => { if (ativo) setParticipantes(dados); })
@@ -129,6 +134,7 @@ export default function Admin() {
     }, []);
 
     useEffect(() => {
+        if (!podeVerPessoas) return;
         let ativo = true;
         listarComissao()
             .then((dados) => { if (ativo) setComissao(dados); })
