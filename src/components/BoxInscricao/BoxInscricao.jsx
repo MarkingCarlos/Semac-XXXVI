@@ -51,6 +51,9 @@ function destinoPosLogin(rotaRetorno) {
         // QR code do stand da Mostra Técnica: volta para registrar a visita.
         // Só o formato /mostra/<codigo>, nada de rota arbitrária.
         if (/^\/mostra\/[A-Za-z0-9]+$/.test(rotaRetorno) && temAcessoParticipante()) return rotaRetorno
+        // Página pública de perguntas do debate: quem entrou pelo modal dela
+        // volta para enviar a pergunta guardada, com qualquer papel.
+        if (rotaRetorno === '/perguntas')                                    return rotaRetorno
     }
     if (temAcessoAdmin())        return '/admin'
     if (temAcessoParticipante()) return '/participantes'

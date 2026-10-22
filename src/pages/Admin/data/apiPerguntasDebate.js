@@ -40,7 +40,8 @@ export async function salvarPerguntasDebateAbertas(ano, perguntasDebateAbertas) 
 }
 
 /* Perguntas de um debate, mais antigas primeiro:
-   [{ id, texto, nomeParticipante, enviadaEm }]. */
+   [{ id, texto, nomeParticipante, autorIdentificado, enviadaEm }] —
+   `autorIdentificado` false = enviada sem login (nome digitado ou "Anônimo"). */
 export async function listarPerguntasDebate(eventoId) {
     const resposta = await apiFetch(`${ROTA_EVENTO}/${eventoId}/perguntas`, { headers: cabecalhosAuth() });
     if (!resposta.ok) {

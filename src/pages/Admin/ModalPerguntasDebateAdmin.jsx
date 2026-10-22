@@ -58,7 +58,10 @@ export default function ModalPerguntasDebateAdmin({ evento, aoFechar }) {
                             <div className="blocoTextoLinhaModalDashboard">
                                 <p className="textoPerguntaDebateAdmin">{pergunta.texto}</p>
                                 <span className="autorPerguntaDebateAdmin">
-                                    {pergunta.nomeParticipante} · {formatarEnvioPerguntaDebate(pergunta.enviadaEm)}
+                                    {pergunta.nomeParticipante}
+                                    {/* Nome digitado na página pública, sem conta: não é verificado. */}
+                                    {!pergunta.autorIdentificado && ' (sem login)'}
+                                    {' · '}{formatarEnvioPerguntaDebate(pergunta.enviadaEm)}
                                 </span>
                             </div>
                         </li>

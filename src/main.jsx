@@ -25,6 +25,7 @@ const ConjuntoDetalhe = lazy(() => import('./pages/Financas/conjuntos/ConjuntoDe
 const Participantes = lazy(() => import('./pages/Participantes/Participantes.jsx'));
 const PaginaTime = lazy(() => import('./pages/Time/time.jsx'));
 const PaginaVisitaMostra = lazy(() => import('./pages/Mostra/PaginaVisitaMostra.jsx'));
+const PaginaPerguntas = lazy(() => import('./pages/Perguntas/PaginaPerguntas.jsx'));
 
 function CarregandoRota() {
     return (
@@ -154,6 +155,8 @@ render(
             <Route path="/checkin"><RotaCheckin /></Route>
             <Route path="/time"><RotaTime /></Route>
             <Route path="/mostra/:codigo"><RotaVisitaMostra /></Route>
+            {/* Pública: professores e convidados perguntam sem login. */}
+            <Route path="/perguntas"><PaginaPerguntas /></Route>
             <Route path="/termo/teste"><RotaTesteTermo/></Route>
             <Route path="/termo"><Termo/></Route>
             <Route path="/sorteio/telao"><RotaTelaoSorteio/></Route>

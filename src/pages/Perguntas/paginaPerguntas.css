@@ -1,0 +1,389 @@
+/* Página /perguntas — envio público de perguntas para os debates. Mesma
+   moldura do /mostra e do /time: tela cheia travada com fixed + inset 0 +
+   100dvh (no iPhone, 100vh conta a barra do Safari e a página "pula"). A
+   rolagem, quando a tela é baixa, fica dentro do conteúdo. */
+
+@import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+
+.paginaPerguntas {
+    position: fixed;
+    inset: 0;
+    height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: #730835;
+    color: #FCF8F5;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.cabecalhoPerguntas {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: max(18px, env(safe-area-inset-top)) 20px 18px;
+}
+
+.marcaCabecalhoPerguntas {
+    display: flex;
+    flex-shrink: 0;
+}
+
+/* Logo horizontal (~4,5:1): a altura manda, a largura acompanha. */
+.imgLogoCabecalhoPerguntas {
+    display: block;
+    height: 24px;
+    width: auto;
+}
+
+.rotuloCabecalhoPerguntas {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-align: right;
+    color: rgba(252, 248, 245, 0.7);
+}
+
+.conteudoPerguntas {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    padding: 0 20px max(24px, env(safe-area-inset-bottom));
+}
+
+.passoCentralPerguntas,
+.formularioPerguntas {
+    margin: auto;
+    width: 100%;
+    max-width: 460px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.passoCentralPerguntas {
+    align-items: stretch;
+    text-align: center;
+}
+
+/* O site centraliza o texto por padrão; no formulário, rótulos e campos
+   leem melhor alinhados à esquerda. Só o título fica no centro. */
+.formularioPerguntas {
+    text-align: left;
+}
+
+.formularioPerguntas .tituloPassoPerguntas {
+    text-align: center;
+}
+
+.tituloPassoPerguntas {
+    margin: 0;
+    font-family: 'Bungee', sans-serif;
+    font-size: 22px;
+    line-height: 1.2;
+}
+
+.descricaoPassoPerguntas {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(252, 248, 245, 0.8);
+}
+
+.indicadorCarregandoPerguntas {
+    width: 44px;
+    height: 44px;
+    margin: 0 auto;
+    border-radius: 50%;
+    border: 4px solid rgba(252, 248, 245, 0.2);
+    border-top-color: #E79839;
+    animation: girarCarregandoPerguntas 0.9s linear infinite;
+}
+
+@keyframes girarCarregandoPerguntas {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .indicadorCarregandoPerguntas { animation: none; }
+}
+
+.chamadaPerguntas {
+    font-family: 'Bungee', sans-serif;
+    font-size: 20px;
+    color: #E79839;
+}
+
+/* ── Formulário ──────────────────────────────────────────────── */
+
+.rotuloCampoPerguntas {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(252, 248, 245, 0.7);
+}
+
+.opcionalCampoPerguntas {
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.grupoDebatesPerguntas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+}
+
+.grupoDebatesPerguntas .rotuloCampoPerguntas {
+    margin-bottom: 2px;
+    padding: 0;
+}
+
+.opcaoDebatePerguntas,
+.cartaoDebateUnicoPerguntas {
+    display: flex;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid rgba(252, 248, 245, 0.25);
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.opcaoDebatePerguntas {
+    align-items: center;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.opcaoDebateEscolhidaPerguntas {
+    border-color: #E79839;
+    background: rgba(231, 152, 57, 0.12);
+}
+
+.opcaoDebatePerguntas:focus-within {
+    outline: 2px solid #E79839;
+    outline-offset: 2px;
+}
+
+.radioDebatePerguntas {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: #E79839;
+}
+
+.textoOpcaoDebatePerguntas {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.cartaoDebateUnicoPerguntas {
+    flex-direction: column;
+    gap: 6px;
+}
+
+.nomeOpcaoDebatePerguntas {
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.horarioOpcaoDebatePerguntas {
+    font-size: 13px;
+    color: rgba(252, 248, 245, 0.75);
+}
+
+.campoPerguntas {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.areaTextoPerguntas,
+.entradaNomePerguntas {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border: 1px solid rgba(252, 248, 245, 0.35);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    color: #FCF8F5;
+    /* 16px evita o zoom automático do iPhone ao focar o campo. */
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    line-height: 1.45;
+}
+
+.areaTextoPerguntas {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.areaTextoPerguntas::placeholder,
+.entradaNomePerguntas::placeholder {
+    color: rgba(252, 248, 245, 0.5);
+}
+
+.areaTextoPerguntas:focus,
+.entradaNomePerguntas:focus {
+    outline: 2px solid #E79839;
+    outline-offset: 1px;
+    border-color: transparent;
+}
+
+.contadorCaracteresPerguntas {
+    align-self: flex-end;
+    font-size: 12px;
+    color: rgba(252, 248, 245, 0.6);
+}
+
+.avisoAutorPerguntas {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(252, 248, 245, 0.85);
+}
+
+.erroPerguntas {
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.25);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* ── Sucesso ─────────────────────────────────────────────────── */
+
+.cartaoConquistaPerguntas {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px;
+    border-radius: 14px;
+    background: #E79839;
+    color: #730835;
+}
+
+.rotuloConquistaPerguntas {
+    font-family: 'Bungee', sans-serif;
+    font-size: 15px;
+}
+
+.textoConquistaPerguntas {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.acoesPerguntas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.botaoPrincipalPerguntas,
+.botaoSecundarioPerguntas {
+    display: block;
+    padding: 14px 18px;
+    border-radius: 15px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.botaoPrincipalPerguntas {
+    border: none;
+    background: #E79839;
+    color: #730835;
+}
+
+.botaoPrincipalPerguntas:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.botaoSecundarioPerguntas {
+    border: 1px solid rgba(252, 248, 245, 0.6);
+    background: transparent;
+    color: #FCF8F5;
+}
+
+/* ── Modal "quer entrar antes de enviar?" (ModalLoginPerguntas) ──
+   Painel preso à borda de baixo, que sobe de baixo para cima (a animação
+   é do GSAP). No desktop fica centralizado na largura, mas segue colado
+   embaixo, como uma folha. */
+
+.fundoModalLoginPerguntas {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.painelModalLoginPerguntas {
+    width: 100%;
+    max-width: 520px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 12px 24px max(24px, env(safe-area-inset-bottom));
+    border-radius: 24px 24px 0 0;
+    background: #5A0629;
+    box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.35);
+    color: #FCF8F5;
+    text-align: center;
+}
+
+.alcaModalLoginPerguntas {
+    align-self: center;
+    width: 44px;
+    height: 5px;
+    margin-bottom: 6px;
+    border-radius: 999px;
+    background: rgba(252, 248, 245, 0.3);
+}
+
+.tituloModalLoginPerguntas {
+    margin: 0;
+    font-family: 'Bungee', sans-serif;
+    font-size: 19px;
+    line-height: 1.25;
+}
+
+.textoModalLoginPerguntas {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: rgba(252, 248, 245, 0.85);
+}
+
+.destaqueModalLoginPerguntas {
+    color: #E79839;
+}
+
+.acoesModalLoginPerguntas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 6px;
+}
