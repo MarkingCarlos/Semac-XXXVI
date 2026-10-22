@@ -1,5 +1,6 @@
 import { Fragment } from "preact";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "preact/compat";
 import { getCorTipoEvento } from "./tiposEventoCores.js";
 import { formatarDataCronograma } from "../cronogramaFiltro/formatarDataCronograma.js";
 import "./cronograma.css";
@@ -32,6 +33,9 @@ const CONSULTA_MOBILE_CRONOGRAMA = "(max-width: 1023px)";
 // Amostra padrão da descrição da palestra antes do botão "Leia mais"
 const LIMITE_PALAVRAS_DESCRICAO_CRONOGRAMA = 100;
 
+// Mesma duração da animação de descida do sheet no CSS
+const DURACAO_SAIDA_SHEET_CRONOGRAMA_MS = 260;
+
 function contarPalavras(texto) {
   return texto.trim().split(/\s+/).filter(Boolean);
 }
@@ -55,7 +59,8 @@ function SeloTipoEventoCronograma({ tipo, className }) {
 
 /**
  * Card com o detalhe da palestra selecionada. No desktop fica inline, ao
- * lado da lista; no mobile vira um sheet que desce do topo da tela.
+ * lado da lista; no mobile vira um sheet que sobe de baixo da tela
+ * (mesmo comportamento do ModalInferiorAdmin do /admin).
  */
 function DestaqueCronograma({
   envolverEmSheet,
@@ -65,6 +70,41 @@ function DestaqueCronograma({
   ehProximoSelecionado,
 }) {
   const [descricaoExpandida, setDescricaoExpandida] = useState(false);
+  const [sheetSaindoCronograma, setSheetSaindoCronograma] = useState(false);
+  const botaoFecharSheetCronogramaRef = useRef(null);
+  const temporizadorSaidaSheetCronogramaRef = useRef(null);
+  const fechandoSheetCronogramaRef = useRef(false);
+
+  // Toca a animação de descida antes de desmontar
+  function fecharSheetCronograma() {
+    if (fechandoSheetCronogramaRef.current) return;
+    fechandoSheetCronogramaRef.current = true;
+    setSheetSaindoCronograma(true);
+    temporizadorSaidaSheetCronogramaRef.current = setTimeout(
+      aoFechar,
+      DURACAO_SAIDA_SHEET_CRONOGRAMA_MS
+    );
+  }
+
+  // Com o sheet aberto: Escape fecha e a página de trás não rola
+  // (body travado e Lenis parado)
+  useEffect(() => {
+    if (!envolverEmSheet) return;
+    function fecharAoTeclarEscapeSheetCronograma(evento) {
+      if (evento.key === "Escape") fecharSheetCronograma();
+    }
+    window.addEventListener("keydown", fecharAoTeclarEscapeSheetCronograma);
+    document.body.style.overflow = "hidden";
+    window.lenis?.stop();
+    botaoFecharSheetCronogramaRef.current?.focus({ preventScroll: true });
+
+    return () => {
+      window.removeEventListener("keydown", fecharAoTeclarEscapeSheetCronograma);
+      document.body.style.overflow = "";
+      window.lenis?.start();
+      clearTimeout(temporizadorSaidaSheetCronogramaRef.current);
+    };
+  }, [envolverEmSheet]);
 
   const palavrasDescricao = eventoSelecionado.descricao
     ? contarPalavras(eventoSelecionado.descricao)
@@ -77,15 +117,23 @@ function DestaqueCronograma({
 
   const cartao = (
     <div
-      className="destaqueCronograma"
+      className={
+        sheetSaindoCronograma
+          ? "destaqueCronograma destaqueSaindoSheetCronograma"
+          : "destaqueCronograma"
+      }
+      role={envolverEmSheet ? "dialog" : undefined}
+      aria-modal={envolverEmSheet ? "true" : undefined}
+      aria-label={envolverEmSheet ? eventoSelecionado.titulo : undefined}
       onClick={envolverEmSheet ? (e) => e.stopPropagation() : undefined}
     >
       {envolverEmSheet && (
         <button
           type="button"
+          ref={botaoFecharSheetCronogramaRef}
           className="botaoFecharDestaqueCronograma"
           aria-label="Fechar"
-          onClick={aoFechar}
+          onClick={fecharSheetCronograma}
         >
           ×
         </button>
@@ -154,7 +202,7 @@ function DestaqueCronograma({
           <button
             type="button"
             className="botaoVoltarProgramacaoCronograma"
-            onClick={aoFechar}
+            onClick={fecharSheetCronograma}
           >
             Voltar à programação
           </button>
@@ -165,10 +213,18 @@ function DestaqueCronograma({
 
   if (!envolverEmSheet) return cartao;
 
-  return (
-    <div className="sheetCronograma" onClick={aoFechar}>
+  // Portal para o body: ancestrais com transform (animação de entrada das
+  // seções) prenderiam o position: fixed na seção
+  return createPortal(
+    <div
+      className={
+        sheetSaindoCronograma ? "sheetCronograma sheetSaindoCronograma" : "sheetCronograma"
+      }
+      onClick={fecharSheetCronograma}
+    >
       {cartao}
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -189,7 +245,7 @@ export default function Cronograma({ eventos, selectedDay, selectedFilter }) {
     return () => clearInterval(intervalo);
   }, []);
 
-  // No mobile o detalhe da palestra vira um sheet que desce do topo em vez de ficar inline
+  // No mobile o detalhe da palestra vira um sheet que sobe de baixo em vez de ficar inline
   useEffect(() => {
     const consulta = window.matchMedia(CONSULTA_MOBILE_CRONOGRAMA);
     const aoMudar = (e) => {

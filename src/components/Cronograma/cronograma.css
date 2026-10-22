@@ -156,14 +156,26 @@
   padding: 20px 8px;
 }
 
+/* Sheet do mobile: sobe de baixo, como o ModalInferiorAdmin do /admin.
+   fixed + inset 0 + 100dvh: no iPhone, 100vh deixa a barra do Safari
+   cortar o painel e a tela "trava". */
 .sheetCronograma {
   position: fixed;
   inset: 0;
+  height: 100dvh;
   z-index: 1001;
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
   background: rgba(58, 4, 27, 0.9);
   box-sizing: border-box;
+  font-size: 0.65rem;
+  animation: surgirSheetCronograma 0.25s ease both;
+}
+
+.sheetSaindoCronograma {
+  animation: sumirSheetCronograma 0.26s ease both;
 }
 
 .destaqueCronograma {
@@ -177,20 +189,48 @@
 
 .sheetCronograma .destaqueCronograma {
   flex: none;
-  width: 95%;
-  max-width: 420px;
-  margin: auto;
-  max-height: 88vh;
+  width: 100%;
+  margin: 0;
+  max-height: 86dvh;
   overflow-y: auto;
+  overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
-  border-radius: 25px;
-  box-shadow: 2px 8px 28px rgba(0, 0, 0, 0.5);
-  animation: entradaSheetTopoCronograma 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 25px 25px 0 0;
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.45);
+  animation: subirSheetCronograma 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-@keyframes entradaSheetTopoCronograma {
-  from { transform: translateY(-100%); }
+.sheetCronograma .destaqueSaindoSheetCronograma {
+  animation: descerSheetCronograma 0.26s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+@keyframes subirSheetCronograma {
+  from { transform: translateY(100%); }
   to { transform: translateY(0); }
+}
+
+@keyframes descerSheetCronograma {
+  from { transform: translateY(0); }
+  to { transform: translateY(100%); }
+}
+
+@keyframes surgirSheetCronograma {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sumirSheetCronograma {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheetCronograma,
+  .sheetSaindoCronograma,
+  .sheetCronograma .destaqueCronograma,
+  .sheetCronograma .destaqueSaindoSheetCronograma {
+    animation: none;
+  }
 }
 
 .botaoFecharDestaqueCronograma {
@@ -271,11 +311,6 @@
 }
 
 
-
-.sheetCronograma  {
-  font-size: 0.65rem;
-}
-
 .destaqueConteudoCronograma {
   background-color: var(--vermelhoAuxDiretoria);
   padding: 12px 14px 14px;
@@ -285,7 +320,7 @@
 }
 
 .sheetCronograma .destaqueConteudoCronograma {
-  padding: 20px 20px 24px;
+  padding: 20px 20px calc(24px + env(safe-area-inset-bottom));
   gap: 15px;
 }
 
