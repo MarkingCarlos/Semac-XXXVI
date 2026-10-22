@@ -106,13 +106,15 @@ async function lerOuFalhar(resposta, mensagemPadrao) {
     return resposta.json();
 }
 
+/* Com o token: a API só manda início real, lotação, vagas e o timer do
+   debate para quem é da comissão (ver EventoController). */
 export async function buscarEvento(id) {
-    const resposta = await apiFetch(`${ROTA}/${id}`);
+    const resposta = await apiFetch(`${ROTA}/${id}`, { headers: cabecalhosAuth() });
     return deResposta(await lerOuFalhar(resposta, 'Falha ao carregar o evento.'));
 }
 
 export async function listarEventos() {
-    const resposta = await apiFetch(ROTA);
+    const resposta = await apiFetch(ROTA, { headers: cabecalhosAuth() });
     const lista = await lerOuFalhar(resposta, 'Falha ao carregar eventos.');
     return lista.map(deResposta);
 }

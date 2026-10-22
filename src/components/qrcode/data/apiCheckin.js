@@ -17,7 +17,8 @@ function separarDataHora(iso) {
    já com data/hora separadas para os dois seletores da tela de check-in.
    `horaFim`, `tipo` e `local` alimentam o cartão de cada evento. */
 export async function listarEventosCheckin() {
-    const resposta = await apiFetch(`${API_URL}/api/evento`);
+    // Com o token, como as demais telas da comissão (ver EventoController).
+    const resposta = await apiFetch(`${API_URL}/api/evento`, { headers: cabecalhosAuth() });
     if (!resposta.ok) throw new Error('Falha ao carregar os eventos.');
     const eventos = await resposta.json();
 

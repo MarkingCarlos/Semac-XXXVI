@@ -63,9 +63,10 @@ async function lerOuFalhar(resposta, mensagemPadrao) {
     return resposta.ok ? resposta.json() : null;
 }
 
-/* Programação completa da semana — pública, não depende de sessão. */
+/* Programação completa da semana. A rota é pública, mas vai com o token:
+   sem ele a API não manda lotação e vagas, que a escolha de minicursos usa. */
 export async function listarEventosParticipantes() {
-    const resposta = await apiFetch(ROTA);
+    const resposta = await apiFetch(ROTA, { headers: cabecalhosAuth() });
     const lista = await lerOuFalhar(resposta, 'Falha ao carregar a programação.');
     return (lista || []).map(deResposta);
 }

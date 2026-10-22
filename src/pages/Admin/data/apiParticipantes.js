@@ -150,9 +150,10 @@ export async function listarMinicursosDoParticipante(id) {
 }
 
 /* Todos os minicursos (eventos cujo tipo exige inscrição), com
-   vagasRestantes — opções do "adicionar a um minicurso". */
+   vagasRestantes — opções do "adicionar a um minicurso". Vai com o token:
+   sem ele a API não manda as vagas. */
 export async function listarTodosMinicursos() {
-    const resposta = await apiFetch(`${API_URL}/api/evento`);
+    const resposta = await apiFetch(`${API_URL}/api/evento`, { headers: cabecalhosAuth() });
     if (!resposta.ok) throw new Error('Falha ao carregar os minicursos.');
     const eventos = await resposta.json();
     return eventos.filter(evento => evento.tipoEvento?.exigeInscricao);
