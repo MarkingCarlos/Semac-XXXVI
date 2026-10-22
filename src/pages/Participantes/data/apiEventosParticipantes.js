@@ -101,12 +101,14 @@ export async function cancelarMinicurso(eventoId) {
 }
 
 /* Envia uma pergunta prévia para um debate. Perguntas encerradas e o
-   limite por participante chegam como 409 com a mensagem da API. */
+   limite por participante chegam como 409 com a mensagem da API. Devolve
+   `{ conquistaConcedida }`: true quando esta pergunta destravou a
+   conquista de mandar pergunta. */
 export async function enviarPerguntaDebate(eventoId, texto) {
     const resposta = await apiFetch(`${ROTA}/${eventoId}/perguntas`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...cabecalhosAuth() },
         body: JSON.stringify({ texto }),
     });
-    await falharSeErro(resposta, 'Não foi possível enviar sua pergunta.');
+    return lerOuFalhar(resposta, 'Não foi possível enviar sua pergunta.');
 }

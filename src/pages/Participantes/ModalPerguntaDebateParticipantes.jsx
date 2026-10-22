@@ -35,7 +35,7 @@ function animacaoCardModalPerguntaDebate(card, entrando) {
         : { y: distancia, duration: 0.3, ease: 'power3.in' };
 }
 
-export default function ModalPerguntaDebateParticipantes({ evento, onFechar }) {
+export default function ModalPerguntaDebateParticipantes({ evento, onFechar, onConquistaConcedida }) {
     const fundoModalPerguntaDebateRef = useRef(null);
     const cardModalPerguntaDebateRef = useRef(null);
     const campoTextoPerguntaDebateRef = useRef(null);
@@ -82,7 +82,8 @@ export default function ModalPerguntaDebateParticipantes({ evento, onFechar }) {
         setEnviandoPerguntaDebate(true);
         setErroPerguntaDebate('');
         try {
-            await enviarPerguntaDebate(evento.id, textoLimpoPerguntaDebate);
+            const respostaPerguntaDebate = await enviarPerguntaDebate(evento.id, textoLimpoPerguntaDebate);
+            if (respostaPerguntaDebate?.conquistaConcedida) onConquistaConcedida?.();
             setPerguntasEnviadasDebate((total) => total + 1);
             setTextoPerguntaDebate('');
             setMostrandoSucessoPerguntaDebate(true);

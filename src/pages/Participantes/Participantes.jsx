@@ -303,6 +303,25 @@ export default function Participantes() {
         return () => { ativo = false; };
     }, []);
 
+    /* Conquista concedida com a página já aberta (hoje, só a de mandar
+       pergunta para o debate). Rebusca a vitrine e põe na fila só as ainda
+       não celebradas, e atualiza o nível, que ganhou os pontos dela. */
+    function recarregarConquistasNovas() {
+        listarMinhasConquistas()
+            .then((lista) => {
+                setConquistas(lista ?? []);
+                setConquistasACelebrar(
+                    (lista ?? [])
+                        .filter((c) => c.celebrar)
+                        .sort((a, b) => (a.raridade ?? 1) - (b.raridade ?? 1)),
+                );
+            })
+            .catch(() => {});
+        buscarNivelParticipante()
+            .then((valor) => setNivel(valor))
+            .catch(() => {});
+    }
+
     /* Programação da semana + em que o participante está. As duas são
        buscadas juntas porque as vagas restantes de um minicurso mudam
        sempre que alguém entra ou sai, mas falham separado: a programação
@@ -675,6 +694,7 @@ export default function Participantes() {
                     key={eventoDetalhe.id}
                     evento={eventoDetalhe}
                     onFechar={() => setPerguntaDebateAberta(false)}
+                    onConquistaConcedida={recarregarConquistasNovas}
                 />
             )}
 
@@ -700,7 +720,9 @@ export default function Participantes() {
                 />
             )}
 
-            {conquistasACelebrar.length > 0 && !escolhaDiasPendente && (
+            {/* Conquista ganha com a página aberta (pergunta de debate) espera
+                o modal fechar: primeiro o "Pergunta enviada!", depois a festa. */}
+            {conquistasACelebrar.length > 0 && !escolhaDiasPendente && !perguntaDebateAberta && (
                 <ConquistaDesbloqueada
                     conquistas={conquistasACelebrar}
                     /* No modo de teste não confirma nada: se marcasse, a
