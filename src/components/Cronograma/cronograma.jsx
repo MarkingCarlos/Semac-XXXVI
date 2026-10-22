@@ -1,7 +1,7 @@
 import { Fragment } from "preact";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "preact/compat";
-import { getCorTipoEvento } from "./tiposEventoCores.js";
+import { getCorTipoEvento, getRotuloSobreTipoEvento } from "./tiposEventoCores.js";
 import { formatarDataCronograma } from "../cronogramaFiltro/formatarDataCronograma.js";
 import "./cronograma.css";
 
@@ -153,7 +153,9 @@ function DestaqueCronograma({
       <div className="destaqueConteudoCronograma">
         {eventoSelecionado.descricao && (
           <>
-            <span className="destaqueRotuloCronograma">Sobre a palestra</span>
+            <span className="destaqueRotuloCronograma">
+              {getRotuloSobreTipoEvento(eventoSelecionado.tipo)}
+            </span>
             <p className="destaqueDescricaoCronograma">{textoDescricaoExibido}</p>
             {descricaoExcedeLimite && (
               <button

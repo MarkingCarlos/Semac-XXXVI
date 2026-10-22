@@ -30,6 +30,28 @@ function hashNomeTipoEvento(nome) {
   return hash;
 }
 
+/* Tipos que levam artigo feminino no rótulo "Sobre a/o ..." do card de
+   destaque. Qualquer tipo fora desta lista usa "o" (minicurso, workshop,
+   credenciamento...); um tipo feminino novo só precisa entrar aqui. */
+const TIPOS_EVENTO_FEMININOS = [
+  'palestra',
+  'mesa redonda',
+  'mesa_redonda',
+  'oficina',
+  'abertura',
+  'cerimonia',
+  'roda de conversa',
+  'apresentacao',
+  'competicao',
+  'maratona',
+];
+
+export function getRotuloSobreTipoEvento(nomeTipo) {
+  if (!nomeTipo?.trim()) return 'Sobre a atividade';
+  const artigo = TIPOS_EVENTO_FEMININOS.includes(normalizarNomeTipoEvento(nomeTipo)) ? 'a' : 'o';
+  return `Sobre ${artigo} ${nomeTipo.trim().toLowerCase()}`;
+}
+
 export function getCorTipoEvento(nomeTipo) {
   if (!nomeTipo) return null;
   const chave = normalizarNomeTipoEvento(nomeTipo);
