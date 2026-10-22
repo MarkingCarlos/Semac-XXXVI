@@ -298,3 +298,53 @@
         animation: none;
     }
 }
+
+/* ── Card "Participantes por dia": mini gráfico de barras ────── */
+
+.graficoBarrasParticipantesDiaCardDashboard {
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+    height: 78px;
+}
+
+.colunaParticipantesDiaCardDashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1 1 0;
+    min-width: 0;
+    gap: 2px;
+}
+
+.valorParticipantesDiaCardDashboard {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--vermelhoDiretoria);
+    font-variant-numeric: tabular-nums;
+}
+
+.trilhoBarraParticipantesDiaCardDashboard {
+    display: flex;
+    align-items: flex-end;
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 30px;
+}
+
+.barraParticipantesDiaCardDashboard {
+    display: block;
+    width: 100%;
+    min-height: 2px;
+    border-radius: 4px 4px 0 0;
+    background: var(--vermelhoDiretoria);
+}
+
+.rotuloParticipantesDiaCardDashboard {
+    font-family: var(--fonteTituloBungee);
+    font-size: 10px;
+    line-height: 1;
+    color: #fff;
+}

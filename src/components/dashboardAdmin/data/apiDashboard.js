@@ -25,6 +25,13 @@ export function buscarInscritosMinicursoDashboard(eventoId) {
     return lerOuFalhar(`/minicursos/${eventoId}/inscritos`, 'Não foi possível carregar os inscritos.');
 }
 
+/* { totalPasseCompleto, diaristasSemEscolha,
+     dias: [{ dia, passeCompleto, diaristas, total }] } — participantes
+   confirmados esperados em cada dia com programação ('2026-10-26'). */
+export function buscarParticipantesPorDiaDashboard() {
+    return lerOuFalhar('/participantes-por-dia', 'Não foi possível carregar os participantes por dia.');
+}
+
 /* [{ posicao, id, nome, email, xp, nivel }] — do maior xp para o menor. */
 export function buscarRankingDashboard() {
     return lerOuFalhar('/ranking', 'Não foi possível carregar o ranking.');

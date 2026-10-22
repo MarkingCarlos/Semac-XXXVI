@@ -1,0 +1,118 @@
+/* Modal "Participantes por dia" (ModalParticipantesPorDia.jsx). A casca,
+   o resumo e o estado vazio vêm do modalTopoDashboard.css. */
+
+.legendaGraficoParticipantesDia {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    margin: 18px 0 6px;
+    padding: 0;
+    list-style: none;
+}
+
+.itemLegendaGraficoParticipantesDia {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(252, 248, 245, 0.85);
+}
+
+.marcadorLegendaGraficoParticipantesDia {
+    flex: 0 0 auto;
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+}
+
+.areaGraficoParticipantesDia {
+    height: 240px;
+    font-family: var(--fonteCorpoMontserrat);
+}
+
+.tooltipParticipantesDia {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 12px;
+    border: 1px solid rgba(252, 248, 245, 0.14);
+    border-radius: 10px;
+    background: #3d0419;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+    font-size: 0.78rem;
+    color: #fcf8f5;
+}
+
+.tituloTooltipParticipantesDia {
+    font-family: var(--fonteTituloBungee);
+    font-weight: 400;
+    font-size: 0.8rem;
+}
+
+.linhaTooltipParticipantesDia {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.totalTooltipParticipantesDia {
+    margin-top: 2px;
+    padding-top: 5px;
+    border-top: 1px solid rgba(252, 248, 245, 0.12);
+    font-weight: 700;
+}
+
+/* ── Tabela (mesmos números do gráfico) ──────────────────────── */
+
+.tabelaParticipantesDia {
+    width: 100%;
+    margin-top: 18px;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.legendaTabelaParticipantesDia {
+    padding-bottom: 8px;
+    text-align: left;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(252, 248, 245, 0.55);
+}
+
+.tabelaParticipantesDia th,
+.tabelaParticipantesDia td {
+    padding: 9px 6px;
+    border-bottom: 1px solid rgba(252, 248, 245, 0.08);
+    text-align: right;
+}
+
+.tabelaParticipantesDia th:first-child {
+    text-align: left;
+}
+
+.tabelaParticipantesDia thead th {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: rgba(252, 248, 245, 0.55);
+}
+
+.tabelaParticipantesDia tbody th {
+    font-weight: 600;
+    color: #fcf8f5;
+}
+
+.celulaTotalTabelaParticipantesDia {
+    font-weight: 700;
+    color: var(--AmareloAuxApoio);
+}
+
+.notaParticipantesDia {
+    margin: 14px 0 0;
+    font-size: 0.78rem;
+    color: rgba(252, 248, 245, 0.6);
+}

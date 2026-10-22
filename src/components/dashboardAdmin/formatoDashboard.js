@@ -10,6 +10,16 @@ export function formatarDiaHora(iso) {
     return `${dia}/${mes} · ${hora.slice(0, 5)}`;
 }
 
+const SIGLAS_DIA_SEMANA = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
+
+/* '2026-10-26' → { sigla: 'SEG', data: '26/10' }. Monta a data no fuso
+   local a partir das partes, pelo mesmo motivo de não usar Date(iso). */
+export function partesDiaSemana(isoData) {
+    const [ano, mes, dia] = isoData.split('-').map(Number);
+    const sigla = SIGLAS_DIA_SEMANA[new Date(ano, mes - 1, dia).getDay()];
+    return { sigla, data: `${String(dia).padStart(2, '0')}/${String(mes).padStart(2, '0')}` };
+}
+
 /* '2026-10-08T19:04:31' → '19:04' */
 export function formatarHora(iso) {
     return iso ? iso.split('T')[1]?.slice(0, 5) ?? '' : '';

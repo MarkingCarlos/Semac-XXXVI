@@ -3,14 +3,16 @@ import ModalVagasMinicursos from './ModalVagasMinicursos.jsx';
 import ModalRankingCompleto from './ModalRankingCompleto.jsx';
 import ModalLeiturasQr from './ModalLeiturasQr.jsx';
 import ModalSorteiosRealizados from './ModalSorteiosRealizados.jsx';
+import ModalParticipantesPorDia from './ModalParticipantesPorDia.jsx';
 import { usarConsultaPeriodica } from './usarConsultaPeriodica.js';
 import {
     buscarMinicursosDashboard,
+    buscarParticipantesPorDiaDashboard,
     buscarRankingDashboard,
     buscarCheckinsDashboard,
 } from './data/apiDashboard.js';
 import { listarSorteios } from '../../pages/Sorteio/data/apiSorteio.js';
-import { porcentagem } from './formatoDashboard.js';
+import { porcentagem, partesDiaSemana } from './formatoDashboard.js';
 import './dashboardAdmin.css';
 
 /* Dashboard da seção Início do /admin (protótipo Figma "SEMAC 2026").
@@ -25,12 +27,14 @@ export default function DashboardAdmin() {
     const ranking = usarConsultaPeriodica(buscarRankingDashboard, true);
     const checkins = usarConsultaPeriodica(buscarCheckinsDashboard, true);
     const sorteios = usarConsultaPeriodica(listarSorteios, true);
+    const participantesPorDia = usarConsultaPeriodica(buscarParticipantesPorDiaDashboard, true);
 
-    const [modalAberto, setModalAberto] = useState(null); // null | 'minicursos' | 'ranking' | 'qr' | 'sorteios'
+    const [modalAberto, setModalAberto] = useState(null); // null | 'minicursos' | 'participantesDia' | 'ranking' | 'qr' | 'sorteios'
     const fecharModal = () => setModalAberto(null);
 
     const cards = [
         <CardVagasMinicursos key="minicursos" consulta={minicursos} aoAbrir={() => setModalAberto('minicursos')} />,
+        <CardParticipantesPorDia key="participantesDia" consulta={participantesPorDia} aoAbrir={() => setModalAberto('participantesDia')} />,
         <CardTopRanking key="ranking" consulta={ranking} aoAbrir={() => setModalAberto('ranking')} />,
         <CardLeituraQr key="qr" consulta={checkins} aoAbrir={() => setModalAberto('qr')} />,
         <CardSorteiosRealizados key="sorteios" consulta={sorteios} aoAbrir={() => setModalAberto('sorteios')} />,
@@ -42,6 +46,9 @@ export default function DashboardAdmin() {
 
             {modalAberto === 'minicursos' && minicursos.dados && (
                 <ModalVagasMinicursos dados={minicursos.dados} aoFechar={fecharModal} />
+            )}
+            {modalAberto === 'participantesDia' && participantesPorDia.dados && (
+                <ModalParticipantesPorDia dados={participantesPorDia.dados} aoFechar={fecharModal} />
             )}
             {modalAberto === 'ranking' && ranking.dados && (
                 <ModalRankingCompleto ranking={ranking.dados} aoFechar={fecharModal} />
@@ -193,6 +200,51 @@ function CardVagasMinicursos({ consulta, aoAbrir }) {
             rotuloAbrir={`Vagas restantes em minicursos: ${restantes}. Abrir detalhes por minicurso`}
         >
             <BarraProgressoCardDashboard valor={ocupacao} rotulo={`${ocupacao}% das vagas preenchidas`} />
+        </CardDashboard>
+    );
+}
+
+/* Uma barra por dia com programação, altura proporcional ao dia mais
+   cheio; o subtítulo traz o pico. O detalhe (passe completo x diárias)
+   fica no modal. */
+function CardParticipantesPorDia({ consulta, aoAbrir }) {
+    const dias = consulta.dados?.dias ?? [];
+    const maiorTotal = Math.max(0, ...dias.map((dia) => dia.total));
+    const diaPico = dias.find((dia) => dia.total === maiorTotal && maiorTotal > 0);
+    const rotuloPico = diaPico ? partesDiaSemana(diaPico.dia) : null;
+
+    return (
+        <CardDashboard
+            titulo="Participantes por dia"
+            subtitulo={rotuloPico
+                ? `Pico: ${rotuloPico.sigla} ${rotuloPico.data} · ${maiorTotal} pessoas`
+                : 'Ninguém confirmado ainda'}
+            consulta={consulta}
+            aoAbrir={aoAbrir}
+            rotuloAbrir={`Participantes por dia: ${dias
+                .map((dia) => `${partesDiaSemana(dia.dia).sigla} ${partesDiaSemana(dia.dia).data}, ${dia.total}`)
+                .join('; ')}. Abrir gráfico por dia`}
+        >
+            {dias.length === 0 ? (
+                <span className="vazioCardDashboard">Nenhum evento na programação.</span>
+            ) : (
+                <span className="graficoBarrasParticipantesDiaCardDashboard" aria-hidden="true">
+                    {dias.map((dia) => (
+                        <span className="colunaParticipantesDiaCardDashboard" key={dia.dia}>
+                            <span className="valorParticipantesDiaCardDashboard">{dia.total}</span>
+                            <span className="trilhoBarraParticipantesDiaCardDashboard">
+                                <span
+                                    className="barraParticipantesDiaCardDashboard"
+                                    style={{ height: `${maiorTotal ? (dia.total / maiorTotal) * 100 : 0}%` }}
+                                />
+                            </span>
+                            <span className="rotuloParticipantesDiaCardDashboard">
+                                {partesDiaSemana(dia.dia).sigla}
+                            </span>
+                        </span>
+                    ))}
+                </span>
+            )}
         </CardDashboard>
     );
 }
