@@ -11,9 +11,8 @@
 // Todos os filtrados já vêm marcados; desmarcar tira da impressão (útil
 // para reimprimir só quem perdeu o crachá).
 //
-// Professores convidados não têm conta: são cadastrados aqui mesmo (nome +
-// gênero, que decide o rótulo PROFESSOR/PROFESSORA) e vêm de
-// /api/professor-convidado, juntados à lista de /api/cracha no navegador.
+// Professores convidados não têm conta: são cadastrados aqui mesmo (só o
+// nome) e vêm de /api/professor-convidado, juntados à lista de /api/cracha no navegador.
 
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { createPortal } from 'preact/compat';
@@ -51,10 +50,7 @@ const ROTULO_PERFIL_CRACHA = {
     PROFESSOR: 'Professor',
 };
 
-const FORMULARIO_VAZIO_PROFESSOR_CRACHAS = { nome: '', genero: 'M' };
-
-const rotuloPerfilListaCrachas = (pessoa) =>
-    (pessoa.perfil === 'PROFESSOR' && pessoa.genero === 'F' ? 'Professora' : ROTULO_PERFIL_CRACHA[pessoa.perfil]);
+const FORMULARIO_VAZIO_PROFESSOR_CRACHAS = { nome: '' };
 
 // No formato da lista de /api/cracha; professor não tem QR.
 const professorParaCracha = (professor) => ({ ...professor, uuid: null, perfil: 'PROFESSOR' });
@@ -204,7 +200,7 @@ export default function Crachas() {
     }
 
     function abrirEdicaoProfessor(professor) {
-        setFormularioProfessor({ nome: professor.nome, genero: professor.genero });
+        setFormularioProfessor({ nome: professor.nome });
         setIdProfessorEmEdicao(professor.id);
         setErroProfessor('');
         setPainelProfessorAberto(true);
@@ -326,7 +322,7 @@ export default function Crachas() {
                                     onChange={() => alternarPessoa(pessoa)}
                                 />
                                 <span class="spanNomePessoaCrachas">{pessoa.nome}</span>
-                                <span class="spanPerfilPessoaCrachas">{rotuloPerfilListaCrachas(pessoa)}</span>
+                                <span class="spanPerfilPessoaCrachas">{ROTULO_PERFIL_CRACHA[pessoa.perfil]}</span>
                                 {pessoa.perfil === 'PARTICIPANTE' && !pessoa.uuid && (
                                     <span class="spanSemQrPessoaCrachas">sem QR</span>
                                 )}
@@ -406,30 +402,6 @@ export default function Crachas() {
                             onInput={(e) => setFormularioProfessor({ ...formularioProfessor, nome: e.currentTarget.value })}
                         />
                     </div>
-
-                    <fieldset class="campoFormularioFinancas grupoGeneroProfessorCrachas">
-                        <legend class="rotuloCampoFinancas">Rótulo do crachá *</legend>
-                        <label class="opcaoGeneroProfessorCrachas">
-                            <input
-                                type="radio"
-                                name="generoProfessorCrachas"
-                                value="M"
-                                checked={formularioProfessor.genero === 'M'}
-                                onChange={() => setFormularioProfessor({ ...formularioProfessor, genero: 'M' })}
-                            />
-                            Masculino — PROFESSOR
-                        </label>
-                        <label class="opcaoGeneroProfessorCrachas">
-                            <input
-                                type="radio"
-                                name="generoProfessorCrachas"
-                                value="F"
-                                checked={formularioProfessor.genero === 'F'}
-                                onChange={() => setFormularioProfessor({ ...formularioProfessor, genero: 'F' })}
-                            />
-                            Feminino — PROFESSORA
-                        </label>
-                    </fieldset>
 
                     {erroProfessor && <p class="avisoErroAdmin" role="alert">{erroProfessor}</p>}
 

@@ -24,9 +24,9 @@ export async function listarPublicos() {
     return lerOuFalhar(resposta, 'Falha ao carregar os públicos.');
 }
 
-export async function contarDestinatarios(publico, eventoId) {
+export async function contarDestinatarios(publico, eventoIds = []) {
     const parametros = new URLSearchParams({ publico });
-    if (eventoId) parametros.set('eventoId', eventoId);
+    eventoIds.forEach((eventoId) => parametros.append('eventoIds', eventoId));
     const resposta = await apiFetch(`${ROTA}/destinatarios?${parametros}`, { headers: cabecalhosAuth() });
     return lerOuFalhar(resposta, 'Falha ao contar os destinatários.');
 }
@@ -52,11 +52,11 @@ export async function enviarTesteComunicado({ assunto, corpoMarkdown }) {
     }
 }
 
-export async function dispararComunicado({ assunto, corpoMarkdown, publico, eventoId }) {
+export async function dispararComunicado({ assunto, corpoMarkdown, publico, eventoIds = [] }) {
     const resposta = await apiFetch(ROTA, {
         method: 'POST',
         headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ assunto, corpoMarkdown, publico, eventoId: eventoId || null }),
+        body: JSON.stringify({ assunto, corpoMarkdown, publico, eventoIds }),
     });
     return lerOuFalhar(resposta, 'Falha ao disparar o comunicado.');
 }

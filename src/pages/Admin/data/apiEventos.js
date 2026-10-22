@@ -32,6 +32,9 @@ function deResposta(evento) {
         /* Pela chave estável do tipo, nunca pelo nome editável: debates
            ganham o botão "Ver perguntas" na aba Conteúdo. */
         ehDebate: evento.tipoEvento?.codigo === 'DEBATE',
+        /* Minicursos e afins: separa o grupo "Minicursos" no público dos
+           comunicados avulsos. */
+        exigeInscricao: Boolean(evento.tipoEvento?.exigeInscricao),
         local: evento.local || '',
         descricao: evento.descricao || '',
         trilhaId: evento.trilha ? evento.trilha.id : null,

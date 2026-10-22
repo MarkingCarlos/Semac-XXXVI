@@ -43,7 +43,7 @@ export default function Comunicados() {
     const [assunto, setAssunto] = useState('');
     const [corpoMarkdown, setCorpoMarkdown] = useState('');
     const [publicoEscolhido, setPublicoEscolhido] = useState('');
-    const [eventoEscolhido, setEventoEscolhido] = useState('');
+    const [eventosEscolhidos, setEventosEscolhidos] = useState([]);
 
     const [destinatarios, setDestinatarios] = useState(null);
     const [htmlPrevia, setHtmlPrevia] = useState('');
@@ -59,7 +59,13 @@ export default function Comunicados() {
 
     const publicoAtual = publicos.find((p) => p.publico === publicoEscolhido) || null;
     const precisaEvento = publicoAtual?.exigeEvento === true;
-    const publicoCompleto = publicoEscolhido && (!precisaEvento || eventoEscolhido);
+    const publicoCompleto = publicoEscolhido && (!precisaEvento || eventosEscolhidos.length > 0);
+    /* Chave estável da seleção para o efeito de recontagem (array novo a
+       cada render dispararia a contagem à toa). */
+    const chaveEventosEscolhidos = eventosEscolhidos.join(',');
+
+    const minicursosComunicados = eventos.filter((evento) => evento.exigeInscricao);
+    const outrosEventosComunicados = eventos.filter((evento) => !evento.exigeInscricao);
     const prontoParaDisparar = assunto.trim() && corpoMarkdown.trim() && publicoCompleto
         && destinatarios && destinatarios.total > 0;
 
@@ -86,11 +92,17 @@ export default function Comunicados() {
         }
         let ativo = true;
         setConfirmando(false);
-        contarDestinatarios(publicoEscolhido, eventoEscolhido || null)
+        contarDestinatarios(publicoEscolhido, precisaEvento ? eventosEscolhidos : [])
             .then((resposta) => { if (ativo) setDestinatarios(resposta); })
             .catch((e) => { if (ativo) setErro(e.message); });
         return () => { ativo = false; };
-    }, [publicoEscolhido, eventoEscolhido, publicoCompleto]);
+    }, [publicoEscolhido, chaveEventosEscolhidos, publicoCompleto]);
+
+    function alternarEventoEscolhido(eventoId) {
+        setEventosEscolhidos((atuais) => (atuais.includes(eventoId)
+            ? atuais.filter((id) => id !== eventoId)
+            : [...atuais, eventoId]));
+    }
 
     useEffect(() => {
         if (!corpoMarkdown.trim() || !assunto.trim()) return undefined;
@@ -150,7 +162,7 @@ export default function Comunicados() {
                 assunto,
                 corpoMarkdown,
                 publico: publicoEscolhido,
-                eventoId: eventoEscolhido || null,
+                eventoIds: precisaEvento ? eventosEscolhidos : [],
             });
             setHistorico([criado, ...historico]);
             setAviso(`Disparo iniciado para ${criado.totalDestinatarios} destinatário(s). `
@@ -192,7 +204,7 @@ export default function Comunicados() {
                         id="campoPublicoComunicados"
                         class="campoSelecaoComunicados"
                         value={publicoEscolhido}
-                        onChange={(e) => { setPublicoEscolhido(e.currentTarget.value); setEventoEscolhido(''); }}
+                        onChange={(e) => { setPublicoEscolhido(e.currentTarget.value); setEventosEscolhidos([]); }}
                     >
                         <option value="">Escolha o público…</option>
                         {publicos.map((p) => (
@@ -203,20 +215,31 @@ export default function Comunicados() {
                     </select>
 
                     {precisaEvento && (
-                        <>
-                            <label class="rotuloCampoComunicados" for="campoEventoComunicados">Qual evento</label>
-                            <select
-                                id="campoEventoComunicados"
-                                class="campoSelecaoComunicados"
-                                value={eventoEscolhido}
-                                onChange={(e) => setEventoEscolhido(e.currentTarget.value)}
-                            >
-                                <option value="">Escolha o evento…</option>
-                                {eventos.map((evento) => (
-                                    <option key={evento.id} value={evento.id}>{evento.nome}</option>
-                                ))}
-                            </select>
-                        </>
+                        <fieldset class="fieldsetEventosComunicados">
+                            <legend class="rotuloCampoComunicados">
+                                Quais eventos
+                                {eventosEscolhidos.length > 0 && ` (${eventosEscolhidos.length} marcado(s))`}
+                            </legend>
+                            {[
+                                { titulo: 'Minicursos', lista: minicursosComunicados },
+                                { titulo: 'Outros eventos (quem fez check-in)', lista: outrosEventosComunicados },
+                            ].filter((grupo) => grupo.lista.length > 0).map((grupo) => (
+                                <div key={grupo.titulo} class="grupoEventosComunicados">
+                                    <span class="tituloGrupoEventosComunicados">{grupo.titulo}</span>
+                                    {grupo.lista.map((evento) => (
+                                        <label key={evento.id} class="opcaoEventoComunicados">
+                                            <input
+                                                type="checkbox"
+                                                class="caixaEventoComunicados"
+                                                checked={eventosEscolhidos.includes(evento.id)}
+                                                onChange={() => alternarEventoEscolhido(evento.id)}
+                                            />
+                                            <span>{evento.nome}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            ))}
+                        </fieldset>
                     )}
 
                     {destinatarios && (

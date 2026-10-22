@@ -17,8 +17,7 @@ export async function listarCrachas() {
 }
 
 /* Professores convidados (tabela `professor_convidado`), cadastrados na
-   própria subaba Crachás. Cada item: { id, nome, genero } — genero 'M'
-   (crachá PROFESSOR) ou 'F' (crachá PROFESSORA). Não têm QR. */
+   própria subaba Crachás. Cada item: { id, nome }. Não têm QR. */
 const ROTA_PROFESSORES = `${API_URL}/api/professor-convidado`;
 
 async function lerOuFalhar(resposta, mensagemPadrao) {
@@ -38,7 +37,7 @@ export async function criarProfessorConvidado(professor) {
     const resposta = await apiFetch(ROTA_PROFESSORES, {
         method: 'POST',
         headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ nome: professor.nome, genero: professor.genero }),
+        body: JSON.stringify({ nome: professor.nome }),
     });
     return lerOuFalhar(resposta, 'Falha ao adicionar o professor.');
 }
@@ -47,7 +46,7 @@ export async function atualizarProfessorConvidado(id, professor) {
     const resposta = await apiFetch(`${ROTA_PROFESSORES}/${id}`, {
         method: 'PUT',
         headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ nome: professor.nome, genero: professor.genero }),
+        body: JSON.stringify({ nome: professor.nome }),
     });
     return lerOuFalhar(resposta, 'Falha ao atualizar o professor.');
 }

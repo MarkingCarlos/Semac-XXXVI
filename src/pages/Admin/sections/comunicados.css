@@ -55,6 +55,56 @@
     outline-offset: 1px;
 }
 
+/* Público "Inscritos em eventos": vários eventos marcáveis, minicursos
+   num grupo separado no topo. Altura limitada para a lista de todos os
+   eventos não empurrar o editor para baixo. */
+.fieldsetEventosComunicados {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    max-height: 320px;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.fieldsetEventosComunicados legend {
+    padding: 0 0.3rem;
+}
+
+.grupoEventosComunicados {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.tituloGrupoEventosComunicados {
+    color: rgba(237, 236, 236, 0.65);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.opcaoEventoComunicados {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--Branco);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.caixaEventoComunicados {
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--AmareloAuxApoio);
+    cursor: pointer;
+}
+
 /* A contagem é o dado mais importante da tela: é o que a pessoa lê antes
    de confirmar um envio sem volta. */
 .resumoDestinatariosComunicados {

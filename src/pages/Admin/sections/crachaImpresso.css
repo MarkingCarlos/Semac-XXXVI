@@ -86,6 +86,30 @@
     white-space: nowrap;
 }
 
+/* -----------------------------------------------------------------
+   Professor convidado: arte fundoCrachaProfessor.jpg, com o quadro
+   cinza de ~16% a ~84% da largura e de ~33% a ~70,4% da altura, sem
+   rótulo. Posição copiada do exemplo da arte (nome em três linhas de
+   ~37,9 a ~56,6 mm, centralizado em ~29,4 mm na horizontal).
+   ----------------------------------------------------------------- */
+
+.divNomeCrachaProfessorImpresso {
+    position: absolute;
+    left: 15.87mm;
+    top: 36.25mm;
+    width: 27mm;
+    height: 22mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bungee', sans-serif;
+    line-height: 1.25;
+    color: #000000;
+    text-align: center;
+    white-space: nowrap;
+}
+
 .divRotuloPerfilCrachaEquipeImpresso {
     position: absolute;
     left: 14.73mm;
