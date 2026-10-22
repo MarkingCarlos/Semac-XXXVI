@@ -18,7 +18,9 @@
 import './crachaImpresso.css';
 
 const LARGURA_TEXTO_CRACHA_MM = 30.54;
-const LARGURA_TEXTO_CRACHA_PROFESSOR_MM = 27;
+// Na altura do nome o cinza da arte do professor fica livre de 10,5 a
+// 48,3 mm (o raio só invade acima); 33 mm deixam ~2,5 mm de folga de cada lado.
+const LARGURA_TEXTO_CRACHA_PROFESSOR_MM = 33;
 const TAMANHO_MAXIMO_FONTE_NOME_MM = 5.46;
 const TAMANHO_MAXIMO_FONTE_NOME_EQUIPE_MM = 5.7;
 const TAMANHO_MAXIMO_FONTE_ROTULO_EQUIPE_MM = 6;

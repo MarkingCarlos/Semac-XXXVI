@@ -89,15 +89,17 @@
 /* -----------------------------------------------------------------
    Professor convidado: arte fundoCrachaProfessor.jpg, com o quadro
    cinza de ~16% a ~84% da largura e de ~33% a ~70,4% da altura, sem
-   rótulo. Posição copiada do exemplo da arte (nome em três linhas de
-   ~37,9 a ~56,6 mm, centralizado em ~29,4 mm na horizontal).
+   rótulo. Altura copiada do exemplo da arte (nome em três linhas de
+   ~37,9 a ~56,6 mm). Na horizontal, centralizado no cinza livre entre
+   os raios (10,5 a 48,3 mm, centro ~29,4 mm) — largura igual a
+   LARGURA_TEXTO_CRACHA_PROFESSOR_MM do CrachaImpresso.jsx.
    ----------------------------------------------------------------- */
 
 .divNomeCrachaProfessorImpresso {
     position: absolute;
-    left: 15.87mm;
+    left: 12.9mm;
     top: 36.25mm;
-    width: 27mm;
+    width: 33mm;
     height: 22mm;
     display: flex;
     flex-direction: column;
