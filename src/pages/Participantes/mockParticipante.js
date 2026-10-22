@@ -1,4 +1,4 @@
-/* Dados mockados da Área do Participante (perfil e certificados).
+/* Dados mockados da Área do Participante (certificados).
    Nenhum endpoint de API expõe isso ainda — nome e e-mail reais vêm da
    sessão (ver Participantes.jsx).
 
@@ -18,12 +18,6 @@
    Programação, agenda e minicursos NÃO estão aqui: são reais, vindos de
    /api/evento e /api/evento/meus (ver data/apiEventosParticipantes.js e
    data/agendaParticipantes.js). */
-
-export const perfilMockParticipante = {
-    curso: 'Ciência da Computação · 3º ano',
-    presencas: 3,
-    presencasTotais: 12,
-};
 
 export const certificadosMockParticipante = [
     { id: 'participacao', titulo: 'PARTICIPAÇÃO · SEMAC XXXVI', cargaHoraria: '12 horas', emitidoEm: '25/08' },

@@ -15,9 +15,8 @@
    data/apiRegrasXpParticipante.js) e editáveis em /admin.
 
    Conquistas também são reais (GET /api/conquista/minhas): vêm só as
-   ativas, cada uma marcada como desbloqueada ou não. Perfil
-   (curso/inscrição/minicursos/presenças) e certificados seguem em
-   mockParticipante.js — nenhum endpoint expõe esses outros dados ainda.
+   ativas, cada uma marcada como desbloqueada ou não. Só os certificados
+   seguem em mockParticipante.js — nenhum endpoint os expõe ainda.
    Nome e e-mail exibidos são os reais, tirados da sessão. */
 
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
@@ -72,10 +71,7 @@ import {
     detalheEventoParticipante,
 } from './data/agendaParticipantes.js';
 
-import {
-    perfilMockParticipante,
-    certificadosMockParticipante,
-} from './mockParticipante.js';
+import { certificadosMockParticipante } from './mockParticipante.js';
 
 const RANKING_VAZIO_PARTICIPANTES = { totalParticipantes: 0, atualizadoEm: '', podio: [], lista: [] };
 
@@ -659,7 +655,6 @@ export default function Participantes() {
                             email={emailParticipante}
                             iniciais={iniciais}
                             nivel={nivel}
-                            perfil={perfilMockParticipante}
                             conquistas={conquistas}
                             certificados={certificadosMockParticipante}
                             certificadosLiberados={CERTIFICADOS_LIBERADOS_PARTICIPANTES}

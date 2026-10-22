@@ -1,6 +1,6 @@
 /* Aba "Perfil": dados da inscrição, conquistas e certificados (quando
-   liberados). Nome/e-mail, nível/xp e conquistas vêm de dados reais; o
-   resto (curso, presenças, certificados) ainda é mock. `nivel` vem null
+   liberados). Nome/e-mail, nível/xp e conquistas vêm de dados reais; só
+   os certificados ainda são mock. `nivel` vem null
    enquanto carrega ou quando a pessoa ainda não tem xp atribuído.
 
    Só chegam aqui as conquistas ativas (ver GET /api/conquista/minhas) —
@@ -14,7 +14,6 @@ export default function SecaoPerfilParticipantes({
     email,
     iniciais,
     nivel,
-    perfil,
     conquistas,
     certificados,
     certificadosLiberados,
@@ -45,10 +44,6 @@ export default function SecaoPerfilParticipantes({
                     <div className="linhaCardDadosInscricaoSecaoPerfilParticipantes">
                         <span className="rotuloLinhaCardDadosInscricaoSecaoPerfilParticipantes">E-mail</span>
                         <span>{email || '—'}</span>
-                    </div>
-                    <div className="linhaCardDadosInscricaoSecaoPerfilParticipantes">
-                        <span className="rotuloLinhaCardDadosInscricaoSecaoPerfilParticipantes">Presenças</span>
-                        <span>{perfil.presencas} de {perfil.presencasTotais} atividades</span>
                     </div>
                 </div>
 
