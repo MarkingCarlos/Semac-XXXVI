@@ -24,6 +24,31 @@ export async function listarComissao() {
     return resposta.json();
 }
 
+/* Quem recebe kit no credenciamento (participantes confirmados, sem
+   diaristas, + comissão), com { id, nome, role, ingresso, camisetas,
+   kitEntregueEm, kitEntreguePorNome }. Sub-aba Kits de Pessoas. */
+export async function listarKits() {
+    const resposta = await apiFetch(`${API_URL}/api/pessoa/kits`, { headers: cabecalhosAuth() });
+    if (!resposta.ok) throw new Error('Não foi possível carregar a lista de kits.');
+    return resposta.json();
+}
+
+/* Marca (entregue = true) ou desfaz (false) a entrega do kit. Quem
+   entregou é registrado pelo backend a partir do token. Retorna a pessoa
+   no mesmo formato de listarKits. */
+export async function marcarKitEntregue(id, entregue) {
+    const resposta = await apiFetch(`${API_URL}/api/pessoa/${id}/kit`, {
+        method: 'PATCH',
+        headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ entregue }),
+    });
+    if (!resposta.ok) {
+        const corpo = await resposta.json().catch(() => null);
+        throw new Error(corpo?.mensagem || 'Não foi possível atualizar a entrega do kit.');
+    }
+    return resposta.json();
+}
+
 /* Cadastra uma pessoa manualmente (inscrição de balcão: dinheiro,
    cortesia, quem se inscreveu presencialmente). `dados` traz nome, cpf,
    email, senha, ra, telefone (só dígitos em cpf/telefone), ehUnesp,

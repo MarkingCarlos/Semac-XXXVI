@@ -4,7 +4,9 @@ import TabelaParticipantes from '../TabelaParticipantes.jsx';
 import TabelaComissao from '../TabelaComissao.jsx';
 import Crachas from './Crachas.jsx';
 import Certificados from './Certificados.jsx';
+import EntregaKits from './EntregaKits.jsx';
 import SeletorModalSubabas from '../../../components/SeletorModalSubabas/SeletorModalSubabas.jsx';
+import { temAcessoGestaoParticipantes } from '../../../auth/sessao.js';
 
 /* Invólucro da aba "Pessoas" do /admin. Reúne participantes e comissão
    numa entrada só da navbar, que já estava cheia.
@@ -20,14 +22,21 @@ import SeletorModalSubabas from '../../../components/SeletorModalSubabas/Seletor
    "Crachás" gera os crachás impressos e busca os próprios dados
    (GET /api/cracha) — inclui palestrantes, que não estão nas outras
    listas. "Certificados" gera os PDFs dos palestrantes (GET
-   /api/certificado), um por palestrante em cada evento. */
+   /api/certificado), um por palestrante em cada evento.
+
+   "Kits" marca a entrega do kit no credenciamento e busca os próprios
+   dados (GET /api/pessoa/kits). É a única sub-aba aberta a toda a
+   comissão (MEMBRO incluído): quem não tem gestão de participantes vê só ela. */
 
 const SUBABAS = [
     { id: 'participantes', rotulo: 'Participantes' },
     { id: 'comissao', rotulo: 'Comissão' },
+    { id: 'kits', rotulo: 'Kits' },
     { id: 'crachas', rotulo: 'Crachás' },
     { id: 'certificados', rotulo: 'Certificados' },
 ];
+
+const SUBABAS_SO_KITS = SUBABAS.filter(subaba => subaba.id === 'kits');
 
 export default function Pessoas({
     participantes,
@@ -39,19 +48,24 @@ export default function Pessoas({
     aoAtualizarPessoa,
     aoExcluirPessoa,
 }) {
-    const [subabaAtiva, setSubabaAtiva] = useState('participantes');
+    const podeGerenciarPessoas = temAcessoGestaoParticipantes();
+    const subabasVisiveis = podeGerenciarPessoas ? SUBABAS : SUBABAS_SO_KITS;
+    const [subabaAtiva, setSubabaAtiva] = useState(podeGerenciarPessoas ? 'participantes' : 'kits');
 
     return (
         <div class="containerSecaoComSubabasAdmin">
 
-            {/* Pílulas no desktop; no mobile, uma pílula só que abre um modal de baixo para cima. */}
-            <SeletorModalSubabas
-                subabas={SUBABAS}
-                subabaAtiva={subabaAtiva}
-                aoTrocar={setSubabaAtiva}
-                tituloModal="Pessoas"
-                rotuloAcessivel="Sub-abas de Pessoas"
-            />
+            {/* Pílulas no desktop; no mobile, uma pílula só que abre um modal de baixo para cima.
+                Com uma sub-aba só (diretoria sem gestão) não há o que trocar. */}
+            {subabasVisiveis.length > 1 && (
+                <SeletorModalSubabas
+                    subabas={subabasVisiveis}
+                    subabaAtiva={subabaAtiva}
+                    aoTrocar={setSubabaAtiva}
+                    tituloModal="Pessoas"
+                    rotuloAcessivel="Sub-abas de Pessoas"
+                />
+            )}
 
             {subabaAtiva === 'participantes' && (
                 <div className="conteudoParticipantesAdmin">
@@ -102,6 +116,7 @@ export default function Pessoas({
                 </div>
             )}
 
+            {subabaAtiva === 'kits' && <EntregaKits />}
             {subabaAtiva === 'crachas' && <Crachas />}
             {subabaAtiva === 'certificados' && <Certificados />}
         </div>

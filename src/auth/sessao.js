@@ -53,6 +53,11 @@ const PAPEIS_GAMIFICACAO = ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO'];
    PAPEIS_GESTAO_PARTICIPANTES do backend (SecurityConfig). */
 const PAPEIS_GESTAO_PARTICIPANTES = ['DIRETOR_SITE', 'PRESIDENTE'];
 
+/* Quem entrega kit no credenciamento (sub-aba Kits de Pessoas no /admin):
+   toda a comissão, MEMBRO incluído. Espelha PAPEIS_ENTREGA_KIT do
+   backend (SecurityConfig). */
+const PAPEIS_ENTREGA_KIT = PAPEIS_ADMIN;
+
 /* Papel com acesso à área do participante (/participantes) — atribuído
    pelo admin quando a inscrição é confirmada (ver apiParticipantes.js). */
 const PAPEIS_PARTICIPANTE = ['PARTICIPANTE'];
@@ -155,6 +160,13 @@ export function temAcessoGamificacao() {
 export function temAcessoGestaoParticipantes() {
     const sessao = lerSessao();
     return !!sessao && PAPEIS_GESTAO_PARTICIPANTES.includes(sessao.role) && !sessaoExpirada();
+}
+
+/* Mostra a aba Pessoas (só com a sub-aba Kits, para quem não tem gestão
+   de participantes). A checagem de verdade é no backend. */
+export function temAcessoEntregaKit() {
+    const sessao = lerSessao();
+    return !!sessao && PAPEIS_ENTREGA_KIT.includes(sessao.role) && !sessaoExpirada();
 }
 
 /* Qualquer sessão com token ainda válido, com ou sem papel — inclui quem

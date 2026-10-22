@@ -29,7 +29,9 @@ const SECOES = [
        evento). A seção aparece para quem vê ao menos uma das sub-abas; quem
        vê qual sub-aba é decidido dentro do Conteudo.jsx. */
     { id: 'conteudo', rotulo: 'Conteúdo', marca: 'C', classeMarcador: 'marcadorRosaMenuFabModulos', papeis: ['DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'] },
-    { id: 'pessoas', rotulo: 'Pessoas', marca: 'P', classeMarcador: 'marcadorAmareloMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
+    /* Toda a comissão entrega kit; as demais sub-abas (listas, crachás,
+       certificados) seguem só com site e presidência — ver Pessoas.jsx. */
+    { id: 'pessoas', rotulo: 'Pessoas', marca: 'P', classeMarcador: 'marcadorAmareloMenuFabModulos', papeis: ['MEMBRO', 'DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'] },
     { id: 'informacoes', rotulo: 'Informações SEMAC', marca: 'IS', classeMarcador: 'marcadorAzulMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO'] },
     { id: 'mensagens', rotulo: 'Mensagens', marca: 'M', classeMarcador: 'marcadorVermelhoMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
 ];
