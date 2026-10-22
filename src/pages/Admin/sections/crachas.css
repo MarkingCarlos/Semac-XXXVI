@@ -27,18 +27,51 @@
     overflow-y: auto;
 }
 
+/* Linha da lista: o label (marca/desmarca) e, para professor convidado,
+   os botões de editar/excluir ao lado, fora do label. */
+.linhaPessoaCrachas {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.linhaPessoaCrachas:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.acoesProfessorCrachas {
+    padding-right: 1rem;
+}
+
+.grupoGeneroProfessorCrachas {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+}
+
+.opcaoGeneroProfessorCrachas {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.opcaoGeneroProfessorCrachas input {
+    accent-color: var(--AmareloAuxApoio);
+    cursor: pointer;
+}
+
 .itemPessoaCrachas {
+    flex: 1;
+    min-width: 0;
     display: flex;
     align-items: center;
     gap: 0.75rem;
     padding: 0.55rem 1.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
     cursor: pointer;
     font-size: 0.9rem;
-}
-
-.itemPessoaCrachas:hover {
-    background: rgba(255, 255, 255, 0.04);
 }
 
 .caixaSelecaoPessoaCrachas {

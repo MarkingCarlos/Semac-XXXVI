@@ -4,9 +4,9 @@
 // - Participante: a arte limpa de fundo, o nome em duas linhas (Anton) no
 //   quadro cinza e, embaixo, o QR de check-in (o mesmo uuid do crachá
 //   digital — ver QrCrachaParticipantes.jsx).
-// - Comissão e palestrante: a arte da equipe (quadro cinza mais baixo), o
-//   nome em duas linhas (Bungee) e, embaixo, o rótulo "COMISSÃO" ou
-//   "PALESTRANTE" em vinho. Sem QR.
+// - Comissão, palestrante e professor convidado: a arte da equipe (quadro
+//   cinza mais baixo), o nome em duas linhas (Bungee) e, embaixo, o rótulo
+//   "COMISSÃO", "PALESTRANTE" ou "PROFESSOR"/"PROFESSORA" em vinho. Sem QR.
 //
 // As posições em mm foram medidas nas artes (public/cracha/): o quadro
 // cinza vai de ~16% a ~84% da largura e o raio do canto superior direito
@@ -23,7 +23,14 @@ const TAMANHO_MAXIMO_FONTE_ROTULO_EQUIPE_MM = 6;
 const ROTULO_PERFIL_CRACHA_EQUIPE = {
     COMISSAO: 'COMISSÃO',
     PALESTRANTE: 'PALESTRANTE',
+    PROFESSOR: 'PROFESSOR',
 };
+
+// Professor convidado: o rótulo segue o gênero marcado no cadastro.
+function rotuloPerfilCrachaEquipe(pessoa) {
+    if (pessoa.perfil === 'PROFESSOR' && pessoa.genero === 'F') return 'PROFESSORA';
+    return ROTULO_PERFIL_CRACHA_EQUIPE[pessoa.perfil];
+}
 
 // Partículas que não contam como "segundo nome": "Maria de Souza" vira
 // MARIA / SOUZA, não MARIA / DE.
@@ -54,7 +61,7 @@ function tamanhoFonteTextoCrachaMm(linhas, familiaFonte, tamanhoMaximoMm) {
 
 function CrachaEquipeImpresso({ pessoa }) {
     const linhasNome = linhasNomeCracha(pessoa.nome);
-    const rotuloPerfil = ROTULO_PERFIL_CRACHA_EQUIPE[pessoa.perfil];
+    const rotuloPerfil = rotuloPerfilCrachaEquipe(pessoa);
     const tamanhoFonteNomeMm = tamanhoFonteTextoCrachaMm(linhasNome, 'Bungee', TAMANHO_MAXIMO_FONTE_NOME_EQUIPE_MM);
     const tamanhoFonteRotuloMm = tamanhoFonteTextoCrachaMm([rotuloPerfil], 'Bungee', TAMANHO_MAXIMO_FONTE_ROTULO_EQUIPE_MM);
 

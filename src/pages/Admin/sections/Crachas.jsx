@@ -1,5 +1,6 @@
 // Subaba "Crachás" da aba Pessoas: gera os crachás impressos de
-// participantes (confirmados e pendentes), comissão e palestrantes.
+// participantes (confirmados e pendentes), comissão, palestrantes e
+// professores convidados.
 //
 // Fluxo: carrega a lista de GET /api/cracha, gera o QR (SVG) de cada uuid
 // com a lib `qrcode` e monta folhas A4 com 9 crachás (3 × 3) e marcas de
@@ -9,12 +10,23 @@
 //
 // Todos os filtrados já vêm marcados; desmarcar tira da impressão (útil
 // para reimprimir só quem perdeu o crachá).
+//
+// Professores convidados não têm conta: são cadastrados aqui mesmo (nome +
+// gênero, que decide o rótulo PROFESSOR/PROFESSORA) e vêm de
+// /api/professor-convidado, juntados à lista de /api/cracha no navegador.
 
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { createPortal } from 'preact/compat';
 import QRCode from 'qrcode';
-import { listarCrachas } from '../data/apiCracha.js';
+import {
+    listarCrachas,
+    listarProfessoresConvidados,
+    criarProfessorConvidado,
+    atualizarProfessorConvidado,
+    excluirProfessorConvidado,
+} from '../data/apiCracha.js';
 import CrachaImpresso from './CrachaImpresso.jsx';
+import PainelLateral from '../../Financas/components/PainelLateral.jsx';
 import SeletorModalSubabas from '../../../components/SeletorModalSubabas/SeletorModalSubabas.jsx';
 import './crachas.css';
 
@@ -29,15 +41,25 @@ const FILTROS_PERFIL_CRACHAS = [
     { id: 'PARTICIPANTE', rotulo: 'Participantes' },
     { id: 'COMISSAO', rotulo: 'Comissão' },
     { id: 'PALESTRANTE', rotulo: 'Palestrantes' },
+    { id: 'PROFESSOR', rotulo: 'Professores' },
 ];
 
 const ROTULO_PERFIL_CRACHA = {
     PARTICIPANTE: 'Participante',
     COMISSAO: 'Comissão',
     PALESTRANTE: 'Palestrante',
+    PROFESSOR: 'Professor',
 };
 
-// Pessoa e palestrante vêm de tabelas diferentes e os ids podem coincidir.
+const FORMULARIO_VAZIO_PROFESSOR_CRACHAS = { nome: '', genero: 'M' };
+
+const rotuloPerfilListaCrachas = (pessoa) =>
+    (pessoa.perfil === 'PROFESSOR' && pessoa.genero === 'F' ? 'Professora' : ROTULO_PERFIL_CRACHA[pessoa.perfil]);
+
+// No formato da lista de /api/cracha; professor não tem QR.
+const professorParaCracha = (professor) => ({ ...professor, uuid: null, perfil: 'PROFESSOR' });
+
+// Pessoa, palestrante e professor vêm de tabelas diferentes e os ids podem coincidir.
 const chaveCracha = (pessoa) => `${pessoa.perfil}-${pessoa.id}`;
 
 // Anton (participante) e Bungee (comissão/palestrante) só são usadas aqui:
@@ -97,7 +119,8 @@ function MarcasCorteFolhaCrachas() {
 }
 
 export default function Crachas() {
-    const [pessoas, setPessoas] = useState([]);
+    const [pessoasCracha, setPessoasCracha] = useState([]);
+    const [professores, setProfessores] = useState([]);
     const [svgsQrCodePorUuid, setSvgsQrCodePorUuid] = useState({});
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState('');
@@ -105,16 +128,28 @@ export default function Crachas() {
     const [busca, setBusca] = useState('');
     const [chavesDesmarcadas, setChavesDesmarcadas] = useState(() => new Set());
 
+    const [painelProfessorAberto, setPainelProfessorAberto] = useState(false);
+    const [formularioProfessor, setFormularioProfessor] = useState(FORMULARIO_VAZIO_PROFESSOR_CRACHAS);
+    const [idProfessorEmEdicao, setIdProfessorEmEdicao] = useState(null);
+    const [idProfessorConfirmandoExclusao, setIdProfessorConfirmandoExclusao] = useState(null);
+    const [salvandoProfessor, setSalvandoProfessor] = useState(false);
+    const [erroProfessor, setErroProfessor] = useState('');
+
     useEffect(() => {
         let ativo = true;
         (async () => {
             try {
-                const [lista] = await Promise.all([listarCrachas(), carregarFontesCracha()]);
+                const [lista, listaProfessores] = await Promise.all([
+                    listarCrachas(),
+                    listarProfessoresConvidados(),
+                    carregarFontesCracha(),
+                ]);
                 const uuids = lista.map((pessoa) => pessoa.uuid).filter(Boolean);
                 const svgs = await Promise.all(uuids.map(gerarSvgQrCode));
                 if (!ativo) return;
                 setSvgsQrCodePorUuid(Object.fromEntries(uuids.map((uuid, i) => [uuid, svgs[i]])));
-                setPessoas(lista);
+                setPessoasCracha(lista);
+                setProfessores(listaProfessores);
             } catch (e) {
                 if (ativo) setErro(e.message);
             } finally {
@@ -123,6 +158,10 @@ export default function Crachas() {
         })();
         return () => { ativo = false; };
     }, []);
+
+    const pessoas = useMemo(() => [...pessoasCracha, ...professores.map(professorParaCracha)]
+        .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR', { sensitivity: 'base' })),
+    [pessoasCracha, professores]);
 
     const pessoasFiltradas = useMemo(() => {
         const termoBusca = busca.trim().toLowerCase();
@@ -155,6 +194,57 @@ export default function Crachas() {
             }
             return novas;
         });
+    }
+
+    function abrirNovoProfessor() {
+        setFormularioProfessor(FORMULARIO_VAZIO_PROFESSOR_CRACHAS);
+        setIdProfessorEmEdicao(null);
+        setErroProfessor('');
+        setPainelProfessorAberto(true);
+    }
+
+    function abrirEdicaoProfessor(professor) {
+        setFormularioProfessor({ nome: professor.nome, genero: professor.genero });
+        setIdProfessorEmEdicao(professor.id);
+        setErroProfessor('');
+        setPainelProfessorAberto(true);
+    }
+
+    async function salvarProfessor(evento) {
+        evento.preventDefault();
+        setSalvandoProfessor(true);
+        setErroProfessor('');
+        try {
+            if (idProfessorEmEdicao !== null) {
+                const atualizado = await atualizarProfessorConvidado(idProfessorEmEdicao, formularioProfessor);
+                setProfessores((anteriores) => anteriores.map((p) => (p.id === idProfessorEmEdicao ? atualizado : p)));
+            } else {
+                const criado = await criarProfessorConvidado(formularioProfessor);
+                setProfessores((anteriores) => [...anteriores, criado]);
+            }
+            setPainelProfessorAberto(false);
+        } catch (e) {
+            setErroProfessor(e.message);
+        } finally {
+            setSalvandoProfessor(false);
+        }
+    }
+
+    // Primeiro clique arma, o segundo exclui (mesmo padrão de Brindes).
+    async function removerProfessor(id) {
+        if (idProfessorConfirmandoExclusao !== id) {
+            setIdProfessorConfirmandoExclusao(id);
+            return;
+        }
+        setErroProfessor('');
+        try {
+            await excluirProfessorConvidado(id);
+            setProfessores((anteriores) => anteriores.filter((p) => p.id !== id));
+        } catch (e) {
+            setErroProfessor(e.message);
+        } finally {
+            setIdProfessorConfirmandoExclusao(null);
+        }
     }
 
     if (carregando) return <p class="estadoCarregandoParticipantesAdmin">Carregando crachás...</p>;
@@ -213,14 +303,21 @@ export default function Crachas() {
                     <button type="button" class="botaoFantasmaFinancas" onClick={() => marcarFiltradas(false)}>
                         Desmarcar todos
                     </button>
+                    <button type="button" class="botaoFantasmaFinancas" onClick={abrirNovoProfessor}>
+                        + Adicionar professor(a)
+                    </button>
                 </div>
+
+                {erroProfessor && !painelProfessorAberto && (
+                    <p class="avisoErroAdmin" role="alert">{erroProfessor}</p>
+                )}
 
                 <ul class="listaPessoasCrachas">
                     {pessoasFiltradas.length === 0 && (
                         <li class="tabelaVaziaAdmin">Ninguém encontrado.</li>
                     )}
                     {pessoasFiltradas.map((pessoa) => (
-                        <li key={chaveCracha(pessoa)}>
+                        <li key={chaveCracha(pessoa)} class="linhaPessoaCrachas">
                             <label class="itemPessoaCrachas">
                                 <input
                                     type="checkbox"
@@ -229,11 +326,50 @@ export default function Crachas() {
                                     onChange={() => alternarPessoa(pessoa)}
                                 />
                                 <span class="spanNomePessoaCrachas">{pessoa.nome}</span>
-                                <span class="spanPerfilPessoaCrachas">{ROTULO_PERFIL_CRACHA[pessoa.perfil]}</span>
+                                <span class="spanPerfilPessoaCrachas">{rotuloPerfilListaCrachas(pessoa)}</span>
                                 {pessoa.perfil === 'PARTICIPANTE' && !pessoa.uuid && (
                                     <span class="spanSemQrPessoaCrachas">sem QR</span>
                                 )}
                             </label>
+                            {/* Fora do <label>: clicar aqui não marca/desmarca o crachá. */}
+                            {pessoa.perfil === 'PROFESSOR' && (
+                                <div class="grupoAcoesLinhaFinancas acoesProfessorCrachas">
+                                    <button
+                                        type="button"
+                                        class="botaoAcaoLinhaFinancas"
+                                        aria-label={`Editar professor(a) ${pessoa.nome}`}
+                                        title="Editar"
+                                        onClick={() => abrirEdicaoProfessor(pessoa)}
+                                    >
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class={
+                                            idProfessorConfirmandoExclusao === pessoa.id
+                                                ? 'botaoAcaoLinhaFinancas botaoConfirmarExclusaoFinancas'
+                                                : 'botaoAcaoLinhaFinancas'
+                                        }
+                                        aria-label={
+                                            idProfessorConfirmandoExclusao === pessoa.id
+                                                ? `Confirmar exclusão de ${pessoa.nome}`
+                                                : `Excluir professor(a) ${pessoa.nome}`
+                                        }
+                                        title={
+                                            idProfessorConfirmandoExclusao === pessoa.id
+                                                ? 'Clique novamente para confirmar'
+                                                : 'Excluir'
+                                        }
+                                        onClick={() => removerProfessor(pessoa.id)}
+                                    >
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            )}
                         </li>
                     ))}
                 </ul>
@@ -253,6 +389,64 @@ export default function Crachas() {
                     </div>
                 </div>
             )}
+
+            <PainelLateral
+                aberto={painelProfessorAberto}
+                titulo={idProfessorEmEdicao !== null ? 'Editar professor(a)' : 'Novo(a) professor(a)'}
+                aoFechar={() => setPainelProfessorAberto(false)}
+            >
+                <form class="formularioFinancas" onSubmit={salvarProfessor}>
+                    <div class="campoFormularioFinancas">
+                        <label class="rotuloCampoFinancas" htmlFor="campoNomeProfessorCrachas">Nome *</label>
+                        <input
+                            id="campoNomeProfessorCrachas"
+                            class="entradaFormularioFinancas"
+                            required
+                            value={formularioProfessor.nome}
+                            onInput={(e) => setFormularioProfessor({ ...formularioProfessor, nome: e.currentTarget.value })}
+                        />
+                    </div>
+
+                    <fieldset class="campoFormularioFinancas grupoGeneroProfessorCrachas">
+                        <legend class="rotuloCampoFinancas">Rótulo do crachá *</legend>
+                        <label class="opcaoGeneroProfessorCrachas">
+                            <input
+                                type="radio"
+                                name="generoProfessorCrachas"
+                                value="M"
+                                checked={formularioProfessor.genero === 'M'}
+                                onChange={() => setFormularioProfessor({ ...formularioProfessor, genero: 'M' })}
+                            />
+                            Masculino — PROFESSOR
+                        </label>
+                        <label class="opcaoGeneroProfessorCrachas">
+                            <input
+                                type="radio"
+                                name="generoProfessorCrachas"
+                                value="F"
+                                checked={formularioProfessor.genero === 'F'}
+                                onChange={() => setFormularioProfessor({ ...formularioProfessor, genero: 'F' })}
+                            />
+                            Feminino — PROFESSORA
+                        </label>
+                    </fieldset>
+
+                    {erroProfessor && <p class="avisoErroAdmin" role="alert">{erroProfessor}</p>}
+
+                    <div class="rodapeFormularioFinancas">
+                        <button type="button" class="botaoFantasmaFinancas" onClick={() => setPainelProfessorAberto(false)}>
+                            Cancelar
+                        </button>
+                        <button type="submit" class="botaoPrimarioFinancas" disabled={salvandoProfessor}>
+                            {salvandoProfessor
+                                ? 'Salvando…'
+                                : idProfessorEmEdicao !== null
+                                    ? 'Salvar alterações'
+                                    : 'Adicionar'}
+                        </button>
+                    </div>
+                </form>
+            </PainelLateral>
 
             {createPortal(
                 <div class="portalImpressaoCrachas">
