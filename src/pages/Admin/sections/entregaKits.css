@@ -187,9 +187,36 @@
     color: rgba(237, 236, 236, 0.65);
 }
 
-.camisetaPessoaKits {
-    color: var(--Branco);
-    font-weight: 600;
+/* Uma etiqueta por camiseta, na cor da pilha de onde ela sai. */
+.listaCamisetasPessoaKits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.etiquetaCamisetaKits {
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.etiquetaCamisetaComissaoKits {
+    background-color: rgba(231, 152, 57, 0.15);
+    border-color: rgba(231, 152, 57, 0.45);
+    color: var(--AmareloAuxApoio);
+}
+
+.etiquetaCamisetaParticipanteKits {
+    background-color: rgba(82, 171, 177, 0.15);
+    border-color: rgba(82, 171, 177, 0.45);
+    color: var(--azulConteudo);
+}
+
+.semCamisetaPessoaKits {
+    font-size: 0.75rem;
+    color: rgba(237, 236, 236, 0.5);
 }
 
 .seloPapelKits {

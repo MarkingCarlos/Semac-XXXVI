@@ -53,12 +53,13 @@ function normalizarBuscaKits(texto) {
     return (texto ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 }
 
-// "M" ou "M baby look", juntando as camisetas com " · ".
-function textoCamisetasKits(camisetas) {
-    if (!camisetas?.length) return 'Sem camiseta';
-    return camisetas
-        .map(camiseta => camiseta.modelo === 'BABY_LOOK' ? `${camiseta.tamanho} baby look` : camiseta.tamanho)
-        .join(' · ');
+// "Comissão · M" ou "Participante · G baby look · extra". O público vem
+// do backend (CamisetaKitDTO): avulsa é sempre de participante, mesmo
+// comprada por diretor — diz de qual pilha a camiseta sai.
+function textoCamisetaKits(camiseta) {
+    const publico = camiseta.publico === 'COMISSAO' ? 'Comissão' : 'Participante';
+    const tamanho = camiseta.modelo === 'BABY_LOOK' ? `${camiseta.tamanho} baby look` : camiseta.tamanho;
+    return [publico, tamanho, camiseta.avulsa && 'extra'].filter(Boolean).join(' · ');
 }
 
 function textoEntregaKits(pessoa) {
@@ -274,7 +275,16 @@ export default function EntregaKits() {
                                                         {ROTULOS_PAPEL_KITS[pessoa.role] ?? pessoa.role}
                                                     </span>
                                                     {pessoa.ingresso && <span>{pessoa.ingresso}</span>}
-                                                    <span class="camisetaPessoaKits">Camiseta: {textoCamisetasKits(pessoa.camisetas)}</span>
+                                                </span>
+                                                <span class="listaCamisetasPessoaKits">
+                                                    {pessoa.camisetas?.length ? pessoa.camisetas.map((camiseta, indice) => (
+                                                        <span
+                                                            key={indice}
+                                                            class={`etiquetaCamisetaKits ${camiseta.publico === 'COMISSAO' ? 'etiquetaCamisetaComissaoKits' : 'etiquetaCamisetaParticipanteKits'}`}
+                                                        >
+                                                            {textoCamisetaKits(camiseta)}
+                                                        </span>
+                                                    )) : <span class="semCamisetaPessoaKits">Sem camiseta</span>}
                                                 </span>
                                                 {entregue && <span class="textoEntregueKits">{textoEntregaKits(pessoa)}</span>}
                                             </div>
