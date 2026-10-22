@@ -4,6 +4,7 @@ import TabelaParticipantes from '../TabelaParticipantes.jsx';
 import TabelaComissao from '../TabelaComissao.jsx';
 import Crachas from './Crachas.jsx';
 import Certificados from './Certificados.jsx';
+import SeletorModalSubabas from '../../../components/SeletorModalSubabas/SeletorModalSubabas.jsx';
 
 /* Invólucro da aba "Pessoas" do /admin. Reúne participantes e comissão
    numa entrada só da navbar, que já estava cheia.
@@ -43,20 +44,14 @@ export default function Pessoas({
     return (
         <div class="containerSecaoComSubabasAdmin">
 
-            <div class="listaSubabasAdmin" role="tablist">
-                {SUBABAS.map((subaba) => (
-                    <button
-                        key={subaba.id}
-                        type="button"
-                        role="tab"
-                        aria-selected={subabaAtiva === subaba.id}
-                        class={`botaoSubabaAdmin${subabaAtiva === subaba.id ? ' botaoSubabaAdminAtivo' : ''}`}
-                        onClick={() => setSubabaAtiva(subaba.id)}
-                    >
-                        {subaba.rotulo}
-                    </button>
-                ))}
-            </div>
+            {/* Pílulas no desktop; no mobile, uma pílula só que abre um modal de baixo para cima. */}
+            <SeletorModalSubabas
+                subabas={SUBABAS}
+                subabaAtiva={subabaAtiva}
+                aoTrocar={setSubabaAtiva}
+                tituloModal="Pessoas"
+                rotuloAcessivel="Sub-abas de Pessoas"
+            />
 
             {subabaAtiva === 'participantes' && (
                 <div className="conteudoParticipantesAdmin">

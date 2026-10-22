@@ -15,6 +15,7 @@ import { createPortal } from 'preact/compat';
 import QRCode from 'qrcode';
 import { listarCrachas } from '../data/apiCracha.js';
 import CrachaImpresso from './CrachaImpresso.jsx';
+import SeletorModalSubabas from '../../../components/SeletorModalSubabas/SeletorModalSubabas.jsx';
 import './crachas.css';
 
 const CRACHAS_POR_FOLHA = 9;
@@ -191,20 +192,14 @@ export default function Crachas() {
 
             <div class="conteinerTabelaAdmin">
                 <div class="topoTabelaAdmin controlesListaCrachas">
-                    <div class="listaSubabasAdmin" role="tablist" aria-label="Filtrar por perfil">
-                        {FILTROS_PERFIL_CRACHAS.map((filtro) => (
-                            <button
-                                key={filtro.id}
-                                type="button"
-                                role="tab"
-                                aria-selected={filtroPerfil === filtro.id}
-                                class={`botaoSubabaAdmin${filtroPerfil === filtro.id ? ' botaoSubabaAdminAtivo' : ''}`}
-                                onClick={() => setFiltroPerfil(filtro.id)}
-                            >
-                                {filtro.rotulo}
-                            </button>
-                        ))}
-                    </div>
+                    {/* Pílulas no desktop; no mobile, uma pílula só que abre um modal de baixo para cima. */}
+                    <SeletorModalSubabas
+                        subabas={FILTROS_PERFIL_CRACHAS}
+                        subabaAtiva={filtroPerfil}
+                        aoTrocar={setFiltroPerfil}
+                        tituloModal="Filtrar por perfil"
+                        rotuloAcessivel="Filtrar por perfil"
+                    />
                     <input
                         class="inputBuscaAdmin"
                         type="text"

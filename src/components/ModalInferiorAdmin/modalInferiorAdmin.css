@@ -41,7 +41,7 @@
 
 .cabecalhoModalInferiorAdmin {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 16px;
     padding: 20px 18px 14px;
@@ -81,6 +81,7 @@
     background: rgba(252, 248, 245, 0.08);
     color: #fcf8f5;
     cursor: pointer;
+    justify-content: center;
 }
 
 .botaoFecharModalInferiorAdmin:focus-visible {

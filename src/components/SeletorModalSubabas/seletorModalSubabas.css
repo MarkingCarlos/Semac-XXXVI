@@ -14,6 +14,7 @@
     .botaoAtivoSeletorModalSubabas {
         display: inline-flex;
         align-self: flex-start;
+        justify-content: space-between;
     }
 }
 
@@ -25,7 +26,8 @@
     min-height: 44px;
     padding: 0.5rem 1rem 0.5rem 1.25rem;
     border: none;
-    border-radius: 999px;
+    width: 100%;
+    border-radius: 15px;
     background: var(--vermelhoDiretoria);
     color: var(--Branco);
     font-family: var(--fonteCorpoMontserrat);

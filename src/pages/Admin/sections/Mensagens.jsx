@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks';
 import MensagensAutomaticas from './MensagensAutomaticas.jsx';
 import Comunicados from './Comunicados.jsx';
+import SeletorModalSubabas from '../../../components/SeletorModalSubabas/SeletorModalSubabas.jsx';
 import './mensagens.css';
 
 /* Invólucro da aba "Mensagens" do /admin. Junta duas telas que tratam do
@@ -25,20 +26,14 @@ export default function Mensagens() {
     return (
         <div class="containerSecaoComSubabasAdmin">
 
-            <div class="listaSubabasAdmin" role="tablist">
-                {SUBABAS.map((subaba) => (
-                    <button
-                        key={subaba.id}
-                        type="button"
-                        role="tab"
-                        aria-selected={subabaAtiva === subaba.id}
-                        class={`botaoSubabaAdmin${subabaAtiva === subaba.id ? ' botaoSubabaAdminAtivo' : ''}`}
-                        onClick={() => setSubabaAtiva(subaba.id)}
-                    >
-                        {subaba.rotulo}
-                    </button>
-                ))}
-            </div>
+            {/* Pílulas no desktop; no mobile, uma pílula só que abre um modal de baixo para cima. */}
+            <SeletorModalSubabas
+                subabas={SUBABAS}
+                subabaAtiva={subabaAtiva}
+                aoTrocar={setSubabaAtiva}
+                tituloModal="Mensagens"
+                rotuloAcessivel="Sub-abas de Mensagens"
+            />
 
             {subabaAtiva === 'automaticas' && <MensagensAutomaticas />}
             {subabaAtiva === 'comunicado' && <Comunicados />}
