@@ -1745,7 +1745,7 @@ a.botaoAcaoLinhaFinancas {
     flex-wrap: wrap;
     gap: 0.4rem;
     padding: 0.3rem;
-    border-radius: 999px;
+    border-radius: 15px;
     background: rgba(0, 0, 0, 0.25);
     align-self: flex-start;
 }
@@ -1753,7 +1753,7 @@ a.botaoAcaoLinhaFinancas {
 .botaoSubabaAdmin {
     padding: 0.45rem 1.1rem;
     border: none;
-    border-radius: 999px;
+    border-radius: 15px;
     background: transparent;
     color: rgba(237, 236, 236, 0.7);
     font-family: var(--fonteCorpoMontserrat), sans-serif;

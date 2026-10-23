@@ -23,3 +23,12 @@
     letter-spacing: 0.03em;
     color: var(--AmareloAuxApoio);
 }
+
+/* Lixeira de cada pergunta: o visual (e o vermelho de "confirmar") vem de
+   botaoAcaoLinhaFinancas/botaoConfirmarExclusaoFinancas, do financas.css
+   que o /admin já carrega. Aqui só o encaixe na linha. */
+.botaoExcluirPerguntaDebateAdmin {
+    flex-shrink: 0;
+    align-self: center;
+    margin-left: 8px;
+}

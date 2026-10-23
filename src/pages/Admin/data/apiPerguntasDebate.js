@@ -4,8 +4,8 @@
      `configuracao_inscricao`): editado no /admin (Informações SEMAC) e
      lido pelo /participantes. Desligado, o glow e o botão "Mande sua
      pergunta" somem e o backend recusa novas perguntas com 409.
-   - Lista de perguntas de um debate: só diretoria e presidência (aba
-     Conteúdo do /admin). */
+   - Lista de perguntas de um debate e exclusão: só diretoria e
+     presidência (aba Conteúdo do /admin). */
 
 import { cabecalhosAuth } from '../../../auth/sessao.js';
 import { apiFetch } from '../../../lib/apiFetch.js';
@@ -13,6 +13,7 @@ import { apiFetch } from '../../../lib/apiFetch.js';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 const ROTA_CONFIGURACAO = `${API_URL}/api/configuracao-inscricao/perguntas-debate`;
 const ROTA_EVENTO = `${API_URL}/api/evento`;
+const ROTA_PERGUNTAS = `${API_URL}/api/perguntas`;
 
 /* Ano ainda sem configuração volta fechado (o backend responde 200 com
    perguntasDebateAbertas=false) até alguém liberar no /admin. */
@@ -49,4 +50,16 @@ export async function listarPerguntasDebate(eventoId) {
         throw new Error(corpo?.mensagem || 'Falha ao carregar as perguntas.');
     }
     return resposta.json();
+}
+
+/* Exclusão definitiva de uma pergunta (DELETE /api/perguntas/{id}). */
+export async function excluirPerguntaDebate(perguntaId) {
+    const resposta = await apiFetch(`${ROTA_PERGUNTAS}/${perguntaId}`, {
+        method: 'DELETE',
+        headers: cabecalhosAuth(),
+    });
+    if (!resposta.ok) {
+        const corpo = await resposta.json().catch(() => null);
+        throw new Error(corpo?.mensagem || 'Falha ao excluir a pergunta.');
+    }
 }
