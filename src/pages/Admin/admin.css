@@ -1728,6 +1728,40 @@ a.botaoAcaoLinhaFinancas {
     color: rgba(237, 236, 236, 0.5);
 }
 
+/* Botão com texto ("Revogar"/"Confirmar") — o botaoAcaoLinhaFinancas é
+   quadrado de 30px, feito para ícone, e o texto vazava para fora. */
+.botaoRevogarConquistaParticipanteAdmin {
+    flex-shrink: 0;
+    border: 1px solid rgba(252, 248, 245, 0.2);
+    background: transparent;
+    color: rgba(252, 248, 245, 0.7);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+
+.botaoRevogarConquistaParticipanteAdmin:hover {
+    color: #E79839;
+    border-color: rgba(231, 152, 57, 0.5);
+}
+
+/* Segundo clique confirma: mesmo alerta da exclusão nas tabelas. */
+.botaoRevogarConquistaParticipanteAdmin.botaoConfirmarExclusaoFinancas {
+    color: #edecec;
+    background: #B13571;
+    border-color: #B13571;
+}
+
+.botaoRevogarConquistaParticipanteAdmin:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
 /* ── Sub-navegação de seção ──────────────────────────────────────────
    Usada por seções que reúnem mais de uma tela numa entrada só da navbar
    (Mensagens e Pessoas), para a barra de cima não crescer sem parar.

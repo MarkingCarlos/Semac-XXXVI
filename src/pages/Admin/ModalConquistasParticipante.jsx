@@ -50,7 +50,7 @@ export default function ModalConquistasParticipante({ participante, aoFechar, ao
     }
 
     return createPortal(
-        <div className="sobreposicaoModalConfirmarParticipantesAdmin" onClick={aoFechar}>
+        <div className="overlayModalParticipantesAdmin" onClick={aoFechar}>
             <div className="modalConfirmarParticipantesAdmin" onClick={(e) => e.stopPropagation()}>
                 <h2 className="tituloModalConquistasAdmin">CONQUISTAS DE {participante.nome.toUpperCase()}</h2>
 
@@ -79,8 +79,8 @@ export default function ModalConquistasParticipante({ participante, aoFechar, ao
                                     type="button"
                                     className={
                                         idConfirmando === conquista.conquistaId
-                                            ? 'botaoAcaoLinhaFinancas botaoConfirmarExclusaoFinancas'
-                                            : 'botaoAcaoLinhaFinancas'
+                                            ? 'botaoRevogarConquistaParticipanteAdmin botaoConfirmarExclusaoFinancas'
+                                            : 'botaoRevogarConquistaParticipanteAdmin'
                                     }
                                     disabled={idProcessando === conquista.conquistaId}
                                     title={
