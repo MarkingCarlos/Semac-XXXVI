@@ -462,6 +462,50 @@
   filter: brightness(1.08);
 }
 
+/* "Mande sua pergunta" dos debates abertos (abre o modal de envio). Mesmo
+   botão amarelo do "Voltar à programação", com o balão de fala. */
+.botaoMandarPerguntaDebateCronograma {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 46px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  background: var(--AmareloAuxApoio, #f2a63f);
+  color: var(--vermelhoAuxDiretoria, #730835);
+  font-family: var(--fonteTituloBungee), sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.botaoMandarPerguntaDebateCronograma:hover {
+  filter: brightness(1.08);
+}
+
+.botaoMandarPerguntaDebateCronograma:focus-visible {
+  outline: 2px solid var(--Branco, #ffffff);
+  outline-offset: 2px;
+}
+
+.botaoMandarPerguntaDebateCronograma svg {
+  flex-shrink: 0;
+}
+
+/* No sheet, o "Voltar" amarelo vem logo abaixo: o de pergunta fica
+   vazado para os dois não se confundirem. */
+.sheetCronograma .botaoMandarPerguntaDebateCronograma {
+  background: transparent;
+  border: 2px solid var(--AmareloAuxApoio, #f2a63f);
+  color: var(--AmareloAuxApoio, #f2a63f);
+}
+
 /* ── Monitores normais (≥ 1024px, até 2559px) ────────────────────────── */
 
 @media (min-width: 1024px) {
@@ -547,12 +591,20 @@
     gap: 14px;
   }
 
+  /* O conteúdo aqui tem gap de 5px: afasta o botão da grade. */
+  .botaoMandarPerguntaDebateCronograma {
+    margin-top: 12px;
+    min-height: 50px;
+    font-size: 0.9rem;
+  }
+
   .destaqueCampoCronograma {
     padding: 12px 16px 14px;
     border-radius: 12px;
   }
 
   .destaqueValorCronograma {
+    text-align: left;
     font-size: 0.95rem;
   }
 

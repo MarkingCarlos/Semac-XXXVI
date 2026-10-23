@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "preact/compat";
 import { getCorTipoEvento, getRotuloSobreTipoEvento } from "./tiposEventoCores.js";
 import { formatarDataCronograma } from "../cronogramaFiltro/formatarDataCronograma.js";
+import { listarDebatesAbertosPerguntas } from "../../pages/Perguntas/apiPerguntas.js";
+import ModalPerguntaDebateCronograma from "./ModalPerguntaDebateCronograma.jsx";
 import "./cronograma.css";
 
 function ordenarPorHorario(a, b) {
@@ -68,9 +70,11 @@ function DestaqueCronograma({
   eventoSelecionado,
   statusSelecionado,
   ehProximoSelecionado,
+  recebendoPerguntasDebate,
 }) {
   const [descricaoExpandida, setDescricaoExpandida] = useState(false);
   const [sheetSaindoCronograma, setSheetSaindoCronograma] = useState(false);
+  const [modalPerguntaDebateAberto, setModalPerguntaDebateAberto] = useState(false);
   const botaoFecharSheetCronogramaRef = useRef(null);
   const temporizadorSaidaSheetCronogramaRef = useRef(null);
   const fechandoSheetCronogramaRef = useRef(false);
@@ -200,6 +204,21 @@ function DestaqueCronograma({
           </div>
         </div>
 
+        {/* Só para debate recebendo perguntas agora: abre o modal de envio
+            sem sair da programação. */}
+        {recebendoPerguntasDebate && (
+          <button
+            type="button"
+            className="botaoMandarPerguntaDebateCronograma"
+            onClick={() => setModalPerguntaDebateAberto(true)}
+          >
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z" />
+            </svg>
+            Mande sua pergunta
+          </button>
+        )}
+
         {envolverEmSheet && (
           <button
             type="button"
@@ -210,6 +229,14 @@ function DestaqueCronograma({
           </button>
         )}
       </div>
+
+      {/* Portal para o body: o clique dentro dele não chega ao sheet */}
+      {modalPerguntaDebateAberto && (
+        <ModalPerguntaDebateCronograma
+          evento={eventoSelecionado}
+          aoFechar={() => setModalPerguntaDebateAberto(false)}
+        />
+      )}
     </div>
   );
 
@@ -240,6 +267,19 @@ export default function Cronograma({ eventos, selectedDay, selectedFilter }) {
   const [agora, setAgora] = useState(() => new Date());
   const [isMobile, setIsMobile] = useState(false);
   const [sheetAberto, setSheetAberto] = useState(false);
+  const [idsDebatesAbertosCronograma, setIdsDebatesAbertosCronograma] = useState([]);
+
+  // Debates recebendo perguntas agora (interruptor do /admin ligado e
+  // debate não encerrado). Se falhar, só não aparece o botão de pergunta.
+  useEffect(() => {
+    let montado = true;
+    listarDebatesAbertosPerguntas()
+      .then((debates) => {
+        if (montado) setIdsDebatesAbertosCronograma(debates.map((debate) => debate.id));
+      })
+      .catch(() => {});
+    return () => { montado = false; };
+  }, []);
 
   // Atualiza o relógio para refletir a hora real sem precisar recarregar a página
   useEffect(() => {
@@ -350,6 +390,7 @@ export default function Cronograma({ eventos, selectedDay, selectedFilter }) {
             eventoSelecionado={eventoSelecionado}
             statusSelecionado={statusSelecionado}
             ehProximoSelecionado={ehProximoSelecionado}
+            recebendoPerguntasDebate={idsDebatesAbertosCronograma.includes(eventoSelecionado.id)}
           />
         )}
       </div>

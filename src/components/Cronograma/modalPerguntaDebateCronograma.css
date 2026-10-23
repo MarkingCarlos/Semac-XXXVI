@@ -1,0 +1,337 @@
+/* Modal "Mande sua pergunta" da programação (ModalPerguntaDebateCronograma).
+   Mobile: sobe de baixo, preso à borda inferior. Desktop (≥ 1024px, mesmo
+   breakpoint do cronograma): centralizado, 50% x 50% da tela. Fica acima
+   do sheet do cronograma (z-index 1001). */
+
+.fundoModalPerguntaCronograma {
+  position: fixed;
+  inset: 0;
+  height: 100dvh;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  background: rgba(58, 4, 27, 0.85);
+  animation: surgirFundoModalPerguntaCronograma 0.25s ease both;
+}
+
+.fundoSaindoModalPerguntaCronograma {
+  animation: sumirFundoModalPerguntaCronograma 0.26s ease both;
+}
+
+.cardModalPerguntaCronograma {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 92dvh;
+  box-sizing: border-box;
+  border-radius: 20px 20px 0 0;
+  background: var(--vermelhoAuxDiretoria, #730835);
+  color: var(--Branco, #fcf8f5);
+  font-family: var(--fonteCorpoMontserrat), sans-serif;
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  animation: subirCardModalPerguntaCronograma 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cardSaindoModalPerguntaCronograma {
+  animation: descerCardModalPerguntaCronograma 0.26s cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+.cabecalhoModalPerguntaCronograma {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px 16px;
+  background: var(--AmareloAuxApoio, #f2a63f);
+  color: var(--vermelhoAuxDiretoria, #730835);
+}
+
+.textosCabecalhoModalPerguntaCronograma {
+  min-width: 0;
+}
+
+.tituloModalPerguntaCronograma {
+  margin: 0;
+  font-family: var(--fonteTituloBungee), sans-serif;
+  font-weight: 400;
+  font-size: 1.1rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.nomeDebateModalPerguntaCronograma {
+  margin: 4px 0 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.botaoFecharModalPerguntaCronograma {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  margin: -6px -8px 0 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.botaoFecharModalPerguntaCronograma:hover {
+  background: rgba(115, 8, 53, 0.12);
+}
+
+.corpoModalPerguntaCronograma {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 18px 20px calc(22px + env(safe-area-inset-bottom));
+}
+
+.formModalPerguntaCronograma,
+.sucessoModalPerguntaCronograma {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.campoModalPerguntaCronograma {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rotuloCampoModalPerguntaCronograma {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(252, 248, 245, 0.7);
+}
+
+.opcionalCampoModalPerguntaCronograma {
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.textareaPerguntaCronograma,
+.inputNomeAutorPerguntaCronograma {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid rgba(252, 248, 245, 0.35);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  color: #fcf8f5;
+  font-family: inherit;
+  /* 16px evita o zoom automático do iPhone ao focar o campo. */
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.textareaPerguntaCronograma {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.textareaPerguntaCronograma::placeholder,
+.inputNomeAutorPerguntaCronograma::placeholder {
+  color: rgba(252, 248, 245, 0.5);
+}
+
+.textareaPerguntaCronograma:focus,
+.inputNomeAutorPerguntaCronograma:focus {
+  outline: 2px solid var(--AmareloAuxApoio, #f2a63f);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.contadorCaracteresModalPerguntaCronograma {
+  align-self: flex-end;
+  font-size: 0.75rem;
+  color: rgba(252, 248, 245, 0.6);
+  font-variant-numeric: tabular-nums;
+}
+
+.avisoAutorModalPerguntaCronograma {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: rgba(252, 248, 245, 0.85);
+}
+
+.erroModalPerguntaCronograma {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #f5a3b0;
+}
+
+.botaoPrincipalModalPerguntaCronograma,
+.botaoSecundarioModalPerguntaCronograma {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 10px;
+  font-family: var(--fonteTituloBungee), sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: filter 0.2s, opacity 0.2s;
+}
+
+.botaoPrincipalModalPerguntaCronograma {
+  border: none;
+  background: var(--AmareloAuxApoio, #f2a63f);
+  color: var(--vermelhoAuxDiretoria, #730835);
+}
+
+.botaoPrincipalModalPerguntaCronograma:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.botaoPrincipalModalPerguntaCronograma:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.botaoSecundarioModalPerguntaCronograma {
+  border: 2px solid rgba(252, 248, 245, 0.5);
+  background: transparent;
+  color: #fcf8f5;
+}
+
+.botaoSecundarioModalPerguntaCronograma:hover {
+  border-color: #fcf8f5;
+}
+
+.botaoPrincipalModalPerguntaCronograma:focus-visible,
+.botaoSecundarioModalPerguntaCronograma:focus-visible,
+.botaoFecharModalPerguntaCronograma:focus-visible {
+  outline: 2px solid #fcf8f5;
+  outline-offset: 2px;
+}
+
+.chamadaSucessoModalPerguntaCronograma {
+  font-family: var(--fonteTituloBungee), sans-serif;
+  font-size: 1.4rem;
+  color: var(--AmareloAuxApoio, #f2a63f);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.descricaoSucessoModalPerguntaCronograma {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.conquistaModalPerguntaCronograma {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(242, 166, 63, 0.5);
+  border-radius: 12px;
+  background: rgba(242, 166, 63, 0.12);
+  font-size: 0.86rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.acoesSucessoModalPerguntaCronograma {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+/* ── Desktop: centralizado, 50% x 50% da tela ─────────────────────── */
+
+@media (min-width: 1024px) {
+  .fundoModalPerguntaCronograma {
+    justify-content: center;
+    align-items: center;
+  }
+
+  .cardModalPerguntaCronograma {
+    width: 50vw;
+    /* Piso para o formulário caber em telas menores */
+    min-width: min(560px, 90vw);
+    max-height: 90dvh;
+    border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    animation-name: surgirCardModalPerguntaCronograma;
+    animation-duration: 0.3s;
+  }
+
+  .cardSaindoModalPerguntaCronograma {
+    animation-name: sumirCardModalPerguntaCronograma;
+    animation-duration: 0.22s;
+  }
+
+  .cabecalhoModalPerguntaCronograma {
+    padding: 22px 26px 18px;
+  }
+
+  .tituloModalPerguntaCronograma {
+    font-size: 1.35rem;
+  }
+
+  .nomeDebateModalPerguntaCronograma {
+    font-size: 0.95rem;
+  }
+
+  .corpoModalPerguntaCronograma {
+    padding: 22px 26px 26px;
+  }
+
+  .acoesSucessoModalPerguntaCronograma {
+    flex-direction: row;
+  }
+}
+
+/* ── Animações ───────────────────────────────────────────────── */
+
+@keyframes surgirFundoModalPerguntaCronograma {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes sumirFundoModalPerguntaCronograma {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes subirCardModalPerguntaCronograma {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes descerCardModalPerguntaCronograma {
+  from { transform: translateY(0); }
+  to   { transform: translateY(100%); }
+}
+
+@keyframes surgirCardModalPerguntaCronograma {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes sumirCardModalPerguntaCronograma {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(12px) scale(0.97); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fundoModalPerguntaCronograma,
+  .cardModalPerguntaCronograma {
+    animation-duration: 0.01ms !important;
+  }
+}
