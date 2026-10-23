@@ -1,12 +1,18 @@
 import { useEffect, useState } from 'preact/hooks';
 import ModalTopoDashboard from '../../components/dashboardAdmin/ModalTopoDashboard.jsx';
-import { listarPerguntasDebate, excluirPerguntaDebate } from './data/apiPerguntasDebate.js';
+import { listarPerguntasDebate, excluirPerguntaDebate, adicionarPerguntaDebate } from './data/apiPerguntasDebate.js';
 import './modalPerguntasDebateAdmin.css';
+
+const LIMITE_CARACTERES_PERGUNTA_DEBATE_ADMIN = 500;
 
 /* Perguntas mandadas previamente para um debate (botão "Ver perguntas" da
    aba Conteúdo), mais antigas primeiro — a ordem em que a mediação costuma
    ler. Usa a casca dos modais da dashboard: no mobile o painel sobe de
    baixo.
+
+   No topo, o formulário para incluir uma pergunta à mão (ex.: entregue em
+   papel no debate). Vale mesmo com as perguntas fechadas para o público, e
+   a nova entra no fim da lista.
 
    Cada pergunta tem a lixeira de dois toques do /admin (mesmo padrão da
    exclusão de professor nos crachás): o primeiro arma, o segundo apaga de
@@ -28,6 +34,10 @@ export default function ModalPerguntasDebateAdmin({ evento, aoFechar }) {
     const [idPerguntaConfirmandoExclusaoAdmin, setIdPerguntaConfirmandoExclusaoAdmin] = useState(null);
     const [idPerguntaExcluindoAdmin, setIdPerguntaExcluindoAdmin] = useState(null);
     const [erroExclusaoPerguntaAdmin, setErroExclusaoPerguntaAdmin] = useState('');
+    const [textoNovaPerguntaAdmin, setTextoNovaPerguntaAdmin] = useState('');
+    const [autorNovaPerguntaAdmin, setAutorNovaPerguntaAdmin] = useState('');
+    const [adicionandoPerguntaAdmin, setAdicionandoPerguntaAdmin] = useState(false);
+    const [erroAdicaoPerguntaAdmin, setErroAdicaoPerguntaAdmin] = useState('');
 
     useEffect(() => {
         let ativo = true;
@@ -57,6 +67,24 @@ export default function ModalPerguntasDebateAdmin({ evento, aoFechar }) {
         }
     }
 
+    async function adicionarPergunta(eventoFormulario) {
+        eventoFormulario.preventDefault();
+        const textoLimpo = textoNovaPerguntaAdmin.trim();
+        if (!textoLimpo || adicionandoPerguntaAdmin) return;
+        setAdicionandoPerguntaAdmin(true);
+        setErroAdicaoPerguntaAdmin('');
+        try {
+            const perguntaCriada = await adicionarPerguntaDebate(evento.id, textoLimpo, autorNovaPerguntaAdmin.trim());
+            setPerguntasDebateAdmin((anteriores) => [...anteriores, perguntaCriada]);
+            setTextoNovaPerguntaAdmin('');
+            setAutorNovaPerguntaAdmin('');
+        } catch (erro) {
+            setErroAdicaoPerguntaAdmin(erro.message);
+        } finally {
+            setAdicionandoPerguntaAdmin(false);
+        }
+    }
+
     const totalPerguntasDebateAdmin = perguntasDebateAdmin.length;
     const subtituloPerguntasDebateAdmin = carregandoPerguntasDebateAdmin
         ? 'Carregando…'
@@ -68,6 +96,45 @@ export default function ModalPerguntasDebateAdmin({ evento, aoFechar }) {
             subtitulo={subtituloPerguntasDebateAdmin}
             aoFechar={aoFechar}
         >
+            <form className="formAdicionarPerguntaDebateAdmin" onSubmit={adicionarPergunta}>
+                <label className="rotuloCampoPerguntaDebateAdmin" htmlFor="textareaNovaPerguntaDebateAdmin">
+                    Adicionar pergunta
+                </label>
+                <textarea
+                    id="textareaNovaPerguntaDebateAdmin"
+                    className="textareaNovaPerguntaDebateAdmin"
+                    rows={3}
+                    maxLength={LIMITE_CARACTERES_PERGUNTA_DEBATE_ADMIN}
+                    placeholder="Digite a pergunta…"
+                    value={textoNovaPerguntaAdmin}
+                    onInput={(evento) => setTextoNovaPerguntaAdmin(evento.currentTarget.value)}
+                />
+                <div className="linhaRodapeFormPerguntaDebateAdmin">
+                    <input
+                        type="text"
+                        className="inputAutorPerguntaDebateAdmin"
+                        maxLength={120}
+                        placeholder="Quem perguntou (opcional)"
+                        aria-label="Quem perguntou (opcional)"
+                        value={autorNovaPerguntaAdmin}
+                        onInput={(evento) => setAutorNovaPerguntaAdmin(evento.currentTarget.value)}
+                    />
+                    <span className="contadorCaracteresPerguntaDebateAdmin">
+                        {textoNovaPerguntaAdmin.length}/{LIMITE_CARACTERES_PERGUNTA_DEBATE_ADMIN}
+                    </span>
+                    <button
+                        type="submit"
+                        className="botaoAdicionarPerguntaDebateAdmin"
+                        disabled={adicionandoPerguntaAdmin || !textoNovaPerguntaAdmin.trim()}
+                    >
+                        {adicionandoPerguntaAdmin ? 'Adicionando…' : 'Adicionar'}
+                    </button>
+                </div>
+                {erroAdicaoPerguntaAdmin && (
+                    <p className="estadoModalDashboard erroModalDashboard" role="alert">{erroAdicaoPerguntaAdmin}</p>
+                )}
+            </form>
+
             {carregandoPerguntasDebateAdmin && (
                 <p className="estadoModalDashboard">Carregando perguntas…</p>
             )}
@@ -89,8 +156,11 @@ export default function ModalPerguntasDebateAdmin({ evento, aoFechar }) {
                                 <p className="textoPerguntaDebateAdmin">{pergunta.texto}</p>
                                 <span className="autorPerguntaDebateAdmin">
                                     {pergunta.nomeParticipante}
-                                    {/* Nome digitado na página pública, sem conta: não é verificado. */}
-                                    {!pergunta.autorIdentificado && ' (sem login)'}
+                                    {/* Incluída à mão no /admin: mostra quem incluiu. Senão, nome
+                                        digitado na página pública, sem conta: não é verificado. */}
+                                    {pergunta.nomeCadastradaPor
+                                        ? ` · adicionada por ${pergunta.nomeCadastradaPor}`
+                                        : !pergunta.autorIdentificado && ' (sem login)'}
                                     {' · '}{formatarEnvioPerguntaDebate(pergunta.enviadaEm)}
                                 </span>
                             </div>

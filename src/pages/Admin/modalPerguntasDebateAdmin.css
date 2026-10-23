@@ -24,6 +24,110 @@
     color: var(--AmareloAuxApoio);
 }
 
+/* Formulário de inclusão à mão, no topo do modal. Campos no mesmo visual
+   do campoBuscaModalDashboard. */
+.formAdicionarPerguntaDebateAdmin {
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(252, 248, 245, 0.1);
+}
+
+.rotuloCampoPerguntaDebateAdmin {
+    display: block;
+    margin-bottom: 8px;
+    font-family: var(--fonteTituloBungee);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(252, 248, 245, 0.75);
+}
+
+.textareaNovaPerguntaDebateAdmin,
+.inputAutorPerguntaDebateAdmin {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid rgba(252, 248, 245, 0.14);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    color: #fcf8f5;
+    font-family: inherit;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+}
+
+.textareaNovaPerguntaDebateAdmin {
+    resize: vertical;
+    min-height: 84px;
+    line-height: 1.5;
+}
+
+.textareaNovaPerguntaDebateAdmin::placeholder,
+.inputAutorPerguntaDebateAdmin::placeholder {
+    color: rgba(252, 248, 245, 0.45);
+}
+
+.textareaNovaPerguntaDebateAdmin:focus-visible,
+.inputAutorPerguntaDebateAdmin:focus-visible {
+    outline: 2px solid var(--AmareloAuxApoio);
+    outline-offset: 1px;
+}
+
+.linhaRodapeFormPerguntaDebateAdmin {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.inputAutorPerguntaDebateAdmin {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.contadorCaracteresPerguntaDebateAdmin {
+    flex: 0 0 auto;
+    font-size: 0.72rem;
+    color: rgba(252, 248, 245, 0.5);
+    font-variant-numeric: tabular-nums;
+}
+
+.botaoAdicionarPerguntaDebateAdmin {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 12px;
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoEscuro);
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.botaoAdicionarPerguntaDebateAdmin:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* Mobile: o nome ocupa a linha toda e o contador + botão descem. */
+@media (max-width: 520px) {
+    .linhaRodapeFormPerguntaDebateAdmin {
+        flex-wrap: wrap;
+    }
+
+    .inputAutorPerguntaDebateAdmin {
+        flex-basis: 100%;
+    }
+
+    .contadorCaracteresPerguntaDebateAdmin {
+        margin-right: auto;
+    }
+}
+
 /* Lixeira de cada pergunta: o visual (e o vermelho de "confirmar") vem de
    botaoAcaoLinhaFinancas/botaoConfirmarExclusaoFinancas, do financas.css
    que o /admin já carrega. Aqui só o encaixe na linha. */

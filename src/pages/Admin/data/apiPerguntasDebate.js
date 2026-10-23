@@ -4,8 +4,8 @@
      `configuracao_inscricao`): editado no /admin (Informações SEMAC) e
      lido pelo /participantes. Desligado, o glow e o botão "Mande sua
      pergunta" somem e o backend recusa novas perguntas com 409.
-   - Lista de perguntas de um debate e exclusão: só diretoria e
-     presidência (aba Conteúdo do /admin). */
+   - Lista de perguntas de um debate, inclusão à mão e exclusão: só
+     diretoria e presidência (aba Conteúdo do /admin). */
 
 import { cabecalhosAuth } from '../../../auth/sessao.js';
 import { apiFetch } from '../../../lib/apiFetch.js';
@@ -48,6 +48,23 @@ export async function listarPerguntasDebate(eventoId) {
     if (!resposta.ok) {
         const corpo = await resposta.json().catch(() => null);
         throw new Error(corpo?.mensagem || 'Falha ao carregar as perguntas.');
+    }
+    return resposta.json();
+}
+
+/* Pergunta incluída à mão pela comissão (ex.: entregue em papel). Vale
+   com as perguntas fechadas; `nomeAutor` vazio aparece como "Anônimo".
+   Devolve a pergunta no mesmo formato de listarPerguntasDebate, com
+   `nomeCadastradaPor` = quem incluiu. */
+export async function adicionarPerguntaDebate(eventoId, texto, nomeAutor) {
+    const resposta = await apiFetch(`${ROTA_EVENTO}/${eventoId}/perguntas`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...cabecalhosAuth() },
+        body: JSON.stringify({ texto, nomeAutor }),
+    });
+    if (!resposta.ok) {
+        const corpo = await resposta.json().catch(() => null);
+        throw new Error(corpo?.mensagem || 'Falha ao adicionar a pergunta.');
     }
     return resposta.json();
 }
