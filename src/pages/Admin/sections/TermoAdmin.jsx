@@ -5,6 +5,7 @@ import {
     adicionarPalavrasTermo,
     removerPalavraTermo,
 } from '../data/apiTermo.js';
+import ModalPalavrasDiaTermo from './ModalPalavrasDiaTermo.jsx';
 import './termoAdmin.css';
 
 /* Termo — os quatro dias do jogo em /termo (tabelas `termo_dia` e
@@ -21,9 +22,10 @@ import './termoAdmin.css';
    com a data de hoje e não precisa de ninguém virando chave durante a
    semana.
 
-   As palavras cadastradas voltam na leitura, mas aparecem mascaradas até
-   alguém clicar em "Mostrar" — assim não vazam num compartilhamento de
-   tela durante reunião. */
+   As palavras cadastradas voltam na leitura, mas ficam recolhidas: o
+   cartão só mostra quantas são e a lista abre num modal, ainda mascarada
+   até alguém clicar em "Mostrar" — assim não vazam num compartilhamento
+   de tela durante reunião. */
 
 const ANO_ATUAL = new Date().getFullYear();
 const TOTAL_DIAS = 4;
@@ -61,8 +63,6 @@ const formatarData = (data) => {
     return `${dia}/${mes}/${ano}`;
 };
 
-const rotuloJogadores = (total) => (total === 1 ? '1 jogador' : `${total} jogadores`);
-
 export default function TermoAdmin() {
     const [dias, setDias] = useState([]);
     const [carregando, setCarregando] = useState(true);
@@ -75,18 +75,10 @@ export default function TermoAdmin() {
     const [diaSalvando, setDiaSalvando] = useState(null);
     const [palavraRemovendo, setPalavraRemovendo] = useState(null);
     const [avisoSalvo, setAvisoSalvo] = useState(null);
-    /* Ids das palavras reveladas com "Mostrar". Não persiste: recarregar
-       a página mascara todas de novo. */
-    const [palavrasVisiveisTermoAdmin, setPalavrasVisiveisTermoAdmin] = useState(() => new Set());
-
-    const alternarVisibilidadePalavra = (id) => {
-        setPalavrasVisiveisTermoAdmin((prev) => {
-            const proximo = new Set(prev);
-            if (proximo.has(id)) proximo.delete(id);
-            else proximo.add(id);
-            return proximo;
-        });
-    };
+    /* Guarda só o número do dia aberto no modal, não uma cópia: assim a
+       lista do modal acompanha `dias` quando uma palavra é removida. */
+    const [diaModalPalavrasTermoAdmin, setDiaModalPalavrasTermoAdmin] = useState(null);
+    const diaAbertoModalTermo = dias.find((d) => d.dia === diaModalPalavrasTermoAdmin);
 
     useEffect(() => {
         let ativo = true;
@@ -254,61 +246,13 @@ export default function TermoAdmin() {
                                 </form>
 
                                 {d.palavras.length > 0 && (
-                                    <ul className="listaPalavrasDiaTermoAdmin">
-                                        {d.palavras.map((palavra) => {
-                                            const palavraVisivel = palavrasVisiveisTermoAdmin.has(palavra.id);
-                                            return (
-                                                <li key={palavra.id} className="itemPalavraDiaTermoAdmin">
-                                                    <span className="textoPalavraDiaTermoAdmin">
-                                                        <strong
-                                                            className={palavraVisivel
-                                                                ? 'strongPalavraSecretaTermoAdmin'
-                                                                : 'strongPalavraSecretaTermoAdmin strongPalavraMascaradaTermoAdmin'}
-                                                            aria-label={palavraVisivel ? undefined : `Palavra oculta de ${palavra.tamanho} letras`}
-                                                        >
-                                                            {palavraVisivel ? palavra.palavra : '•'.repeat(palavra.tamanho)}
-                                                        </strong>
-                                                        <span className="spanDetalhesPalavraTermoAdmin">
-                                                            {palavra.tamanho} letras · {rotuloJogadores(palavra.jogadores)}
-                                                        </span>
-                                                    </span>
-                                                    <div className="divAcoesPalavraTermoAdmin">
-                                                        <button
-                                                            type="button"
-                                                            className="botaoMostrarPalavraTermoAdmin"
-                                                            aria-pressed={palavraVisivel}
-                                                            onClick={() => alternarVisibilidadePalavra(palavra.id)}
-                                                        >
-                                                            {palavraVisivel ? 'Ocultar' : 'Mostrar'}
-                                                        </button>
-                                                        {/* Abre o jogo contra esta palavra em nova guia,
-                                                            sem gravar jogo nem creditar xp. */}
-                                                        <a
-                                                            className="botaoTestarPalavraTermoAdmin"
-                                                            href={`/termo/teste?palavra=${palavra.id}`}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                        >
-                                                            Testar
-                                                        </a>
-                                                        {/* Palavra já sorteada fica: apagá-la levaria junto
-                                                            o jogo e as tentativas de quem a recebeu. */}
-                                                        <button
-                                                            type="button"
-                                                            className="botaoRemoverPalavraTermoAdmin"
-                                                            disabled={palavra.jogadores > 0 || palavraRemovendo === palavra.id}
-                                                            title={palavra.jogadores > 0
-                                                                ? 'Já sorteada para um participante — não pode ser removida'
-                                                                : 'Remover palavra'}
-                                                            onClick={() => removerPalavra(palavra.id)}
-                                                        >
-                                                            {palavraRemovendo === palavra.id ? 'Removendo…' : 'Remover'}
-                                                        </button>
-                                                    </div>
-                                                </li>
-                                            );
-                                        })}
-                                    </ul>
+                                    <button
+                                        type="button"
+                                        className="botaoVerPalavrasDiaTermoAdmin"
+                                        onClick={() => setDiaModalPalavrasTermoAdmin(d.dia)}
+                                    >
+                                        Ver palavras ({d.palavras.length})
+                                    </button>
                                 )}
 
                                 <form
@@ -348,6 +292,16 @@ export default function TermoAdmin() {
                         );
                     })}
                 </div>
+            )}
+
+            {diaAbertoModalTermo && (
+                <ModalPalavrasDiaTermo
+                    dia={diaAbertoModalTermo}
+                    rotuloData={formatarData(diaAbertoModalTermo.data)}
+                    palavraRemovendo={palavraRemovendo}
+                    aoRemover={removerPalavra}
+                    aoFechar={() => setDiaModalPalavrasTermoAdmin(null)}
+                />
             )}
         </section>
     );

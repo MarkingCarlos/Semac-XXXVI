@@ -101,6 +101,39 @@
     font-family: var(--fonteCorpoMontserrat);
 }
 
+/* No cartão as palavras ficam recolhidas: só este botão, que abre o modal. */
+.botaoVerPalavrasDiaTermoAdmin {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.12);
+    color: #edecec;
+    border: 1px dashed rgba(252, 248, 245, 0.25);
+    border-radius: 8px;
+    padding: 10px;
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.18s ease, color 0.18s ease;
+}
+
+.botaoVerPalavrasDiaTermoAdmin:hover {
+    border-color: #E79839;
+    color: #E79839;
+}
+
+/* O modal base tem 420px; aqui cabe a linha da palavra com as três ações. */
+.modalPalavrasDiaTermoAdmin {
+    max-width: 560px;
+}
+
+/* 20+ palavras por dia: a lista rola dentro do modal, o rodapé fica visível. */
+.listaPalavrasModalTermoAdmin {
+    max-height: 60dvh;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    padding-right: 4px;
+}
+
 /* As palavras já cadastradas — mascaradas até clicar em "Mostrar". */
 .listaPalavrasDiaTermoAdmin {
     list-style: none;
