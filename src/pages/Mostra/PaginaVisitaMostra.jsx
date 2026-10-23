@@ -84,9 +84,6 @@ export default function PaginaVisitaMostra() {
                         </span>
 
                         <div className="cartaoTrabalhoVisitaMostra">
-                            {visitaMostra.stand && (
-                                <span className="standTrabalhoVisitaMostra">STAND {visitaMostra.stand}</span>
-                            )}
                             <h1 className="tituloTrabalhoVisitaMostra">{visitaMostra.titulo}</h1>
                             <p className="apresentadoresTrabalhoVisitaMostra">{visitaMostra.apresentadores}</p>
                         </div>

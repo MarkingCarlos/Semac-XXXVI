@@ -11,11 +11,11 @@
     max-width: 62ch;
 }
 
-/* Título largo, apresentadores no meio, stand estreito. Quebra em coluna
+/* Título e apresentadores lado a lado. Quebra em coluna
    no celular. */
 .formularioNovoTrabalhoMostraAdmin {
     display: grid;
-    grid-template-columns: 2fr 2fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
     align-items: end;
     padding: 18px;
@@ -50,6 +50,31 @@
     font-family: var(--fonteCorpoMontserrat);
     font-size: 0.8125rem;
     opacity: 0.7;
+}
+
+/* No bloco os trabalhos ficam recolhidos: só este botão, que abre o
+   modal. Mesmo visual do "Ver palavras" do Termo. */
+.botaoVerTrabalhosMostraAdmin {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.12);
+    color: #edecec;
+    border: 1px dashed rgba(252, 248, 245, 0.25);
+    border-radius: 8px;
+    padding: 10px;
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.18s ease, color 0.18s ease;
+}
+
+.botaoVerTrabalhosMostraAdmin:hover {
+    border-color: #E79839;
+    color: #E79839;
+}
+
+.avisoModalTrabalhosMostraAdmin {
+    margin: 0 0 10px;
 }
 
 .listaTrabalhosMostraAdmin {
@@ -204,14 +229,6 @@
     font-family: var(--fonteTituloBungee);
     font-size: 5mm;
     letter-spacing: 0.08em;
-    color: #730835;
-}
-
-.standFolhaMostraAdmin {
-    margin-top: 6mm;
-    font-family: var(--fonteTituloBungee);
-    font-size: 14mm;
-    line-height: 1;
     color: #730835;
 }
 

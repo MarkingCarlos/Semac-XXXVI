@@ -1678,15 +1678,105 @@ a.botaoAcaoLinhaFinancas {
 /*    .gradeConquistasInfoSemac { grid-template-columns: 1fr; }*/
 /*}*/
 
-/* ── Conquistas de um participante (modal de revogação) ─────────── */
-.tituloModalConquistasAdmin {
-    font-family: 'Bungee', sans-serif;
-    font-size: 0.9rem;
-    line-height: 1.25;
-    color: var(--Branco);
-    margin: 0 0 1rem;
+/* ── Conquistas no mobile (ModalConquistasInfoSemac.jsx) ──────────
+   Até 820px (corte do MenuFabModulos) a grade some e fica o botão que
+   abre a lista de nomes; tocar num nome abre os detalhes. */
+.botaoVerConquistasInfoSemac {
+    display: none;
+    width: 100%;
+    margin-top: 1rem;
+    background: rgba(0, 0, 0, 0.12);
+    color: #edecec;
+    border: 1px dashed rgba(252, 248, 245, 0.25);
+    border-radius: 8px;
+    padding: 10px;
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
 }
 
+@media (max-width: 820px) {
+    .gradeConquistasInfoSemac {
+        display: none;
+    }
+
+    .botaoVerConquistasInfoSemac {
+        display: block;
+    }
+}
+
+.listaNomesModalConquistasInfoSemac {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* Mesmo desenho das opções do seletor de sub-abas (seletorModalSubabas.css). */
+.botaoNomeModalConquistasInfoSemac {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 52px;
+    padding: 0 14px 0 16px;
+    border: 1px solid rgba(252, 248, 245, 0.1);
+    border-radius: 12px;
+    background: rgba(252, 248, 245, 0.04);
+    color: rgba(237, 236, 236, 0.9);
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.botaoNomeModalConquistasInfoSemac:focus-visible {
+    outline: 2px solid var(--AmareloAuxApoio);
+    outline-offset: 2px;
+}
+
+.botaoNomeModalConquistasInfoSemac svg {
+    flex-shrink: 0;
+    opacity: 0.6;
+}
+
+/* Bolinha de status: amarela se ativa, como a borda do cartão. */
+.spanStatusModalConquistasInfoSemac {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(252, 248, 245, 0.25);
+}
+
+.spanStatusAtivaModalConquistasInfoSemac {
+    background: var(--AmareloAuxApoio);
+}
+
+.spanNomeModalConquistasInfoSemac {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+/* No modal de detalhes o nome já é o título: o cartão perde a moldura e
+   o nome repetido. */
+.cartaoConquistaDetalheInfoSemac {
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+.cartaoConquistaDetalheInfoSemac .nomeConquistaInfoSemac {
+    display: none;
+}
+
+/* ── Conquistas de um participante (modal de revogação) ─────────── */
 .listaConquistasParticipanteAdmin {
     list-style: none;
     margin: 0 0 1rem;

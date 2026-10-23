@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
-import { createPortal } from 'preact/compat';
+import ModalInferiorAdmin from '../../components/ModalInferiorAdmin/ModalInferiorAdmin.jsx';
 import {
     listarConquistasDoParticipante,
     revogarConquistaDoParticipante,
@@ -49,61 +49,56 @@ export default function ModalConquistasParticipante({ participante, aoFechar, ao
         }
     }
 
-    return createPortal(
-        <div className="overlayModalParticipantesAdmin" onClick={aoFechar}>
-            <div className="modalConfirmarParticipantesAdmin" onClick={(e) => e.stopPropagation()}>
-                <h2 className="tituloModalConquistasAdmin">CONQUISTAS DE {participante.nome.toUpperCase()}</h2>
+    /* Centralizado no desktop, de baixo para cima no mobile; o X do
+       cabeçalho, o clique fora e o Esc fecham com animação. */
+    return (
+        <ModalInferiorAdmin
+            titulo={`Conquistas de ${participante.nome}`}
+            aoFechar={aoFechar}
+            centralizadoNoDesktop
+        >
+            {erro && <p className="avisoErroAdmin" role="alert">{erro}</p>}
 
-                {erro && <p className="avisoErroAdmin" role="alert">{erro}</p>}
-
-                {carregando ? (
-                    <p className="estadoCarregandoParticipantesAdmin">Carregando…</p>
-                ) : conquistas.length === 0 ? (
-                    <p className="estadoCarregandoParticipantesAdmin">
-                        Este participante ainda não tem nenhuma conquista.
-                    </p>
-                ) : (
-                    <ul className="listaConquistasParticipanteAdmin">
-                        {conquistas.map((conquista) => (
-                            <li className="itemConquistaParticipanteAdmin" key={conquista.conquistaId}>
-                                <div className="textoItemConquistaParticipanteAdmin">
-                                    <span className="nomeItemConquistaParticipanteAdmin">{conquista.nome}</span>
-                                    <span className="detalheItemConquistaParticipanteAdmin">
-                                        {conquista.xpCreditado ?? 0} xp
-                                        {conquista.concedidaPorNome
-                                            ? ` · concedida por ${conquista.concedidaPorNome}`
-                                            : ' · concedida pelo sistema'}
-                                    </span>
-                                </div>
-                                <button
-                                    type="button"
-                                    className={
-                                        idConfirmando === conquista.conquistaId
-                                            ? 'botaoRevogarConquistaParticipanteAdmin botaoConfirmarExclusaoFinancas'
-                                            : 'botaoRevogarConquistaParticipanteAdmin'
-                                    }
-                                    disabled={idProcessando === conquista.conquistaId}
-                                    title={
-                                        idConfirmando === conquista.conquistaId
-                                            ? `Clique novamente para estornar ${conquista.xpCreditado ?? 0} xp`
-                                            : 'Revogar e estornar o xp'
-                                    }
-                                    onClick={() => revogar(conquista)}
-                                >
-                                    {idConfirmando === conquista.conquistaId ? 'Confirmar' : 'Revogar'}
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-
-                <div className="rodapeFormularioFinancas">
-                    <button type="button" className="botaoFantasmaFinancas" onClick={aoFechar}>
-                        Fechar
-                    </button>
-                </div>
-            </div>
-        </div>,
-        document.body,
+            {carregando ? (
+                <p className="estadoCarregandoParticipantesAdmin">Carregando…</p>
+            ) : conquistas.length === 0 ? (
+                <p className="estadoCarregandoParticipantesAdmin">
+                    Este participante ainda não tem nenhuma conquista.
+                </p>
+            ) : (
+                <ul className="listaConquistasParticipanteAdmin">
+                    {conquistas.map((conquista) => (
+                        <li className="itemConquistaParticipanteAdmin" key={conquista.conquistaId}>
+                            <div className="textoItemConquistaParticipanteAdmin">
+                                <span className="nomeItemConquistaParticipanteAdmin">{conquista.nome}</span>
+                                <span className="detalheItemConquistaParticipanteAdmin">
+                                    {conquista.xpCreditado ?? 0} xp
+                                    {conquista.concedidaPorNome
+                                        ? ` · concedida por ${conquista.concedidaPorNome}`
+                                        : ' · concedida pelo sistema'}
+                                </span>
+                            </div>
+                            <button
+                                type="button"
+                                className={
+                                    idConfirmando === conquista.conquistaId
+                                        ? 'botaoRevogarConquistaParticipanteAdmin botaoConfirmarExclusaoFinancas'
+                                        : 'botaoRevogarConquistaParticipanteAdmin'
+                                }
+                                disabled={idProcessando === conquista.conquistaId}
+                                title={
+                                    idConfirmando === conquista.conquistaId
+                                        ? `Clique novamente para estornar ${conquista.xpCreditado ?? 0} xp`
+                                        : 'Revogar e estornar o xp'
+                                }
+                                onClick={() => revogar(conquista)}
+                            >
+                                {idConfirmando === conquista.conquistaId ? 'Confirmar' : 'Revogar'}
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </ModalInferiorAdmin>
     );
 }

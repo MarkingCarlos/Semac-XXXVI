@@ -282,8 +282,12 @@ export default function ModalEditarParticipante({ pessoa, aoFechar, aoAtualizado
                                                             {textoHorarioMinicurso(evento)} · {ROTULO_STATUS_MINICURSO[status] ?? status}
                                                         </span>
                                                     </div>
+                                                    {/* Ícone X no lugar do texto: o botão é o
+                                                        quadrado de 30px das tabelas. No 2º clique
+                                                        ele fica rosa (confirmar), como na exclusão. */}
                                                     <button
                                                         type="button"
+                                                        aria-label={confirmandoRemover ? 'Confirmar remoção do minicurso' : 'Remover do minicurso'}
                                                         class={`botaoAcaoLinhaFinancas ${confirmandoRemover ? 'botaoConfirmarExclusaoFinancas' : ''}`}
                                                         disabled={presente || idRemovendoMinicurso === evento.id}
                                                         title={
@@ -295,7 +299,10 @@ export default function ModalEditarParticipante({ pessoa, aoFechar, aoAtualizado
                                                         }
                                                         onClick={() => removerMinicurso(evento)}
                                                     >
-                                                        {confirmandoRemover ? 'Confirmar' : 'Remover'}
+                                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                                                            <line x1="18" y1="6" x2="6" y2="18" />
+                                                            <line x1="6" y1="6" x2="18" y2="18" />
+                                                        </svg>
                                                     </button>
                                                 </li>
                                             )

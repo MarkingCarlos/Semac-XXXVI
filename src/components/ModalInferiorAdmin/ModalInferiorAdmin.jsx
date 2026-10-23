@@ -12,11 +12,16 @@ import './modalInferiorAdmin.css';
    modal com animação e, se precisar, abrir outra coisa só depois (ex.:
    outro modal, sem empilhar um sobre o outro).
 
-   Foco inicial: o primeiro elemento com `data-foco-inicial`, ou o X. */
+   Foco inicial: o primeiro elemento com `data-foco-inicial`, ou o X.
+
+   `centralizadoNoDesktop`: acima de 820px o painel vira um modal no
+   centro da tela, com 50% da largura e da altura, entrando e saindo com
+   fade e escala. No mobile continua subindo de baixo. Sem a prop, nada
+   muda para quem já usa o componente. */
 
 const DURACAO_SAIDA_MODAL_INFERIOR_MS = 260;
 
-export default function ModalInferiorAdmin({ titulo, subtitulo, aoFechar, children }) {
+export default function ModalInferiorAdmin({ titulo, subtitulo, aoFechar, centralizadoNoDesktop = false, children }) {
     const [modalInferiorSaindo, setModalInferiorSaindo] = useState(false);
     const painelModalInferiorRef = useRef(null);
     const botaoFecharModalInferiorRef = useRef(null);
@@ -59,13 +64,15 @@ export default function ModalInferiorAdmin({ titulo, subtitulo, aoFechar, childr
 
     /* Portal para o body: ancestrais com transform (animação de entrada
        das seções) prenderiam o position: fixed na seção. */
+    const classeSobreposicaoModalInferior = [
+        'sobreposicaoModalInferiorAdmin',
+        centralizadoNoDesktop && 'sobreposicaoCentralizadaModalInferiorAdmin',
+        modalInferiorSaindo && 'sobreposicaoSaindoModalInferiorAdmin',
+    ].filter(Boolean).join(' ');
+
     return createPortal(
         <div
-            className={
-                modalInferiorSaindo
-                    ? 'sobreposicaoModalInferiorAdmin sobreposicaoSaindoModalInferiorAdmin'
-                    : 'sobreposicaoModalInferiorAdmin'
-            }
+            className={classeSobreposicaoModalInferior}
             onClick={() => fecharModalInferior()}
         >
             <div

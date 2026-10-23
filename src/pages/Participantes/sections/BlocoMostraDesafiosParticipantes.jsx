@@ -2,7 +2,7 @@ import { useState, useEffect } from 'preact/hooks';
 import { lerProgressoMostra } from '../../Mostra/apiVisitaMostra.js';
 
 /* Bloco "Mostra Técnica" da aba Desafios: quantos trabalhos a pessoa já
-   visitou e quais faltam, com o stand de cada um, para ela saber aonde
+   visitou e quais faltam, pelo título, para ela saber aonde
    ir. A visita em si acontece lendo o QR do stand (/mostra/<codigo>).
 
    Carrega por conta própria em vez de entrar no catálogo de
@@ -78,7 +78,6 @@ export default function BlocoMostraDesafiosParticipantes() {
                             <span className="textoTrabalhoMostraDesafiosParticipantes">
                                 <strong className="tituloTrabalhoMostraDesafiosParticipantes">{trabalho.titulo}</strong>
                                 <span className="detalheTrabalhoMostraDesafiosParticipantes">
-                                    {trabalho.stand ? `Stand ${trabalho.stand} · ` : ''}
                                     {trabalho.visitado ? 'Visitado' : 'Falta visitar'}
                                 </span>
                             </span>

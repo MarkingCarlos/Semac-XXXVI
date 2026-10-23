@@ -7,6 +7,7 @@ import TimesAdmin from './TimesAdmin.jsx';
 import TermoAdmin from './TermoAdmin.jsx';
 import DesafioCifraAdmin from './DesafioCifraAdmin.jsx';
 import MostraTecnicaAdmin from './MostraTecnicaAdmin.jsx';
+import ModalConquistasInfoSemac, { CartaoConquistaInfoSemac } from './ModalConquistasInfoSemac.jsx';
 import SeletorModalSubabas from '../../../components/SeletorModalSubabas/SeletorModalSubabas.jsx';
 import {
     listarTiposInscricao,
@@ -51,7 +52,6 @@ import {
     atualizarConquista,
     alterarAtivaConquista,
     enviarImagemConquista,
-    urlImagemConquista,
     reavaliarConquistas,
 } from '../data/apiConquistas.js';
 
@@ -69,7 +69,8 @@ import {
    6. Cotas de patrocínio (tabela `cota`), nível + valor;
    7. Conquistas (tabela `conquista`) — só edição: cada conquista nasce de
       uma regra em código (CatalogoConquistas, no backend) e é criada no
-      boot. Aqui se define como ela aparece e se já vale;
+      boot. Aqui se define como ela aparece e se já vale. No mobile a
+      grade vira lista de nomes → detalhes (ModalConquistasInfoSemac.jsx);
    8. Times (TimesAdmin.jsx), 9. Termo (TermoAdmin.jsx), 9b. Cifra do Dia
       (DesafioCifraAdmin.jsx) e 10. Mostra Técnica (MostraTecnicaAdmin.jsx),
       só para quem gerencia a
@@ -122,15 +123,6 @@ const rotuloDoNivel = (nivel) =>
     NIVEIS_PATROCINIO.find((n) => n.valor === nivel)?.rotulo ?? nivel;
 
 const porValorCrescente = (a, b) => a.valor - b.valor;
-
-/* Conquista automática o sistema concede sozinho; manual alguém da
-   diretoria concede lendo o QR do crachá em /checkin. Espelha o enum
-   TipoValidacaoConquista do backend — o valor vem do código e não é
-   editável aqui. */
-const ROTULOS_VALIDACAO_CONQUISTA = {
-    AUTOMATICA: 'Automática',
-    MANUAL: 'Validada pela comissão',
-};
 
 const FORMULARIO_CONQUISTA_VAZIO = {
     nome: '',
@@ -244,6 +236,8 @@ export default function InformacoesSemac() {
     const [idConquistaEmEspera, setIdConquistaEmEspera] = useState(null);
     const [reavaliando, setReavaliando] = useState(false);
     const [avisoReavaliacao, setAvisoReavaliacao] = useState('');
+    /* Mobile: lista de nomes → detalhes (ModalConquistasInfoSemac). */
+    const [modalConquistasAberto, setModalConquistasAberto] = useState(false);
 
     const porXpMinimoCrescente = (a, b) => a.xpMinimo - b.xpMinimo;
 
@@ -1139,92 +1133,41 @@ export default function InformacoesSemac() {
                     <div className="vazioInfoSemac">
                         Nenhuma conquista no catálogo. Elas são criadas automaticamente quando a API sobe.
                     </div>
-                ) : (
+                ) : (<>
+                    {/* Desktop: grade de cartões. Mobile (até 820px): a grade
+                        some pelo CSS e fica só este botão, que abre a lista. */}
                     <div className="gradeConquistasInfoSemac">
-                        {conquistas.map((conquista) => {
-                            const emEspera = idConquistaEmEspera === conquista.id;
-                            const urlImagem = urlImagemConquista(conquista.id, conquista.imagemVersao);
-                            return (
-                                <div
-                                    className={
-                                        conquista.ativa
-                                            ? 'cartaoConquistaInfoSemac cartaoConquistaAtivaInfoSemac'
-                                            : 'cartaoConquistaInfoSemac'
-                                    }
-                                    key={conquista.id}
-                                >
-                                    <div className="topoCartaoConquistaInfoSemac">
-                                        <div className="molduraImagemConquistaInfoSemac">
-                                            {urlImagem ? (
-                                                <img
-                                                    className="imagemConquistaInfoSemac"
-                                                    src={urlImagem}
-                                                    alt={`Imagem da conquista ${conquista.nome}`}
-                                                />
-                                            ) : (
-                                                <span className="semImagemConquistaInfoSemac">sem<br />imagem</span>
-                                            )}
-                                        </div>
-
-                                        <div className="textoCartaoConquistaInfoSemac">
-                                            <span className="nomeConquistaInfoSemac">{conquista.nome}</span>
-                                            <span className="metaConquistaInfoSemac">
-                                                {conquista.pontosBase} pontos · raridade {conquista.raridade}
-                                            </span>
-                                            <span className="seloValidacaoConquistaInfoSemac">
-                                                {ROTULOS_VALIDACAO_CONQUISTA[conquista.tipoValidacao] ?? conquista.tipoValidacao}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <p className="descricaoConquistaInfoSemac">
-                                        {conquista.descricao || 'Sem descrição — o participante não saberá como conseguir.'}
-                                    </p>
-
-                                    {conquista.totalConquistado > 0 && (
-                                        <span className="contagemConquistaInfoSemac">
-                                            {conquista.totalConquistado === 1
-                                                ? '1 participante já conquistou'
-                                                : `${conquista.totalConquistado} participantes já conquistaram`}
-                                        </span>
-                                    )}
-
-                                    <div className="acoesCartaoConquistaInfoSemac">
-                                        <button
-                                            type="button"
-                                            className="botaoFantasmaFinancas"
-                                            onClick={() => abrirEdicaoConquista(conquista)}
-                                        >
-                                            Editar
-                                        </button>
-
-                                        <label className="botaoFantasmaFinancas rotuloUploadConquistaInfoSemac">
-                                            {conquista.imagemVersao ? 'Trocar imagem' : 'Enviar imagem'}
-                                            <input
-                                                type="file"
-                                                accept="image/png"
-                                                disabled={emEspera}
-                                                onChange={(e) => {
-                                                    trocarImagemConquista(conquista, e.currentTarget.files?.[0]);
-                                                    e.currentTarget.value = '';
-                                                }}
-                                            />
-                                        </label>
-                                    </div>
-
-                                    <label className="campoCheckboxInfoSemac">
-                                        <input
-                                            type="checkbox"
-                                            checked={conquista.ativa}
-                                            disabled={emEspera}
-                                            onInput={(e) => alternarAtivaConquista(conquista, e.currentTarget.checked)}
-                                        />
-                                        <span>{conquista.ativa ? 'Ativa para os participantes' : 'Inativa'}</span>
-                                    </label>
-                                </div>
-                            );
-                        })}
+                        {conquistas.map((conquista) => (
+                            <CartaoConquistaInfoSemac
+                                key={conquista.id}
+                                conquista={conquista}
+                                emEspera={idConquistaEmEspera === conquista.id}
+                                aoEditar={abrirEdicaoConquista}
+                                aoTrocarImagem={trocarImagemConquista}
+                                aoAlternarAtiva={alternarAtivaConquista}
+                            />
+                        ))}
                     </div>
+
+                    <button
+                        type="button"
+                        className="botaoVerConquistasInfoSemac"
+                        onClick={() => { setErroConquistas(''); setModalConquistasAberto(true); }}
+                    >
+                        Ver conquistas ({conquistas.length})
+                    </button>
+                </>)}
+
+                {modalConquistasAberto && (
+                    <ModalConquistasInfoSemac
+                        conquistas={conquistas}
+                        idConquistaEmEspera={idConquistaEmEspera}
+                        erro={erroConquistas}
+                        aoEditar={abrirEdicaoConquista}
+                        aoTrocarImagem={trocarImagemConquista}
+                        aoAlternarAtiva={alternarAtivaConquista}
+                        aoFechar={() => setModalConquistasAberto(false)}
+                    />
                 )}
             </section>
 

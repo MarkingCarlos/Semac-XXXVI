@@ -8,6 +8,7 @@ import {
     removerTrabalhoMostra,
     linkVisitaTrabalhoMostra,
 } from '../data/apiMostraAdmin.js';
+import ModalTrabalhosMostra from './ModalTrabalhosMostra.jsx';
 import './mostraTecnicaAdmin.css';
 
 /* Mostra Técnica — os trabalhos expostos nos stands (tabela
@@ -19,13 +20,16 @@ import './mostraTecnicaAdmin.css';
    participante lê com a câmera do celular e a visita fica registrada;
    quem visita todos ganha a conquista "Explorador da Mostra".
 
+   A lista dos trabalhos fica recolhida: o bloco mostra quantos são e abre
+   o ModalTrabalhosMostra, onde estão o QR, a edição e a remoção.
+
    "Imprimir QR codes" monta uma folha A4 por trabalho num portal no
    <body>. O crachas.css também tem um @media print global, então a folha
    só aparece com a classe `imprimindoMostraAdmin` no <body>, ligada só
    durante a impressão daqui. */
 
 const ANO_ATUAL = new Date().getFullYear();
-const FORMULARIO_VAZIO = { titulo: '', apresentadores: '', stand: '' };
+const FORMULARIO_VAZIO = { titulo: '', apresentadores: '' };
 const CLASSE_BODY_IMPRESSAO = 'imprimindoMostraAdmin';
 
 /* QR preto em fundo branco, com correção de erro alta: a folha fica
@@ -39,8 +43,6 @@ function gerarSvgQrCodeMostra(link) {
     });
 }
 
-const rotuloVisitas = (total) => (total === 1 ? '1 visita' : `${total} visitas`);
-
 export default function MostraTecnicaAdmin() {
     const [trabalhos, setTrabalhos] = useState([]);
     const [carregando, setCarregando] = useState(true);
@@ -50,16 +52,7 @@ export default function MostraTecnicaAdmin() {
     const [formularioNovoTrabalho, setFormularioNovoTrabalho] = useState(FORMULARIO_VAZIO);
     const [salvandoNovoTrabalho, setSalvandoNovoTrabalho] = useState(false);
 
-    /* Edição inline: um trabalho por vez. */
-    const [idTrabalhoEditando, setIdTrabalhoEditando] = useState(null);
-    const [formularioEdicaoTrabalho, setFormularioEdicaoTrabalho] = useState(FORMULARIO_VAZIO);
-    const [salvandoEdicaoTrabalho, setSalvandoEdicaoTrabalho] = useState(false);
-
-    /* Remover pede um segundo clique: leva junto as visitas do trabalho. */
-    const [idTrabalhoConfirmandoRemocao, setIdTrabalhoConfirmandoRemocao] = useState(null);
-    const [idTrabalhoRemovendo, setIdTrabalhoRemovendo] = useState(null);
-
-    const [idTrabalhoQrAberto, setIdTrabalhoQrAberto] = useState(null);
+    const [modalTrabalhosMostraAberto, setModalTrabalhosMostraAberto] = useState(false);
     const [svgsQrCodePorCodigo, setSvgsQrCodePorCodigo] = useState({});
 
     useEffect(() => {
@@ -102,58 +95,16 @@ export default function MostraTecnicaAdmin() {
         }
     };
 
-    const abrirEdicao = (trabalho) => {
-        limparMensagens();
-        setIdTrabalhoConfirmandoRemocao(null);
-        setIdTrabalhoEditando(trabalho.id);
-        setFormularioEdicaoTrabalho({
-            titulo: trabalho.titulo,
-            apresentadores: trabalho.apresentadores,
-            stand: trabalho.stand ?? '',
-        });
-    };
-
-    const salvarEdicao = async () => {
-        limparMensagens();
-        setSalvandoEdicaoTrabalho(true);
-        try {
-            const salvo = await atualizarTrabalhoMostra(idTrabalhoEditando, { ano: ANO_ATUAL, ...formularioEdicaoTrabalho });
-            setTrabalhos((prev) => prev.map((t) => (t.id === salvo.id ? salvo : t)));
-            setIdTrabalhoEditando(null);
-            setAviso('Trabalho salvo.');
-        } catch (e) {
-            setErro(e.message);
-        } finally {
-            setSalvandoEdicaoTrabalho(false);
-        }
+    /* Chamados pelo modal, que mostra o erro: aqui só falam com a API e
+       atualizam a lista — e com ela o resumo e as folhas de impressão. */
+    const salvarTrabalhoEditado = async (id, formulario) => {
+        const salvo = await atualizarTrabalhoMostra(id, { ano: ANO_ATUAL, ...formulario });
+        setTrabalhos((prev) => prev.map((t) => (t.id === salvo.id ? salvo : t)));
     };
 
     const removerTrabalho = async (id) => {
-        if (idTrabalhoConfirmandoRemocao !== id) {
-            setIdTrabalhoConfirmandoRemocao(id);
-            return;
-        }
-        limparMensagens();
-        setIdTrabalhoRemovendo(id);
-        try {
-            await removerTrabalhoMostra(id);
-            setTrabalhos((prev) => prev.filter((t) => t.id !== id));
-            setIdTrabalhoConfirmandoRemocao(null);
-            setAviso('Trabalho removido.');
-        } catch (e) {
-            setErro(e.message);
-        } finally {
-            setIdTrabalhoRemovendo(null);
-        }
-    };
-
-    const copiarLink = async (codigoQr) => {
-        try {
-            await navigator.clipboard.writeText(linkVisitaTrabalhoMostra(codigoQr));
-            setAviso('Link copiado.');
-        } catch {
-            setErro('Não foi possível copiar o link.');
-        }
+        await removerTrabalhoMostra(id);
+        setTrabalhos((prev) => prev.filter((t) => t.id !== id));
     };
 
     /* Liga a classe só durante a impressão: o @media print do crachas.css
@@ -169,7 +120,6 @@ export default function MostraTecnicaAdmin() {
     };
 
     const formularioNovoValido = formularioNovoTrabalho.titulo.trim() && formularioNovoTrabalho.apresentadores.trim();
-    const formularioEdicaoValido = formularioEdicaoTrabalho.titulo.trim() && formularioEdicaoTrabalho.apresentadores.trim();
     const totalVisitas = trabalhos.reduce((soma, t) => soma + t.visitas, 0);
     const qrCodesProntos = trabalhos.length > 0 && trabalhos.every((t) => svgsQrCodePorCodigo[t.codigoQr]);
 
@@ -232,16 +182,6 @@ export default function MostraTecnicaAdmin() {
                         required
                     />
                 </label>
-                <label className="campoFormularioFinancas campoStandMostraAdmin">
-                    <span className="rotuloCampoFinancas">Stand (opcional)</span>
-                    <input
-                        className="entradaFormularioFinancas"
-                        maxLength={50}
-                        placeholder="12"
-                        value={formularioNovoTrabalho.stand}
-                        onInput={(e) => setFormularioNovoTrabalho((f) => ({ ...f, stand: e.currentTarget.value }))}
-                    />
-                </label>
                 <div className="acoesFormularioMostraAdmin">
                     {aviso && <span className="avisoSalvoMostraAdmin">{aviso}</span>}
                     <button
@@ -261,142 +201,23 @@ export default function MostraTecnicaAdmin() {
             )}
 
             {!carregando && trabalhos.length > 0 && (
-                <ul className="listaTrabalhosMostraAdmin">
-                    {trabalhos.map((trabalho) => {
-                        const editandoEste = idTrabalhoEditando === trabalho.id;
-                        const qrAberto = idTrabalhoQrAberto === trabalho.id;
-                        const confirmandoRemocao = idTrabalhoConfirmandoRemocao === trabalho.id;
+                <button
+                    type="button"
+                    className="botaoVerTrabalhosMostraAdmin"
+                    onClick={() => setModalTrabalhosMostraAberto(true)}
+                >
+                    Ver trabalhos ({trabalhos.length})
+                </button>
+            )}
 
-                        if (editandoEste) {
-                            return (
-                                <li key={trabalho.id} className="itemTrabalhoMostraAdmin">
-                                    <form
-                                        className="formularioEdicaoTrabalhoMostraAdmin"
-                                        onSubmit={(evento) => { evento.preventDefault(); salvarEdicao(); }}
-                                    >
-                                        <label className="campoFormularioFinancas">
-                                            <span className="rotuloCampoFinancas">Título</span>
-                                            <input
-                                                className="entradaFormularioFinancas"
-                                                maxLength={200}
-                                                value={formularioEdicaoTrabalho.titulo}
-                                                onInput={(e) => setFormularioEdicaoTrabalho((f) => ({ ...f, titulo: e.currentTarget.value }))}
-                                                required
-                                            />
-                                        </label>
-                                        <label className="campoFormularioFinancas">
-                                            <span className="rotuloCampoFinancas">Apresentadores</span>
-                                            <input
-                                                className="entradaFormularioFinancas"
-                                                maxLength={300}
-                                                value={formularioEdicaoTrabalho.apresentadores}
-                                                onInput={(e) => setFormularioEdicaoTrabalho((f) => ({ ...f, apresentadores: e.currentTarget.value }))}
-                                                required
-                                            />
-                                        </label>
-                                        <label className="campoFormularioFinancas">
-                                            <span className="rotuloCampoFinancas">Stand</span>
-                                            <input
-                                                className="entradaFormularioFinancas"
-                                                maxLength={50}
-                                                value={formularioEdicaoTrabalho.stand}
-                                                onInput={(e) => setFormularioEdicaoTrabalho((f) => ({ ...f, stand: e.currentTarget.value }))}
-                                            />
-                                        </label>
-                                        <div className="divAcoesTrabalhoMostraAdmin">
-                                            <button
-                                                type="button"
-                                                className="botaoAcaoTrabalhoMostraAdmin"
-                                                onClick={() => setIdTrabalhoEditando(null)}
-                                            >
-                                                Cancelar
-                                            </button>
-                                            <button
-                                                type="submit"
-                                                className="botaoPrimarioFinancas"
-                                                disabled={salvandoEdicaoTrabalho || !formularioEdicaoValido}
-                                            >
-                                                {salvandoEdicaoTrabalho ? 'Salvando…' : 'Salvar'}
-                                            </button>
-                                        </div>
-                                    </form>
-                                </li>
-                            );
-                        }
-
-                        return (
-                            <li key={trabalho.id} className="itemTrabalhoMostraAdmin">
-                                <div className="linhaTrabalhoMostraAdmin">
-                                    <div className="textoTrabalhoMostraAdmin">
-                                        <strong className="tituloTrabalhoMostraAdmin">{trabalho.titulo}</strong>
-                                        <span className="detalhesTrabalhoMostraAdmin">
-                                            {trabalho.apresentadores}
-                                            {trabalho.stand && ` · Stand ${trabalho.stand}`}
-                                            {' · '}{rotuloVisitas(trabalho.visitas)}
-                                        </span>
-                                    </div>
-                                    <div className="divAcoesTrabalhoMostraAdmin">
-                                        <button
-                                            type="button"
-                                            className="botaoAcaoTrabalhoMostraAdmin"
-                                            aria-expanded={qrAberto}
-                                            onClick={() => setIdTrabalhoQrAberto(qrAberto ? null : trabalho.id)}
-                                        >
-                                            {qrAberto ? 'Fechar QR' : 'QR code'}
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="botaoAcaoTrabalhoMostraAdmin"
-                                            onClick={() => abrirEdicao(trabalho)}
-                                        >
-                                            Editar
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className={confirmandoRemocao
-                                                ? 'botaoAcaoTrabalhoMostraAdmin botaoConfirmarRemocaoMostraAdmin'
-                                                : 'botaoAcaoTrabalhoMostraAdmin'}
-                                            disabled={idTrabalhoRemovendo === trabalho.id}
-                                            title={trabalho.visitas > 0
-                                                ? 'Remove também as visitas já registradas para este trabalho'
-                                                : 'Remover trabalho'}
-                                            onClick={() => removerTrabalho(trabalho.id)}
-                                            onBlur={() => { if (confirmandoRemocao) setIdTrabalhoConfirmandoRemocao(null); }}
-                                        >
-                                            {idTrabalhoRemovendo === trabalho.id
-                                                ? 'Removendo…'
-                                                : confirmandoRemocao ? 'Confirmar remoção' : 'Remover'}
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {qrAberto && (
-                                    <div className="divPreviaQrMostraAdmin">
-                                        {svgsQrCodePorCodigo[trabalho.codigoQr] && (
-                                            <div
-                                                className="divSvgPreviaQrMostraAdmin"
-                                                // SVG gerado localmente pela lib `qrcode`.
-                                                dangerouslySetInnerHTML={{ __html: svgsQrCodePorCodigo[trabalho.codigoQr] }}
-                                            />
-                                        )}
-                                        <div className="divLinkPreviaQrMostraAdmin">
-                                            <code className="codeLinkQrMostraAdmin">
-                                                {linkVisitaTrabalhoMostra(trabalho.codigoQr)}
-                                            </code>
-                                            <button
-                                                type="button"
-                                                className="botaoAcaoTrabalhoMostraAdmin"
-                                                onClick={() => copiarLink(trabalho.codigoQr)}
-                                            >
-                                                Copiar link
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
-                            </li>
-                        );
-                    })}
-                </ul>
+            {modalTrabalhosMostraAberto && (
+                <ModalTrabalhosMostra
+                    trabalhos={trabalhos}
+                    svgsQrCodePorCodigo={svgsQrCodePorCodigo}
+                    aoSalvarEdicao={salvarTrabalhoEditado}
+                    aoRemover={removerTrabalho}
+                    aoFechar={() => setModalTrabalhosMostraAberto(false)}
+                />
             )}
 
             {createPortal(
@@ -404,7 +225,6 @@ export default function MostraTecnicaAdmin() {
                     {trabalhos.map((trabalho) => (
                         <div key={trabalho.id} className="folhaA4MostraAdmin">
                             <span className="rotuloEventoFolhaMostraAdmin">MOSTRA TÉCNICA · SEMAC XXXVI</span>
-                            {trabalho.stand && <span className="standFolhaMostraAdmin">STAND {trabalho.stand}</span>}
                             <h1 className="tituloFolhaMostraAdmin">{trabalho.titulo}</h1>
                             <p className="apresentadoresFolhaMostraAdmin">{trabalho.apresentadores}</p>
                             {svgsQrCodePorCodigo[trabalho.codigoQr] && (

@@ -157,14 +157,14 @@ export default function TermoAdmin() {
         }
     };
 
+    /* Chamado pelo modal, que mostra o erro: o aviso do bloco ficaria
+       atrás do fundo escuro e ninguém veria. */
     const removerPalavra = async (id) => {
         setErro('');
         setAvisoSalvo(null);
         setPalavraRemovendo(id);
         try {
             substituirDia(await removerPalavraTermo(id));
-        } catch (e) {
-            setErro(e.message);
         } finally {
             setPalavraRemovendo(null);
         }

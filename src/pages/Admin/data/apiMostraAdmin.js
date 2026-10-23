@@ -25,21 +25,21 @@ export async function listarTrabalhosMostraAdmin(ano) {
     return lerOuFalhar(resposta, 'Falha ao carregar os trabalhos da Mostra Técnica.');
 }
 
-export async function criarTrabalhoMostra({ ano, titulo, apresentadores, stand }) {
+export async function criarTrabalhoMostra({ ano, titulo, apresentadores }) {
     const resposta = await apiFetch(ROTA, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...cabecalhosAuth() },
-        body: JSON.stringify({ ano, titulo, apresentadores, stand }),
+        body: JSON.stringify({ ano, titulo, apresentadores }),
     });
     return lerOuFalhar(resposta, 'Falha ao cadastrar o trabalho.');
 }
 
 /* O código do QR não muda na edição: o QR já impresso continua valendo. */
-export async function atualizarTrabalhoMostra(id, { ano, titulo, apresentadores, stand }) {
+export async function atualizarTrabalhoMostra(id, { ano, titulo, apresentadores }) {
     const resposta = await apiFetch(`${ROTA}/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', ...cabecalhosAuth() },
-        body: JSON.stringify({ ano, titulo, apresentadores, stand }),
+        body: JSON.stringify({ ano, titulo, apresentadores }),
     });
     return lerOuFalhar(resposta, 'Falha ao salvar o trabalho.');
 }
