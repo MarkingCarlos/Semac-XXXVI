@@ -1860,7 +1860,7 @@
 .rodapeCartaoDesafioParticipantes {
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
+  justify-content: center;
   gap: 12px;
   flex-wrap: wrap;
 }

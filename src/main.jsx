@@ -14,6 +14,7 @@ const Inscricao = lazy(() => import('./pages/Inscricao/Inscricao.jsx'));
 const PaginaCotas = lazy(() => import('./pages/PaginaCotas/PaginaCotas.jsx'));
 const Checkin = lazy(() => import('./components/qrcode/ModalQrCode.jsx'));
 const Termo = lazy(() => import('./pages/Termo/termo.jsx'));
+const DesafioCifra = lazy(() => import('./pages/DesafioCifra/desafioCifra.jsx'));
 const Sorteio = lazy(() => import('./pages/Sorteio/sorteio.jsx'));
 const TelaoSorteio = lazy(() => import('./pages/Sorteio/telaoSorteio.jsx'));
 const PainelDebate = lazy(() => import('./pages/Debate/painelDebate.jsx'));
@@ -78,6 +79,14 @@ function RotaAdmin() {
 function RotaTesteTermo() {
     return temAcessoGamificacao()
         ? <Termo modoTeste />
+        : <Redirect to="/inscricoes?tab=entrar&next=/admin" />;
+}
+
+/* Modo teste da Cifra do Dia, aberto em nova guia pelo botão "Testar" do
+   /admin -> Cifra do Dia. Mesmo público que cadastra os desafios. */
+function RotaTesteDesafioCifra() {
+    return temAcessoGamificacao()
+        ? <DesafioCifra modoTeste />
         : <Redirect to="/inscricoes?tab=entrar&next=/admin" />;
 }
 
@@ -159,6 +168,8 @@ render(
             <Route path="/perguntas"><PaginaPerguntas /></Route>
             <Route path="/termo/teste"><RotaTesteTermo/></Route>
             <Route path="/termo"><Termo/></Route>
+            <Route path="/desafio-cifra/teste"><RotaTesteDesafioCifra/></Route>
+            <Route path="/desafio-cifra"><DesafioCifra/></Route>
             <Route path="/sorteio/telao"><RotaTelaoSorteio/></Route>
             <Route path="/sorteio"><RotaSorteio/></Route>
             <Route path="/debate/:id/telao"><RotaTelaoDebate/></Route>

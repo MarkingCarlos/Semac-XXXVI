@@ -1,0 +1,231 @@
+/* Campo em casas da Cifra do Dia (campoOtpCifra.jsx), no visual de cofre
+   do design da SEMAC com as cores do site. A letra entra subindo e
+   desfocada como no Input OTP do animate-ui; a casa da vez mostra um "_"
+   com anel âmbar. */
+
+@keyframes entrarCaracterCampoOtpCifra {
+    from { opacity: 0; transform: translateY(8px) scale(0.6); filter: blur(4px); }
+    to   { opacity: 1; transform: translateY(0) scale(1);     filter: blur(0); }
+}
+
+@keyframes piscarCursorCampoOtpCifra {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.2; }
+}
+
+@keyframes balancarCampoOtpCifra {
+    0%, 100% { transform: translateX(0); }
+    20%      { transform: translateX(-9px); }
+    40%      { transform: translateX(9px); }
+    60%      { transform: translateX(-6px); }
+    80%      { transform: translateX(6px); }
+}
+
+.divEnvoltorioCampoOtpCifra {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* --casasLinhaCampoOtpCifra (vem do jsx) é quantas casas cabem numa linha
+   do celular: a casa encolhe até esse número caber. Blocos que não cabem
+   lado a lado descem inteiros para a linha de baixo; um bloco sozinho
+   maior que a linha quebra dentro dele. */
+.divCampoOtpCifra {
+    --casasLinhaCampoOtpCifra: 9;
+    --vaoCasaCampoOtpCifra: 6px;
+    --ladoCasaCampoOtpCifra: max(24px, min(
+        36px,
+        calc((min(100vw - 40px, 560px) - (var(--casasLinhaCampoOtpCifra) - 1) * var(--vaoCasaCampoOtpCifra)) / var(--casasLinhaCampoOtpCifra))
+    ));
+    position: relative;
+    width: 100%;
+    cursor: text;
+}
+
+.campoTremendoCampoOtpCifra {
+    animation: balancarCampoOtpCifra 0.4s ease;
+}
+
+.divBlocosCampoOtpCifra {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    /* O vão maior entre blocos é o que separa MAKE · THEM · BELIEVE. Um
+       separador desenhado sobraria no começo da linha quando o bloco
+       desce. */
+    gap: 8px 18px;
+}
+
+.divGrupoCampoOtpCifra {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    gap: 8px var(--vaoCasaCampoOtpCifra);
+}
+
+/* Casa vazia: tracejada e afundada. */
+.divCasaCampoOtpCifra {
+    position: relative;
+    width: var(--ladoCasaCampoOtpCifra);
+    height: calc(var(--ladoCasaCampoOtpCifra) * 1.3);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    border: 1.5px dashed rgba(255, 255, 255, 0.28);
+    background: rgba(0, 0, 0, 0.22);
+    box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.25);
+    color: var(--AmareloAuxApoio);
+    font-family: var(--fonteTituloBungee);
+    font-size: calc(var(--ladoCasaCampoOtpCifra) * 0.5);
+    transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+.casaPreenchidaCampoOtpCifra {
+    border: 1.5px solid var(--AmareloAuxApoio);
+    background: rgb(231 152 57 / 0.14);
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* A casa da vez: "_" âmbar com anel. Com o campo focado, o "_" pisca. */
+.casaAtivaCampoOtpCifra {
+    border: 2px solid var(--AmareloAuxApoio);
+    background: rgba(0, 0, 0, 0.28);
+    box-shadow: 0 0 0 4px rgb(231 152 57 / 0.22);
+}
+
+.casaFocadaCampoOtpCifra .spanCursorCampoOtpCifra {
+    animation: piscarCursorCampoOtpCifra 1s ease-in-out infinite;
+}
+
+/* Animação de envio: as casas ainda não alcançadas embaralham... */
+.casaEmbaralhadaCampoOtpCifra {
+    border: 1.5px solid rgb(231 152 57 / 0.45);
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--Branco);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: calc(var(--ladoCasaCampoOtpCifra) * 0.45);
+}
+
+/* ...e as alcançadas travam cheias de âmbar. */
+.casaTravadaCampoOtpCifra {
+    border: 1.5px solid var(--AmareloAuxApoio);
+    background: var(--AmareloAuxApoio);
+    color: var(--vermelhoEscuro);
+    box-shadow: 0 0 12px rgb(231 152 57 / 0.55);
+}
+
+.spanCaracterCampoOtpCifra {
+    display: inline-block;
+    animation: entrarCaracterCampoOtpCifra 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.spanCursorCampoOtpCifra {
+    line-height: 1;
+}
+
+/* O input de verdade fica por cima das casas, invisível. 16px de fonte
+   para o Safari do iPhone não dar zoom ao focar. */
+.inputOcultoCampoOtpCifra {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    border: none;
+    background: transparent;
+    color: transparent;
+    caret-color: transparent;
+    font-size: 16px;
+    cursor: text;
+}
+
+/* Teclado dos números pequenos: 5 colunas, ¹ a ⁹ e o apagar. */
+.divTecladoCampoOtpCifra {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.botaoTeclaCampoOtpCifra {
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: var(--vermelhoAux2Diretoria);
+    color: var(--Branco);
+    font-family: var(--fonteTituloBungee);
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #45051E;
+    touch-action: manipulation;
+    transition: transform 0.08s, box-shadow 0.08s;
+}
+
+.botaoTeclaCampoOtpCifra:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #45051E;
+}
+
+.botaoTeclaCampoOtpCifra:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.botaoApagarCampoOtpCifra {
+    border-color: rgb(231 152 57 / 0.45);
+    background: var(--vermelhoEscuro);
+    color: var(--AmareloAuxApoio);
+    box-shadow: 0 4px 0 #3A0418;
+}
+
+.botaoApagarCampoOtpCifra:active:not(:disabled) {
+    box-shadow: 0 1px 0 #3A0418;
+}
+
+/* Número pequeno desenhado com o algarismo comum da fonte (ver
+   textoCifra.jsx), para ¹ e ⁵ saírem do mesmo tamanho. Vale para a senha,
+   as casas e as teclas. */
+.spanSobrescritoTextoCifra {
+    font-size: 0.6em;
+    line-height: 1;
+    vertical-align: 0.7em;
+}
+
+@media (min-width: 1024px) {
+    .divCampoOtpCifra {
+        --ladoCasaCampoOtpCifra: 38px;
+    }
+
+    .divTecladoCampoOtpCifra {
+        gap: 12px;
+    }
+
+    .botaoTeclaCampoOtpCifra {
+        height: 60px;
+        border-radius: 14px;
+        font-size: 30px;
+        box-shadow: 0 5px 0 #45051E;
+    }
+
+    .botaoApagarCampoOtpCifra {
+        box-shadow: 0 5px 0 #3A0418;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .spanCaracterCampoOtpCifra,
+    .campoTremendoCampoOtpCifra,
+    .casaFocadaCampoOtpCifra .spanCursorCampoOtpCifra {
+        animation: none;
+    }
+}

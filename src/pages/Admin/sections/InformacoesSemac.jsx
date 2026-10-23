@@ -5,6 +5,7 @@ import { formatarCentavos } from '../../Financas/utils/moeda.js';
 import { temAcessoFinanceiro, temAcessoGamificacao } from '../../../auth/sessao.js';
 import TimesAdmin from './TimesAdmin.jsx';
 import TermoAdmin from './TermoAdmin.jsx';
+import DesafioCifraAdmin from './DesafioCifraAdmin.jsx';
 import MostraTecnicaAdmin from './MostraTecnicaAdmin.jsx';
 import SeletorModalSubabas from '../../../components/SeletorModalSubabas/SeletorModalSubabas.jsx';
 import {
@@ -69,8 +70,9 @@ import {
    7. Conquistas (tabela `conquista`) — só edição: cada conquista nasce de
       uma regra em código (CatalogoConquistas, no backend) e é criada no
       boot. Aqui se define como ela aparece e se já vale;
-   8. Times (TimesAdmin.jsx), 9. Termo (TermoAdmin.jsx) e 10. Mostra
-      Técnica (MostraTecnicaAdmin.jsx), só para quem gerencia a
+   8. Times (TimesAdmin.jsx), 9. Termo (TermoAdmin.jsx), 9b. Cifra do Dia
+      (DesafioCifraAdmin.jsx) e 10. Mostra Técnica (MostraTecnicaAdmin.jsx),
+      só para quem gerencia a
       gamificação — os mesmos papéis que o backend aceita.
    Valores de ingresso/cota/meta em centavos na interface, convertidos na
    borda da API. Xp mínimo do nível é inteiro puro, sem conversão.
@@ -1226,10 +1228,11 @@ export default function InformacoesSemac() {
                 )}
             </section>
 
-            {/* ── Times, Termo e Mostra Técnica ───────────────── */}
+            {/* ── Times, Termo, Cifra do Dia e Mostra Técnica ── */}
             {podeGerenciarTimesTermo && (<>
                 <TimesAdmin />
                 <TermoAdmin />
+                <DesafioCifraAdmin />
                 <MostraTecnicaAdmin />
             </>)}
             </>)}

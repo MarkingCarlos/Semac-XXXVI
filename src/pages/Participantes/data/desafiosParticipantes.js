@@ -3,8 +3,8 @@
    Desafios são jogos que o participante conclui para ganhar XP. Duas
    famílias:
 
-     - DIÁRIOS: valem mais e são elaborados para cada dia do evento.
-       Nenhum existe ainda — o bloco mostra o aviso de "em breve".
+     - DIÁRIOS: valem mais e são elaborados para cada dia do evento. A
+       Cifra do Dia é o primeiro.
      - BÁSICOS: sempre disponíveis durante a semana. O Termo é o primeiro.
 
    Por que o catálogo está em código e não no banco: hoje há um desafio.
@@ -21,6 +21,7 @@
    `carregarEstado` (um estado só). */
 
 import { listarDiasTermo } from '../../Termo/apiTermo.js';
+import { listarDiasDesafioCifra } from '../../DesafioCifra/apiDesafioCifra.js';
 
 export const CATEGORIA_DIARIO_DESAFIOS = 'diario';
 export const CATEGORIA_BASICO_DESAFIOS = 'basico';
@@ -147,6 +148,67 @@ async function carregarCartoesTermo(desafio) {
     }));
 }
 
+const TOTAL_TENTATIVAS_CIFRA = 5;
+
+/* "2026-10-27" -> "27/10", para o nome do card. */
+const diaMesDesafios = (data) => {
+    const [, mes, dia] = data.split('-');
+    return `${dia}/${mes}`;
+};
+
+/* Estado de um card da Cifra do Dia a partir de uma linha de
+   GET /api/desafio-cifra/meus. Mesmas situações do Termo, com uma
+   diferença: a cifra não tem treino, então o card concluído leva de volta
+   à página só para ver o resultado. */
+function estadoDoDiaCifra(dia) {
+    const xpGanho = dia.encerrado ? (dia.xpGanho ?? 0) : undefined;
+
+    if (!dia.hoje) {
+        return {
+            situacao: SITUACAO_ENCERRADO_DESAFIOS,
+            detalhe: dia.venceu ? 'Você decifrou esse dia.' : 'Esse dia já passou.',
+            xpGanho,
+        };
+    }
+
+    if (dia.encerrado) {
+        return dia.venceu
+            ? { situacao: SITUACAO_CONCLUIDO_DESAFIOS, detalhe: 'Você decifrou a senha de hoje.', xpGanho, acao: 'VER RESULTADO' }
+            : { situacao: SITUACAO_FINALIZADO_DESAFIOS, detalhe: 'Não foi dessa vez.', xpGanho };
+    }
+
+    if (dia.tentativasUsadas > 0) {
+        return {
+            situacao: SITUACAO_EM_ANDAMENTO_DESAFIOS,
+            detalhe: `${dia.tentativasUsadas} de ${TOTAL_TENTATIVAS_CIFRA} tentativas usadas.`,
+        };
+    }
+
+    return {
+        situacao: SITUACAO_DISPONIVEL_DESAFIOS,
+        detalhe: `Você tem ${TOTAL_TENTATIVAS_CIFRA} tentativas.`,
+    };
+}
+
+/* Um card por dia de Cifra já ocorrido, como o Termo. */
+async function carregarCartoesCifra(desafio) {
+    const dias = await listarDiasDesafioCifra();
+
+    if (!dias) {
+        return [cartaoIndisponivelDesafios(desafio, '')];
+    }
+    if (dias.length === 0) {
+        return [cartaoIndisponivelDesafios(desafio, 'Uma senha nova em cada dia da SEMAC.')];
+    }
+
+    return dias.map((dia) => ({
+        ...desafio,
+        id: `${desafio.id}-${dia.data}`,
+        nome: `${desafio.nome} · ${diaMesDesafios(dia.data)}`,
+        estado: estadoDoDiaCifra(dia),
+    }));
+}
+
 /* Card sem estado jogável: vale para o desafio que ainda não abriu e para
    o que não pôde ser carregado. Mantém o `id` do catálogo, então é sempre
    um só por desafio. */
@@ -158,6 +220,15 @@ function cartaoIndisponivelDesafios(desafio, detalhe) {
 }
 
 export const DESAFIOS_PARTICIPANTES = [
+    {
+        id: 'cifra',
+        categoria: CATEGORIA_DIARIO_DESAFIOS,
+        nome: 'Cifra do Dia',
+        descricao: 'Decifre a senha criptografada do dia.',
+        xp: 25,
+        rota: '/desafio-cifra',
+        carregarCartoes: carregarCartoesCifra,
+    },
     {
         id: 'termo',
         categoria: CATEGORIA_BASICO_DESAFIOS,

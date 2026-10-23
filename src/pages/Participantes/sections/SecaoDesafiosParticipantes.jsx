@@ -48,6 +48,10 @@ function CartaoDesafioParticipantes({ desafio, onAbrir }) {
        quem errou); as outras mostram o que o desafio vale. O destaque é só
        para xp que entrou — "+0 XP" em verde seria comemorar a derrota. */
     const xpExibido = estado.xpGanho ?? desafio.xp;
+
+    /* O estado pode tirar o botão que a situação daria: a Cifra do Dia
+       concluída não tem treino, então "JOGAR DE NOVO" não leva a nada. */
+    const acao = estado.acao !== undefined ? estado.acao : apresentacao.acao;
     const ganhouXp = estado.xpGanho > 0;
 
     return (
@@ -69,13 +73,13 @@ function CartaoDesafioParticipantes({ desafio, onAbrir }) {
 
             <div className="rodapeCartaoDesafioParticipantes">
 
-                {apresentacao.acao && (
+                {acao && (
                     <button
                         type="button"
                         className="botaoCartaoDesafioParticipantes"
                         onClick={() => onAbrir(estado.rota ?? desafio.rota)}
                     >
-                        {apresentacao.acao}
+                        {acao}
                     </button>
                 )}
             </div>
