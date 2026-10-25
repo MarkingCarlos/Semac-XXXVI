@@ -2,7 +2,8 @@
    telaVerificacaoQrKits.css — câmera que confirma o QR do crachá antes
    de entregar o kit (só no celular). Ocupa a tela toda por cima do
    /admin: fixed + inset 0 + 100dvh, nunca 100vh (no iPhone a barra do
-   Safari esconde o fim da tela).
+   Safari esconde o fim da tela). Mesma paleta vermelha da câmera do
+   /checkin (TelaCameraCheckin.css).
    ================================================================= */
 
 @keyframes entradaTelaVerificacaoQrKits {
@@ -21,7 +22,7 @@
     gap: 1rem;
     padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
     box-sizing: border-box;
-    background-color: var(--Preto);
+    background-color: var(--vermelhoAuxDiretoria);
     color: var(--Branco);
     font-family: 'Montserrat', sans-serif;
     animation: entradaTelaVerificacaoQrKits 0.25s ease-out;
@@ -35,8 +36,8 @@
     gap: 0.75rem;
     padding: 0.85rem 1rem;
     border-radius: 14px;
-    background-color: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: var(--vermelhoDiretoria);
+    border: none;
 }
 
 .infoPessoaVerificacaoQrKits {
@@ -84,7 +85,7 @@
     min-height: 0;
     border-radius: 20px;
     overflow: hidden;
-    background-color: #0d0d0d;
+    background-color: #1b0510;
 }
 
 .videoCameraVerificacaoQrKits {
@@ -119,7 +120,7 @@
     aspect-ratio: 1;
     border: 4px solid var(--AmareloAuxApoio);
     border-radius: 18px;
-    box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.35);
+    box-shadow: 0 0 0 100vmax rgba(27, 5, 16, 0.35);
 }
 
 .legendaVerificacaoQrKits {
@@ -128,7 +129,7 @@
     right: 0;
     bottom: 0;
     padding: 1.5rem 1rem 1rem;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0));
+    background: linear-gradient(to top, rgba(27, 5, 16, 0.92), rgba(27, 5, 16, 0));
     text-align: center;
     font-size: 0.85rem;
     font-weight: 600;
@@ -172,8 +173,8 @@
     gap: 0.6rem;
     padding: 1rem;
     border-radius: 14px;
-    background-color: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: var(--vermelhoDiretoria);
+    border: none;
 }
 
 .rotuloJustificativaSemQrKits {
@@ -189,7 +190,7 @@
     padding: 0.65rem 0.75rem;
     border-radius: 10px;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    background-color: rgba(0, 0, 0, 0.35);
+    background-color: rgba(27, 5, 16, 0.55);
     color: var(--Branco);
     font-family: 'Montserrat', sans-serif;
     font-size: 16px;
