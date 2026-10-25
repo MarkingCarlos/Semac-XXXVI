@@ -36,12 +36,14 @@ export const nomeJanelaTelaoDebate = (eventoId) => `semacTelaoDebate${eventoId}`
 
 /* modo: 'vs' (os dois lado a lado) | 'a' | 'b' (fala de um, com timer) |
    'q' (pergunta em destaque na tela toda).
+   replica: a fala de 'a'/'b' é uma réplica (tempo próprio, menor).
    participantes: [{ id, nome, cargo, temFoto }] — o 1º é o A, o 2º o B. */
 export const ESTADO_INICIAL_TELAO_DEBATE = {
     eventoId: null,
     tituloDebate: '',
     participantes: [],
     modo: 'vs',
+    replica: false,
     rodando: false,
     fimEm: 0,
     restanteMs: 180000,

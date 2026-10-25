@@ -229,6 +229,8 @@
     display: flex;
     flex-direction: column;
     gap: 36px;
+    /* Não passa da área do destaque; o texto encolhe a fonte para caber. */
+    max-height: 100%;
 }
 
 .divDetalheCaixaPerguntaTelaoDebate {
@@ -257,9 +259,10 @@
     line-height: 1.2;
     color: #FCF8F5;
     text-wrap: balance;
-    display: -webkit-box;
-    -webkit-line-clamp: 6;
-    -webkit-box-orient: vertical;
+    /* Sem line-clamp: a pergunta aparece sempre inteira e a fonte é
+       reduzida para caber (usarFonteQueCabeTelaoDebate). */
+    flex: 1 1 auto;
+    min-height: 0;
     overflow: hidden;
 }
 
@@ -301,9 +304,8 @@
     font-weight: 600;
     line-height: 1.3;
     color: #FCF8F5;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    /* A altura máxima vem do JSX (usarPerguntaResumoTelaoDebate): cresce
+       quando a pergunta é longa, e os cards descem para abrir espaço. */
     overflow: hidden;
 }
 
@@ -381,8 +383,8 @@
     font-weight: 700;
     line-height: 1.25;
     color: #FCF8F5;
-    display: -webkit-box;
-    -webkit-line-clamp: 6;
-    -webkit-box-orient: vertical;
+    /* Espaço até o pé do palco; a fonte é reduzida para a pergunta
+       inteira caber. */
+    max-height: 280px;
     overflow: hidden;
 }

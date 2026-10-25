@@ -69,6 +69,48 @@ export async function adicionarPerguntaDebate(eventoId, texto, nomeAutor) {
     return resposta.json();
 }
 
+/* ── Roteiro do debate (painel /debate/<id>) ─────────────────────
+   Cada pergunta traz `bloco` (null = fora dos blocos) e `daMediacao`. */
+
+async function lerRespostaPergunta(resposta, mensagemPadrao) {
+    if (!resposta.ok) {
+        const corpo = await resposta.json().catch(() => null);
+        throw new Error(corpo?.mensagem || mensagemPadrao);
+    }
+    return resposta.json();
+}
+
+/* Pergunta escrita pela mediação, já no bloco. */
+export async function adicionarPerguntaMediacao(eventoId, texto, bloco) {
+    const resposta = await apiFetch(`${ROTA_EVENTO}/${eventoId}/perguntas`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...cabecalhosAuth() },
+        body: JSON.stringify({ texto, bloco, daMediacao: true }),
+    });
+    return lerRespostaPergunta(resposta, 'Falha ao salvar a pergunta.');
+}
+
+/* Só pergunta da mediação: o backend recusa (409) a do público. */
+export async function editarPerguntaMediacao(perguntaId, texto, bloco) {
+    const resposta = await apiFetch(`${ROTA_PERGUNTAS}/${perguntaId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', ...cabecalhosAuth() },
+        body: JSON.stringify({ texto, bloco }),
+    });
+    return lerRespostaPergunta(resposta, 'Falha ao salvar a pergunta.');
+}
+
+/* Põe a pergunta num bloco ou tira (bloco null). Do público vai uma por
+   bloco: o backend tira do bloco a que estava lá antes. */
+export async function definirBlocoPerguntaDebate(perguntaId, bloco) {
+    const resposta = await apiFetch(`${ROTA_PERGUNTAS}/${perguntaId}/bloco`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', ...cabecalhosAuth() },
+        body: JSON.stringify({ bloco }),
+    });
+    return lerRespostaPergunta(resposta, 'Falha ao mudar o bloco da pergunta.');
+}
+
 /* Exclusão definitiva de uma pergunta (DELETE /api/perguntas/{id}). */
 export async function excluirPerguntaDebate(perguntaId) {
     const resposta = await apiFetch(`${ROTA_PERGUNTAS}/${perguntaId}`, {

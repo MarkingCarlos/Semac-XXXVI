@@ -1,5 +1,5 @@
 import './palcoTelaoDebate.css';
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import logoSemac from '../../assets/Logo_Semac_2026.svg';
 import waveSuperiorTelaoDebate from './assets/waveSuperiorTelaoDebate.svg';
 import waveInferiorTelaoDebate from './assets/waveInferiorTelaoDebate.svg';
@@ -17,7 +17,8 @@ import { estiloEnquadramentoFoto } from './enquadramentoFotoPalestrante.js';
    - 'vs': os dois participantes lado a lado com o "VS" no meio. Com uma
      pergunta ativa, os cards descem um pouco e ela aparece resumida em cima.
    - 'a' / 'b': o outro participante sai de cena e entra o timer do lado
-     dele. Laranja no alerta; esgotado, conta em positivo piscando.
+     dele. Laranja no alerta; esgotado, conta em positivo piscando. Na
+     réplica (`replica`) o rótulo vira "Réplica".
    - 'q': a pergunta do mediador ocupa a tela.
 
    Recriado a partir do protótipo "Debate Telão" (Claude Design). */
@@ -29,6 +30,84 @@ const INTERVALO_RELOGIO_TELAO_DEBATE_MS = 200;
 
 const TRANSICAO_SAIDA_CARD_TELAO_DEBATE = 'opacity 0.5s ease, transform 0.8s cubic-bezier(0.16,1,0.3,1)';
 const TRANSICAO_ENTRADA_CARD_TELAO_DEBATE = 'opacity 0.5s ease 0.4s, transform 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s';
+
+/* Tamanhos de fonte (px do palco) de cada lugar onde a pergunta aparece:
+   começa no máximo e diminui até ela caber inteira na caixa. A pergunta
+   nunca é cortada — pergunta grande fica com letra menor. */
+const FONTE_PERGUNTA_DESTAQUE_TELAO_DEBATE = { maximo: 76, minimo: 24 };
+const FONTE_PERGUNTA_RESUMO_TELAO_DEBATE = { maximo: 26, minimo: 12 };
+const FONTE_PERGUNTA_TIMER_TELAO_DEBATE = { maximo: 28, minimo: 12 };
+const PASSO_FONTE_PERGUNTA_TELAO_DEBATE = 2;
+
+/* Visão geral (modo 'vs'): até 2 linhas na fonte cheia a pergunta é
+   curta e cabe no espaço de sempre. Mais que isso ela é longa: os cards
+   encolhem e descem para o bloco da pergunta crescer, em vez de a letra
+   ficar miúda. */
+const ALTURA_PERGUNTA_RESUMO_CURTA_TELAO_DEBATE = 84;
+const ALTURA_PERGUNTA_RESUMO_LONGA_TELAO_DEBATE = 200;
+
+/* Posição dos cards e do VS com pergunta na visão geral. O VS desce junto
+   para continuar no centro das fotos: centro da foto = 190 (topo do card)
+   + descida + 320 × escala, e o VS mora em 510. */
+const ELEVACAO_PERGUNTA_CURTA_TELAO_DEBATE = { cards: 'translateY(70px) scale(0.88)', vs: 'translateY(31px) scale(0.88)' };
+const ELEVACAO_PERGUNTA_LONGA_TELAO_DEBATE = { cards: 'translateY(202px) scale(0.7)', vs: 'translateY(106px) scale(0.7)' };
+
+/* Diminui a fonte do elemento, a partir do máximo, até o texto caber na
+   altura que ele tem (max-height). Mede em px de layout, que o scale() do
+   palco não altera, então não depende do tamanho da tela. */
+function encolherFonteAteCaberTelaoDebate(elemento, { maximo, minimo }) {
+    let tamanho = maximo;
+    elemento.style.fontSize = `${tamanho}px`;
+    while (tamanho > minimo && elemento.scrollHeight > elemento.clientHeight + 1) {
+        tamanho = Math.max(minimo, tamanho - PASSO_FONTE_PERGUNTA_TELAO_DEBATE);
+        elemento.style.fontSize = `${tamanho}px`;
+    }
+}
+
+/* Roda `ajustar` agora e de novo quando as fontes terminam de carregar,
+   porque a fonte provisória tem outra largura. */
+function usarAjusteTextoTelaoDebate(ajustar, dependencias) {
+    const textoRef = useRef(null);
+
+    useLayoutEffect(() => {
+        const elemento = textoRef.current;
+        if (!elemento) return undefined;
+        let ativo = true;
+        const ajustarSeAtivo = () => { if (ativo) ajustar(elemento); };
+        ajustarSeAtivo();
+        document.fonts?.ready.then(ajustarSeAtivo);
+        return () => { ativo = false; };
+    }, dependencias);
+
+    return textoRef;
+}
+
+/* Fonte que cabe na altura definida no CSS (destaque e timer). */
+function usarFonteQueCabeTelaoDebate(texto, fonte) {
+    return usarAjusteTextoTelaoDebate(
+        (elemento) => encolherFonteAteCaberTelaoDebate(elemento, fonte),
+        [texto, fonte.maximo, fonte.minimo],
+    );
+}
+
+/* Pergunta da visão geral: mede na fonte cheia sem limite de altura para
+   decidir se é longa, aplica a altura correspondente e só então encolhe a
+   fonte, se ainda precisar. */
+function usarPerguntaResumoTelaoDebate(texto) {
+    const [perguntaLonga, setPerguntaLonga] = useState(false);
+
+    const textoRef = usarAjusteTextoTelaoDebate((elemento) => {
+        elemento.style.maxHeight = 'none';
+        elemento.style.fontSize = `${FONTE_PERGUNTA_RESUMO_TELAO_DEBATE.maximo}px`;
+        const longa = elemento.scrollHeight > ALTURA_PERGUNTA_RESUMO_CURTA_TELAO_DEBATE + 1;
+        const alturaMaxima = longa ? ALTURA_PERGUNTA_RESUMO_LONGA_TELAO_DEBATE : ALTURA_PERGUNTA_RESUMO_CURTA_TELAO_DEBATE;
+        elemento.style.maxHeight = `${alturaMaxima}px`;
+        encolherFonteAteCaberTelaoDebate(elemento, FONTE_PERGUNTA_RESUMO_TELAO_DEBATE);
+        setPerguntaLonga(longa);
+    }, [texto]);
+
+    return { textoRef, perguntaLonga };
+}
 
 function formatarTempoTelaoDebate(ms) {
     const esgotado = ms < 0;
@@ -105,13 +184,17 @@ export default function PalcoTelaoDebate({ estado }) {
 
     const { modo, pergunta, participantes, tituloDebate } = estado;
     const temPergunta = Boolean(pergunta);
+    const textoPerguntaDestaqueRef = usarFonteQueCabeTelaoDebate(pergunta, FONTE_PERGUNTA_DESTAQUE_TELAO_DEBATE);
+    const { textoRef: textoPerguntaResumoRef, perguntaLonga } = usarPerguntaResumoTelaoDebate(pergunta);
+    const textoPerguntaTimerRef = usarFonteQueCabeTelaoDebate(pergunta, FONTE_PERGUNTA_TIMER_TELAO_DEBATE);
     const modoVs = modo === 'vs';
     const modoFala = modo === 'a' || modo === 'b';
 
     const escondeA = modo === 'b' || modo === 'q';
     const escondeB = modo === 'a' || modo === 'q';
-    const elevacaoCards = modoVs && temPergunta ? 'translateY(70px) scale(0.88)' : 'none';
-    const elevacaoVs = modoVs && temPergunta ? 'translateY(31px) scale(0.88)' : 'none';
+    const elevacaoPergunta = perguntaLonga ? ELEVACAO_PERGUNTA_LONGA_TELAO_DEBATE : ELEVACAO_PERGUNTA_CURTA_TELAO_DEBATE;
+    const elevacaoCards = modoVs && temPergunta ? elevacaoPergunta.cards : 'none';
+    const elevacaoVs = modoVs && temPergunta ? elevacaoPergunta.vs : 'none';
 
     const restanteMs = restanteTimerDebate(estado, agora);
     const esgotado = restanteMs < 0;
@@ -191,7 +274,7 @@ export default function PalcoTelaoDebate({ estado }) {
                     <div className="divCaixaPerguntaDestaqueTelaoDebate">
                         <div className="divDetalheCaixaPerguntaTelaoDebate" />
                         <div className="divRotuloPerguntaDestaqueTelaoDebate">Pergunta do mediador</div>
-                        <div className="divTextoPerguntaDestaqueTelaoDebate">{pergunta}</div>
+                        <div className="divTextoPerguntaDestaqueTelaoDebate" ref={textoPerguntaDestaqueRef}>{pergunta}</div>
                     </div>
                 </div>
 
@@ -208,7 +291,7 @@ export default function PalcoTelaoDebate({ estado }) {
                 >
                     <div className="divCaixaPerguntaResumoTelaoDebate">
                         <div className="divRotuloPerguntaResumoTelaoDebate">Pergunta</div>
-                        <div className="divTextoPerguntaResumoTelaoDebate">{pergunta}</div>
+                        <div className="divTextoPerguntaResumoTelaoDebate" ref={textoPerguntaResumoRef}>{pergunta}</div>
                     </div>
                 </div>
 
@@ -224,7 +307,7 @@ export default function PalcoTelaoDebate({ estado }) {
                         transform: modoFala ? 'none' : 'translateY(60px)',
                     }}
                 >
-                    <div className="divRotuloTimerTelaoDebate">{esgotado ? 'Tempo esgotado' : 'Com a palavra'}</div>
+                    <div className="divRotuloTimerTelaoDebate">{esgotado ? 'Tempo esgotado' : estado.replica ? 'Réplica' : 'Com a palavra'}</div>
                     <div className="divDigitosTimerTelaoDebate" style={{ color: corDigitosTimer }}>
                         {formatarTempoTelaoDebate(restanteMs)}
                     </div>
@@ -239,7 +322,7 @@ export default function PalcoTelaoDebate({ estado }) {
                     </div>
                     <div className="divPerguntaTimerTelaoDebate" style={{ opacity: temPergunta ? 1 : 0 }}>
                         <div className="divRotuloPerguntaTimerTelaoDebate">Pergunta</div>
-                        <div className="divTextoPerguntaTimerTelaoDebate">{pergunta}</div>
+                        <div className="divTextoPerguntaTimerTelaoDebate" ref={textoPerguntaTimerRef}>{pergunta}</div>
                     </div>
                 </div>
             </div>

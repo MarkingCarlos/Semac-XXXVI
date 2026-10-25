@@ -63,9 +63,11 @@ function deResposta(evento) {
             fotoZoom: Number(p.fotoZoom ?? 1),
         })),
         /* Timer do telão do debate. O formulário edita a fala em minutos
-           (aceita 2,5) e o alerta em segundos; o backend guarda segundos. */
+           (aceita 2,5), a réplica e o alerta em segundos; o backend guarda
+           segundos. */
         debateTempoFalaMin: String((evento.debateTempoFalaSeg ?? 180) / 60),
         debateAlertaSeg: String(evento.debateAlertaSeg ?? 30),
+        debateTempoReplicaSeg: String(evento.debateTempoReplicaSeg ?? 30),
     };
 }
 
@@ -94,6 +96,9 @@ function paraRequisicao(evento) {
             : null,
         debateAlertaSeg: evento.debateAlertaSeg !== '' && evento.debateAlertaSeg != null
             ? Number(evento.debateAlertaSeg)
+            : null,
+        debateTempoReplicaSeg: evento.debateTempoReplicaSeg !== '' && evento.debateTempoReplicaSeg != null
+            ? Number(evento.debateTempoReplicaSeg)
             : null,
     };
 }

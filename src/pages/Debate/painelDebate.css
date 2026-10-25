@@ -178,6 +178,9 @@
 .botaoTelaPainelDebate { background: #A10535; }
 .botaoFalaAPainelDebate { background: #B13571; }
 .botaoFalaBPainelDebate { background: #469197; }
+/* Réplica: a cor do participante, mais escura que a da fala. */
+.botaoReplicaAPainelDebate { background: #7d2550; }
+.botaoReplicaBPainelDebate { background: #2f6a6f; }
 .botaoTimerPainelDebate { background: #850735; }
 .botaoTimerPrincipalPainelDebate { background: #E79839; color: #730835; min-width: 160px; justify-content: center; }
 
@@ -272,8 +275,11 @@
     overflow-y: auto;
 }
 
+/* Texto na largura toda e os botões numa linha embaixo dele: pergunta
+   longa não fica espremida ao lado dos botões. */
 .liPerguntaPainelDebate {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 10px;
     padding: 10px 12px;
@@ -286,7 +292,7 @@
 .liPerguntaExibidaPainelDebate .pTextoPerguntaPainelDebate { opacity: 0.6; }
 
 .pTextoPerguntaPainelDebate {
-    flex: 1;
+    flex: 1 1 100%;
     min-width: 0;
     margin: 0;
     font-size: 0.9rem;
@@ -297,7 +303,7 @@
 
 .spanSeloExibidaPainelDebate {
     display: inline-block;
-    margin-left: 8px;
+    /*margin-left: 8px;*/
     padding: 1px 8px;
     border-radius: 999px;
     border: 1px solid rgba(231, 152, 57, 0.6);
@@ -305,6 +311,202 @@
     font-size: 0.68rem;
     font-weight: 600;
     white-space: nowrap;
+}
+
+/* Pergunta do público já escolhida para um bloco do roteiro. */
+.spanSeloBlocoPainelDebate {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: #469197;
+    color: #FCF8F5;
+    font-size: 0.68rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* ── Roteiro em blocos (RoteiroBlocosDebate) ─────────────────── */
+.divRoteiroPainelDebate {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 12px;
+    border: 2px solid rgba(231, 152, 57, 0.45);
+    background: rgba(115, 8, 53, 0.45);
+}
+
+.divAbasBlocosRoteiroPainelDebate {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.botaoAbaBlocoRoteiroPainelDebate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-height: 48px;
+    padding: 8px 4px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background: #850735;
+    color: #FCF8F5;
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: border-color 0.25s, background 0.25s;
+}
+
+.botaoAbaBlocoRoteiroPainelDebate:hover { border-color: #E79839; }
+.botaoAbaBlocoAtivaRoteiroPainelDebate { background: #E79839; color: #730835; }
+
+/* "mediação+plateia" já cadastradas no bloco. */
+.spanContagemBlocoRoteiroPainelDebate {
+    font-family: inherit;
+    font-size: 0.68rem;
+    opacity: 0.8;
+}
+
+.divGrupoRoteiroPainelDebate {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.spanSubrotuloRoteiroPainelDebate {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #E79839;
+}
+
+.spanAutorRoteiroPainelDebate {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    opacity: 0.75;
+}
+
+.liEdicaoRoteiroPainelDebate {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.selectBlocoRoteiroPainelDebate {
+    min-height: 40px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 2px solid rgba(252, 248, 245, 0.25);
+    background: #730835;
+    color: #FCF8F5;
+    font-family: inherit;
+    font-size: 0.85rem;
+}
+
+.botaoExibirPerguntaPainelDebate:disabled { opacity: 0.5; cursor: default; }
+
+/* Título do roteiro e o botão que recolhe o bloco aberto. */
+.divCabecalhoRoteiroPainelDebate {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.botaoRecolherRoteiroPainelDebate,
+.botaoRecolherPublicoPainelDebate {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    min-height: 36px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 2px solid rgba(252, 248, 245, 0.2);
+    background: transparent;
+    color: #FCF8F5;
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: border-color 0.25s;
+}
+
+.botaoRecolherRoteiroPainelDebate:hover,
+.botaoRecolherPublicoPainelDebate:hover { border-color: #E79839; }
+
+.svgSetaRecolherRoteiroPainelDebate,
+.svgSetaRecolherPublicoPainelDebate { transition: transform 0.25s ease; }
+.svgSetaAbertaRoteiroPainelDebate,
+.svgSetaAbertaPublicoPainelDebate { transform: rotate(180deg); }
+
+/* "Enviadas pelo público": Atualizar e Recolher lado a lado. */
+.divAcoesCabecalhoPublicoPainelDebate {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.divConteudoBlocoRoteiroPainelDebate {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .svgSetaRecolherRoteiroPainelDebate,
+    .svgSetaRecolherPublicoPainelDebate { transition: none; }
+}
+
+/* Dentro do modal do celular: o modal já tem fundo e título. */
+.divRoteiroEmModalPainelDebate {
+    padding: 0;
+    border: 0;
+    background: none;
+}
+
+/* Cartão que abre o roteiro no celular (só aparece abaixo de 640px). */
+.botaoAbrirRoteiroPainelDebate {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+        "rotulo acao"
+        "resumo acao";
+    align-items: center;
+    gap: 4px 12px;
+    width: 100%;
+    min-height: 64px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 2px solid rgba(231, 152, 57, 0.45);
+    background: rgba(115, 8, 53, 0.45);
+    color: #FCF8F5;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.botaoAbrirRoteiroPainelDebate .spanRotuloPainelDebate { grid-area: rotulo; }
+
+.spanResumoRoteiroPainelDebate {
+    grid-area: resumo;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.spanAcaoAbrirRoteiroPainelDebate {
+    grid-area: acao;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #E79839;
+    color: #730835;
+    font-family: 'Bungee', sans-serif;
+    font-size: 0.8rem;
 }
 
 .botaoExibirPerguntaPainelDebate,
@@ -397,9 +599,6 @@
     .divNovaPerguntaPainelDebate .divGrupoBotoesPainelDebate { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .divNovaPerguntaPainelDebate .botaoTimerPrincipalPainelDebate { grid-column: auto; min-height: 52px; font-size: 0.85rem; }
 
-    .liPerguntaPainelDebate { flex-wrap: wrap; }
-    .pTextoPerguntaPainelDebate { flex-basis: 100%; }
-
     .botaoExibirPerguntaPainelDebate,
     .botaoRemoverPerguntaPainelDebate { min-height: 44px; flex: 1 1 0; }
 
@@ -407,4 +606,11 @@
 
     /* 16px: abaixo disso o Safari do iPhone dá zoom ao focar */
     .textareaNovaPerguntaPainelDebate { font-size: 16px; }
+
+    /* Roteiro (no modal): "Adicionar ao Bloco N" na largura toda, e a
+       edição com o bloco em cima e Salvar/Cancelar lado a lado. */
+    .divRoteiroPainelDebate .divGrupoBotoesPainelDebate { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .divRoteiroPainelDebate .divGrupoBotoesPainelDebate > .botaoTimerPainelDebate:only-child,
+    .divRoteiroPainelDebate .selectBlocoRoteiroPainelDebate { grid-column: 1 / -1; }
+    .selectBlocoRoteiroPainelDebate { min-height: 44px; font-size: 16px; }
 }

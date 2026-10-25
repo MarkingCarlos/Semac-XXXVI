@@ -68,6 +68,7 @@ const EVENTO_VAZIO = {
     palestrantes: [],
     debateTempoFalaMin: '3',
     debateAlertaSeg: '30',
+    debateTempoReplicaSeg: '30',
 };
 
 /* Rota do painel que controla o telão do debate (ver pages/Debate). */
@@ -1054,6 +1055,20 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
                                         required
                                         value={formulario.debateTempoFalaMin}
                                         onInput={(e) => setFormulario({ ...formulario, debateTempoFalaMin: e.currentTarget.value })}
+                                    />
+                                </div>
+                                <div className="campoFormularioFinancas">
+                                    <label className="rotuloCampoFinancas" htmlFor="campoTempoReplicaDebate">Tempo de réplica (s) *</label>
+                                    <input
+                                        id="campoTempoReplicaDebate"
+                                        className="entradaFormularioFinancas"
+                                        type="number"
+                                        min="5"
+                                        max="3600"
+                                        step="5"
+                                        required
+                                        value={formulario.debateTempoReplicaSeg}
+                                        onInput={(e) => setFormulario({ ...formulario, debateTempoReplicaSeg: e.currentTarget.value })}
                                     />
                                 </div>
                                 <div className="campoFormularioFinancas">

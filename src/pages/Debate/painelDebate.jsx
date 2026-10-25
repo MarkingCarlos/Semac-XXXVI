@@ -16,7 +16,13 @@ import {
     publicarEstadoTelaoDebate,
 } from './apiTelaoDebate.js';
 import { buscarEvento } from '../Admin/data/apiEventos.js';
-import { listarPerguntasDebate } from '../Admin/data/apiPerguntasDebate.js';
+import {
+    adicionarPerguntaMediacao,
+    definirBlocoPerguntaDebate,
+    listarPerguntasDebate,
+} from '../Admin/data/apiPerguntasDebate.js';
+import RoteiroBlocosDebate, { TOTAL_BLOCOS_DEBATE } from './RoteiroBlocosDebate.jsx';
+import ModalInferiorAdmin from '../../components/ModalInferiorAdmin/ModalInferiorAdmin.jsx';
 
 /* Painel de quem controla o telão do debate (/debate/<id>). No notebook,
    o telão (/debate/<id>/telao) é aberto numa segunda guia e arrastado
@@ -35,6 +41,10 @@ import { listarPerguntasDebate } from '../Admin/data/apiPerguntasDebate.js';
 
 const TOLERANCIA_PRESENCA_TELAO_DEBATE_MS = INTERVALO_PRESENCA_TELAO_DEBATE_MS * 2.5;
 const AJUSTE_TIMER_DEBATE_MS = 30000;
+/* Perguntas (roteiro e público) vêm do banco: a lista é consultada de
+   novo neste intervalo para o notebook e o celular verem o que o outro
+   cadastrou. */
+const INTERVALO_PERGUNTAS_DEBATE_MS = 10000;
 
 const chaveArmazenamentoPainelDebate = (eventoId) => `semacDebatePainel${eventoId}`;
 
@@ -54,6 +64,21 @@ function salvarEstadoPainelDebate(eventoId, estado) {
     }
 }
 
+/* Mesma largura do @media do celular em painelDebate.css: abaixo dela o
+   roteiro vira um cartão que abre o modal de baixo para cima. */
+const CONSULTA_CELULAR_PAINEL_DEBATE = '(max-width: 640px)';
+
+function usarCelularPainelDebate() {
+    const [ehCelular, setEhCelular] = useState(() => window.matchMedia(CONSULTA_CELULAR_PAINEL_DEBATE).matches);
+    useEffect(() => {
+        const consulta = window.matchMedia(CONSULTA_CELULAR_PAINEL_DEBATE);
+        const aoMudar = () => setEhCelular(consulta.matches);
+        consulta.addEventListener('change', aoMudar);
+        return () => consulta.removeEventListener('change', aoMudar);
+    }, []);
+    return ehCelular;
+}
+
 const estaDigitando = (alvo) => alvo && /^(INPUT|TEXTAREA|SELECT)$/.test(alvo.tagName);
 
 export default function PainelDebate() {
@@ -64,18 +89,31 @@ export default function PainelDebate() {
 
     const [salvo] = useState(() => lerEstadoSalvoPainelDebate(eventoId));
     const [modo, setModo] = useState(salvo?.modo ?? 'vs');
+    // Fala em modo réplica: mesma tela da fala ('a'/'b'), com o tempo da réplica.
+    const [replica, setReplica] = useState(salvo?.replica ?? false);
     const [rodando, setRodando] = useState(salvo?.rodando ?? false);
     const [fimEm, setFimEm] = useState(salvo?.fimEm ?? 0);
     const [restanteMs, setRestanteMs] = useState(salvo?.restanteMs ?? null);
     const [pergunta, setPergunta] = useState(salvo?.pergunta ?? '');
+    // Lista antiga do mediador, só no navegador (antes do roteiro no banco):
+    // continua sincronizada para dar para passar cada uma para um bloco.
     const [perguntasMediador, setPerguntasMediador] = useState(salvo?.perguntasMediador ?? []);
+    // Aba do roteiro aberta neste aparelho (não sincroniza).
+    const [blocoAtivo, setBlocoAtivo] = useState(salvo?.blocoAtivo ?? 1);
+    // Lista "Enviadas pelo público" recolhida neste aparelho (não sincroniza).
+    const [publicoRecolhido, setPublicoRecolhido] = useState(salvo?.publicoRecolhido ?? false);
     // Perguntas do público que já foram ao telão (só para marcar na lista)
     const [idsPerguntasExibidas, setIdsPerguntasExibidas] = useState(salvo?.idsPerguntasExibidas ?? []);
 
     const [rascunhoPergunta, setRascunhoPergunta] = useState('');
-    const [perguntasPublico, setPerguntasPublico] = useState([]);
+    const ehCelularPainel = usarCelularPainelDebate();
+    const [roteiroAbertoCelular, setRoteiroAbertoCelular] = useState(false);
+    // Todas as perguntas do debate no banco: as da mediação (roteiro) e as do público.
+    const [perguntasDebate, setPerguntasDebate] = useState([]);
     const [carregandoPerguntasPublico, setCarregandoPerguntasPublico] = useState(true);
     const [erroPerguntasPublico, setErroPerguntasPublico] = useState('');
+    const [erroRascunhoPergunta, setErroRascunhoPergunta] = useState('');
+    const perguntasPublico = perguntasDebate.filter((p) => !p.daMediacao);
 
     const [telaoConectado, setTelaoConectado] = useState(false);
     const canalRef = useRef(null);
@@ -94,8 +132,15 @@ export default function PainelDebate() {
     // no notebook, painel aberto no celular).
     const telaoVistoEmRemotoRef = useRef(null);
 
-    const duracaoMs = evento ? Math.round(Number(evento.debateTempoFalaMin) * 60) * 1000 : 180000;
-    const alertaSeg = evento ? Number(evento.debateAlertaSeg) : 30;
+    const duracaoFalaMs = evento ? Math.round(Number(evento.debateTempoFalaMin) * 60) * 1000 : 180000;
+    const tempoReplicaSeg = evento ? Number(evento.debateTempoReplicaSeg) : 30;
+    const duracaoReplicaMs = tempoReplicaSeg * 1000;
+    const alertaFalaSeg = evento ? Number(evento.debateAlertaSeg) : 30;
+    /* A réplica é curta: o alerta dela é no máximo um terço da duração,
+       senão uma réplica de 30s com alerta de 30s nasceria em alerta. */
+    const alertaReplicaSeg = Math.min(alertaFalaSeg, Math.floor(tempoReplicaSeg / 3));
+    const duracaoMs = replica ? duracaoReplicaMs : duracaoFalaMs;
+    const alertaSeg = replica ? alertaReplicaSeg : alertaFalaSeg;
     const restanteParado = restanteMs ?? duracaoMs;
 
     const estadoTelao = {
@@ -106,6 +151,7 @@ export default function PainelDebate() {
             fotoPosX: p.fotoPosX, fotoPosY: p.fotoPosY, fotoZoom: p.fotoZoom,
         })),
         modo,
+        replica,
         rodando,
         fimEm,
         restanteMs: restanteParado,
@@ -115,14 +161,19 @@ export default function PainelDebate() {
     };
 
     // ── Carregamento ──────────────────────────────────────────────
-    const carregarPerguntasPublico = () => {
-        setCarregandoPerguntasPublico(true);
-        setErroPerguntasPublico('');
-        listarPerguntasDebate(eventoId)
-            .then(setPerguntasPublico)
-            .catch((e) => setErroPerguntasPublico(e.message))
-            .finally(() => setCarregandoPerguntasPublico(false));
+    /* `silencioso`: atualização automática ou depois de salvar — sem o
+       "Carregando…" e mantendo a lista se a rede falhar. */
+    const carregarPerguntasDebate = ({ silencioso = false } = {}) => {
+        if (!silencioso) {
+            setCarregandoPerguntasPublico(true);
+            setErroPerguntasPublico('');
+        }
+        return listarPerguntasDebate(eventoId)
+            .then((lista) => { setPerguntasDebate(lista); setErroPerguntasPublico(''); })
+            .catch((e) => { if (!silencioso) setErroPerguntasPublico(e.message); })
+            .finally(() => { if (!silencioso) setCarregandoPerguntasPublico(false); });
     };
+    const atualizarPerguntasDebate = () => carregarPerguntasDebate({ silencioso: true });
 
     useEffect(() => {
         let ativo = true;
@@ -136,8 +187,12 @@ export default function PainelDebate() {
                 setEvento(carregado);
             })
             .catch((e) => { if (ativo) setErroCarregarDebate(e.message); });
-        carregarPerguntasPublico();
-        return () => { ativo = false; };
+        carregarPerguntasDebate();
+        const intervaloPerguntas = setInterval(atualizarPerguntasDebate, INTERVALO_PERGUNTAS_DEBATE_MS);
+        return () => {
+            ativo = false;
+            clearInterval(intervaloPerguntas);
+        };
     }, [eventoId]);
 
     // ── Canal com o telão ─────────────────────────────────────────
@@ -175,7 +230,7 @@ export default function PainelDebate() {
        carrega sozinho — compará-los faria dois painéis com o evento em
        versões diferentes republicarem um ao outro sem parar. */
     const assinaturaControlesPainel = JSON.stringify({
-        modo, rodando, fimEm, restanteMs: restanteParado, pergunta, perguntasMediador, idsPerguntasExibidas,
+        modo, replica, rodando, fimEm, restanteMs: restanteParado, pergunta, perguntasMediador, idsPerguntasExibidas,
     });
 
     const conteudoServidorPainel = () => ({
@@ -191,10 +246,11 @@ export default function PainelDebate() {
         const { telao, perguntasMediador: mediador = [], idsPerguntasExibidas: exibidas = [] } = resposta.estado;
         alteradoEmPainelRef.current = resposta.alteradoEm;
         assinaturaSincronizadaRef.current = JSON.stringify({
-            modo: telao.modo, rodando: telao.rodando, fimEm: telao.fimEm, restanteMs: telao.restanteMs,
+            modo: telao.modo, replica: telao.replica ?? false, rodando: telao.rodando, fimEm: telao.fimEm, restanteMs: telao.restanteMs,
             pergunta: telao.pergunta, perguntasMediador: mediador, idsPerguntasExibidas: exibidas,
         });
         setModo(telao.modo);
+        setReplica(telao.replica ?? false);
         setRodando(telao.rodando);
         setFimEm(telao.fimEm);
         setRestanteMs(telao.restanteMs);
@@ -233,10 +289,11 @@ export default function PainelDebate() {
         }
         if (mudancaLocal) publicarNoServidor();
         salvarEstadoPainelDebate(eventoId, {
-            modo, rodando, fimEm, restanteMs, pergunta, perguntasMediador, idsPerguntasExibidas,
+            modo, replica, rodando, fimEm, restanteMs, pergunta, perguntasMediador, idsPerguntasExibidas,
+            blocoAtivo, publicoRecolhido,
             alteradoEm: alteradoEmPainelRef.current,
         });
-    }, [assinaturaEstado, perguntasMediador, idsPerguntasExibidas]);
+    }, [assinaturaEstado, perguntasMediador, idsPerguntasExibidas, blocoAtivo, publicoRecolhido]);
 
     /* Primeira consulta com o evento carregado: fica com o mais novo entre
        o servidor e a cópia deste navegador (o servidor pode ter perdido o
@@ -275,12 +332,16 @@ export default function PainelDebate() {
 
     // ── Ações ─────────────────────────────────────────────────────
     /* Trocar de tela zera o timer (cada fala começa cheia), como no
-       protótipo. Destacar a pergunta não mexe no timer. */
-    const irParaTela = (novoModo) => {
+       protótipo. Destacar a pergunta não mexe no timer. A réplica usa a
+       tela da fala do participante, com o tempo da réplica. */
+    const irParaTela = (novoModo, { emReplica = false } = {}) => {
         setModo(novoModo);
+        setReplica(emReplica);
         setRodando(false);
-        setRestanteMs(duracaoMs);
+        setRestanteMs(emReplica ? duracaoReplicaMs : duracaoFalaMs);
     };
+
+    const irParaReplica = (lado) => irParaTela(lado, { emReplica: true });
 
     const alternarTimer = () => {
         if (rodando) {
@@ -303,28 +364,58 @@ export default function PainelDebate() {
         else setRestanteMs(Math.max(0, restanteParado + deltaMs));
     };
 
-    const exibirPergunta = (texto, idPublico = null) => {
+    /* `idPergunta`: pergunta do banco (roteiro ou público), para marcar
+       como "já exibida". Pergunta de improviso vai sem id. */
+    const exibirPergunta = (texto, idPergunta = null) => {
         const limpo = (texto || '').trim();
         if (!limpo) return;
         setPergunta(limpo);
         setModo('q');
-        if (idPublico !== null && !idsPerguntasExibidas.includes(idPublico)) {
-            setIdsPerguntasExibidas([...idsPerguntasExibidas, idPublico]);
+        if (idPergunta !== null && !idsPerguntasExibidas.includes(idPergunta)) {
+            setIdsPerguntasExibidas([...idsPerguntasExibidas, idPergunta]);
         }
     };
 
+    // Improviso: vai direto ao telão, sem entrar no roteiro.
     const exibirRascunho = () => {
         const limpo = rascunhoPergunta.trim();
         if (!limpo) return;
-        if (!perguntasMediador.includes(limpo)) setPerguntasMediador([...perguntasMediador, limpo]);
         exibirPergunta(limpo);
         setRascunhoPergunta('');
     };
 
-    const salvarRascunho = () => {
-        const limpo = rascunhoPergunta.trim();
-        if (limpo && !perguntasMediador.includes(limpo)) setPerguntasMediador([...perguntasMediador, limpo]);
-        setRascunhoPergunta('');
+    /* Salva uma pergunta da mediação no bloco aberto do roteiro. Usado
+       pelo campo de improviso e para passar a lista antiga para o banco. */
+    const salvarNoBlocoAtivo = async (texto) => {
+        const limpo = (texto || '').trim();
+        if (!limpo) return false;
+        setErroRascunhoPergunta('');
+        try {
+            await adicionarPerguntaMediacao(eventoId, limpo, blocoAtivo);
+            await atualizarPerguntasDebate();
+            return true;
+        } catch (e) {
+            setErroRascunhoPergunta(e.message);
+            return false;
+        }
+    };
+
+    const salvarRascunho = async () => {
+        if (await salvarNoBlocoAtivo(rascunhoPergunta)) setRascunhoPergunta('');
+    };
+
+    const moverListaAntigaParaBloco = async (texto) => {
+        if (await salvarNoBlocoAtivo(texto)) setPerguntasMediador(perguntasMediador.filter((t) => t !== texto));
+    };
+
+    const usarPerguntaPublicoNoBloco = async (perguntaPublico) => {
+        setErroPerguntasPublico('');
+        try {
+            await definirBlocoPerguntaDebate(perguntaPublico.id, blocoAtivo);
+            await atualizarPerguntasDebate();
+        } catch (e) {
+            setErroPerguntasPublico(e.message);
+        }
     };
 
     const destacarPergunta = () => {
@@ -343,7 +434,7 @@ export default function PainelDebate() {
     // ── Atalhos de teclado (os mesmos do protótipo) ───────────────
     const acoesRef = useRef({});
     acoesRef.current = {
-        irParaTela, alternarTimer, zerarTimer, ajustarTimer, destacarPergunta, encerrarPergunta,
+        irParaTela, irParaReplica, alternarTimer, zerarTimer, ajustarTimer, destacarPergunta, encerrarPergunta,
     };
     useEffect(() => {
         const teclaPainel = (e) => {
@@ -353,6 +444,8 @@ export default function PainelDebate() {
             if (tecla === '0' || tecla === 'escape') acoes.irParaTela('vs');
             else if (tecla === '1' || tecla === 'a') acoes.irParaTela('a');
             else if (tecla === '2' || tecla === 'b') acoes.irParaTela('b');
+            else if (tecla === '3') acoes.irParaReplica('a');
+            else if (tecla === '4') acoes.irParaReplica('b');
             else if (tecla === ' ') { e.preventDefault(); acoes.alternarTimer(); }
             else if (tecla === 'r') acoes.zerarTimer();
             else if (tecla === '+' || tecla === '=' || tecla === 'arrowup') { e.preventDefault(); acoes.ajustarTimer(AJUSTE_TIMER_DEBATE_MS); }
@@ -440,17 +533,31 @@ export default function PainelDebate() {
                         </button>
                         <button
                             type="button"
-                            className={`botaoTelaPainelDebate botaoFalaAPainelDebate ${modo === 'a' ? 'botaoAtivoPainelDebate' : ''}`}
+                            className={`botaoTelaPainelDebate botaoFalaAPainelDebate ${modo === 'a' && !replica ? 'botaoAtivoPainelDebate' : ''}`}
                             onClick={() => irParaTela('a')}
                         >
                             Fala {participanteA?.nome ?? 'A'} <kbd className="kbdTeclaPainelDebate">1</kbd>
                         </button>
                         <button
                             type="button"
-                            className={`botaoTelaPainelDebate botaoFalaBPainelDebate ${modo === 'b' ? 'botaoAtivoPainelDebate' : ''}`}
+                            className={`botaoTelaPainelDebate botaoFalaBPainelDebate ${modo === 'b' && !replica ? 'botaoAtivoPainelDebate' : ''}`}
                             onClick={() => irParaTela('b')}
                         >
                             Fala {participanteB?.nome ?? 'B'} <kbd className="kbdTeclaPainelDebate">2</kbd>
+                        </button>
+                        <button
+                            type="button"
+                            className={`botaoTelaPainelDebate botaoReplicaAPainelDebate ${modo === 'a' && replica ? 'botaoAtivoPainelDebate' : ''}`}
+                            onClick={() => irParaReplica('a')}
+                        >
+                            Réplica {participanteA?.nome ?? 'A'} <kbd className="kbdTeclaPainelDebate">3</kbd>
+                        </button>
+                        <button
+                            type="button"
+                            className={`botaoTelaPainelDebate botaoReplicaBPainelDebate ${modo === 'b' && replica ? 'botaoAtivoPainelDebate' : ''}`}
+                            onClick={() => irParaReplica('b')}
+                        >
+                            Réplica {participanteB?.nome ?? 'B'} <kbd className="kbdTeclaPainelDebate">4</kbd>
                         </button>
                     </div>
 
@@ -468,7 +575,7 @@ export default function PainelDebate() {
                             Zerar <kbd className="kbdTeclaPainelDebate">R</kbd>
                         </button>
                         <span className="spanConfigTimerPainelDebate">
-                            {Number(evento?.debateTempoFalaMin ?? 3).toLocaleString('pt-BR')} min por fala · alerta nos últimos {alertaSeg}s
+                            {Number(evento?.debateTempoFalaMin ?? 3).toLocaleString('pt-BR')} min por fala · {tempoReplicaSeg}s de réplica · alerta nos últimos {alertaFalaSeg}s ({alertaReplicaSeg}s na réplica)
                         </span>
                     </div>
                 </section>
@@ -492,6 +599,55 @@ export default function PainelDebate() {
                         </div>
                     </div>
 
+                    {/* No celular o roteiro ocupa muito espaço: vira um cartão
+                        que abre o modal de baixo para cima. Exibir uma
+                        pergunta fecha o modal, para ver a prévia do telão. */}
+                    {ehCelularPainel ? (
+                        <button
+                            type="button"
+                            className="botaoAbrirRoteiroPainelDebate"
+                            onClick={() => setRoteiroAbertoCelular(true)}
+                        >
+                            <span className="spanRotuloPainelDebate">Roteiro do debate</span>
+                            <span className="spanResumoRoteiroPainelDebate">
+                                Bloco {blocoAtivo} de {TOTAL_BLOCOS_DEBATE} · {perguntasDebate.filter((p) => p.bloco != null).length} perguntas nos blocos
+                            </span>
+                            <span className="spanAcaoAbrirRoteiroPainelDebate" aria-hidden="true">Abrir</span>
+                        </button>
+                    ) : (
+                        <RoteiroBlocosDebate
+                            eventoId={eventoId}
+                            perguntas={perguntasDebate}
+                            blocoAtivo={blocoAtivo}
+                            aoTrocarBloco={setBlocoAtivo}
+                            perguntaNoTelao={pergunta}
+                            idsExibidas={idsPerguntasExibidas}
+                            aoExibir={exibirPergunta}
+                            aoMudarPerguntas={atualizarPerguntasDebate}
+                        />
+                    )}
+                    {ehCelularPainel && roteiroAbertoCelular && (
+                        <ModalInferiorAdmin
+                            titulo="Roteiro do debate"
+                            subtitulo={`${TOTAL_BLOCOS_DEBATE} blocos · mediação e plateia`}
+                            aoFechar={() => setRoteiroAbertoCelular(false)}
+                        >
+                            {(fecharRoteiro) => (
+                                <RoteiroBlocosDebate
+                                    emModal
+                                    eventoId={eventoId}
+                                    perguntas={perguntasDebate}
+                                    blocoAtivo={blocoAtivo}
+                                    aoTrocarBloco={setBlocoAtivo}
+                                    perguntaNoTelao={pergunta}
+                                    idsExibidas={idsPerguntasExibidas}
+                                    aoExibir={(texto, id) => fecharRoteiro(() => exibirPergunta(texto, id))}
+                                    aoMudarPerguntas={atualizarPerguntasDebate}
+                                />
+                            )}
+                        </ModalInferiorAdmin>
+                    )}
+
                     <div className="divNovaPerguntaPainelDebate">
                         <label className="spanRotuloPainelDebate" htmlFor="campoNovaPerguntaPainelDebate">
                             Pergunta do mediador <kbd className="kbdTeclaPainelDebate">P</kbd>
@@ -511,14 +667,18 @@ export default function PainelDebate() {
                                 Exibir em destaque <kbd className="kbdTeclaPainelDebate">Enter</kbd>
                             </button>
                             <button type="button" className="botaoTimerPainelDebate" onClick={salvarRascunho}>
-                                Salvar na lista
+                                Salvar no Bloco {blocoAtivo}
                             </button>
                         </div>
+                        {erroRascunhoPergunta && <p className="pErroPainelDebate" role="alert">{erroRascunhoPergunta}</p>}
                     </div>
 
                     {perguntasMediador.length > 0 && (
                         <div className="divListaPerguntasPainelDebate">
-                            <span className="spanRotuloPainelDebate">Lista do mediador</span>
+                            <span className="spanRotuloPainelDebate">Lista antiga (só neste navegador)</span>
+                            <p className="pVazioPainelDebate">
+                                Passe cada pergunta para um bloco do roteiro, para ficar salva no banco.
+                            </p>
                             <ul className="ulPerguntasPainelDebate">
                                 {perguntasMediador.map((texto) => (
                                     <li
@@ -528,6 +688,13 @@ export default function PainelDebate() {
                                         <p className="pTextoPerguntaPainelDebate">{texto}</p>
                                         <button type="button" className="botaoExibirPerguntaPainelDebate" onClick={() => exibirPergunta(texto)}>
                                             Exibir
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="botaoRemoverPerguntaPainelDebate"
+                                            onClick={() => moverListaAntigaParaBloco(texto)}
+                                        >
+                                            Salvar no Bloco {blocoAtivo}
                                         </button>
                                         <button
                                             type="button"
@@ -547,20 +714,39 @@ export default function PainelDebate() {
                             <span className="spanRotuloPainelDebate">
                                 Enviadas pelo público{perguntasPublico.length > 0 && ` (${perguntasPublico.length})`}
                             </span>
-                            <button
-                                type="button"
-                                className="botaoRemoverPerguntaPainelDebate"
-                                disabled={carregandoPerguntasPublico}
-                                onClick={carregarPerguntasPublico}
-                            >
-                                {carregandoPerguntasPublico ? 'Carregando…' : 'Atualizar'}
-                            </button>
+                            <div className="divAcoesCabecalhoPublicoPainelDebate">
+                                {!publicoRecolhido && (
+                                    <button
+                                        type="button"
+                                        className="botaoRemoverPerguntaPainelDebate"
+                                        disabled={carregandoPerguntasPublico}
+                                        onClick={() => carregarPerguntasDebate()}
+                                    >
+                                        {carregandoPerguntasPublico ? 'Carregando…' : 'Atualizar'}
+                                    </button>
+                                )}
+                                <button
+                                    type="button"
+                                    className="botaoRecolherPublicoPainelDebate"
+                                    aria-expanded={!publicoRecolhido}
+                                    onClick={() => setPublicoRecolhido(!publicoRecolhido)}
+                                >
+                                    {publicoRecolhido ? 'Mostrar' : 'Recolher'}
+                                    <svg
+                                        className={`svgSetaRecolherPublicoPainelDebate ${publicoRecolhido ? '' : 'svgSetaAbertaPublicoPainelDebate'}`}
+                                        width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                                    >
+                                        <path d="M6 9l6 6 6-6" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
-                        {erroPerguntasPublico && <p className="pErroPainelDebate" role="alert">{erroPerguntasPublico}</p>}
-                        {!carregandoPerguntasPublico && !erroPerguntasPublico && perguntasPublico.length === 0 && (
+                        {!publicoRecolhido && erroPerguntasPublico && <p className="pErroPainelDebate" role="alert">{erroPerguntasPublico}</p>}
+                        {!publicoRecolhido && !carregandoPerguntasPublico && !erroPerguntasPublico && perguntasPublico.length === 0 && (
                             <p className="pVazioPainelDebate">Nenhuma pergunta enviada para este debate.</p>
                         )}
-                        {perguntasPublico.length > 0 && (
+                        {!publicoRecolhido && perguntasPublico.length > 0 && (
                             <ul className="ulPerguntasPainelDebate">
                                 {perguntasPublico.map((perguntaPublico) => {
                                     const jaExibida = idsPerguntasExibidas.includes(perguntaPublico.id);
@@ -571,6 +757,9 @@ export default function PainelDebate() {
                                         >
                                             <p className="pTextoPerguntaPainelDebate">
                                                 {perguntaPublico.texto}
+                                                {perguntaPublico.bloco != null && (
+                                                    <span className="spanSeloBlocoPainelDebate">Bloco {perguntaPublico.bloco}</span>
+                                                )}
                                                 {jaExibida && <span className="spanSeloExibidaPainelDebate">já exibida</span>}
                                             </p>
                                             <button
@@ -580,6 +769,15 @@ export default function PainelDebate() {
                                             >
                                                 Exibir
                                             </button>
+                                            {perguntaPublico.bloco !== blocoAtivo && (
+                                                <button
+                                                    type="button"
+                                                    className="botaoRemoverPerguntaPainelDebate"
+                                                    onClick={() => usarPerguntaPublicoNoBloco(perguntaPublico)}
+                                                >
+                                                    Usar no Bloco {blocoAtivo}
+                                                </button>
+                                            )}
                                         </li>
                                     );
                                 })}
