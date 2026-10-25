@@ -9,16 +9,29 @@ import {
     nomeJanelaTelaoDebate,
     rotaTelaoDebate,
 } from './canalTelaoDebate.js';
+import {
+    agoraServidorDebate,
+    buscarEstadoTelaoDebate,
+    INTERVALO_SINCRONIA_TELAO_DEBATE_MS,
+    publicarEstadoTelaoDebate,
+} from './apiTelaoDebate.js';
 import { buscarEvento } from '../Admin/data/apiEventos.js';
 import { listarPerguntasDebate } from '../Admin/data/apiPerguntasDebate.js';
 
-/* Painel de quem controla o telão do debate (/debate/<id>). Fica no
-   notebook; o telão (/debate/<id>/telao) é aberto numa segunda guia e
-   arrastado para a tela estendida. Daqui saem a troca de tela, o timer e
-   as perguntas — tudo por botão ou atalho de teclado.
+/* Painel de quem controla o telão do debate (/debate/<id>). No notebook,
+   o telão (/debate/<id>/telao) é aberto numa segunda guia e arrastado
+   para a tela estendida. Daqui saem a troca de tela, o timer e as
+   perguntas — tudo por botão ou atalho de teclado.
 
-   O estado (tela, timer, pergunta, perguntas do mediador) fica salvo no
-   navegador por debate: recarregar o painel não zera o timer. */
+   O mesmo painel funciona no celular, como controle remoto: cada mudança
+   é publicada no servidor e o painel consulta a cada
+   INTERVALO_SINCRONIA_TELAO_DEBATE_MS, então notebook e celular ficam
+   iguais e vale quem mexeu por último (`alteradoEm`, ver
+   apiTelaoDebate.js).
+
+   O estado (tela, timer, pergunta, perguntas do mediador) também fica
+   salvo no navegador por debate: recarregar o painel não zera o timer, e
+   se a API reiniciou no meio do debate é esta cópia que repõe o servidor. */
 
 const TOLERANCIA_PRESENCA_TELAO_DEBATE_MS = INTERVALO_PRESENCA_TELAO_DEBATE_MS * 2.5;
 const AJUSTE_TIMER_DEBATE_MS = 30000;
@@ -69,6 +82,17 @@ export default function PainelDebate() {
     const ultimoSinalTelaoRef = useRef(0);
     const estadoTelaoRef = useRef(ESTADO_INICIAL_TELAO_DEBATE);
     const campoPerguntaRef = useRef(null);
+
+    // ── Sincronia com o servidor (outros aparelhos) ───────────────
+    // Instante da última mudança que este painel conhece, local ou remota.
+    const alteradoEmPainelRef = useRef(salvo?.alteradoEm ?? 0);
+    // Controles da última versão publicada ou adotada: se o estado atual
+    // é igual, não houve mudança local e não há o que publicar.
+    const assinaturaSincronizadaRef = useRef(null);
+    const sincronizouServidorRef = useRef(false);
+    // Última consulta da guia projetada vista pelo servidor (telão aberto
+    // no notebook, painel aberto no celular).
+    const telaoVistoEmRemotoRef = useRef(null);
 
     const duracaoMs = evento ? Math.round(Number(evento.debateTempoFalaMin) * 60) * 1000 : 180000;
     const alertaSeg = evento ? Number(evento.debateAlertaSeg) : 30;
@@ -124,7 +148,7 @@ export default function PainelDebate() {
                 ultimoSinalTelaoRef.current = Date.now();
                 setTelaoConectado(true);
                 if (mensagem.tipo === 'telaoAberto') {
-                    canal.enviar({ tipo: 'estado', estado: estadoTelaoRef.current });
+                    canal.enviar({ tipo: 'estado', estado: estadoTelaoRef.current, alteradoEm: alteradoEmPainelRef.current });
                 }
             } else if (mensagem.tipo === 'telaoFechado') {
                 ultimoSinalTelaoRef.current = 0;
@@ -132,8 +156,14 @@ export default function PainelDebate() {
             }
         });
         canalRef.current = canal;
+        // Conectado = a guia deste navegador deu sinal, ou o telão aberto em
+        // outro aparelho consultou o servidor há pouco.
         const verificarPresenca = setInterval(() => {
-            setTelaoConectado(Date.now() - ultimoSinalTelaoRef.current < TOLERANCIA_PRESENCA_TELAO_DEBATE_MS);
+            const telaoLocal = Date.now() - ultimoSinalTelaoRef.current < TOLERANCIA_PRESENCA_TELAO_DEBATE_MS;
+            const vistoEmRemoto = telaoVistoEmRemotoRef.current;
+            const telaoRemoto = vistoEmRemoto != null
+                && agoraServidorDebate() - vistoEmRemoto < TOLERANCIA_PRESENCA_TELAO_DEBATE_MS;
+            setTelaoConectado(telaoLocal || telaoRemoto);
         }, 1000);
         return () => {
             clearInterval(verificarPresenca);
@@ -141,16 +171,107 @@ export default function PainelDebate() {
         };
     }, [eventoId]);
 
+    /* Só os controles: título e fotos vêm do evento, que cada aparelho
+       carrega sozinho — compará-los faria dois painéis com o evento em
+       versões diferentes republicarem um ao outro sem parar. */
+    const assinaturaControlesPainel = JSON.stringify({
+        modo, rodando, fimEm, restanteMs: restanteParado, pergunta, perguntasMediador, idsPerguntasExibidas,
+    });
+
+    const conteudoServidorPainel = () => ({
+        telao: estadoTelaoRef.current,
+        perguntasMediador,
+        idsPerguntasExibidas,
+    });
+
+    /* Põe no painel o que outro aparelho mudou. A assinatura é marcada
+       antes, para o efeito de publicação não devolver a mudança como se
+       fosse daqui. */
+    const adotarEstadoServidor = (resposta) => {
+        const { telao, perguntasMediador: mediador = [], idsPerguntasExibidas: exibidas = [] } = resposta.estado;
+        alteradoEmPainelRef.current = resposta.alteradoEm;
+        assinaturaSincronizadaRef.current = JSON.stringify({
+            modo: telao.modo, rodando: telao.rodando, fimEm: telao.fimEm, restanteMs: telao.restanteMs,
+            pergunta: telao.pergunta, perguntasMediador: mediador, idsPerguntasExibidas: exibidas,
+        });
+        setModo(telao.modo);
+        setRodando(telao.rodando);
+        setFimEm(telao.fimEm);
+        setRestanteMs(telao.restanteMs);
+        setPergunta(telao.pergunta);
+        setPerguntasMediador(mediador);
+        setIdsPerguntasExibidas(exibidas);
+    };
+
+    const publicarNoServidor = () => {
+        assinaturaSincronizadaRef.current = assinaturaControlesPainel;
+        publicarEstadoTelaoDebate(eventoId, conteudoServidorPainel(), alteradoEmPainelRef.current)
+            .then((resposta) => {
+                // Outro aparelho mexeu depois: o servidor devolveu o dele
+                if (resposta.alteradoEm > alteradoEmPainelRef.current) adotarEstadoServidor(resposta);
+            })
+            .catch(() => {
+                // sem rede: a próxima mudança ou consulta tenta de novo
+                assinaturaSincronizadaRef.current = null;
+            });
+    };
+
     /* Publica no telão e salva a cada mudança. Só depois do evento
-       carregado: antes disso o telão receberia título e fotos vazios. */
+       carregado: antes disso o telão receberia título e fotos vazios.
+       Mudança feita aqui (e não adotada de outro aparelho) ganha um
+       `alteradoEm` novo e vai também para o servidor — mas só depois da
+       primeira consulta, senão um celular recém-aberto apagaria o estado
+       do debate com o seu, ainda vazio. */
     const assinaturaEstado = JSON.stringify(estadoTelao);
     useEffect(() => {
         estadoTelaoRef.current = estadoTelao;
-        if (evento) canalRef.current?.enviar({ tipo: 'estado', estado: estadoTelao });
+        const mudancaLocal = Boolean(evento) && sincronizouServidorRef.current
+            && assinaturaControlesPainel !== assinaturaSincronizadaRef.current;
+        if (mudancaLocal) alteradoEmPainelRef.current = agoraServidorDebate();
+        if (evento) {
+            canalRef.current?.enviar({ tipo: 'estado', estado: estadoTelao, alteradoEm: alteradoEmPainelRef.current });
+        }
+        if (mudancaLocal) publicarNoServidor();
         salvarEstadoPainelDebate(eventoId, {
             modo, rodando, fimEm, restanteMs, pergunta, perguntasMediador, idsPerguntasExibidas,
+            alteradoEm: alteradoEmPainelRef.current,
         });
     }, [assinaturaEstado, perguntasMediador, idsPerguntasExibidas]);
+
+    /* Primeira consulta com o evento carregado: fica com o mais novo entre
+       o servidor e a cópia deste navegador (o servidor pode ter perdido o
+       estado num reinício da API). Depois, consulta a cada
+       INTERVALO_SINCRONIA_TELAO_DEBATE_MS para ver o que os outros
+       aparelhos mudaram. */
+    const carregouEvento = Boolean(evento);
+    const sincronizarRef = useRef(null);
+    sincronizarRef.current = { adotarEstadoServidor, publicarNoServidor };
+    useEffect(() => {
+        if (!carregouEvento) return undefined;
+        let ativo = true;
+
+        const consultar = () => buscarEstadoTelaoDebate(eventoId).then((resposta) => {
+            if (!ativo) return;
+            telaoVistoEmRemotoRef.current = resposta.telaoVistoEm;
+            const acoes = sincronizarRef.current;
+            if (resposta.estado && resposta.alteradoEm > alteradoEmPainelRef.current) {
+                acoes.adotarEstadoServidor(resposta);
+            } else if (!sincronizouServidorRef.current) {
+                if (!alteradoEmPainelRef.current) alteradoEmPainelRef.current = agoraServidorDebate();
+                acoes.publicarNoServidor();
+            }
+            sincronizouServidorRef.current = true;
+        }).catch(() => {
+            // sem rede: segue local (telão no mesmo navegador) e tenta de novo
+        });
+
+        consultar();
+        const intervaloSincronia = setInterval(consultar, INTERVALO_SINCRONIA_TELAO_DEBATE_MS);
+        return () => {
+            ativo = false;
+            clearInterval(intervaloSincronia);
+        };
+    }, [eventoId, carregouEvento]);
 
     // ── Ações ─────────────────────────────────────────────────────
     /* Trocar de tela zera o timer (cada fala começa cheia), como no
@@ -163,10 +284,11 @@ export default function PainelDebate() {
 
     const alternarTimer = () => {
         if (rodando) {
-            setRestanteMs(fimEm - Date.now());
+            setRestanteMs(fimEm - agoraServidorDebate());
             setRodando(false);
         } else {
-            setFimEm(Date.now() + restanteParado);
+            // Relógio do servidor: o telão pode estar em outro aparelho
+            setFimEm(agoraServidorDebate() + restanteParado);
             setRodando(true);
         }
     };
@@ -284,9 +406,16 @@ export default function PainelDebate() {
             </header>
 
             {!telaoConectado && (
-                <p className="pDicaAbrirTelaoPainelDebate">
-                    Abra o telão, arraste a guia para a tela estendida e aperte <kbd className="kbdTeclaPainelDebate">F</kbd> nela para tela cheia.
-                </p>
+                <>
+                    <p className="pDicaAbrirTelaoPainelDebate">
+                        Abra o telão, arraste a guia para a tela estendida e aperte <kbd className="kbdTeclaPainelDebate">F</kbd> nela para tela cheia.
+                    </p>
+                    {/* No celular (só aparece em tela de toque) o painel é o
+                        controle remoto: o telão abre no notebook. */}
+                    <p className="pDicaControleRemotoPainelDebate">
+                        Abra o telão no notebook ligado ao projetor (/debate/{eventoId}/telao). Daqui você controla tudo pelo celular.
+                    </p>
+                </>
             )}
             {evento && evento.palestrantes.length !== 2 && (
                 <p className="pAvisoPainelDebate" role="alert">
@@ -301,7 +430,7 @@ export default function PainelDebate() {
                         <PalcoTelaoDebate estado={estadoTelao} />
                     </div>
 
-                    <div className="divGrupoBotoesPainelDebate">
+                    <div className="divGrupoBotoesPainelDebate divGrupoTelasPainelDebate">
                         <button
                             type="button"
                             className={`botaoTelaPainelDebate ${modo === 'vs' ? 'botaoAtivoPainelDebate' : ''}`}

@@ -7,8 +7,14 @@
    Quem manda é o painel: publica o estado inteiro a cada mudança. O telão
    só desenha o que recebe.
 
+   O painel também pode estar em outro aparelho (celular): aí o estado
+   chega pelo servidor (apiTelaoDebate.js). O telão ouve os dois caminhos
+   e fica com o mais novo pelo `alteradoEm` (instante da mudança, no
+   relógio do servidor) — assim um estado atrasado de um caminho não
+   desfaz o que o outro já trouxe.
+
    Mensagens do painel → telão
-     { tipo: 'estado', estado }   ver ESTADO_INICIAL_TELAO_DEBATE
+     { tipo: 'estado', estado, alteradoEm }   ver ESTADO_INICIAL_TELAO_DEBATE
 
    Mensagens do telão → painel
      { tipo: 'telaoAberto' }      pede o estado atual (abriu ou recarregou)
@@ -17,8 +23,8 @@
 
    O timer não é mandado a cada segundo: vai a hora de término (`fimEm`)
    quando está rodando, ou o que sobrou (`restanteMs`) quando pausado, e
-   cada guia calcula o tempo pelo próprio relógio — como as duas estão no
-   mesmo computador, o relógio é o mesmo. */
+   cada guia calcula o tempo pelo relógio do servidor
+   (agoraServidorDebate), que é o mesmo para notebook e celular. */
 
 const NOME_CANAL_TELAO_DEBATE = 'semacDebateTelao';
 

@@ -5,6 +5,7 @@ import waveSuperiorTelaoDebate from './assets/waveSuperiorTelaoDebate.svg';
 import waveInferiorTelaoDebate from './assets/waveInferiorTelaoDebate.svg';
 import { urlFotoPalestrante } from '../Admin/data/apiEventos.js';
 import { restanteTimerDebate } from './canalTelaoDebate.js';
+import { agoraServidorDebate } from './apiTelaoDebate.js';
 import { estiloEnquadramentoFoto } from './enquadramentoFotoPalestrante.js';
 
 /* O que aparece no telão do debate, desenhado num palco fixo de 1920×1080
@@ -80,7 +81,9 @@ function CardParticipanteTelaoDebate({ participante, lado, estilo }) {
 export default function PalcoTelaoDebate({ estado }) {
     const fundoRef = useRef(null);
     const [escala, setEscala] = useState(0);
-    const [agora, setAgora] = useState(Date.now());
+    // Relógio do servidor: o painel pode estar num celular com o relógio
+    // diferente do notebook do telão (ver apiTelaoDebate.js).
+    const [agora, setAgora] = useState(agoraServidorDebate);
 
     useEffect(() => {
         const fundo = fundoRef.current;
@@ -96,7 +99,7 @@ export default function PalcoTelaoDebate({ estado }) {
     }, []);
 
     useEffect(() => {
-        const relogio = setInterval(() => setAgora(Date.now()), INTERVALO_RELOGIO_TELAO_DEBATE_MS);
+        const relogio = setInterval(() => setAgora(agoraServidorDebate()), INTERVALO_RELOGIO_TELAO_DEBATE_MS);
         return () => clearInterval(relogio);
     }, []);
 

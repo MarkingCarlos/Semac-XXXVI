@@ -107,7 +107,18 @@
     line-height: 1.4;
 }
 
-.pDicaAbrirTelaoPainelDebate { background: rgba(10, 10, 10, 0.25); }
+.pDicaAbrirTelaoPainelDebate,
+.pDicaControleRemotoPainelDebate { background: rgba(10, 10, 10, 0.25); }
+
+/* Só no celular (abaixo, em tela de toque) */
+.pDicaControleRemotoPainelDebate {
+    display: none;
+    margin: 0 0 16px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
 .pAvisoPainelDebate { background: rgba(231, 152, 57, 0.15); color: #E79839; font-weight: 600; }
 
 /* ── Corpo ───────────────────────────────────────────────────── */
@@ -324,4 +335,76 @@
     font-size: 0.85rem;
     font-weight: 600;
     color: #F4C27F;
+}
+
+/* ── Celular: o painel vira controle remoto ──────────────────── */
+
+/* Tela de toque não tem teclado para atalho nem tela estendida para
+   arrastar o telão: some o que só serve no notebook. */
+@media (hover: none) and (pointer: coarse) {
+    .kbdTeclaPainelDebate,
+    .botaoAbrirTelaoPainelDebate,
+    .pDicaAbrirTelaoPainelDebate { display: none; }
+
+    .pDicaControleRemotoPainelDebate { display: block; }
+}
+
+/* Botões em grade, grandes para o polegar: as telas em duas colunas
+   (Visão geral em cima, uma fala de cada lado), Iniciar/Pausar na
+   largura toda e os ajustes do timer lado a lado. */
+@media (max-width: 640px) {
+    .mainPainelDebate { padding: 16px 16px 40px; }
+
+    .headerPainelDebate {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .divCorpoPainelDebate { gap: 16px; }
+
+    .divGrupoBotoesPainelDebate {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .divGrupoTelasPainelDebate { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .divGrupoTelasPainelDebate .botaoTelaPainelDebate:first-child { grid-column: 1 / -1; }
+
+    .botaoTelaPainelDebate,
+    .botaoTimerPainelDebate,
+    .botaoTimerPrincipalPainelDebate {
+        justify-content: center;
+        min-height: 52px;
+        padding: 10px 8px;
+        text-align: center;
+        overflow-wrap: anywhere;
+    }
+
+    .botaoTimerPrincipalPainelDebate {
+        grid-column: 1 / -1;
+        min-width: 0;
+        min-height: 60px;
+        font-size: 1rem;
+    }
+
+    .spanConfigTimerPainelDebate { grid-column: 1 / -1; }
+
+    /* Pergunta ativa e do mediador: dois botões, metade cada */
+    .divPerguntaAtivaPainelDebate .divGrupoBotoesPainelDebate,
+    .divNovaPerguntaPainelDebate .divGrupoBotoesPainelDebate { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .divNovaPerguntaPainelDebate .botaoTimerPrincipalPainelDebate { grid-column: auto; min-height: 52px; font-size: 0.85rem; }
+
+    .liPerguntaPainelDebate { flex-wrap: wrap; }
+    .pTextoPerguntaPainelDebate { flex-basis: 100%; }
+
+    .botaoExibirPerguntaPainelDebate,
+    .botaoRemoverPerguntaPainelDebate { min-height: 44px; flex: 1 1 0; }
+
+    .divCabecalhoListaPainelDebate .botaoRemoverPerguntaPainelDebate { flex: 0 0 auto; }
+
+    /* 16px: abaixo disso o Safari do iPhone dá zoom ao focar */
+    .textareaNovaPerguntaPainelDebate { font-size: 16px; }
 }

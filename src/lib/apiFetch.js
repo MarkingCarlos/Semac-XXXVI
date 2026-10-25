@@ -43,8 +43,10 @@ function registrarMedicao(dados) {
     }
 }
 
+/* `medir: false` tira a chamada do log e do histórico: para consultas
+   repetidas a cada segundo (telão do debate), que só fariam barulho. */
 export async function apiFetch(url, opcoes = {}) {
-    const { timeout = TIMEOUT_PADRAO, ...resto } = opcoes;
+    const { timeout = TIMEOUT_PADRAO, medir = true, ...resto } = opcoes;
     const metodo = (resto.method || 'GET').toUpperCase();
     const urlTexto = typeof url === 'string' ? url : (url && url.url) || String(url);
 
@@ -55,7 +57,7 @@ export async function apiFetch(url, opcoes = {}) {
     try {
         const resposta = await fetch(url, { ...resto, signal: controlador.signal });
         const duracaoMs = Math.round(agora() - inicio);
-        registrarMedicao({
+        if (medir) registrarMedicao({
             metodo,
             url: urlTexto,
             status: resposta.status,
@@ -66,7 +68,7 @@ export async function apiFetch(url, opcoes = {}) {
     } catch (erro) {
         const duracaoMs = Math.round(agora() - inicio);
         const abortou = erro && erro.name === 'AbortError';
-        registrarMedicao({
+        if (medir) registrarMedicao({
             metodo,
             url: urlTexto,
             status: abortou ? 'timeout' : 'erro-rede',
