@@ -10,6 +10,9 @@
 //
 // Se não der para ler (crachá esquecido, câmera ruim), "Entregar sem ler
 // QR code" pausa a câmera e pede o motivo, que fica gravado na entrega.
+//
+// `avisoKit` (opcional) aparece embaixo do nome — hoje, o lembrete de que
+// diarista leva só folder e crachá.
 
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { createPortal } from 'preact/compat';
@@ -24,7 +27,7 @@ const ESPERA_RELER_APOS_ERRO_KITS_MS = 2500;
 // Mesmo limite da coluna kit_justificativa_sem_qr.
 const LIMITE_JUSTIFICATIVA_SEM_QR_KITS = 255;
 
-export default function TelaVerificacaoQrKits({ pessoa, onConfirmar, onCancelar }) {
+export default function TelaVerificacaoQrKits({ pessoa, avisoKit, onConfirmar, onCancelar }) {
     const [processandoLeituraKits, setProcessandoLeituraKits] = useState(false);
     const [erroLeituraKits, setErroLeituraKits] = useState('');
     const [justificandoSemQrKits, setJustificandoSemQrKits] = useState(false);
@@ -95,6 +98,7 @@ export default function TelaVerificacaoQrKits({ pessoa, onConfirmar, onCancelar 
                 <div class="infoPessoaVerificacaoQrKits">
                     <span class="rotuloVerificacaoQrKits">Leia o QR code de</span>
                     <span class="nomePessoaVerificacaoQrKits">{pessoa.nome}</span>
+                    {avisoKit && <span class="avisoKitVerificacaoQrKits">{avisoKit}</span>}
                 </div>
                 <button type="button" class="botaoCancelarVerificacaoQrKits" onClick={onCancelar}>
                     Cancelar

@@ -64,6 +64,19 @@
     white-space: nowrap;
 }
 
+/* Mesmo aviso rosa da linha do diarista em EntregaKits. */
+.avisoKitVerificacaoQrKits {
+    align-self: flex-start;
+    margin-top: 0.2rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid rgba(177, 53, 113, 0.6);
+    background-color: rgba(177, 53, 113, 0.25);
+    color: #F3B6D2;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
 .botaoCancelarVerificacaoQrKits {
     flex: 0 0 auto;
     min-height: 44px;

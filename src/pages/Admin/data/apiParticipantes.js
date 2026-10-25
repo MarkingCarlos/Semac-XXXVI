@@ -24,9 +24,10 @@ export async function listarComissao() {
     return resposta.json();
 }
 
-/* Quem recebe kit no credenciamento (participantes confirmados, sem
-   diaristas, + comissão), com { id, nome, role, ingresso, camisetas,
-   kitEntregueEm, kitEntreguePorNome }. Sub-aba Kits de Pessoas. */
+/* Quem recebe kit no credenciamento (participantes confirmados + comissão),
+   com { id, nome, role, ingresso, camisetas, kitEntregueEm,
+   kitEntreguePorNome, kitReduzido }. kitReduzido = diarista, que leva só
+   folder e crachá. Sub-aba Kits de Pessoas. */
 export async function listarKits() {
     const resposta = await apiFetch(`${API_URL}/api/pessoa/kits`, { headers: cabecalhosAuth() });
     if (!resposta.ok) throw new Error('Não foi possível carregar a lista de kits.');

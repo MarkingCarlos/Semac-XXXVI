@@ -260,6 +260,19 @@
     color: rgba(237, 236, 236, 0.65);
 }
 
+/* Diarista: o ingresso por dia não inclui o kit completo. Cor própria
+   (rosa) para não se confundir com os selos de papel e de camiseta. */
+.avisoKitReduzidoKits {
+    align-self: flex-start;
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    border: 1px solid rgba(177, 53, 113, 0.6);
+    background-color: rgba(177, 53, 113, 0.18);
+    color: #F3B6D2;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
 .textoJustificativaSemQrKits {
     font-size: 0.75rem;
     font-style: italic;

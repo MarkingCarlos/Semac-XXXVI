@@ -1,9 +1,10 @@
 // Subaba "Kits" da aba Pessoas: marca a entrega do kit (camisa, caneta e
 // afins) quando a pessoa chega no credenciamento.
 //
-// Lista de GET /api/pessoa/kits: participantes confirmados (sem diaristas,
-// cujo ingresso não inclui kit) e toda a comissão. Aberta a toda a
-// comissão, então a lista não traz contato, RA nem pagamento.
+// Lista de GET /api/pessoa/kits: participantes confirmados e toda a
+// comissão. Aberta a toda a comissão, então a lista não traz contato, RA
+// nem pagamento. Diarista (kitReduzido) não ganha o kit completo, só folder
+// e crachá: a linha e a tela do QR avisam quem está entregando.
 //
 // Marcar é um toque; desfazer exige dois, mesmo padrão do "Desconfirmar"
 // da tabela de participantes — no balcão, com fila, um toque errado em
@@ -59,8 +60,18 @@ const FILTROS_ENTREGA_KITS = [
 const FILTROS_PUBLICO_KITS = [
     { id: 'todos', rotulo: 'Todos' },
     { id: 'participantes', rotulo: 'Participantes' },
+    { id: 'diarias', rotulo: 'Diárias' },
     { id: 'comissao', rotulo: 'Comissão' },
 ];
+
+// Público da pessoa para filtro e contador: diarista tem o seu, porque
+// recebe outra coisa (só folder e crachá).
+function publicoPessoaKits(pessoa) {
+    if (pessoa.role !== 'PARTICIPANTE') return 'comissao';
+    return pessoa.kitReduzido ? 'diarias' : 'participantes';
+}
+
+const AVISO_KIT_REDUZIDO_KITS = 'Diária — entregar só folder e crachá';
 
 // Busca sem diferenciar acento nem maiúscula ("joao" acha "João").
 function normalizarBuscaKits(texto) {
@@ -132,14 +143,17 @@ export default function EntregaKits() {
     const semConexaoKits = !!consultaKits.dados && !!consultaKits.erro;
 
     const contagemKits = useMemo(() => {
-        const participantes = pessoasKits.filter(p => p.role === 'PARTICIPANTE');
-        const comissao = pessoasKits.filter(p => p.role !== 'PARTICIPANTE');
+        const participantes = pessoasKits.filter(p => publicoPessoaKits(p) === 'participantes');
+        const diarias = pessoasKits.filter(p => publicoPessoaKits(p) === 'diarias');
+        const comissao = pessoasKits.filter(p => publicoPessoaKits(p) === 'comissao');
         const entregues = lista => lista.filter(p => p.kitEntregueEm).length;
         return {
             total: pessoasKits.length,
             entregues: entregues(pessoasKits),
             participantes: participantes.length,
             participantesEntregues: entregues(participantes),
+            diarias: diarias.length,
+            diariasEntregues: entregues(diarias),
             comissao: comissao.length,
             comissaoEntregues: entregues(comissao),
         };
@@ -150,9 +164,7 @@ export default function EntregaKits() {
         return pessoasKits.filter(pessoa => {
             if (filtroKits === 'pendentes' && pessoa.kitEntregueEm) return false;
             if (filtroKits === 'entregues' && !pessoa.kitEntregueEm) return false;
-            const ehParticipante = pessoa.role === 'PARTICIPANTE';
-            if (filtroPublicoKits === 'participantes' && !ehParticipante) return false;
-            if (filtroPublicoKits === 'comissao' && ehParticipante) return false;
+            if (filtroPublicoKits !== 'todos' && publicoPessoaKits(pessoa) !== filtroPublicoKits) return false;
             return !termo || normalizarBuscaKits(pessoa.nome).includes(termo);
         });
     }, [pessoasKits, buscaKits, filtroKits, filtroPublicoKits]);
@@ -233,6 +245,8 @@ export default function EntregaKits() {
                         <p class="divisaoContadorKits">
                             Participantes {contagemKits.participantesEntregues}/{contagemKits.participantes}
                             {' · '}
+                            Diárias {contagemKits.diariasEntregues}/{contagemKits.diarias}
+                            {' · '}
                             Comissão {contagemKits.comissaoEntregues}/{contagemKits.comissao}
                         </p>
                     </section>
@@ -283,7 +297,10 @@ export default function EntregaKits() {
 
                         {ultimaEntregaKits && (
                             <div class="avisoUltimaEntregaKits" role="status">
-                                <span>Kit entregue para <strong>{ultimaEntregaKits.nome}</strong></span>
+                                <span>
+                                    {ultimaEntregaKits.kitReduzido ? 'Folder e crachá entregues para ' : 'Kit entregue para '}
+                                    <strong>{ultimaEntregaKits.nome}</strong>
+                                </span>
                                 <button
                                     type="button"
                                     class="botaoDesfazerUltimaEntregaKits"
@@ -314,6 +331,9 @@ export default function EntregaKits() {
                                                     </span>
                                                     {pessoa.ingresso && <span>{pessoa.ingresso}</span>}
                                                 </span>
+                                                {pessoa.kitReduzido && (
+                                                    <span class="avisoKitReduzidoKits">{AVISO_KIT_REDUZIDO_KITS}</span>
+                                                )}
                                                 <span class="listaCamisetasPessoaKits">
                                                     {pessoa.camisetas?.length ? pessoa.camisetas.map((camiseta, indice) => (
                                                         <span
@@ -351,7 +371,9 @@ export default function EntregaKits() {
                                                     ? 'Salvando...'
                                                     : entregue
                                                         ? confirmandoDesfazer ? 'Toque de novo para desfazer' : 'Desfazer entrega'
-                                                        : 'Marcar kit como entregue'}
+                                                        : pessoa.kitReduzido
+                                                            ? 'Marcar folder e crachá como entregues'
+                                                            : 'Marcar kit como entregue'}
                                             </button>
                                         </li>
                                     );
@@ -369,6 +391,7 @@ export default function EntregaKits() {
             {pessoaVerificandoQrKits && (
                 <TelaVerificacaoQrKits
                     pessoa={pessoaVerificandoQrKits}
+                    avisoKit={pessoaVerificandoQrKits.kitReduzido ? AVISO_KIT_REDUZIDO_KITS : null}
                     onConfirmar={concluirVerificacaoQrKits}
                     onCancelar={() => setPessoaVerificandoQrKits(null)}
                 />
