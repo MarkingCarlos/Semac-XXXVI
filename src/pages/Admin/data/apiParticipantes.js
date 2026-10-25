@@ -35,12 +35,15 @@ export async function listarKits() {
 
 /* Marca (entregue = true) ou desfaz (false) a entrega do kit. Quem
    entregou é registrado pelo backend a partir do token. Retorna a pessoa
-   no mesmo formato de listarKits. */
-export async function marcarKitEntregue(id, entregue) {
+   no mesmo formato de listarKits.
+   Opcionais, só do celular: `uuid` é o QR do crachá lido (o backend
+   confere se é da própria pessoa e grava a entrega como verificada por
+   QR); `justificativaSemQr` é o motivo quando não deu para ler. */
+export async function marcarKitEntregue(id, entregue, { uuid, justificativaSemQr } = {}) {
     const resposta = await apiFetch(`${API_URL}/api/pessoa/${id}/kit`, {
         method: 'PATCH',
         headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({ entregue }),
+        body: JSON.stringify({ entregue, uuid, justificativaSemQr }),
     });
     if (!resposta.ok) {
         const corpo = await resposta.json().catch(() => null);

@@ -13,11 +13,25 @@
 // (usarConsultaPeriodica, mesmo "tempo real" da dashboard). O que este
 // aparelho acabou de marcar vale por cima de uma consulta que saiu antes
 // do clique — senão uma resposta atrasada desmarcaria o kit na tela.
+//
+// No celular, entregar para um participante abre a câmera para ler o QR do
+// crachá antes (TelaVerificacaoQrKits): confirma que é a própria pessoa.
+// No desktop, que não tem câmera no balcão, e para a comissão a entrega é
+// marcada direto. O backend grava qual dos dois caminhos foi usado.
 
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { listarKits, marcarKitEntregue } from '../data/apiParticipantes.js';
 import { usarConsultaPeriodica } from '../../../components/dashboardAdmin/usarConsultaPeriodica.js';
+import TelaVerificacaoQrKits from './TelaVerificacaoQrKits.jsx';
 import './entregaKits.css';
+
+// Toque como entrada principal = celular ou tablet, que têm câmera.
+const CONSULTA_MOBILE_VERIFICACAO_QR_KITS = '(hover: none) and (pointer: coarse)';
+
+function exigeLeituraQrKits(pessoa) {
+    return pessoa.role === 'PARTICIPANTE'
+        && window.matchMedia(CONSULTA_MOBILE_VERIFICACAO_QR_KITS).matches;
+}
 
 // Guarda quando cada consulta saiu, para comparar com as alterações locais.
 function consultarKitsComHorario() {
@@ -70,6 +84,13 @@ function textoEntregaKits(pessoa) {
     return `Entregue ${dia} às ${hora}${autor}`;
 }
 
+// Só participante lê QR; para a comissão "sem QR" é o normal e não diz
+// nada. null = entregue antes de isso ser registrado.
+function textoVerificacaoQrKits(pessoa) {
+    if (pessoa.role !== 'PARTICIPANTE' || pessoa.kitVerificadoQr == null) return null;
+    return pessoa.kitVerificadoQr ? 'via QR' : 'sem QR';
+}
+
 export default function EntregaKits() {
     const consultaKits = usarConsultaPeriodica(consultarKitsComHorario, true);
     // id → { pessoa, alteradoEm }: respostas dos PATCHs feitos neste aparelho.
@@ -83,6 +104,8 @@ export default function EntregaKits() {
     // No filtro "Pendentes" quem acabou de receber some da lista; o aviso
     // confirma a entrega e deixa desfazer ali mesmo se foi a pessoa errada.
     const [ultimaEntregaKits, setUltimaEntregaKits] = useState(null);
+    // Participante cujo QR a câmera está esperando (só no celular).
+    const [pessoaVerificandoQrKits, setPessoaVerificandoQrKits] = useState(null);
 
     const consultadoEmKits = consultaKits.dados?.consultadoEm ?? 0;
 
@@ -134,6 +157,20 @@ export default function EntregaKits() {
         });
     }, [pessoasKits, buscaKits, filtroKits, filtroPublicoKits]);
 
+    function aplicarAlteracaoKit(atualizada, desfazendo) {
+        setAlteracoesLocaisKits(anteriores => ({
+            ...anteriores,
+            [atualizada.id]: { pessoa: atualizada, alteradoEm: Date.now() },
+        }));
+        setUltimaEntregaKits(desfazendo ? null : atualizada);
+    }
+
+    // A tela da câmera já fez o PATCH com o uuid lido; aqui só reflete.
+    function concluirVerificacaoQrKits(atualizada) {
+        setPessoaVerificandoQrKits(null);
+        aplicarAlteracaoKit(atualizada, false);
+    }
+
     async function alternarEntregaKit(pessoa, { semConfirmacao = false } = {}) {
         const desfazendo = !!pessoa.kitEntregueEm;
         if (desfazendo && !semConfirmacao && idConfirmandoDesfazerKit !== pessoa.id) {
@@ -141,14 +178,14 @@ export default function EntregaKits() {
             return;
         }
         setErroMarcarKit('');
+        if (!desfazendo && exigeLeituraQrKits(pessoa)) {
+            setPessoaVerificandoQrKits(pessoa);
+            return;
+        }
         setIdProcessandoKit(pessoa.id);
         try {
             const atualizada = await marcarKitEntregue(pessoa.id, !desfazendo);
-            setAlteracoesLocaisKits(anteriores => ({
-                ...anteriores,
-                [atualizada.id]: { pessoa: atualizada, alteradoEm: Date.now() },
-            }));
-            setUltimaEntregaKits(desfazendo ? null : atualizada);
+            aplicarAlteracaoKit(atualizada, desfazendo);
         } catch (e) {
             setErroMarcarKit(e.message);
         } finally {
@@ -266,6 +303,7 @@ export default function EntregaKits() {
                                     const entregue = !!pessoa.kitEntregueEm;
                                     const processando = idProcessandoKit === pessoa.id;
                                     const confirmandoDesfazer = idConfirmandoDesfazerKit === pessoa.id;
+                                    const verificacaoQr = entregue && textoVerificacaoQrKits(pessoa);
                                     return (
                                         <li key={pessoa.id} class={`linhaPessoaKits ${entregue ? 'linhaEntregueKits' : ''}`}>
                                             <div class="infoPessoaKits">
@@ -286,7 +324,21 @@ export default function EntregaKits() {
                                                         </span>
                                                     )) : <span class="semCamisetaPessoaKits">Sem camiseta</span>}
                                                 </span>
-                                                {entregue && <span class="textoEntregueKits">{textoEntregaKits(pessoa)}</span>}
+                                                {entregue && (
+                                                    <span class="textoEntregueKits">
+                                                        {textoEntregaKits(pessoa)}
+                                                        {verificacaoQr && (
+                                                            <span class={`seloVerificacaoQrKits ${pessoa.kitVerificadoQr ? '' : 'seloSemQrKits'}`}>
+                                                                {verificacaoQr}
+                                                            </span>
+                                                        )}
+                                                    </span>
+                                                )}
+                                                {entregue && pessoa.kitJustificativaSemQr && (
+                                                    <span class="textoJustificativaSemQrKits">
+                                                        Motivo: {pessoa.kitJustificativaSemQr}
+                                                    </span>
+                                                )}
                                             </div>
                                             <button
                                                 type="button"
@@ -312,6 +364,14 @@ export default function EntregaKits() {
                         </div>
                     </div>
                 </>
+            )}
+
+            {pessoaVerificandoQrKits && (
+                <TelaVerificacaoQrKits
+                    pessoa={pessoaVerificandoQrKits}
+                    onConfirmar={concluirVerificacaoQrKits}
+                    onCancelar={() => setPessoaVerificandoQrKits(null)}
+                />
             )}
         </div>
     );

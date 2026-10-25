@@ -1,0 +1,247 @@
+/* =================================================================
+   telaVerificacaoQrKits.css — câmera que confirma o QR do crachá antes
+   de entregar o kit (só no celular). Ocupa a tela toda por cima do
+   /admin: fixed + inset 0 + 100dvh, nunca 100vh (no iPhone a barra do
+   Safari esconde o fim da tela).
+   ================================================================= */
+
+@keyframes entradaTelaVerificacaoQrKits {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.telaVerificacaoQrKits {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
+    box-sizing: border-box;
+    background-color: var(--Preto);
+    color: var(--Branco);
+    font-family: 'Montserrat', sans-serif;
+    animation: entradaTelaVerificacaoQrKits 0.25s ease-out;
+}
+
+/* ── Topo: de quem é o QR esperado ────────────────────────────── */
+.barraTopoVerificacaoQrKits {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    border-radius: 14px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.infoPessoaVerificacaoQrKits {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.rotuloVerificacaoQrKits {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--AmareloAuxApoio);
+}
+
+.nomePessoaVerificacaoQrKits {
+    font-size: 1rem;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.botaoCancelarVerificacaoQrKits {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 0.5rem 0.9rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: transparent;
+    color: var(--Branco);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* ── Câmera ───────────────────────────────────────────────────── */
+.visorCameraVerificacaoQrKits {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    background-color: #0d0d0d;
+}
+
+.videoCameraVerificacaoQrKits {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.estadoCameraVerificacaoQrKits {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: rgba(237, 236, 236, 0.7);
+}
+
+.molduraMiraVerificacaoQrKits {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.miraVerificacaoQrKits {
+    width: min(234px, 65vw);
+    aspect-ratio: 1;
+    border: 4px solid var(--AmareloAuxApoio);
+    border-radius: 18px;
+    box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.35);
+}
+
+.legendaVerificacaoQrKits {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1.5rem 1rem 1rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0));
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.textoConferindoVerificacaoQrKits {
+    color: var(--azulConteudo);
+}
+
+.textoErroVerificacaoQrKits {
+    display: inline-block;
+    padding: 0.5rem 0.85rem;
+    border-radius: 10px;
+    background-color: rgba(177, 53, 113, 0.25);
+    border: 1px solid rgba(177, 53, 113, 0.6);
+    color: var(--Branco);
+}
+
+/* ── Saída quando o QR não pode ser lido ──────────────────────── */
+.botaoEntregarSemQrKits {
+    flex: 0 0 auto;
+    min-height: 48px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: transparent;
+    color: rgba(237, 236, 236, 0.85);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.botaoEntregarSemQrKits:disabled {
+    opacity: 0.5;
+}
+
+.formularioSemQrKits {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 1rem;
+    border-radius: 14px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rotuloJustificativaSemQrKits {
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+/* 16px: abaixo disso o Safari do iPhone dá zoom ao focar o campo. */
+.campoJustificativaSemQrKits {
+    width: 100%;
+    box-sizing: border-box;
+    resize: none;
+    padding: 0.65rem 0.75rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.35);
+    color: var(--Branco);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+}
+
+.campoJustificativaSemQrKits:focus {
+    outline: none;
+    border-color: var(--AmareloAuxApoio);
+}
+
+.textoErroSemQrKits {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--rosaMarketing);
+}
+
+.acoesSemQrKits {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.botaoVoltarSemQrKits,
+.botaoConfirmarSemQrKits {
+    flex: 1 1 0;
+    min-height: 44px;
+    border-radius: 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.botaoVoltarSemQrKits {
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: transparent;
+    color: var(--Branco);
+}
+
+.botaoConfirmarSemQrKits {
+    border: 1px solid var(--AmareloAuxApoio);
+    background-color: var(--AmareloAuxApoio);
+    color: var(--Preto);
+}
+
+.botaoVoltarSemQrKits:disabled,
+.botaoConfirmarSemQrKits:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .telaVerificacaoQrKits {
+        animation: none;
+    }
+}
