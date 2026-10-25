@@ -58,6 +58,7 @@ import { lerEscolhaMinicursos } from '../Admin/data/apiEscolhaMinicursos.js';
 import { lerPerguntasDebateAbertas } from '../Admin/data/apiPerguntasDebate.js';
 import ConquistaDesbloqueada, { MODO_TESTE_CONQUISTA } from '../../components/ConquistaDesbloqueada/ConquistaDesbloqueada.jsx';
 import { montarRankingExibicao } from './data/rankingParticipantes.js';
+import { lerResumoMeuTime } from '../Admin/data/apiTimes.js';
 import {
     montarDiasDaSemana,
     diaInicialAgenda,
@@ -139,6 +140,8 @@ export default function Participantes() {
     const [carregandoAgenda, setCarregandoAgenda] = useState(true);
     const [erroAgenda, setErroAgenda] = useState('');
     const [nivel, setNivel] = useState(null);
+    // Resumo do time (GET /api/time/meu/resumo); null = não revelado ainda.
+    const [meuTimeParticipante, setMeuTimeParticipante] = useState(null);
     const [carregandoNivel, setCarregandoNivel] = useState(true);
     const [ranking, setRanking] = useState(RANKING_VAZIO_PARTICIPANTES);
     const [regrasXp, setRegrasXp] = useState([]);
@@ -243,6 +246,16 @@ export default function Participantes() {
             .then((valor) => { if (ativo) setNivel(valor); })
             .catch(() => {})
             .finally(() => { if (ativo) setCarregandoNivel(false); });
+        return () => { ativo = false; };
+    }, []);
+
+    /* Time da pessoa, só se ela já o revelou em /time. Falha ou time não
+       revelado: o bloco do perfil simplesmente não aparece. */
+    useEffect(() => {
+        let ativo = true;
+        lerResumoMeuTime()
+            .then((resumo) => { if (ativo && resumo?.revelado) setMeuTimeParticipante(resumo); })
+            .catch(() => {});
         return () => { ativo = false; };
     }, []);
 
@@ -655,6 +668,7 @@ export default function Participantes() {
                             email={emailParticipante}
                             iniciais={iniciais}
                             nivel={nivel}
+                            meuTime={meuTimeParticipante}
                             conquistas={conquistas}
                             certificados={certificadosMockParticipante}
                             certificadosLiberados={CERTIFICADOS_LIBERADOS_PARTICIPANTES}

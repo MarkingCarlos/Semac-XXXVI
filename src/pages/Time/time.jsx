@@ -224,11 +224,11 @@ export default function PaginaTime() {
                             </div>
                             <div className="cartaoNumeroTime">
                                 <span className="valorNumeroTime">{meuTime.xpTime.toLocaleString('pt-BR')}</span>
-                                <span className="rotuloNumeroTime">XP DO TIME</span>
+                                <span className="rotuloNumeroTime">XP MÉDIO</span>
                             </div>
                         </div>
 
-                        <p className="notaXpTime">Cada presença sua também soma para o time.</p>
+                        <p className="notaXpTime">Cada presença sua também conta na média do time.</p>
 
                         <div className="acoesRevelacaoTime">
                             <a className="botaoPrincipalTime" href="/participantes">IR PARA A PLATAFORMA</a>

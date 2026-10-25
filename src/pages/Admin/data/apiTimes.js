@@ -70,6 +70,13 @@ export async function lerMeuTime() {
     return lerOuFalhar(resposta, 'Não foi possível carregar seu time.', '/time');
 }
 
+/* Bloco "Seu time" do /participantes. Só leitura: não revela o time (só
+   o /time revela). `revelado` false = o bloco não aparece. */
+export async function lerResumoMeuTime() {
+    const resposta = await apiFetch(`${ROTA}/meu/resumo`, { headers: cabecalhosAuth() });
+    return lerOuFalhar(resposta, 'Não foi possível carregar seu time.', '/participantes');
+}
+
 /* O mascote aparece num círculo. Imagem quase quadrada preenche o círculo
    (object-fit: cover) sem perder nada; imagem alongada (ex.: 1268×3844)
    perderia topo e base no cover, então entra inteira, contida e com

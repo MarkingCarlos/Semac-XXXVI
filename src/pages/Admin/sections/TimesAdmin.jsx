@@ -20,7 +20,23 @@ import './timesAdmin.css';
 
    O sorteio reparte só quem tem pagamento confirmado, com no máximo 1
    pessoa de diferença entre os times. Quem confirmar depois entra
-   sozinho no time com menos gente, na primeira vez que abrir /time. */
+   sozinho no time com menos gente, na primeira vez que abrir /time.
+
+   Revelação programada (`revelacaoProgramadaEm`, V73): a partir do
+   horário os times valem mesmo com o interruptor desligado. O interruptor
+   serve para liberar antes. */
+
+/* "Programada para 26/10 às 07:00" ou, já passado o horário, o aviso de
+   que desligar o interruptor não esconde mais os times. */
+function textoRevelacaoProgramadaTimes(painel) {
+    const horario = new Date(painel.revelacaoProgramadaEm);
+    const dia = horario.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+    const hora = horario.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const jaPassou = horario.getTime() <= Date.now();
+    return jaPassou
+        ? `Revelados automaticamente em ${dia} às ${hora} — desligar aqui não esconde mais os times.`
+        : `Revelação programada para ${dia} às ${hora}.`;
+}
 
 export default function TimesAdmin() {
     const [painel, setPainel] = useState(null);
@@ -149,12 +165,23 @@ export default function TimesAdmin() {
                     />
                     <span className="trilhoInterruptorTimesAdmin" aria-hidden="true" />
                     <span className="textoInterruptorTimesAdmin">
-                        <strong>{painel.ativos ? 'Revelação ligada' : 'Revelação desligada'}</strong>
-                        <span>
+                        <strong>
                             {painel.ativos
+                                ? 'Revelação ligada'
+                                : painel.liberados ? 'Revelação automática' : 'Revelação desligada'}
+                        </strong>
+                        <span>
+                            {painel.liberados
                                 ? 'Quem escaneia o QR code vê o próprio time.'
                                 : 'Quem escaneia o QR code vai para o /participantes.'}
                         </span>
+                        {/* Horário da V73: depois dele os times valem mesmo com
+                            o interruptor desligado (ver TimeService.timesAtivos). */}
+                        {painel.revelacaoProgramadaEm && (
+                            <span className="textoRevelacaoProgramadaTimesAdmin">
+                                {textoRevelacaoProgramadaTimes(painel)}
+                            </span>
+                        )}
                     </span>
                 </label>
 
@@ -270,7 +297,7 @@ export default function TimesAdmin() {
                                     <dd>{time.revelados}</dd>
                                 </div>
                                 <div>
-                                    <dt>XP</dt>
+                                    <dt>XP médio</dt>
                                     <dd>{time.xpTime.toLocaleString('pt-BR')}</dd>
                                 </div>
                             </dl>

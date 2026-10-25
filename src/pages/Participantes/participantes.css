@@ -1664,6 +1664,97 @@
   outline: none;
 }
 
+/* Bloco "Seu time" (só depois da revelação em /time): mascote no círculo
+   com a cor do time, nome e posição. O cartão inteiro leva ao /time. */
+.cardMeuTimeSecaoPerfilParticipantes {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  border-radius: 15px;
+  background: var(--vermelhoAux2Participantes);
+  border: 2px solid var(--corMeuTimeSecaoPerfil);
+  color: var(--brancoQuenteParticipantes);
+  text-decoration: none;
+  transition: transform 0.2s ease, background 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cardMeuTimeSecaoPerfilParticipantes:hover,
+.cardMeuTimeSecaoPerfilParticipantes:focus-visible {
+  background: #93093d;
+  outline: none;
+}
+
+.cardMeuTimeSecaoPerfilParticipantes:active { transform: scale(0.98); }
+
+.circuloMascoteMeuTimeSecaoPerfilParticipantes {
+  flex: 0 0 auto;
+  width: 72px;
+  height: 72px;
+  border-radius: 9999px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: var(--corMeuTimeSecaoPerfil);
+  box-shadow: 0 0 0 3px rgba(252, 248, 245, 0.15);
+}
+
+.imgMascoteMeuTimeSecaoPerfilParticipantes {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Mascote alongado: inteiro, com o fundo claro das artes (como no /time). */
+.imgMascoteContidoMeuTimeSecaoPerfilParticipantes {
+  box-sizing: border-box;
+  object-fit: contain;
+  background: #F7F7F7;
+}
+
+.inicialMeuTimeSecaoPerfilParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 32px;
+  line-height: 1;
+  color: var(--brancoQuenteParticipantes);
+}
+
+.textosMeuTimeSecaoPerfilParticipantes {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  text-align: left;
+}
+
+.rotuloMeuTimeSecaoPerfilParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--AmareloAuxApoio);
+}
+
+.nomeMeuTimeSecaoPerfilParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 20px;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.posicaoMeuTimeSecaoPerfilParticipantes {
+  font-size: 13px;
+  color: rgba(252, 248, 245, 0.8);
+}
+
+.posicaoMeuTimeSecaoPerfilParticipantes strong { color: var(--brancoQuenteParticipantes); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cardMeuTimeSecaoPerfilParticipantes { transition: none; }
+  .cardMeuTimeSecaoPerfilParticipantes:active { transform: none; }
+}
+
 .cardDadosInscricaoSecaoPerfilParticipantes {
   background: var(--vermelhoAux2Participantes);
   border-radius: 15px;
@@ -1695,8 +1786,13 @@
   flex-direction: column;
   gap: 10px;
 }
-.blocoConquistasSecaoPerfilParticipantes{
+/* Coluna da direita do perfil: "Seu time" em cima de "Suas conquistas". */
+.colunaLateralSecaoPerfilParticipantes {
   flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 .blocoCertificadosSecaoPerfilParticipantes .rotuloBlocoSecaoPerfilParticipantes { font-size: 15px; }
 

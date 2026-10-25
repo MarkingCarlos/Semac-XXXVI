@@ -101,6 +101,13 @@
     color: #edecec;
 }
 
+/* Horário da revelação programada, em destaque sob o interruptor. */
+.textoRevelacaoProgramadaTimesAdmin {
+    margin-top: 4px;
+    color: var(--AmareloAuxApoio);
+    font-weight: 600;
+}
+
 .cartaoSorteioTimesAdmin {
     justify-content: space-between;
     flex-wrap: wrap;
