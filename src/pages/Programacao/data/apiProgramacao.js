@@ -37,7 +37,9 @@ function deResposta(evento) {
     return {
         id: evento.id,
         titulo: evento.nome,
-        palestrante: (evento.palestrantes || []).map((p) => p.nome).join(', ') || '—',
+        // Vazio quando o evento não tem palestrante (coffee-break, abertura...):
+        // a programação esconde o campo em vez de mostrar um traço.
+        palestrante: (evento.palestrantes || []).map((p) => p.nome).join(', '),
         descricao: evento.descricao || '',
         dia: DIAS_SEMANA[inicio.getDay()],
         categoria: evento.trilha ? evento.trilha.nome : null,

@@ -382,6 +382,12 @@
   gap: 8px;
 }
 
+/* Sem palestrante a grade pode ficar com 3 campos (abertura): o que sobra
+   sozinho na última linha ocupa a largura toda em vez de meia coluna. */
+.destaqueGradeCronograma > .destaqueCampoCronograma:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
 .sheetCronograma .destaqueGradeCronograma {
   gap: 10px;
 }

@@ -1,7 +1,7 @@
 import { Fragment } from "preact";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "preact/compat";
-import { getCorTipoEvento, getRotuloSobreTipoEvento } from "./tiposEventoCores.js";
+import { ehTipoEventoAbertura, getCorTipoEvento, getRotuloSobreTipoEvento } from "./tiposEventoCores.js";
 import { formatarDataCronograma } from "../cronogramaFiltro/formatarDataCronograma.js";
 import { listarDebatesAbertosPerguntas } from "../../pages/Perguntas/apiPerguntas.js";
 import ModalPerguntaDebateCronograma from "./ModalPerguntaDebateCronograma.jsx";
@@ -119,6 +119,12 @@ function DestaqueCronograma({
       ? eventoSelecionado.descricao
       : truncarPalavras(palavrasDescricao, LIMITE_PALAVRAS_DESCRICAO_CRONOGRAMA);
 
+  // Sem palestrante (coffee-break, credenciamento...) não há o que
+  // transmitir; a abertura é a exceção: não tem palestrante, mas é transmitida.
+  const temPalestranteDestaque = !!eventoSelecionado.palestrante;
+  const temTransmissaoDestaque =
+    temPalestranteDestaque || ehTipoEventoAbertura(eventoSelecionado.tipo);
+
   const cartao = (
     <div
       className={
@@ -174,10 +180,12 @@ function DestaqueCronograma({
         )}
 
         <div className="destaqueGradeCronograma">
-          <div className="destaqueCampoCronograma">
-            <span className="destaqueRotuloCronograma">Palestrante</span>
-            <span className="destaqueValorCronograma">{eventoSelecionado.palestrante}</span>
-          </div>
+          {temPalestranteDestaque && (
+            <div className="destaqueCampoCronograma">
+              <span className="destaqueRotuloCronograma">Palestrante</span>
+              <span className="destaqueValorCronograma">{eventoSelecionado.palestrante}</span>
+            </div>
+          )}
           <div className="destaqueCampoCronograma">
             <span className="destaqueRotuloCronograma">Horário</span>
             <span className="destaqueValorCronograma destaqueValorHorarioCronograma">
@@ -188,20 +196,22 @@ function DestaqueCronograma({
             <span className="destaqueRotuloCronograma">Local</span>
             <span className="destaqueValorCronograma">{eventoSelecionado.local}</span>
           </div>
-          <div className="destaqueCampoCronograma">
-            <span className="destaqueRotuloCronograma">Veja também em</span>
-            <a
-              className="destaqueLinkCronograma"
-              href={eventoSelecionado.linkUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.4 3.5 12 3.5 12 3.5s-7.4 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c2 .6 9.4.6 9.4.6s7.4 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.5v-7l6.3 3.5-6.3 3.5Z" />
-              </svg>
-              {eventoSelecionado.linkTexto}
-            </a>
-          </div>
+          {temTransmissaoDestaque && (
+            <div className="destaqueCampoCronograma">
+              <span className="destaqueRotuloCronograma">Veja também em</span>
+              <a
+                className="destaqueLinkCronograma"
+                href={eventoSelecionado.linkUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.4 3.5 12 3.5 12 3.5s-7.4 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c2 .6 9.4.6 9.4.6s7.4 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.5v-7l6.3 3.5-6.3 3.5Z" />
+                </svg>
+                {eventoSelecionado.linkTexto}
+              </a>
+            </div>
+          )}
         </div>
 
         {/* Só para debate recebendo perguntas agora: abre o modal de envio
@@ -366,7 +376,9 @@ export default function Cronograma({ eventos, selectedDay, selectedFilter }) {
                     <span className="eventoHorarioCronograma">{evento.horarioInicio}</span>
                     <span className="eventoTextoCronograma">
                       <span className="eventoTituloCronograma">{evento.titulo}</span>
-                      <span className="eventoPalestranteCronograma">{evento.palestrante}</span>
+                      {evento.palestrante && (
+                        <span className="eventoPalestranteCronograma">{evento.palestrante}</span>
+                      )}
                       <SeloTipoEventoCronograma
                         tipo={evento.tipo}
                         className="eventoSeloTipoEventoCronograma"

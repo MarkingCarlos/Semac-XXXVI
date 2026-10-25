@@ -52,6 +52,12 @@ export function getRotuloSobreTipoEvento(nomeTipo) {
   return `Sobre ${artigo} ${nomeTipo.trim().toLowerCase()}`;
 }
 
+/* A abertura não tem palestrante, mas é transmitida: o card de destaque
+   mostra o link de transmissão para ela mesmo sem palestrante. */
+export function ehTipoEventoAbertura(nomeTipo) {
+  return !!nomeTipo && normalizarNomeTipoEvento(nomeTipo) === 'abertura';
+}
+
 export function getCorTipoEvento(nomeTipo) {
   if (!nomeTipo) return null;
   const chave = normalizarNomeTipoEvento(nomeTipo);
