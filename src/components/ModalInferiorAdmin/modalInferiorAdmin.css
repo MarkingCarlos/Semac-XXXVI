@@ -247,6 +247,9 @@
     font-weight: 600;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+    /* Também usado em <a> (ex.: "Controlar telão" do debate). */
+    box-sizing: border-box;
+    text-decoration: none;
 }
 
 .botaoAcaoItemModalInferiorAdmin:disabled {

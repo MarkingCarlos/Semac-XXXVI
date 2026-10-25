@@ -1468,6 +1468,16 @@ function ModalDetalhesEvento({
                                 Ver perguntas
                             </button>
                         )}
+                        {/* Mesma aba no celular: o voltar do navegador traz de
+                            volta ao /admin. O painel vira controle remoto. */}
+                        {evento.ehDebate && (
+                            <a
+                                className="botaoAcaoItemModalInferiorAdmin"
+                                href={rotaPainelDebate(evento.id)}
+                            >
+                                Controlar telão
+                            </a>
+                        )}
 
                         {/* Iniciar e excluir só para quem gerencia a programação. */}
                         {podeGerenciar && (
