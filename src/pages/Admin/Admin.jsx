@@ -33,7 +33,7 @@ const SECOES = [
        certificados) seguem só com site e presidência — ver Pessoas.jsx. */
     { id: 'pessoas', rotulo: 'Pessoas', marca: 'P', classeMarcador: 'marcadorAmareloMenuFabModulos', papeis: ['MEMBRO', 'DIRETOR_CONTEUDO', 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING', 'DIRETOR_SITE', 'PRESIDENTE'] },
     { id: 'informacoes', rotulo: 'Informações SEMAC', marca: 'IS', classeMarcador: 'marcadorAzulMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO'] },
-    { id: 'mensagens', rotulo: 'Mensagens', marca: 'M', classeMarcador: 'marcadorVermelhoMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE'] },
+    { id: 'mensagens', rotulo: 'Mensagens', marca: 'M', classeMarcador: 'marcadorVermelhoMenuFabModulos', papeis: ['DIRETOR_SITE', 'PRESIDENTE', 'DIRETOR_CONTEUDO'] },
 ];
 
 export default function Admin() {
