@@ -63,24 +63,49 @@ export default function DashboardAdmin() {
     );
 }
 
-/* Só o card de vagas em minicursos, para quem não vê a dashboard inteira
-   (diretoria de conteúdo). Componente à parte porque cada
-   usarConsultaPeriodica consulta ao montar: as outras rotas da dashboard
-   dariam 403 a cada atualização. */
-export function DashboardMinicursosAdmin() {
+/* Só os cards que o papel pode ver, para quem não vê a dashboard inteira
+   (demais diretorias): vagas em minicursos e/ou top 3 do ranking. Cada
+   card é um componente à parte porque cada usarConsultaPeriodica consulta
+   ao montar: as rotas que o papel não acessa dariam 403 a cada
+   atualização. */
+export function DashboardParcialAdmin({ mostrarMinicursos, mostrarRanking }) {
+    if (!mostrarMinicursos && !mostrarRanking) return null;
+
+    return (
+        <section className="secaoDashboardAdmin" aria-label="Dashboard do evento">
+            <div className="gradeCardsParciaisDashboard">
+                {mostrarMinicursos && <CardMinicursosComModal />}
+                {mostrarRanking && <CardRankingComModal />}
+            </div>
+        </section>
+    );
+}
+
+function CardMinicursosComModal() {
     const minicursos = usarConsultaPeriodica(buscarMinicursosDashboard, true);
     const [modalAberto, setModalAberto] = useState(false);
 
     return (
-        <section className="secaoDashboardAdmin" aria-label="Vagas em minicursos">
-            <div className="gradeCardMinicursosDashboard">
-                <CardVagasMinicursos consulta={minicursos} aoAbrir={() => setModalAberto(true)} />
-            </div>
-
+        <>
+            <CardVagasMinicursos consulta={minicursos} aoAbrir={() => setModalAberto(true)} />
             {modalAberto && minicursos.dados && (
                 <ModalVagasMinicursos dados={minicursos.dados} aoFechar={() => setModalAberto(false)} />
             )}
-        </section>
+        </>
+    );
+}
+
+function CardRankingComModal() {
+    const ranking = usarConsultaPeriodica(buscarRankingDashboard, true);
+    const [modalAberto, setModalAberto] = useState(false);
+
+    return (
+        <>
+            <CardTopRanking consulta={ranking} aoAbrir={() => setModalAberto(true)} />
+            {modalAberto && ranking.dados && (
+                <ModalRankingCompleto ranking={ranking.dados} aoFechar={() => setModalAberto(false)} />
+            )}
+        </>
     );
 }
 

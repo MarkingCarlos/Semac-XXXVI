@@ -10,8 +10,8 @@ import { useState, useEffect } from 'preact/hooks';
 import { Link } from 'wouter';
 import { buscarPerfil, atualizarPerfil } from '../data/apiPerfil.js';
 import { listarSorteios } from '../../Sorteio/data/apiSorteio.js';
-import { temAcessoDashboard, temAcessoDashboardMinicursos } from '../../../auth/sessao.js';
-import DashboardAdmin, { DashboardMinicursosAdmin } from '../../../components/dashboardAdmin/DashboardAdmin.jsx';
+import { temAcessoDashboard, temAcessoDashboardMinicursos, temAcessoDashboardRanking } from '../../../auth/sessao.js';
+import DashboardAdmin, { DashboardParcialAdmin } from '../../../components/dashboardAdmin/DashboardAdmin.jsx';
 import './inicio.css';
 
 const LABEL_FUNCAO = {
@@ -163,7 +163,12 @@ export default function Inicio({ podeAcessarFinanceiro = false, podeVerPrevisao 
 
             {temAcessoDashboard()
                 ? <DashboardAdmin />
-                : temAcessoDashboardMinicursos() && <DashboardMinicursosAdmin />}
+                : (
+                    <DashboardParcialAdmin
+                        mostrarMinicursos={temAcessoDashboardMinicursos()}
+                        mostrarRanking={temAcessoDashboardRanking()}
+                    />
+                )}
 
             {/* Atalho para a /sorteio, no visual dos cards da dashboard e logo
                 abaixo do carrossel. Fica fora da DashboardAdmin de propósito:

@@ -43,6 +43,10 @@ const PAPEIS_DASHBOARD = ['PRESIDENTE', 'DIRETOR_SITE'];
    da programação. Espelha PAPEIS_DASHBOARD_MINICURSOS do backend. */
 const PAPEIS_DASHBOARD_MINICURSOS = [...PAPEIS_DASHBOARD, 'DIRETOR_CONTEUDO'];
 
+/* Quem vê o card "Top 3 do ranking" (com o ranking completo): toda a
+   diretoria e a presidência. Espelha PAPEIS_DASHBOARD_RANKING do backend. */
+const PAPEIS_DASHBOARD_RANKING = PAPEIS_DIRETORIA;
+
 /* Quem configura a sub-aba Gamificação de Informações SEMAC (xp, níveis,
    conquistas, times e Termo). Espelha PAPEIS_GAMIFICACAO do backend
    (SecurityConfig). */
@@ -148,6 +152,11 @@ export function temAcessoDashboard() {
 export function temAcessoDashboardMinicursos() {
     const sessao = lerSessao();
     return !!sessao && PAPEIS_DASHBOARD_MINICURSOS.includes(sessao.role) && !sessaoExpirada();
+}
+
+export function temAcessoDashboardRanking() {
+    const sessao = lerSessao();
+    return !!sessao && PAPEIS_DASHBOARD_RANKING.includes(sessao.role) && !sessaoExpirada();
 }
 
 export function temAcessoGamificacao() {

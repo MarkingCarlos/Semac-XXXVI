@@ -22,10 +22,10 @@
     display: none;
 }
 
-/* Só o card de minicursos (DashboardMinicursosAdmin): com um card só, ele
+/* Dashboard parcial (DashboardParcialAdmin): com um ou dois cards, cada um
    ocupa a largura de uma coluna em vez de esticar — mesma grade do card
    "Realizar sorteio" do Início. */
-.gradeCardMinicursosDashboard {
+.gradeCardsParciaisDashboard {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
     gap: 20px;
