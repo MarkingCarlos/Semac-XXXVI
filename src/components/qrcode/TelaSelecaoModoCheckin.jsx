@@ -17,6 +17,7 @@ export default function TelaSelecaoModoCheckin({
     onEscolherPresenca,
     onEscolherConquista,
     onEscolherTeste,
+    onEscolherBrindeComissao,
 }) {
     const semConquistas = conquistasDisponiveis === 0;
     const [, navegar] = useLocation();
@@ -61,6 +62,19 @@ export default function TelaSelecaoModoCheckin({
                     </span>
                 </button>
             )}
+
+            {/* Toda a comissão entrega: lê o QR que a pessoa mostra no /admin.
+                Só vale em 26/10 — fora do dia o backend recusa com o aviso. */}
+            <button
+                type="button"
+                className="cartaoModoCheckin"
+                onClick={onEscolherBrindeComissao}
+            >
+                <span className="tituloCartaoModoCheckin">ENTREGAR BRINDE DA COMISSÃO</span>
+                <span className="descricaoCartaoModoCheckin">
+                    Ler o QR do /admin de quem é da comissão (só em 26/10, uma vez por pessoa).
+                </span>
+            </button>
 
             {/* Toda a comissão: confere se o crachá é lido, sem registrar nada. */}
             <button

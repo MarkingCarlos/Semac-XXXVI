@@ -12,6 +12,7 @@ import { buscarPerfil, atualizarPerfil } from '../data/apiPerfil.js';
 import { listarSorteios } from '../../Sorteio/data/apiSorteio.js';
 import { temAcessoDashboard, temAcessoDashboardMinicursos, temAcessoDashboardRanking } from '../../../auth/sessao.js';
 import DashboardAdmin, { DashboardParcialAdmin } from '../../../components/dashboardAdmin/DashboardAdmin.jsx';
+import CardBrindeComissaoInicio from './CardBrindeComissaoInicio.jsx';
 import './inicio.css';
 
 const LABEL_FUNCAO = {
@@ -182,6 +183,8 @@ export default function Inicio({ podeAcessarFinanceiro = false, podeVerPrevisao 
                         <span className="textoSorteiosHojeInicio">{textoSorteiosHoje}</span>
                     </span>
                 </Link>
+                {/* Só no dia do brinde da comissão; fora dele não renderiza nada. */}
+                <CardBrindeComissaoInicio />
             </div>
 
             <form className="formularioPerfilInicio" onSubmit={salvar}>

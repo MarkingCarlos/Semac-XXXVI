@@ -93,3 +93,15 @@ export async function testarLeituraQrCode(uuid) {
     });
     return lerErroOuFalhar(resposta, 'Não foi possível ler este QR code.');
 }
+
+/* Brinde da comissão (26/10): dá baixa no QR lido, que é o do /admin da
+   pessoa (não o do crachá). Leitura única — o backend recusa QR já usado,
+   QR de crachá e leitura fora do dia, com a mensagem pronta para exibir. */
+export async function retirarBrindeComissaoPorQrCode(qrCode) {
+    const resposta = await apiFetch(`${API_URL}/api/brinde-comissao/retirada`, {
+        method: 'POST',
+        headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ qrCode }),
+    });
+    return lerErroOuFalhar(resposta, 'Não foi possível entregar o brinde.');
+}

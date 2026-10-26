@@ -138,6 +138,58 @@
     text-decoration: none;
 }
 
+/* ── Brinde da comissão (CardBrindeComissaoInicio, só em 26/10) ── */
+.cardBrindeComissaoInicio {
+    border-color: var(--AmareloAuxApoio);
+}
+
+.cardBrindeRetiradoComissaoInicio {
+    opacity: 0.75;
+}
+
+.textoBrindeComissaoInicio {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.35;
+    color: #fff;
+}
+
+.corpoModalBrindeComissaoInicio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 0 4px;
+    text-align: center;
+}
+
+/* Fundo branco e tamanho generoso: a câmera de quem entrega lê na hora. */
+.imgQrModalBrindeComissaoInicio {
+    width: min(280px, 72vw);
+    height: auto;
+    aspect-ratio: 1;
+    padding: 12px;
+    border-radius: 12px;
+    background: #fff;
+    image-rendering: pixelated;
+}
+
+.textoAvisoModalBrindeComissaoInicio {
+    margin: 0;
+    max-width: 320px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: rgba(252, 248, 245, 0.8);
+}
+
+.textoRetiradoModalBrindeComissaoInicio {
+    margin: 24px 0;
+    font-family: var(--fonteTituloBungee);
+    font-size: 1.1rem;
+    color: var(--AmareloAuxApoio);
+}
+
 .textoSorteiosHojeInicio {
     display: -webkit-box;
     -webkit-box-orient: vertical;

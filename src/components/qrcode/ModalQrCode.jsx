@@ -8,6 +8,7 @@ import {
     registrarPresencaPorQrCode,
     concederConquistaPorQrCode,
     testarLeituraQrCode,
+    retirarBrindeComissaoPorQrCode,
 } from './data/apiCheckin.js';
 import { temAcessoDiretoria } from '../../auth/sessao.js';
 import './ModalQrCode.css';
@@ -22,11 +23,25 @@ import './ModalQrCode.css';
       carimbado, por exemplo) e lê os crachás de quem cumpriu. Restrito a
       diretores e presidência, porque credita pontos que mexem no ranking.
 
-   A tela da câmera não sabe qual dos dois está rodando: recebe uma
+   3. Entregar brinde da comissão (26/10) — lê o QR que a pessoa da
+      comissão mostra no /admin (não o crachá). Leitura única; qualquer
+      papel de comissão entrega.
+
+   A tela da câmera não sabe qual deles está rodando: recebe uma
    `operacao` com o que chamar e como exibir o resultado (ver
    TelaCameraCheckin). É isto que monta essa operação. */
+const ROTULOS_PAPEL_BRINDE_COMISSAO = {
+    MEMBRO: 'Membro',
+    DIRETOR_SITE: 'Diretor(a) de Site',
+    DIRETOR_CONTEUDO: 'Diretor(a) de Conteúdo',
+    DIRETOR_PATROCINIO: 'Diretor(a) de Patrocínio',
+    DIRETOR_APOIO: 'Diretor(a) de Apoio',
+    DIRETOR_MARKETING: 'Diretor(a) de Marketing',
+    PRESIDENTE: 'Presidência',
+};
+
 const ModalQrCode = () => {
-    const [modo, setModo] = useState(null); // null | 'presenca' | 'conquista' | 'teste'
+    const [modo, setModo] = useState(null); // null | 'presenca' | 'conquista' | 'teste' | 'brindeComissao'
     const [operacao, setOperacao] = useState(null);
     const [conquistasManuais, setConquistasManuais] = useState([]);
 
@@ -96,6 +111,24 @@ const ModalQrCode = () => {
         });
     }
 
+    /* Brinde da comissão: sem alvo para escolher, vai direto para a câmera.
+       O QR é o do /admin da pessoa; o backend recusa crachá, QR já usado e
+       leitura fora do dia (ver BrindeComissaoService). */
+    function iniciarBrindeComissao() {
+        setModo('brindeComissao');
+        setOperacao({
+            titulo: 'BRINDE DA COMISSÃO',
+            subtitulo: 'Leia o QR do /admin da pessoa',
+            porUuid: retirarBrindeComissaoPorQrCode,
+            normalizar: (dto) => ({
+                titulo: 'BRINDE ENTREGUE',
+                nome: dto.nome,
+                info: ROTULOS_PAPEL_BRINDE_COMISSAO[dto.role] ?? 'Comissão',
+                xpTexto: null,
+            }),
+        });
+    }
+
     function iniciarConquista(conquista) {
         setOperacao({
             titulo: 'CONQUISTA',
@@ -117,8 +150,8 @@ const ModalQrCode = () => {
        de palestra, não de ferramenta. */
     function voltarDaCamera() {
         setOperacao(null);
-        // O teste não tem alvo para escolher: volta direto aos modos.
-        if (modo === 'teste') setModo(null);
+        // Teste e brinde não têm alvo para escolher: voltam direto aos modos.
+        if (modo === 'teste' || modo === 'brindeComissao') setModo(null);
     }
 
     function voltarParaModos() {
@@ -148,6 +181,7 @@ const ModalQrCode = () => {
                             onEscolherPresenca={() => setModo('presenca')}
                             onEscolherConquista={() => setModo('conquista')}
                             onEscolherTeste={iniciarTeste}
+                            onEscolherBrindeComissao={iniciarBrindeComissao}
                         />
                     )}
                 </div>
