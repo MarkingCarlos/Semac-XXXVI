@@ -117,7 +117,7 @@ const ModalQrCode = () => {
     function iniciarBrindeComissao() {
         setModo('brindeComissao');
         setOperacao({
-            titulo: 'BRINDE DA COMISSÃO',
+            titulo: 'MONSTER DA COMISSÃO',
             subtitulo: 'Leia o QR do /admin da pessoa',
             porUuid: retirarBrindeComissaoPorQrCode,
             normalizar: (dto) => ({

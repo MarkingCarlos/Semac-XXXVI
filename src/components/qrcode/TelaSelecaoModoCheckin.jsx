@@ -70,10 +70,7 @@ export default function TelaSelecaoModoCheckin({
                 className="cartaoModoCheckin"
                 onClick={onEscolherBrindeComissao}
             >
-                <span className="tituloCartaoModoCheckin">ENTREGAR BRINDE DA COMISSÃO</span>
-                <span className="descricaoCartaoModoCheckin">
-                    Ler o QR do /admin de quem é da comissão (só em 26/10, uma vez por pessoa).
-                </span>
+                <span className="tituloCartaoModoCheckin">ENTREGAR MONSTER DA COMISSÃO</span>
             </button>
 
             {/* Toda a comissão: confere se o crachá é lido, sem registrar nada. */}

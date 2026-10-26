@@ -60,7 +60,7 @@ export default function CardBrindeComissaoInicio() {
                 className={`cardDashboard cardBrindeComissaoInicio ${retirado ? 'cardBrindeRetiradoComissaoInicio' : ''}`}
                 onClick={() => setModalBrindeAberto(true)}
             >
-                <span className="tituloCardDashboard">Brinde da comissão</span>
+                <span className="tituloCardDashboard">Monster da comissão</span>
                 <span className="subtituloCardDashboard">{retirado ? 'Já retirado' : 'Só hoje · leitura única'}</span>
                 <span className="conteudoCardDashboard">
                     <span className="textoBrindeComissaoInicio">
@@ -86,7 +86,7 @@ export default function CardBrindeComissaoInicio() {
                                 <img
                                     className="imgQrModalBrindeComissaoInicio"
                                     src={imagemQrBrinde}
-                                    alt="QR code do seu brinde da comissão"
+                                    alt="QR code do seu monster"
                                 />
                                 <p className="textoAvisoModalBrindeComissaoInicio">
                                     Vale uma vez só e apenas hoje. Quem entrega lê em /checkin → "Entregar brinde da comissão".
