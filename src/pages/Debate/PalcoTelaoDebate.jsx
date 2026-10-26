@@ -14,7 +14,7 @@ import { estiloEnquadramentoFoto } from './enquadramentoFotoPalestrante.js';
    `estado` recebido — quem decide é o painel (ver canalTelaoDebate.js).
 
    Modos:
-   - 'vs': os dois participantes lado a lado com o "VS" no meio. Com uma
+   - 'vs': os dois participantes lado a lado. Com uma
      pergunta ativa, os cards descem um pouco e ela aparece resumida em cima.
    - 'a' / 'b': o outro participante sai de cena e entra o timer do lado
      dele. Laranja no alerta; esgotado, conta em positivo piscando. Na
@@ -46,11 +46,9 @@ const PASSO_FONTE_PERGUNTA_TELAO_DEBATE = 2;
 const ALTURA_PERGUNTA_RESUMO_CURTA_TELAO_DEBATE = 84;
 const ALTURA_PERGUNTA_RESUMO_LONGA_TELAO_DEBATE = 200;
 
-/* Posição dos cards e do VS com pergunta na visão geral. O VS desce junto
-   para continuar no centro das fotos: centro da foto = 190 (topo do card)
-   + descida + 320 × escala, e o VS mora em 510. */
-const ELEVACAO_PERGUNTA_CURTA_TELAO_DEBATE = { cards: 'translateY(70px) scale(0.88)', vs: 'translateY(31px) scale(0.88)' };
-const ELEVACAO_PERGUNTA_LONGA_TELAO_DEBATE = { cards: 'translateY(202px) scale(0.7)', vs: 'translateY(106px) scale(0.7)' };
+/* Posição dos cards com pergunta na visão geral. */
+const ELEVACAO_PERGUNTA_CURTA_TELAO_DEBATE = { cards: 'translateY(70px) scale(0.88)' };
+const ELEVACAO_PERGUNTA_LONGA_TELAO_DEBATE = { cards: 'translateY(202px) scale(0.7)' };
 
 /* Diminui a fonte do elemento, a partir do máximo, até o texto caber na
    altura que ele tem (max-height). Mede em px de layout, que o scale() do
@@ -194,7 +192,6 @@ export default function PalcoTelaoDebate({ estado }) {
     const escondeB = modo === 'a' || modo === 'q';
     const elevacaoPergunta = perguntaLonga ? ELEVACAO_PERGUNTA_LONGA_TELAO_DEBATE : ELEVACAO_PERGUNTA_CURTA_TELAO_DEBATE;
     const elevacaoCards = modoVs && temPergunta ? elevacaoPergunta.cards : 'none';
-    const elevacaoVs = modoVs && temPergunta ? elevacaoPergunta.vs : 'none';
 
     const restanteMs = restanteTimerDebate(estado, agora);
     const esgotado = restanteMs < 0;
@@ -249,16 +246,6 @@ export default function PalcoTelaoDebate({ estado }) {
                         transform: escondeB ? 'translateX(900px) rotate(10deg)' : elevacaoCards,
                     }}
                 />
-
-                <div
-                    className="divVsTelaoDebate"
-                    style={{
-                        opacity: modoVs ? 1 : 0,
-                        transform: modoVs ? elevacaoVs : 'scale(0.3) rotate(-90deg)',
-                    }}
-                >
-                    VS
-                </div>
 
                 {/* Pergunta em destaque (modo 'q') */}
                 <div

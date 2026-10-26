@@ -183,28 +183,6 @@
     font-weight: 500;
 }
 
-/* ── VS ──────────────────────────────────────────────────────── */
-
-.divVsTelaoDebate {
-    position: absolute;
-    left: 960px;
-    top: 510px;
-    width: 180px;
-    height: 180px;
-    margin-left: -90px;
-    margin-top: -90px;
-    border-radius: 50%;
-    background: #E79839;
-    color: #730835;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Bungee', sans-serif;
-    font-size: 64px;
-    transition: opacity 0.4s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    pointer-events: none;
-}
-
 /* ── Pergunta em destaque ────────────────────────────────────── */
 
 .divPerguntaDestaqueTelaoDebate {
