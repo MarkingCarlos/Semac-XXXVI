@@ -10,25 +10,33 @@
 
    As imagens das conquistas usam o mesmo esquema com `ajuste` 'contain':
    a imagem inteira cabe na moldura (PNG de fundo transparente), e o zoom
-   aproxima a partir do ponto escolhido. */
+   aproxima a partir do ponto escolhido. Lá o zoom também desce abaixo de
+   1 (ZOOM_MINIMO_CONTAIN), para diminuir a imagem dentro da moldura. */
 
 export const ZOOM_MINIMO_FOTO_PALESTRANTE = 1;
 export const ZOOM_MAXIMO_FOTO_PALESTRANTE = 3;
+
+/* Mesmo limite validado no backend (EnquadramentoImagemConquistaRequestDTO). */
+export const ZOOM_MINIMO_CONTAIN = 0.3;
 
 export const ENQUADRAMENTO_PADRAO_FOTO_PALESTRANTE = { fotoPosX: 50, fotoPosY: 50, fotoZoom: 1 };
 
 const limitar = (valor, minimo, maximo) => Math.min(maximo, Math.max(minimo, valor));
 
-export function normalizarEnquadramentoFoto({ fotoPosX, fotoPosY, fotoZoom } = {}) {
+export function zoomMinimoDoAjuste(ajuste) {
+    return ajuste === 'contain' ? ZOOM_MINIMO_CONTAIN : ZOOM_MINIMO_FOTO_PALESTRANTE;
+}
+
+export function normalizarEnquadramentoFoto({ fotoPosX, fotoPosY, fotoZoom } = {}, zoomMinimo = ZOOM_MINIMO_FOTO_PALESTRANTE) {
     return {
         fotoPosX: limitar(Number(fotoPosX ?? 50), 0, 100),
         fotoPosY: limitar(Number(fotoPosY ?? 50), 0, 100),
-        fotoZoom: limitar(Number(fotoZoom ?? 1), ZOOM_MINIMO_FOTO_PALESTRANTE, ZOOM_MAXIMO_FOTO_PALESTRANTE),
+        fotoZoom: limitar(Number(fotoZoom ?? 1), zoomMinimo, ZOOM_MAXIMO_FOTO_PALESTRANTE),
     };
 }
 
 export function estiloEnquadramentoFoto(palestrante, ajuste = 'cover') {
-    const { fotoPosX, fotoPosY, fotoZoom } = normalizarEnquadramentoFoto(palestrante);
+    const { fotoPosX, fotoPosY, fotoZoom } = normalizarEnquadramentoFoto(palestrante, zoomMinimoDoAjuste(ajuste));
     const ponto = `${fotoPosX}% ${fotoPosY}%`;
     return {
         objectFit: ajuste,

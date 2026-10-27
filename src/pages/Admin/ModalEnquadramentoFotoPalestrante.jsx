@@ -5,7 +5,7 @@ import {
     estiloEnquadramentoFoto,
     normalizarEnquadramentoFoto,
     ZOOM_MAXIMO_FOTO_PALESTRANTE,
-    ZOOM_MINIMO_FOTO_PALESTRANTE,
+    zoomMinimoDoAjuste,
 } from '../Debate/enquadramentoFotoPalestrante.js';
 import './modalEnquadramentoFotoPalestrante.css';
 
@@ -22,7 +22,8 @@ import './modalEnquadramentoFotoPalestrante.css';
 
    Também ajusta a imagem das conquistas (botão "Ajustar imagem" de
    Informações SEMAC), com `ajuste` 'contain' e `titulo` próprio; lá o
-   "Aplicar" grava direto. */
+   "Aplicar" grava direto, o zoom desce abaixo de 1 (diminui a imagem) e
+   `renderizarPrevia` desenha, ao vivo, como o participante vai ver. */
 
 const arredondar = (valor) => Math.round(valor * 100) / 100;
 
@@ -35,8 +36,11 @@ export default function ModalEnquadramentoFotoPalestrante({
     ajuste = 'cover',
     titulo = 'Ajustar foto',
     aplicando = false,
+    renderizarPrevia = null,
 }) {
-    const [enquadramentoAtual, setEnquadramentoAtual] = useState(() => normalizarEnquadramentoFoto(enquadramento));
+    const zoomMinimo = zoomMinimoDoAjuste(ajuste);
+    const normalizar = (valor) => normalizarEnquadramentoFoto(valor, zoomMinimo);
+    const [enquadramentoAtual, setEnquadramentoAtual] = useState(() => normalizar(enquadramento));
     const molduraRef = useRef(null);
     const imagemRef = useRef(null);
     const arrasteRef = useRef(null);
@@ -54,7 +58,8 @@ export default function ModalEnquadramentoFotoPalestrante({
 
     /* Quantos px de arraste correspondem a 100% de posição: a sobra da
        foto além da moldura (object-fit: cover) mais o que o zoom acrescenta.
-       Em 'contain' a imagem cabe inteira, então só o zoom dá sobra. */
+       Em 'contain' a imagem cabe inteira, então só o zoom dá sobra — para
+       mais ou para menos: abaixo de 1 a sobra é o espaço vazio em volta. */
     const faixaArraste = (eixo) => {
         const moldura = molduraRef.current;
         const imagem = imagemRef.current;
@@ -63,16 +68,22 @@ export default function ModalEnquadramentoFotoPalestrante({
         const escalas = [moldura.clientWidth / imagem.naturalWidth, moldura.clientHeight / imagem.naturalHeight];
         const cobertura = ajuste === 'contain' ? Math.min(...escalas) : Math.max(...escalas);
         const tamanhoFoto = (eixo === 'x' ? imagem.naturalWidth : imagem.naturalHeight) * cobertura;
-        return Math.max(0, tamanhoFoto - lado) * enquadramentoAtual.fotoZoom + (enquadramentoAtual.fotoZoom - 1) * lado;
+        return Math.max(0, tamanhoFoto - lado) * enquadramentoAtual.fotoZoom
+            + Math.abs(enquadramentoAtual.fotoZoom - 1) * lado;
     };
 
+    /* Acima de 1, levar o ponto em evidência para a direita puxa a imagem
+       para a esquerda; abaixo de 1 a imagem encolhe na direção desse
+       ponto e anda junto com ele. O sinal mantém a imagem seguindo o mouse
+       nos dois casos. */
     const moverFoto = (dx, dy) => {
         const faixaX = faixaArraste('x');
         const faixaY = faixaArraste('y');
-        setEnquadramentoAtual((atual) => normalizarEnquadramentoFoto({
+        const sentido = enquadramentoAtual.fotoZoom < 1 ? -1 : 1;
+        setEnquadramentoAtual((atual) => normalizar({
             ...atual,
-            fotoPosX: faixaX > 0 ? atual.fotoPosX - (dx / faixaX) * 100 : atual.fotoPosX,
-            fotoPosY: faixaY > 0 ? atual.fotoPosY - (dy / faixaY) * 100 : atual.fotoPosY,
+            fotoPosX: faixaX > 0 ? atual.fotoPosX - sentido * (dx / faixaX) * 100 : atual.fotoPosX,
+            fotoPosY: faixaY > 0 ? atual.fotoPosY - sentido * (dy / faixaY) * 100 : atual.fotoPosY,
         }));
     };
 
@@ -91,7 +102,7 @@ export default function ModalEnquadramentoFotoPalestrante({
     const encerrarArraste = () => { arrasteRef.current = null; };
 
     const alterarZoom = (novoZoom) => {
-        setEnquadramentoAtual((atual) => normalizarEnquadramentoFoto({ ...atual, fotoZoom: novoZoom }));
+        setEnquadramentoAtual((atual) => normalizar({ ...atual, fotoZoom: novoZoom }));
     };
 
     const rolarZoom = (e) => {
@@ -105,7 +116,7 @@ export default function ModalEnquadramentoFotoPalestrante({
         if (!passo) return;
         e.preventDefault();
         // Seta move o ponto em evidência, então a foto anda para o lado oposto
-        setEnquadramentoAtual((atual) => normalizarEnquadramentoFoto({
+        setEnquadramentoAtual((atual) => normalizar({
             ...atual,
             fotoPosX: atual.fotoPosX + passo[0],
             fotoPosY: atual.fotoPosY + passo[1],
@@ -161,7 +172,7 @@ export default function ModalEnquadramentoFotoPalestrante({
                     <input
                         type="range"
                         className="inputZoomEnquadramentoFoto"
-                        min={ZOOM_MINIMO_FOTO_PALESTRANTE}
+                        min={zoomMinimo}
                         max={ZOOM_MAXIMO_FOTO_PALESTRANTE}
                         step="0.01"
                         value={enquadramentoAtual.fotoZoom}
@@ -169,6 +180,16 @@ export default function ModalEnquadramentoFotoPalestrante({
                     />
                     <span className="spanValorZoomEnquadramentoFoto">{enquadramentoAtual.fotoZoom.toFixed(2)}×</span>
                 </label>
+
+                {renderizarPrevia && (
+                    <div className="divPreviaEnquadramentoFoto">
+                        <span className="spanRotuloPreviaEnquadramentoFoto">Como o participante vê</span>
+                        {/* Só visualização: os cards da prévia não abrem nada. */}
+                        <div className="divConteudoPreviaEnquadramentoFoto" inert aria-hidden="true">
+                            {renderizarPrevia(enquadramentoAtual)}
+                        </div>
+                    </div>
+                )}
 
                 <div className="divAcoesEnquadramentoFoto">
                     <button

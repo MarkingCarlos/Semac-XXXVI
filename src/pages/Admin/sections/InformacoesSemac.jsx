@@ -57,6 +57,7 @@ import {
     reavaliarConquistas,
 } from '../data/apiConquistas.js';
 import ModalEnquadramentoFotoPalestrante from '../ModalEnquadramentoFotoPalestrante.jsx';
+import CardConquista from '../../../components/CardConquista/CardConquista.jsx';
 
 /* Informações SEMAC — seis blocos:
    1. Inscrições abertas (tabela `configuracao_inscricao`), liga/desliga
@@ -1211,6 +1212,28 @@ export default function InformacoesSemac() {
                             fotoPosX: conquistaEmEnquadramento.imagemPosX,
                             fotoPosY: conquistaEmEnquadramento.imagemPosY,
                             fotoZoom: conquistaEmEnquadramento.imagemZoom,
+                        }}
+                        renderizarPrevia={(enquadramentoPrevia) => {
+                            /* O card de verdade da vitrine, com o ajuste
+                               ainda não salvo: conquistada e bloqueada. */
+                            const conquistaPrevia = {
+                                ...conquistaEmEnquadramento,
+                                imagemPosX: enquadramentoPrevia.fotoPosX,
+                                imagemPosY: enquadramentoPrevia.fotoPosY,
+                                imagemZoom: enquadramentoPrevia.fotoZoom,
+                            };
+                            return (
+                                <>
+                                    <div className="divCardPreviaEnquadramentoFoto">
+                                        <CardConquista conquista={{ ...conquistaPrevia, desbloqueada: true }} />
+                                        <span className="spanLegendaPreviaEnquadramentoFoto">Conquistada</span>
+                                    </div>
+                                    <div className="divCardPreviaEnquadramentoFoto">
+                                        <CardConquista conquista={{ ...conquistaPrevia, desbloqueada: false }} />
+                                        <span className="spanLegendaPreviaEnquadramentoFoto">Bloqueada</span>
+                                    </div>
+                                </>
+                            );
                         }}
                         aoAplicar={aplicarEnquadramentoConquista}
                         aoFechar={() => { if (!salvandoEnquadramentoConquista) setConquistaEmEnquadramento(null); }}
