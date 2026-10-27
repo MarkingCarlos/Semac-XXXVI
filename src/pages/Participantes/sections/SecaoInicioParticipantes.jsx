@@ -135,7 +135,7 @@ export default function SecaoInicioParticipantes({
                         <div className="avisoASeguirInicioParticipantes">
                             <span className="rotuloASeguirInicioParticipantes">A SEGUIR</span>
                             <span className="textoASeguirInicioParticipantes">
-                                {atividadeSeguinte.dia} · {atividadeSeguinte.horario} · <strong>{atividadeSeguinte.titulo}</strong> · {atividadeSeguinte.local}
+                                <strong className="strongTituloASeguirInicioParticipantes">{atividadeSeguinte.titulo}</strong>
                             </span>
                         </div>
                     )}
