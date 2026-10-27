@@ -2,7 +2,7 @@
    de leitura de QR code em /checkin para marcar presença nas palestras. */
 
 import { apiFetch } from '../../../lib/apiFetch.js';
-import { cabecalhosAuth, temAcessoGestaoParticipantes } from '../../../auth/sessao.js';
+import { cabecalhosAuth, temAcessoDiretoria, temAcessoGestaoParticipantes } from '../../../auth/sessao.js';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
@@ -63,8 +63,12 @@ export async function registrarPresencaPorQrCode(eventoId, uuid) {
    conquista (aqui). A câmera é a mesma; só muda
    o que acontece quando o participante é identificado.
 
-   Conceder é restrito a diretores e presidência no backend — MEMBRO
-   recebe 403. A interface esconde o modo com temAcessoDiretoria(). */
+   Conceder é de diretores e presidência; MEMBRO só concede as de
+   CONQUISTAS_CONCEDIDAS_POR_MEMBRO (o backend recusa as outras com 403,
+   ver CatalogoConquistas no java_api). */
+
+/* Espelha CatalogoConquistas.CONQUISTAS_CONCEDIDAS_POR_MEMBRO. */
+const CONQUISTAS_CONCEDIDAS_POR_MEMBRO = ['ALQUIMIA_COMPLETA'];
 
 /* Só as conquistas MANUAIS e já ativas: as automáticas o sistema concede
    sozinho, e as inativas ainda não valem. Com o prazo (`concessaoAte`)
@@ -76,8 +80,10 @@ export async function listarConquistasManuaisCheckin() {
     if (!resposta.ok) throw new Error('Falha ao carregar as conquistas.');
     const conquistas = await resposta.json();
     const concedeForaDoPrazo = temAcessoGestaoParticipantes();
+    const concedeTodas = temAcessoDiretoria();
     return conquistas.filter((c) => c.tipoValidacao === 'MANUAL'
         && c.ativa
+        && (concedeTodas || CONQUISTAS_CONCEDIDAS_POR_MEMBRO.includes(c.codigo))
         && (concedeForaDoPrazo || !prazoConcessaoVencido(c.concessaoAte)));
 }
 

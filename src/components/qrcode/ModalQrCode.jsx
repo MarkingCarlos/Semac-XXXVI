@@ -10,7 +10,7 @@ import {
     testarLeituraQrCode,
     retirarBrindeComissaoPorQrCode,
 } from './data/apiCheckin.js';
-import { temAcessoDiretoria } from '../../auth/sessao.js';
+import { temAcessoAdmin } from '../../auth/sessao.js';
 import './ModalQrCode.css';
 
 /* Ferramenta usada durante o evento, na rota /checkin. Dois modos, com a
@@ -45,7 +45,8 @@ const ModalQrCode = () => {
     const [operacao, setOperacao] = useState(null);
     const [conquistasManuais, setConquistasManuais] = useState([]);
 
-    const podeConcederConquista = temAcessoDiretoria();
+    // MEMBRO também entra: a lista dele só traz as conquistas que ele concede
+    const podeConcederConquista = temAcessoAdmin();
 
     /* Carregado já na abertura para a tela de modos saber se há conquista
        manual ativa — sem isso o botão levaria a uma lista vazia. Falha em
@@ -137,9 +138,10 @@ const ModalQrCode = () => {
             normalizar: (dto) => ({
                 titulo: 'CONQUISTA CONCEDIDA',
                 nome: dto.participanteNome,
-                info: dto.conquistaNome,
-                xpTexto: `+${dto.pontosCreditados} XP`,
-                xpZerado: false,
+                info: dto.detalhe ? `${dto.conquistaNome} · ${dto.detalhe}` : dto.conquistaNome,
+                // Alquimia Completa: segunda vitória entra no pódio, mas sem pontos
+                xpTexto: dto.jaTinha ? '+0 XP · já tinha a conquista' : `+${dto.pontosCreditados} XP`,
+                xpZerado: dto.jaTinha,
                 detalhe: dto.nivelAtual ? `${dto.nivelAtual} · ${dto.xpTotal} XP` : null,
             }),
         });

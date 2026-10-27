@@ -3,10 +3,10 @@ import './TelaSelecaoModoCheckin.css';
 
 /* Primeira tela do /checkin: o que se vai fazer com os QR codes.
 
-   "Conceder conquista" só aparece para diretores e presidência — quem é
-   MEMBRO continua marcando presença normalmente, mas conceder credita
-   pontos que mexem no ranking e fica com a diretoria (a checagem de
-   verdade é no backend; aqui é para não oferecer o que vai dar 403).
+   "Conceder conquista" aparece para toda a comissão, mas MEMBRO só vê
+   na lista as conquistas que pode conceder (hoje, a Alquimia Completa) —
+   conceder credita pontos que mexem no ranking, então as outras ficam
+   com a diretoria (a checagem de verdade é no backend).
 
    Sem conquista manual ativa, o modo aparece desabilitado com o motivo:
    é mais útil dizer "nenhuma conquista ativa" do que sumir e deixar a
