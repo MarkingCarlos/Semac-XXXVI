@@ -2,7 +2,7 @@
    de leitura de QR code em /checkin para marcar presença nas palestras. */
 
 import { apiFetch } from '../../../lib/apiFetch.js';
-import { cabecalhosAuth } from '../../../auth/sessao.js';
+import { cabecalhosAuth, temAcessoGestaoParticipantes } from '../../../auth/sessao.js';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
@@ -67,12 +67,27 @@ export async function registrarPresencaPorQrCode(eventoId, uuid) {
    recebe 403. A interface esconde o modo com temAcessoDiretoria(). */
 
 /* Só as conquistas MANUAIS e já ativas: as automáticas o sistema concede
-   sozinho, e as inativas ainda não valem. */
+   sozinho, e as inativas ainda não valem. Com o prazo (`concessaoAte`)
+   vencido a conquista também some — menos para diretoria de site e
+   presidência, que concedem a qualquer momento. A checagem de verdade é
+   no backend (ConquistaService.exigirPrazoDeConcessao). */
 export async function listarConquistasManuaisCheckin() {
     const resposta = await apiFetch(`${API_URL}/api/conquista`, { headers: cabecalhosAuth() });
     if (!resposta.ok) throw new Error('Falha ao carregar as conquistas.');
     const conquistas = await resposta.json();
-    return conquistas.filter((c) => c.tipoValidacao === 'MANUAL' && c.ativa);
+    const concedeForaDoPrazo = temAcessoGestaoParticipantes();
+    return conquistas.filter((c) => c.tipoValidacao === 'MANUAL'
+        && c.ativa
+        && (concedeForaDoPrazo || !prazoConcessaoVencido(c.concessaoAte)));
+}
+
+/* '2026-10-26' vale até o fim desse dia, no fuso de quem está olhando.
+   Comparar as strings 'AAAA-MM-DD' evita o UTC de new Date('2026-10-26'). */
+function prazoConcessaoVencido(concessaoAte) {
+    if (!concessaoAte) return false;
+    const hoje = new Date();
+    const hojeTexto = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`;
+    return hojeTexto > concessaoAte;
 }
 
 export async function concederConquistaPorQrCode(conquistaId, uuid) {

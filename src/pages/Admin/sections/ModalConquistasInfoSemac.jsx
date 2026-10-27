@@ -55,6 +55,12 @@ export function CartaoConquistaInfoSemac({ conquista, emEspera, aoEditar, aoTroc
                     <span className="seloValidacaoConquistaInfoSemac">
                         {ROTULOS_VALIDACAO_CONQUISTA[conquista.tipoValidacao] ?? conquista.tipoValidacao}
                     </span>
+                    {conquista.concessaoAte && (
+                        <span className="metaConquistaInfoSemac">
+                            Concessão até {conquista.concessaoAte.split('-').reverse().slice(0, 2).join('/')}
+                            {' '}(site e presidência: sem prazo)
+                        </span>
+                    )}
                 </div>
             </div>
 

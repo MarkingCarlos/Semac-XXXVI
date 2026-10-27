@@ -13,7 +13,13 @@
 
    Em debates, com as perguntas liberadas no /admin, o rodapé ganha o
    botão "Mande sua pergunta" (abre o ModalPerguntaDebateParticipantes
-   por cima deste card). */
+   por cima deste card).
+
+   Nos eventos da pesquisa de satisfação, quem teve presença confirmada
+   ganha "Avaliar atividade" (abre o ModalAvaliacaoEventoParticipantes).
+   `avaliacaoEvento` = { liberada, nota }: antes do fim o botão aparece
+   desabilitado; já avaliado, mostra a nota e deixa trocar. Null = sem
+   botão (tipo fora da pesquisa ou sem presença). */
 
 import { useEffect, useRef } from 'preact/hooks';
 import { useGSAP } from '@gsap/react';
@@ -37,7 +43,14 @@ function animacaoCardSheetDetalheEvento(card, entrando) {
         : { y: distancia, duration: 0.3, ease: 'power3.in' };
 }
 
-export default function SheetDetalheEventoParticipantes({ evento, podeMandarPergunta, onMandarPergunta, onFechar }) {
+export default function SheetDetalheEventoParticipantes({
+    evento,
+    podeMandarPergunta,
+    onMandarPergunta,
+    avaliacaoEvento,
+    onAvaliar,
+    onFechar,
+}) {
     const fundoSheetDetalheEventoRef = useRef(null);
     const cardSheetDetalheEventoRef = useRef(null);
     const botaoFecharSheetDetalheEventoRef = useRef(null);
@@ -117,15 +130,35 @@ export default function SheetDetalheEventoParticipantes({ evento, podeMandarPerg
                     </div>
                 </div>
 
-                {podeMandarPergunta && (
+                {(podeMandarPergunta || avaliacaoEvento) && (
                     <div className="rodapeSheetDetalheEventoParticipantes">
-                        <button
-                            type="button"
-                            className="botaoMandarPerguntaSheetDetalheEventoParticipantes"
-                            onClick={onMandarPergunta}
-                        >
-                            Mande sua pergunta
-                        </button>
+                        {podeMandarPergunta && (
+                            <button
+                                type="button"
+                                className="botaoMandarPerguntaSheetDetalheEventoParticipantes"
+                                onClick={onMandarPergunta}
+                            >
+                                Mande sua pergunta
+                            </button>
+                        )}
+                        {avaliacaoEvento && (
+                            <button
+                                type="button"
+                                className={
+                                    avaliacaoEvento.nota === null
+                                        ? 'botaoAvaliarSheetDetalheEventoParticipantes'
+                                        : 'botaoAvaliarSheetDetalheEventoParticipantes botaoAvaliadoSheetDetalheEventoParticipantes'
+                                }
+                                disabled={!avaliacaoEvento.liberada}
+                                onClick={onAvaliar}
+                            >
+                                {!avaliacaoEvento.liberada
+                                    ? 'Avaliação abre ao fim da atividade'
+                                    : avaliacaoEvento.nota === null
+                                        ? 'Avaliar atividade'
+                                        : `Sua nota: ${avaliacaoEvento.nota} · Trocar`}
+                            </button>
+                        )}
                     </div>
                 )}
             </div>

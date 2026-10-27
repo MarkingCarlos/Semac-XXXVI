@@ -26,11 +26,12 @@ import {
 import { lerSessao } from '../../../auth/sessao.js';
 import { listarSorteios, criarSorteioComBrinde, excluirSorteio } from '../../Sorteio/data/apiSorteio.js';
 import Brindes from './Brindes.jsx';
+import AvaliacoesEventosAdmin from './AvaliacoesEventosAdmin.jsx';
 import SeletorModalSubabas from '../../../components/SeletorModalSubabas/SeletorModalSubabas.jsx';
 import ListaItensMobileAdmin from '../../../components/ListaItensMobileAdmin/ListaItensMobileAdmin.jsx';
 import ModalInferiorAdmin from '../../../components/ModalInferiorAdmin/ModalInferiorAdmin.jsx';
 
-/* Conteúdo — duas sub-abas:
+/* Conteúdo — três sub-abas:
    - "Eventos": tabela `evento` com seu tipo (`tipo_evento`) e palestrantes
      (`palestrante`, atualizado no lugar a cada gravação — preserva a
      foto, que sobe à parte logo depois). A lista de eventos
@@ -38,6 +39,8 @@ import ModalInferiorAdmin from '../../../components/ModalInferiorAdmin/ModalInfe
      os painéis de gerenciamento dos tipos de evento e das trilhas. Os
      sorteios de cada evento são cadastrados no próprio painel de edição.
    - "Brindes": em Brindes.jsx.
+   - "Avaliações": resumo da pesquisa de satisfação, em
+     AvaliacoesEventosAdmin.jsx. Mesmo público de "Eventos".
    Toda a diretoria vê e edita os eventos; criar, excluir, iniciar e abrir
    a escolha de minicursos ficam com PAPEIS_GESTAO_EVENTOS (mesma regra
    do SecurityConfig). MEMBRO só vê Brindes. */
@@ -51,6 +54,11 @@ const SUBABAS_CONTEUDO = [
         papeis: [...PAPEIS_GESTAO_EVENTOS, 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING'],
     },
     { id: 'brindes', rotulo: 'Brindes' },
+    {
+        id: 'avaliacoes',
+        rotulo: 'Avaliações',
+        papeis: [...PAPEIS_GESTAO_EVENTOS, 'DIRETOR_PATROCINIO', 'DIRETOR_APOIO', 'DIRETOR_MARKETING'],
+    },
 ];
 
 const NOVO_SORTEIO_EVENTO_VAZIO = { brinde: '' };
@@ -542,6 +550,8 @@ export default function Conteudo({ eventos, setEventos, carregando, erro }) {
             />
 
             {subabaAtivaConteudo === 'brindes' && <Brindes />}
+
+            {subabaAtivaConteudo === 'avaliacoes' && <AvaliacoesEventosAdmin />}
 
             {subabaAtivaConteudo === 'eventos' && (<>
                 <div className="controlesCabecalhoFinancas barraFerramentasEventosConteudo">

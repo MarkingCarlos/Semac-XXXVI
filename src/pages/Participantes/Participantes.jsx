@@ -33,6 +33,7 @@ import MenuPerfilParticipantes from './MenuPerfilParticipantes.jsx';
 import MenuFabParticipantes from './MenuFabParticipantes.jsx';
 import SheetDetalheEventoParticipantes from './SheetDetalheEventoParticipantes.jsx';
 import ModalPerguntaDebateParticipantes from './ModalPerguntaDebateParticipantes.jsx';
+import ModalAvaliacaoEventoParticipantes from './ModalAvaliacaoEventoParticipantes.jsx';
 import SecaoInicioParticipantes from './sections/SecaoInicioParticipantes.jsx';
 import SecaoAgendaParticipantes from './sections/SecaoAgendaParticipantes.jsx';
 import SecaoDesafiosParticipantes from './sections/SecaoDesafiosParticipantes.jsx';
@@ -42,6 +43,7 @@ import SecaoPerfilParticipantes from './sections/SecaoPerfilParticipantes.jsx';
 import {
     listarEventosParticipantes,
     listarMeusEventosParticipantes,
+    listarMinhasAvaliacoesEventos,
     inscreverEmMinicurso,
     cancelarMinicurso,
 } from './data/apiEventosParticipantes.js';
@@ -70,6 +72,7 @@ import {
     ehMinicurso,
     diaDoEvento,
     detalheEventoParticipante,
+    statusPorHorario,
 } from './data/agendaParticipantes.js';
 
 import { certificadosMockParticipante } from './mockParticipante.js';
@@ -180,6 +183,20 @@ export default function Participantes() {
         let ativo = true;
         lerPerguntasDebateAbertas(new Date().getFullYear())
             .then((abertas) => { if (ativo) setPerguntasDebateAbertas(abertas); })
+            .catch(() => {});
+        return () => { ativo = false; };
+    }, []);
+
+    /* Pesquisa de satisfação: notas já dadas, { [eventoId]: nota }. Falha
+       em silêncio — sem a lista o botão só aparece como "Avaliar", e
+       reenviar troca a nota no backend do mesmo jeito. */
+    const [minhasAvaliacoesEventos, setMinhasAvaliacoesEventos] = useState({});
+    const [avaliacaoEventoAberta, setAvaliacaoEventoAberta] = useState(false);
+
+    useEffect(() => {
+        let ativo = true;
+        listarMinhasAvaliacoesEventos()
+            .then((notas) => { if (ativo && notas) setMinhasAvaliacoesEventos(notas); })
             .catch(() => {});
         return () => { ativo = false; };
     }, []);
@@ -312,8 +329,8 @@ export default function Participantes() {
         return () => { ativo = false; };
     }, []);
 
-    /* Conquista concedida com a página já aberta (hoje, só a de mandar
-       pergunta para o debate). Rebusca a vitrine e põe na fila só as ainda
+    /* Conquista concedida com a página já aberta (a de mandar pergunta
+       para o debate e a de avaliar tudo o que assistiu). Rebusca a vitrine e põe na fila só as ainda
        não celebradas, e atualiza o nível, que ganhou os pontos dela. */
     function recarregarConquistasNovas() {
         listarMinhasConquistas()
@@ -412,6 +429,20 @@ export default function Participantes() {
         const evento = eventos.find((item) => item.id === eventoDetalheId);
         return evento?.temDetalhe ? detalheEventoParticipante(evento) : null;
     }, [eventos, eventoDetalheId]);
+
+    /* Botão da pesquisa de satisfação no detalhe: só em evento avaliável
+       com presença confirmada. Liberado quando o evento terminou — mesmas
+       regras que o backend valida. */
+    const avaliacaoEventoDetalhe = useMemo(() => {
+        const evento = eventos.find((item) => item.id === eventoDetalheId);
+        if (!evento?.avaliavel) return null;
+        const meuVinculo = meusEventos.find((item) => item.id === eventoDetalheId);
+        if (meuVinculo?.status !== 'PRESENTE') return null;
+        return {
+            liberada: statusPorHorario(evento, agora) === 'concluido',
+            nota: minhasAvaliacoesEventos[eventoDetalheId] ?? null,
+        };
+    }, [eventos, meusEventos, eventoDetalheId, minhasAvaliacoesEventos, agora]);
 
     const totalMinicursos = useMemo(() => eventosDoIngresso.filter(ehMinicurso).length, [eventosDoIngresso]);
 
@@ -691,10 +722,26 @@ export default function Participantes() {
                     evento={eventoDetalhe}
                     podeMandarPergunta={perguntasDebateAbertas && eventoDetalhe.ehDebate}
                     onMandarPergunta={() => setPerguntaDebateAberta(true)}
+                    avaliacaoEvento={avaliacaoEventoDetalhe}
+                    onAvaliar={() => setAvaliacaoEventoAberta(true)}
                     onFechar={() => {
                         setPerguntaDebateAberta(false);
+                        setAvaliacaoEventoAberta(false);
                         setEventoDetalheId(null);
                     }}
+                />
+            )}
+
+            {eventoDetalhe && avaliacaoEventoDetalhe?.liberada && avaliacaoEventoAberta && (
+                <ModalAvaliacaoEventoParticipantes
+                    key={eventoDetalhe.id}
+                    evento={eventoDetalhe}
+                    notaAtual={avaliacaoEventoDetalhe.nota}
+                    onAvaliado={(eventoId, nota) =>
+                        setMinhasAvaliacoesEventos((notas) => ({ ...notas, [eventoId]: nota }))
+                    }
+                    onFechar={() => setAvaliacaoEventoAberta(false)}
+                    onConquistaConcedida={recarregarConquistasNovas}
                 />
             )}
 
@@ -729,9 +776,10 @@ export default function Participantes() {
                 />
             )}
 
-            {/* Conquista ganha com a página aberta (pergunta de debate) espera
-                o modal fechar: primeiro o "Pergunta enviada!", depois a festa. */}
-            {conquistasACelebrar.length > 0 && !escolhaDiasPendente && !perguntaDebateAberta && (
+            {/* Conquista ganha com a página aberta (pergunta de debate,
+                avaliação) espera o modal fechar: primeiro o "Pergunta
+                enviada!" ou o "Valeu pela avaliação!", depois a festa. */}
+            {conquistasACelebrar.length > 0 && !escolhaDiasPendente && !perguntaDebateAberta && !avaliacaoEventoAberta && (
                 <ConquistaDesbloqueada
                     conquistas={conquistasACelebrar}
                     /* No modo de teste não confirma nada: se marcasse, a

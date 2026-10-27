@@ -1955,6 +1955,19 @@ a.botaoAcaoLinhaFinancas {
     margin-bottom: 16px;
 }
 
+/* Conteúdo → Avaliações: filtro à esquerda, média geral à direita. */
+.barraFerramentasAvaliacoesEventosAdmin {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.resumoGeralAvaliacoesEventosAdmin {
+    font-size: 14px;
+    opacity: 0.85;
+}
+
 .dicaCampoSorteiosBrindes {
     margin: 0;
     font-size: 0.76rem;

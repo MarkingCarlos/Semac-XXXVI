@@ -2306,12 +2306,14 @@
   }
 }
 
-/* ── Rodapé do detalhe: "Mande sua pergunta" ──────────────── */
+/* ── Rodapé do detalhe: "Mande sua pergunta" e "Avaliar atividade" ── */
 .rodapeSheetDetalheEventoParticipantes {
   flex: none;
   padding-top: 16px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
 .botaoMandarPerguntaSheetDetalheEventoParticipantes,
@@ -2493,6 +2495,225 @@
 @media (prefers-reduced-motion: reduce) {
   .botaoMandarPerguntaSheetDetalheEventoParticipantes,
   .botaoPrimarioModalPerguntaDebateParticipantes { transition: none; }
+}
+
+/* ── Pesquisa de satisfação: botão do detalhe ──────────────── */
+.botaoAvaliarSheetDetalheEventoParticipantes,
+.botaoPrimarioModalAvaliacaoEventoParticipantes {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--vermelhoAuxDiretoria);
+  background: var(--AmareloAuxApoio);
+  border: none;
+  border-radius: 15px;
+  padding: 12px 12px;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.botaoAvaliarSheetDetalheEventoParticipantes {
+  width: 100%;
+  max-width: 360px;
+}
+
+/* Já avaliado: contorno em vez de preenchido, para não competir com o
+   "Mande sua pergunta" — a ação principal já foi feita. */
+.botaoAvaliadoSheetDetalheEventoParticipantes {
+  color: var(--AmareloAuxApoio);
+  background: transparent;
+  border: 1px solid var(--AmareloAuxApoio);
+}
+
+.botaoAvaliarSheetDetalheEventoParticipantes:hover:not(:disabled),
+.botaoPrimarioModalAvaliacaoEventoParticipantes:hover:not(:disabled) { filter: brightness(1.08); }
+.botaoAvaliarSheetDetalheEventoParticipantes:active:not(:disabled),
+.botaoPrimarioModalAvaliacaoEventoParticipantes:active:not(:disabled) { transform: scale(0.98); }
+.botaoAvaliarSheetDetalheEventoParticipantes:focus-visible,
+.botaoPrimarioModalAvaliacaoEventoParticipantes:focus-visible,
+.botaoSecundarioModalAvaliacaoEventoParticipantes:focus-visible,
+.botaoNotaAvaliacaoEventoParticipantes:focus-visible {
+  outline: 2px solid var(--brancoQuenteParticipantes);
+  outline-offset: 2px;
+}
+
+.botaoAvaliarSheetDetalheEventoParticipantes:disabled,
+.botaoPrimarioModalAvaliacaoEventoParticipantes:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.botaoSecundarioModalAvaliacaoEventoParticipantes {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--brancoQuenteParticipantes);
+  background: transparent;
+  border: 1px solid rgba(252, 248, 245, 0.35);
+  border-radius: 15px;
+  padding: 12px 12px;
+  cursor: pointer;
+}
+
+/* ── Modal da avaliação ────────────────────────────────────── */
+/* Fica por cima do card de detalhe, como o da pergunta do debate. Mobile:
+   sobe de baixo; desktop: centralizado, 50% × 50% da tela. Animação via
+   GSAP (ver ModalAvaliacaoEventoParticipantes.jsx). */
+.fundoModalAvaliacaoEventoParticipantes {
+  position: fixed;
+  inset: 0;
+  height: 100dvh;
+  overflow: hidden;
+  background: rgba(10, 10, 10, 0.6);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 12;
+}
+
+.cardModalAvaliacaoEventoParticipantes {
+  width: 100%;
+  max-width: 560px;
+  max-height: 85dvh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--vermelhoAuxDiretoria);
+  color: var(--brancoQuenteParticipantes);
+  border-radius: 25px 25px 0 0;
+  padding: 10px 22px calc(22px + env(safe-area-inset-bottom));
+  box-shadow: 0 -12px 40px rgba(10, 10, 10, 0.35);
+}
+
+.seloModalAvaliacaoEventoParticipantes { align-self: center; }
+
+.tituloModalAvaliacaoEventoParticipantes {
+  margin: 4px 0 6px;
+  font-family: var(--fonteTituloBungee);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--Branco);
+}
+
+.formularioModalAvaliacaoEventoParticipantes,
+.blocoSucessoModalAvaliacaoEventoParticipantes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.perguntaModalAvaliacaoEventoParticipantes {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  color: rgba(252, 248, 245, 0.9);
+}
+
+/* 0 a 10: duas linhas no mobile (6 + 5), uma só no desktop. */
+.grupoNotasAvaliacaoEventoParticipantes {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.botaoNotaAvaliacaoEventoParticipantes {
+  font: inherit;
+  font-size: 16px;
+  font-weight: 800;
+  min-height: 44px;
+  color: var(--brancoQuenteParticipantes);
+  background: var(--vermelhoAux2Participantes);
+  border: 1px solid rgba(252, 248, 245, 0.2);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.botaoNotaAvaliacaoEventoParticipantes:hover { border-color: var(--AmareloAuxApoio); }
+.botaoNotaAvaliacaoEventoParticipantes:active { transform: scale(0.95); }
+
+.botaoNotaMarcadaAvaliacaoEventoParticipantes {
+  color: var(--vermelhoAuxDiretoria);
+  background: var(--AmareloAuxApoio);
+  border-color: var(--AmareloAuxApoio);
+}
+
+.legendaNotasAvaliacaoEventoParticipantes {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.erroModalAvaliacaoEventoParticipantes {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--AmareloAuxApoio);
+}
+
+.acoesModalAvaliacaoEventoParticipantes {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+
+.acoesModalAvaliacaoEventoParticipantes > button { flex: 1 1 0; }
+
+.tituloSucessoModalAvaliacaoEventoParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 18px;
+  text-align: center;
+  color: var(--AmareloAuxApoio);
+}
+
+.textoSucessoModalAvaliacaoEventoParticipantes {
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+  color: rgba(252, 248, 245, 0.85);
+}
+
+@media (min-width: 860px) {
+  .fundoModalAvaliacaoEventoParticipantes {
+    align-items: center;
+    padding: 20px 16px;
+  }
+  .cardModalAvaliacaoEventoParticipantes {
+    width: 50vw;
+    max-width: none;
+    min-height: 50dvh;
+    max-height: 85dvh;
+    justify-content: center;
+    padding: 26px 32px;
+    border-radius: var(--radius-lg, 25px);
+    background: var(--vermelhoAux2Participantes);
+    border: 1px solid rgba(252, 248, 245, 0.14);
+    box-shadow: 0 20px 60px rgba(11, 11, 11, 0.5);
+  }
+  .cardModalAvaliacaoEventoParticipantes .alcaSheetDetalheEventoParticipantes { display: none; }
+  .grupoNotasAvaliacaoEventoParticipantes { grid-template-columns: repeat(11, minmax(0, 1fr)); }
+  /* No fundo mais claro do desktop, os botões de nota voltam ao vermelho escuro. */
+  .cardModalAvaliacaoEventoParticipantes .botaoNotaAvaliacaoEventoParticipantes:not(.botaoNotaMarcadaAvaliacaoEventoParticipantes) {
+    background: var(--vermelhoAuxDiretoria);
+  }
+  .acoesModalAvaliacaoEventoParticipantes > button { flex: 0 0 auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .botaoAvaliarSheetDetalheEventoParticipantes,
+  .botaoPrimarioModalAvaliacaoEventoParticipantes,
+  .botaoNotaAvaliacaoEventoParticipantes { transition: none; }
 }
 
 /* ── Mostra Técnica (aba Desafios) ──────────────────────────────
