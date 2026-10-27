@@ -3,10 +3,10 @@ import QRCode from 'qrcode';
 import ModalInferiorAdmin from '../../../components/ModalInferiorAdmin/ModalInferiorAdmin.jsx';
 import { buscarMeuBrindeComissao } from '../data/apiBrindeComissao.js';
 
-/* Cartão "Brinde da comissão" no Início do /admin: só no dia do brinde
-   (o backend diz, em `disponivelHoje`). Abre o QR da pessoa — leitura
-   única, lido por outra pessoa da comissão no /checkin ("Entregar brinde
-   da comissão"). Com o modal aberto, consulta de novo a cada
+/* Cartão "Brinde da comissão" no Início do /admin: só nos dias do brinde
+   (o backend diz, em `disponivelHoje`). Abre o QR do dia da pessoa —
+   leitura única, lido por outra pessoa da comissão no /checkin ("Entregar
+   Monster"). Com o modal aberto, consulta de novo a cada
    INTERVALO_BRINDE_COMISSAO_MS para trocar o QR por "retirado" assim que
    for lido. Fora do dia, ou se a consulta falhar, nada aparece. */
 
@@ -89,7 +89,7 @@ export default function CardBrindeComissaoInicio() {
                                     alt="QR code do seu monster"
                                 />
                                 <p className="textoAvisoModalBrindeComissaoInicio">
-                                    Vale uma vez só e apenas hoje. Quem entrega lê em /checkin → "Entregar brinde da comissão".
+                                    Vale uma vez só e apenas hoje. Quem entrega lê em /checkin → "Entregar Monster".
                                 </p>
                             </>
                         ) : (

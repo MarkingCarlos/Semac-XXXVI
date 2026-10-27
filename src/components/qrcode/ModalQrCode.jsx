@@ -23,9 +23,9 @@ import './ModalQrCode.css';
       carimbado, por exemplo) e lê os crachás de quem cumpriu. Restrito a
       diretores e presidência, porque credita pontos que mexem no ranking.
 
-   3. Entregar brinde da comissão (26/10) — lê o QR que a pessoa da
-      comissão mostra no /admin (não o crachá). Leitura única; qualquer
-      papel de comissão entrega.
+   3. Entregar Monster (26/10 e 29/10) — lê o QR que a pessoa da
+      comissão mostra no /admin ou o crachá do participante. Uma retirada
+      por pessoa por dia; qualquer papel de comissão entrega.
 
    A tela da câmera não sabe qual deles está rodando: recebe uma
    `operacao` com o que chamar e como exibir o resultado (ver
@@ -38,6 +38,7 @@ const ROTULOS_PAPEL_BRINDE_COMISSAO = {
     DIRETOR_APOIO: 'Diretor(a) de Apoio',
     DIRETOR_MARKETING: 'Diretor(a) de Marketing',
     PRESIDENTE: 'Presidência',
+    PARTICIPANTE: 'Participante',
 };
 
 const ModalQrCode = () => {
@@ -112,14 +113,15 @@ const ModalQrCode = () => {
         });
     }
 
-    /* Brinde da comissão: sem alvo para escolher, vai direto para a câmera.
-       O QR é o do /admin da pessoa; o backend recusa crachá, QR já usado e
-       leitura fora do dia (ver BrindeComissaoService). */
+    /* Monster: sem alvo para escolher, vai direto para a câmera. Comissão
+       mostra o QR do /admin; participante, o crachá. O backend recusa
+       crachá de comissão, retirada repetida no dia e leitura fora dos dias
+       do brinde (ver BrindeComissaoService). */
     function iniciarBrindeComissao() {
         setModo('brindeComissao');
         setOperacao({
-            titulo: 'MONSTER DA COMISSÃO',
-            subtitulo: 'Leia o QR do /admin da pessoa',
+            titulo: 'ENTREGAR MONSTER',
+            subtitulo: 'Leia o crachá do participante ou o QR do /admin da comissão',
             porUuid: retirarBrindeComissaoPorQrCode,
             normalizar: (dto) => ({
                 titulo: 'BRINDE ENTREGUE',

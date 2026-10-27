@@ -63,14 +63,15 @@ export default function TelaSelecaoModoCheckin({
                 </button>
             )}
 
-            {/* Toda a comissão entrega: lê o QR que a pessoa mostra no /admin.
-                Só vale em 26/10 — fora do dia o backend recusa com o aviso. */}
+            {/* Toda a comissão entrega: lê o QR do /admin (comissão) ou o
+                crachá (participante). Só vale nos dias do brinde (26/10 e
+                29/10) — fora deles o backend recusa com o aviso. */}
             <button
                 type="button"
                 className="cartaoModoCheckin"
                 onClick={onEscolherBrindeComissao}
             >
-                <span className="tituloCartaoModoCheckin">ENTREGAR MONSTER DA COMISSÃO</span>
+                <span className="tituloCartaoModoCheckin">ENTREGAR MONSTER</span>
             </button>
 
             {/* Toda a comissão: confere se o crachá é lido, sem registrar nada. */}

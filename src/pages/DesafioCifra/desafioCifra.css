@@ -708,7 +708,6 @@
     background: var(--vermelhoDiretoria);
     border-radius: 25px;
     padding: 24px 20px;
-    max-width: 50%;
     width: 100%;
     box-sizing: border-box;
     display: flex;
