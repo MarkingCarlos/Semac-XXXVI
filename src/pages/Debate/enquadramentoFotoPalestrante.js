@@ -6,7 +6,11 @@
    ajustar é o que vai para o telão.
 
    object-fit: cover garante que a foto sempre cobre a moldura; o zoom
-   cresce a partir do mesmo ponto, então nunca sobra borda vazia. */
+   cresce a partir do mesmo ponto, então nunca sobra borda vazia.
+
+   As imagens das conquistas usam o mesmo esquema com `ajuste` 'contain':
+   a imagem inteira cabe na moldura (PNG de fundo transparente), e o zoom
+   aproxima a partir do ponto escolhido. */
 
 export const ZOOM_MINIMO_FOTO_PALESTRANTE = 1;
 export const ZOOM_MAXIMO_FOTO_PALESTRANTE = 3;
@@ -23,11 +27,11 @@ export function normalizarEnquadramentoFoto({ fotoPosX, fotoPosY, fotoZoom } = {
     };
 }
 
-export function estiloEnquadramentoFoto(palestrante) {
+export function estiloEnquadramentoFoto(palestrante, ajuste = 'cover') {
     const { fotoPosX, fotoPosY, fotoZoom } = normalizarEnquadramentoFoto(palestrante);
     const ponto = `${fotoPosX}% ${fotoPosY}%`;
     return {
-        objectFit: 'cover',
+        objectFit: ajuste,
         objectPosition: ponto,
         transformOrigin: ponto,
         transform: `scale(${fotoZoom})`,

@@ -76,6 +76,8 @@
     height: 132px;
     display: grid;
     place-items: center;
+    /* O zoom do enquadramento (estiloImagemConquista) não vaza da moldura. */
+    overflow: hidden;
 }
 
 /* A metáfora do produto: preto e branco enquanto não foi conquistada,

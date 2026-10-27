@@ -72,6 +72,17 @@ export async function enviarImagemConquista(id, arquivo) {
     return lerOuFalhar(resposta, 'Falha ao enviar a imagem.');
 }
 
+/* Enquadramento da imagem na moldura dos cards (botão "Ajustar imagem").
+   Grava na hora e devolve a conquista atualizada. */
+export async function salvarEnquadramentoImagemConquista(id, { imagemPosX, imagemPosY, imagemZoom }) {
+    const resposta = await apiFetch(`${ROTA}/${id}/enquadramento`, {
+        method: 'PUT',
+        headers: cabecalhosAuth({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ imagemPosX, imagemPosY, imagemZoom }),
+    });
+    return lerOuFalhar(resposta, 'Falha ao salvar o ajuste da imagem.');
+}
+
 /* URL pública da imagem. `imagemVersao` (o nome do arquivo em disco) entra
    como cache-buster: a rota em si é fixa e responde com max-age de um dia,
    então sem isso uma troca de imagem só apareceria no dia seguinte.

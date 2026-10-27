@@ -1,5 +1,5 @@
 import { useState } from 'preact/hooks';
-import { urlImagemConquista } from '../../pages/Participantes/data/apiConquistasParticipante.js';
+import { urlImagemConquista, estiloImagemConquista } from '../../pages/Participantes/data/apiConquistasParticipante.js';
 import ModalConquista from '../ModalConquista/ModalConquista.jsx';
 import './cardConquista.css';
 
@@ -50,7 +50,7 @@ export default function CardConquista({ conquista, compacto = false }) {
         >
             <div className="molduraImagemCardConquista">
                 {urlImagem ? (
-                    <img className="imagemCardConquista" src={urlImagem} alt="" loading="lazy" />
+                    <img className="imagemCardConquista" src={urlImagem} alt="" loading="lazy" style={estiloImagemConquista(conquista)} />
                 ) : (
                     <span className="marcadorSemImagemCardConquista" aria-hidden="true">?</span>
                 )}

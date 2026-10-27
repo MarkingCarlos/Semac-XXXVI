@@ -2,7 +2,7 @@ import { useRef } from 'preact/hooks';
 import { createPortal } from 'preact/compat';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import { urlImagemConquista } from '../../pages/Participantes/data/apiConquistasParticipante.js';
+import { urlImagemConquista, estiloImagemConquista } from '../../pages/Participantes/data/apiConquistasParticipante.js';
 import './conquistaDesbloqueada.css';
 
 export const MODO_TESTE_CONQUISTA = false;
@@ -161,7 +161,7 @@ export default function ConquistaDesbloqueada({ conquistas, onConcluir, onCelebr
                                 <div className="anelSeloConquistaDesbloqueada" data-anel aria-hidden="true" />
                                 <div className="seloConquistaDesbloqueada" data-imagem>
                                     {urlImagem
-                                        ? <img className="imagemSeloConquistaDesbloqueada" src={urlImagem} alt="" />
+                                        ? <img className="imagemSeloConquistaDesbloqueada" src={urlImagem} alt="" style={estiloImagemConquista(conquista)} />
                                         : <span className="iniciaisSeloConquistaDesbloqueada">{iniciaisConquista(conquista.nome)}</span>}
                                 </div>
                             </div>

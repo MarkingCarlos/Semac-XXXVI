@@ -18,12 +18,25 @@ import './modalEnquadramentoFotoPalestrante.css';
    ele vai para o banco junto com o "Salvar alterações" do evento.
 
    Modal próprio (e não o ModalTopoDashboard) porque o Esc precisa fechar
-   só ele — o PainelLateral de trás também fecha com Esc. */
+   só ele — o PainelLateral de trás também fecha com Esc.
+
+   Também ajusta a imagem das conquistas (botão "Ajustar imagem" de
+   Informações SEMAC), com `ajuste` 'contain' e `titulo` próprio; lá o
+   "Aplicar" grava direto. */
 
 const arredondar = (valor) => Math.round(valor * 100) / 100;
 
-export default function ModalEnquadramentoFotoPalestrante({ srcFoto, nomePalestrante, enquadramento, aoAplicar, aoFechar }) {
-    const [ajuste, setAjuste] = useState(() => normalizarEnquadramentoFoto(enquadramento));
+export default function ModalEnquadramentoFotoPalestrante({
+    srcFoto,
+    nomePalestrante,
+    enquadramento,
+    aoAplicar,
+    aoFechar,
+    ajuste = 'cover',
+    titulo = 'Ajustar foto',
+    aplicando = false,
+}) {
+    const [enquadramentoAtual, setEnquadramentoAtual] = useState(() => normalizarEnquadramentoFoto(enquadramento));
     const molduraRef = useRef(null);
     const imagemRef = useRef(null);
     const arrasteRef = useRef(null);
@@ -40,21 +53,23 @@ export default function ModalEnquadramentoFotoPalestrante({ srcFoto, nomePalestr
     }, [aoFechar]);
 
     /* Quantos px de arraste correspondem a 100% de posição: a sobra da
-       foto além da moldura (object-fit: cover) mais o que o zoom acrescenta. */
+       foto além da moldura (object-fit: cover) mais o que o zoom acrescenta.
+       Em 'contain' a imagem cabe inteira, então só o zoom dá sobra. */
     const faixaArraste = (eixo) => {
         const moldura = molduraRef.current;
         const imagem = imagemRef.current;
         if (!moldura || !imagem?.naturalWidth) return 0;
         const lado = eixo === 'x' ? moldura.clientWidth : moldura.clientHeight;
-        const cobertura = Math.max(moldura.clientWidth / imagem.naturalWidth, moldura.clientHeight / imagem.naturalHeight);
+        const escalas = [moldura.clientWidth / imagem.naturalWidth, moldura.clientHeight / imagem.naturalHeight];
+        const cobertura = ajuste === 'contain' ? Math.min(...escalas) : Math.max(...escalas);
         const tamanhoFoto = (eixo === 'x' ? imagem.naturalWidth : imagem.naturalHeight) * cobertura;
-        return (tamanhoFoto - lado) * ajuste.fotoZoom + (ajuste.fotoZoom - 1) * lado;
+        return Math.max(0, tamanhoFoto - lado) * enquadramentoAtual.fotoZoom + (enquadramentoAtual.fotoZoom - 1) * lado;
     };
 
     const moverFoto = (dx, dy) => {
         const faixaX = faixaArraste('x');
         const faixaY = faixaArraste('y');
-        setAjuste((atual) => normalizarEnquadramentoFoto({
+        setEnquadramentoAtual((atual) => normalizarEnquadramentoFoto({
             ...atual,
             fotoPosX: faixaX > 0 ? atual.fotoPosX - (dx / faixaX) * 100 : atual.fotoPosX,
             fotoPosY: faixaY > 0 ? atual.fotoPosY - (dy / faixaY) * 100 : atual.fotoPosY,
@@ -76,12 +91,12 @@ export default function ModalEnquadramentoFotoPalestrante({ srcFoto, nomePalestr
     const encerrarArraste = () => { arrasteRef.current = null; };
 
     const alterarZoom = (novoZoom) => {
-        setAjuste((atual) => normalizarEnquadramentoFoto({ ...atual, fotoZoom: novoZoom }));
+        setEnquadramentoAtual((atual) => normalizarEnquadramentoFoto({ ...atual, fotoZoom: novoZoom }));
     };
 
     const rolarZoom = (e) => {
         e.preventDefault();
-        alterarZoom(ajuste.fotoZoom - e.deltaY * 0.0015);
+        alterarZoom(enquadramentoAtual.fotoZoom - e.deltaY * 0.0015);
     };
 
     const teclaMoldura = (e) => {
@@ -90,7 +105,7 @@ export default function ModalEnquadramentoFotoPalestrante({ srcFoto, nomePalestr
         if (!passo) return;
         e.preventDefault();
         // Seta move o ponto em evidência, então a foto anda para o lado oposto
-        setAjuste((atual) => normalizarEnquadramentoFoto({
+        setEnquadramentoAtual((atual) => normalizarEnquadramentoFoto({
             ...atual,
             fotoPosX: atual.fotoPosX + passo[0],
             fotoPosY: atual.fotoPosY + passo[1],
@@ -99,9 +114,9 @@ export default function ModalEnquadramentoFotoPalestrante({ srcFoto, nomePalestr
 
     const aplicar = () => {
         aoAplicar({
-            fotoPosX: arredondar(ajuste.fotoPosX),
-            fotoPosY: arredondar(ajuste.fotoPosY),
-            fotoZoom: arredondar(ajuste.fotoZoom),
+            fotoPosX: arredondar(enquadramentoAtual.fotoPosX),
+            fotoPosY: arredondar(enquadramentoAtual.fotoPosY),
+            fotoZoom: arredondar(enquadramentoAtual.fotoZoom),
         });
     };
 
@@ -111,10 +126,10 @@ export default function ModalEnquadramentoFotoPalestrante({ srcFoto, nomePalestr
                 className="divPainelEnquadramentoFoto"
                 role="dialog"
                 aria-modal="true"
-                aria-label={`Ajustar foto de ${nomePalestrante}`}
+                aria-label={`${titulo}: ${nomePalestrante}`}
                 onClick={(e) => e.stopPropagation()}
             >
-                <h2 className="h2TituloEnquadramentoFoto">Ajustar foto</h2>
+                <h2 className="h2TituloEnquadramentoFoto">{titulo}</h2>
                 <p className="pSubtituloEnquadramentoFoto">
                     {nomePalestrante || 'Palestrante'} · arraste para posicionar, role para dar zoom
                 </p>
@@ -137,7 +152,7 @@ export default function ModalEnquadramentoFotoPalestrante({ srcFoto, nomePalestr
                         src={srcFoto}
                         alt=""
                         draggable={false}
-                        style={estiloEnquadramentoFoto(ajuste)}
+                        style={estiloEnquadramentoFoto(enquadramentoAtual, ajuste)}
                     />
                 </div>
 
@@ -149,17 +164,17 @@ export default function ModalEnquadramentoFotoPalestrante({ srcFoto, nomePalestr
                         min={ZOOM_MINIMO_FOTO_PALESTRANTE}
                         max={ZOOM_MAXIMO_FOTO_PALESTRANTE}
                         step="0.01"
-                        value={ajuste.fotoZoom}
+                        value={enquadramentoAtual.fotoZoom}
                         onInput={(e) => alterarZoom(Number(e.currentTarget.value))}
                     />
-                    <span className="spanValorZoomEnquadramentoFoto">{ajuste.fotoZoom.toFixed(2)}×</span>
+                    <span className="spanValorZoomEnquadramentoFoto">{enquadramentoAtual.fotoZoom.toFixed(2)}×</span>
                 </label>
 
                 <div className="divAcoesEnquadramentoFoto">
                     <button
                         type="button"
                         className="botaoFantasmaFinancas"
-                        onClick={() => setAjuste(ENQUADRAMENTO_PADRAO_FOTO_PALESTRANTE)}
+                        onClick={() => setEnquadramentoAtual(ENQUADRAMENTO_PADRAO_FOTO_PALESTRANTE)}
                     >
                         Centralizar
                     </button>
@@ -167,8 +182,8 @@ export default function ModalEnquadramentoFotoPalestrante({ srcFoto, nomePalestr
                     <button type="button" className="botaoFantasmaFinancas" onClick={aoFechar}>
                         Cancelar
                     </button>
-                    <button type="button" className="botaoPrimarioFinancas" onClick={aplicar}>
-                        Aplicar
+                    <button type="button" className="botaoPrimarioFinancas" onClick={aplicar} disabled={aplicando}>
+                        {aplicando ? 'Salvando…' : 'Aplicar'}
                     </button>
                 </div>
             </div>

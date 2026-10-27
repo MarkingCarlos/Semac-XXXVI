@@ -52,8 +52,11 @@ import {
     atualizarConquista,
     alterarAtivaConquista,
     enviarImagemConquista,
+    salvarEnquadramentoImagemConquista,
+    urlImagemConquista,
     reavaliarConquistas,
 } from '../data/apiConquistas.js';
+import ModalEnquadramentoFotoPalestrante from '../ModalEnquadramentoFotoPalestrante.jsx';
 
 /* Informações SEMAC — seis blocos:
    1. Inscrições abertas (tabela `configuracao_inscricao`), liga/desliga
@@ -234,6 +237,9 @@ export default function InformacoesSemac() {
     /* Id da conquista cuja imagem ou interruptor está em trânsito — trava
        só aquele card, não o bloco inteiro. */
     const [idConquistaEmEspera, setIdConquistaEmEspera] = useState(null);
+    /* Conquista aberta no ajuste de enquadramento da imagem (null = fechado). */
+    const [conquistaEmEnquadramento, setConquistaEmEnquadramento] = useState(null);
+    const [salvandoEnquadramentoConquista, setSalvandoEnquadramentoConquista] = useState(false);
     const [reavaliando, setReavaliando] = useState(false);
     const [avisoReavaliacao, setAvisoReavaliacao] = useState('');
     /* Mobile: lista de nomes → detalhes (ModalConquistasInfoSemac). */
@@ -474,6 +480,28 @@ export default function InformacoesSemac() {
             setErroConquistas(e.message);
         } finally {
             setIdConquistaEmEspera(null);
+        }
+    };
+
+    /* "Aplicar" do ajuste de imagem: grava na hora. O modal fala em
+       fotoPosX/fotoPosY/fotoZoom (é o mesmo da foto do palestrante); aqui
+       vira imagemPosX/imagemPosY/imagemZoom. Com erro, o modal fecha e a
+       mensagem aparece no bloco. */
+    const aplicarEnquadramentoConquista = async ({ fotoPosX, fotoPosY, fotoZoom }) => {
+        const conquista = conquistaEmEnquadramento;
+        setSalvandoEnquadramentoConquista(true);
+        setErroConquistas('');
+        try {
+            trocarConquista(await salvarEnquadramentoImagemConquista(conquista.id, {
+                imagemPosX: fotoPosX,
+                imagemPosY: fotoPosY,
+                imagemZoom: fotoZoom,
+            }));
+        } catch (e) {
+            setErroConquistas(e.message);
+        } finally {
+            setSalvandoEnquadramentoConquista(false);
+            setConquistaEmEnquadramento(null);
         }
     };
 
@@ -1144,6 +1172,7 @@ export default function InformacoesSemac() {
                                 emEspera={idConquistaEmEspera === conquista.id}
                                 aoEditar={abrirEdicaoConquista}
                                 aoTrocarImagem={trocarImagemConquista}
+                                aoAjustarImagem={setConquistaEmEnquadramento}
                                 aoAlternarAtiva={alternarAtivaConquista}
                             />
                         ))}
@@ -1165,8 +1194,26 @@ export default function InformacoesSemac() {
                         erro={erroConquistas}
                         aoEditar={abrirEdicaoConquista}
                         aoTrocarImagem={trocarImagemConquista}
+                        aoAjustarImagem={setConquistaEmEnquadramento}
                         aoAlternarAtiva={alternarAtivaConquista}
                         aoFechar={() => setModalConquistasAberto(false)}
+                    />
+                )}
+
+                {conquistaEmEnquadramento && (
+                    <ModalEnquadramentoFotoPalestrante
+                        srcFoto={urlImagemConquista(conquistaEmEnquadramento.id, conquistaEmEnquadramento.imagemVersao)}
+                        nomePalestrante={conquistaEmEnquadramento.nome}
+                        titulo="Ajustar imagem"
+                        ajuste="contain"
+                        aplicando={salvandoEnquadramentoConquista}
+                        enquadramento={{
+                            fotoPosX: conquistaEmEnquadramento.imagemPosX,
+                            fotoPosY: conquistaEmEnquadramento.imagemPosY,
+                            fotoZoom: conquistaEmEnquadramento.imagemZoom,
+                        }}
+                        aoAplicar={aplicarEnquadramentoConquista}
+                        aoFechar={() => { if (!salvandoEnquadramentoConquista) setConquistaEmEnquadramento(null); }}
                     />
                 )}
             </section>

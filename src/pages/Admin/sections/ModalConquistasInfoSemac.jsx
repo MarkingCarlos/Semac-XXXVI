@@ -1,6 +1,7 @@
 import { useState, useRef } from 'preact/hooks';
 import ModalInferiorAdmin from '../../../components/ModalInferiorAdmin/ModalInferiorAdmin.jsx';
 import { urlImagemConquista } from '../data/apiConquistas.js';
+import { estiloImagemConquista } from '../../Participantes/data/apiConquistasParticipante.js';
 
 /* Conquistas do bloco de Informações SEMAC → Gamificação.
 
@@ -24,7 +25,9 @@ const ROTULOS_VALIDACAO_CONQUISTA = {
     MANUAL: 'Validada pela comissão',
 };
 
-export function CartaoConquistaInfoSemac({ conquista, emEspera, aoEditar, aoTrocarImagem, aoAlternarAtiva, classeExtra = '' }) {
+export function CartaoConquistaInfoSemac({
+    conquista, emEspera, aoEditar, aoTrocarImagem, aoAjustarImagem, aoAlternarAtiva, classeExtra = '',
+}) {
     const urlImagem = urlImagemConquista(conquista.id, conquista.imagemVersao);
     const classeCartao = [
         'cartaoConquistaInfoSemac',
@@ -40,6 +43,7 @@ export function CartaoConquistaInfoSemac({ conquista, emEspera, aoEditar, aoTroc
                         <img
                             className="imagemConquistaInfoSemac"
                             src={urlImagem}
+                            style={estiloImagemConquista(conquista)}
                             alt={`Imagem da conquista ${conquista.nome}`}
                         />
                     ) : (
@@ -97,6 +101,17 @@ export function CartaoConquistaInfoSemac({ conquista, emEspera, aoEditar, aoTroc
                         }}
                     />
                 </label>
+
+                {conquista.imagemVersao && (
+                    <button
+                        type="button"
+                        className="botaoFantasmaFinancas"
+                        disabled={emEspera}
+                        onClick={() => aoAjustarImagem(conquista)}
+                    >
+                        Ajustar imagem
+                    </button>
+                )}
             </div>
 
             <label className="campoCheckboxInfoSemac">
@@ -116,7 +131,7 @@ export function CartaoConquistaInfoSemac({ conquista, emEspera, aoEditar, aoTroc
    imagem) continuam lá, e o modal só repete a mensagem, porque a do
    bloco fica atrás do fundo escuro. */
 export default function ModalConquistasInfoSemac({
-    conquistas, idConquistaEmEspera, erro, aoEditar, aoTrocarImagem, aoAlternarAtiva, aoFechar,
+    conquistas, idConquistaEmEspera, erro, aoEditar, aoTrocarImagem, aoAjustarImagem, aoAlternarAtiva, aoFechar,
 }) {
     /* { tipo: 'lista' } ou { tipo: 'detalhe', id }. */
     const [telaModalConquistas, setTelaModalConquistas] = useState({ tipo: 'lista' });
@@ -166,6 +181,7 @@ export default function ModalConquistasInfoSemac({
                                 fecharModalDetalheConquista();
                             }}
                             aoTrocarImagem={aoTrocarImagem}
+                            aoAjustarImagem={aoAjustarImagem}
                             aoAlternarAtiva={aoAlternarAtiva}
                         />
                     </>

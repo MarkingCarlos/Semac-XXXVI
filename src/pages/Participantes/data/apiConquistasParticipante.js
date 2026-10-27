@@ -1,5 +1,6 @@
 import { cabecalhosAuth, tratarErroAuth } from '../../../auth/sessao.js';
 import { apiFetch } from '../../../lib/apiFetch.js';
+import { estiloEnquadramentoFoto } from '../../Debate/enquadramentoFotoPalestrante.js';
 
 /* Conquistas do próprio participante (GET /api/conquista/minhas).
 
@@ -45,4 +46,16 @@ export async function marcarConquistaComoVista(conquistaId) {
 export function urlImagemConquista(id, imagemVersao) {
     if (!imagemVersao) return null;
     return `${ROTA}/${id}/imagem?v=${encodeURIComponent(imagemVersao)}`;
+}
+
+/* Estilo do <img> da conquista com o enquadramento ajustado no /admin
+   (imagemPosX/imagemPosY/imagemZoom). Mesma regra da foto do palestrante,
+   mas em 'contain': sem ajuste, a imagem inteira cabe na moldura. A
+   moldura precisa de overflow: hidden para o zoom não vazar. */
+export function estiloImagemConquista(conquista) {
+    return estiloEnquadramentoFoto({
+        fotoPosX: conquista.imagemPosX,
+        fotoPosY: conquista.imagemPosY,
+        fotoZoom: conquista.imagemZoom,
+    }, 'contain');
 }

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'preact/hooks';
 import { createPortal } from 'preact/compat';
-import { urlImagemConquista } from '../../pages/Participantes/data/apiConquistasParticipante.js';
+import { urlImagemConquista, estiloImagemConquista } from '../../pages/Participantes/data/apiConquistasParticipante.js';
 import './modalConquista.css';
 
 /* Detalhe de uma conquista, aberto ao tocar no card (ver CardConquista).
@@ -68,7 +68,7 @@ export default function ModalConquista({ conquista, aoFechar }) {
                         }
                     >
                         {urlImagem ? (
-                            <img className="imagemSeloModalConquista" src={urlImagem} alt="" />
+                            <img className="imagemSeloModalConquista" src={urlImagem} alt="" style={estiloImagemConquista(conquista)} />
                         ) : (
                             <span className="marcadorSemImagemModalConquista" aria-hidden="true">?</span>
                         )}

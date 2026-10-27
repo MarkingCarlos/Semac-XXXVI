@@ -119,7 +119,10 @@
 }
 
 .imagemSeloConquistaDesbloqueada {
+    /* Caixa quadrada, como a moldura do ajuste no /admin: assim o
+       enquadramento (estiloImagemConquista) sai igual ao que foi ajustado. */
     width: 80%;
+    height: 80%;
     object-fit: contain;
 }
 
