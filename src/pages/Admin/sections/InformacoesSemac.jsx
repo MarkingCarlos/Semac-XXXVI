@@ -7,6 +7,7 @@ import TimesAdmin from './TimesAdmin.jsx';
 import TermoAdmin from './TermoAdmin.jsx';
 import DesafioCifraAdmin from './DesafioCifraAdmin.jsx';
 import MostraTecnicaAdmin from './MostraTecnicaAdmin.jsx';
+import LaboratoriosQuizAdmin from './LaboratoriosQuizAdmin.jsx';
 import ModalConquistasInfoSemac, { CartaoConquistaInfoSemac } from './ModalConquistasInfoSemac.jsx';
 import SeletorModalSubabas from '../../../components/SeletorModalSubabas/SeletorModalSubabas.jsx';
 import {
@@ -76,8 +77,9 @@ import CardConquista from '../../../components/CardConquista/CardConquista.jsx';
       boot. Aqui se define como ela aparece e se já vale. No mobile a
       grade vira lista de nomes → detalhes (ModalConquistasInfoSemac.jsx);
    8. Times (TimesAdmin.jsx), 9. Termo (TermoAdmin.jsx), 9b. Cifra do Dia
-      (DesafioCifraAdmin.jsx) e 10. Mostra Técnica (MostraTecnicaAdmin.jsx),
-      só para quem gerencia a
+      (DesafioCifraAdmin.jsx), 10. Mostra Técnica (MostraTecnicaAdmin.jsx)
+      e 11. Quiz dos Laboratórios (LaboratoriosQuizAdmin.jsx), só para
+      quem gerencia a
       gamificação — os mesmos papéis que o backend aceita.
    Valores de ingresso/cota/meta em centavos na interface, convertidos na
    borda da API. Xp mínimo do nível é inteiro puro, sem conversão.
@@ -1247,6 +1249,7 @@ export default function InformacoesSemac() {
                 <TermoAdmin />
                 <DesafioCifraAdmin />
                 <MostraTecnicaAdmin />
+                <LaboratoriosQuizAdmin />
             </>)}
             </>)}
 

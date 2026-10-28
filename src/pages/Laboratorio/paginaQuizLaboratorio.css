@@ -1,0 +1,429 @@
+/* Página /laboratorio/<codigo> — o quiz de um laboratório. Mesma moldura
+   do /mostra: tela cheia travada com fixed + inset 0 + 100dvh (no iPhone,
+   100vh conta a barra do Safari e a página "pula"). A rolagem, quando a
+   tela é baixa, fica dentro do conteúdo. */
+
+@import url('https://fonts.googleapis.com/css2?family=Bungee&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+
+.paginaQuizLaboratorio {
+    position: fixed;
+    inset: 0;
+    height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: #730835;
+    color: #FCF8F5;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.cabecalhoQuizLaboratorio {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: max(18px, env(safe-area-inset-top)) 20px 18px;
+}
+
+.marcaCabecalhoQuizLaboratorio {
+    font-family: 'Bungee', sans-serif;
+    font-size: 15px;
+}
+
+.acentoMarcaCabecalhoQuizLaboratorio {
+    color: #E79839;
+}
+
+.rotuloCabecalhoQuizLaboratorio {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: rgba(252, 248, 245, 0.7);
+}
+
+.faixaTesteQuizLaboratorio {
+    padding: 8px 20px;
+    background: #E79839;
+    color: #730835;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: center;
+}
+
+.conteudoQuizLaboratorio {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    padding: 0 20px max(24px, env(safe-area-inset-bottom));
+}
+
+.passoCentralQuizLaboratorio,
+.passoPerguntaQuizLaboratorio {
+    margin: auto;
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+}
+
+.passoCentralQuizLaboratorio {
+    text-align: center;
+}
+
+.tituloPassoQuizLaboratorio {
+    margin: 0;
+    font-family: 'Bungee', sans-serif;
+    font-size: 22px;
+    line-height: 1.2;
+}
+
+.descricaoPassoQuizLaboratorio {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(252, 248, 245, 0.8);
+}
+
+.indicadorCarregandoQuizLaboratorio {
+    width: 44px;
+    height: 44px;
+    margin: 0 auto;
+    border-radius: 50%;
+    border: 4px solid rgba(252, 248, 245, 0.2);
+    border-top-color: #E79839;
+    animation: girarCarregandoQuizLaboratorio 0.9s linear infinite;
+}
+
+@keyframes girarCarregandoQuizLaboratorio {
+    to { transform: rotate(360deg); }
+}
+
+.chamadaQuizLaboratorio {
+    font-family: 'Bungee', sans-serif;
+    font-size: 18px;
+    color: #E79839;
+}
+
+.cartaoLaboratorioQuizLaboratorio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 20px;
+    border: 1px solid rgba(252, 248, 245, 0.25);
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.nomeLaboratorioQuizLaboratorio {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+.responsaveisLaboratorioQuizLaboratorio {
+    margin: 0;
+    font-size: 14px;
+    color: rgba(252, 248, 245, 0.8);
+}
+
+.placarQuizLaboratorio {
+    margin-top: 6px;
+    font-family: 'Bungee', sans-serif;
+    font-size: 44px;
+    line-height: 1;
+    color: #E79839;
+}
+
+.rotuloPlacarQuizLaboratorio {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(252, 248, 245, 0.7);
+}
+
+.cartaoXpQuizLaboratorio {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px;
+    border-radius: 14px;
+    background: #E79839;
+    color: #730835;
+    animation: surgirXpQuizLaboratorio 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes surgirXpQuizLaboratorio {
+    from { opacity: 0; transform: scale(0.92); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.rotuloXpQuizLaboratorio {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+}
+
+.valorXpQuizLaboratorio {
+    font-family: 'Bungee', sans-serif;
+    font-size: 22px;
+}
+
+/* ── Pergunta ─────────────────────────────────────────────────────── */
+
+.blocoProgressoQuizLaboratorio {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.linhaProgressoQuizLaboratorio {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.nomeProgressoQuizLaboratorio {
+    min-width: 0;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(252, 248, 245, 0.7);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.valorProgressoQuizLaboratorio {
+    flex: none;
+    font-family: 'Bungee', sans-serif;
+    font-size: 16px;
+}
+
+.trilhaProgressoQuizLaboratorio {
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(252, 248, 245, 0.15);
+    overflow: hidden;
+}
+
+.preenchimentoProgressoQuizLaboratorio {
+    height: 100%;
+    border-radius: inherit;
+    background: #E79839;
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fieldsetPerguntaQuizLaboratorio {
+    margin: 0;
+    padding: 0;
+    border: none;
+    min-width: 0;
+    animation: entrarPerguntaQuizLaboratorio 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes entrarPerguntaQuizLaboratorio {
+    from { opacity: 0; transform: translateX(16px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.enunciadoPerguntaQuizLaboratorio {
+    padding: 0;
+    margin-bottom: 16px;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.listaAlternativasQuizLaboratorio {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.alternativaQuizLaboratorio {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 52px;
+    padding: 12px 14px;
+    border: 1px solid rgba(252, 248, 245, 0.25);
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.alternativaQuizLaboratorio:hover {
+    border-color: rgba(231, 152, 57, 0.7);
+}
+
+.alternativaQuizLaboratorio:focus-within {
+    outline: 2px solid #E79839;
+    outline-offset: 2px;
+}
+
+.alternativaMarcadaQuizLaboratorio {
+    border-color: #E79839;
+    background: rgba(231, 152, 57, 0.18);
+}
+
+.radioAlternativaQuizLaboratorio {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+}
+
+.letraAlternativaQuizLaboratorio {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgba(252, 248, 245, 0.4);
+    font-size: 13px;
+    font-weight: 800;
+    transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.alternativaMarcadaQuizLaboratorio .letraAlternativaQuizLaboratorio {
+    border-color: #E79839;
+    background: #E79839;
+    color: #730835;
+}
+
+.textoAlternativaQuizLaboratorio {
+    font-size: 15px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.acoesPerguntaQuizLaboratorio {
+    display: flex;
+    gap: 10px;
+}
+
+.acoesPerguntaQuizLaboratorio > * {
+    flex: 1;
+}
+
+.notaEnvioQuizLaboratorio {
+    margin: -8px 0 0;
+    font-size: 12px;
+    text-align: center;
+    color: rgba(252, 248, 245, 0.65);
+}
+
+/* ── Correção ─────────────────────────────────────────────────────── */
+
+.listaCorrecaoQuizLaboratorio {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+}
+
+.itemCorrecaoQuizLaboratorio {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border-left: 4px solid;
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.itemAcertoQuizLaboratorio {
+    border-left-color: #E79839;
+}
+
+.itemErroQuizLaboratorio {
+    border-left-color: rgba(252, 248, 245, 0.35);
+}
+
+.enunciadoCorrecaoQuizLaboratorio {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.respostaCorrecaoQuizLaboratorio {
+    font-size: 13px;
+    color: rgba(252, 248, 245, 0.85);
+    overflow-wrap: anywhere;
+}
+
+.acoesFinaisQuizLaboratorio {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ── Botões ───────────────────────────────────────────────────────── */
+
+.botaoPrincipalQuizLaboratorio,
+.botaoSecundarioQuizLaboratorio {
+    display: block;
+    padding: 14px 18px;
+    border-radius: 999px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity 0.18s ease, transform 0.12s ease;
+}
+
+.botaoPrincipalQuizLaboratorio:active:not(:disabled),
+.botaoSecundarioQuizLaboratorio:active {
+    transform: scale(0.98);
+}
+
+.botaoPrincipalQuizLaboratorio {
+    border: none;
+    background: #E79839;
+    color: #730835;
+}
+
+.botaoPrincipalQuizLaboratorio:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.botaoSecundarioQuizLaboratorio {
+    border: 1px solid rgba(252, 248, 245, 0.6);
+    background: transparent;
+    color: #FCF8F5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .indicadorCarregandoQuizLaboratorio,
+    .fieldsetPerguntaQuizLaboratorio,
+    .cartaoXpQuizLaboratorio {
+        animation: none;
+    }
+
+    .preenchimentoProgressoQuizLaboratorio {
+        transition: none;
+    }
+}

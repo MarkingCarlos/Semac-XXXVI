@@ -1,0 +1,219 @@
+/* Seção LaboratoriosQuizAdmin do /admin — os laboratórios, o editor de
+   perguntas e os QR codes. Reaproveita a lista, os botões e as folhas A4
+   do mostraTecnicaAdmin.css e os campos do financas.css; aqui só o que é
+   próprio. */
+
+.divBotoesCabecalhoLaboratoriosAdmin {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.avisoBlocoLaboratoriosAdmin {
+    margin: 0 0 12px;
+}
+
+/* Selo "Aberto"/"Fechado" ao lado do nome, na lista. */
+.seloStatusLaboratorioAdmin {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(252, 248, 245, 0.3);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    vertical-align: middle;
+    opacity: 0.8;
+}
+
+.seloAbertoLaboratorioAdmin {
+    border-color: #E79839;
+    background: #E79839;
+    color: #730835;
+    opacity: 1;
+}
+
+/* ── Editor de perguntas ──────────────────────────────────────────── */
+
+.formularioEditorLaboratorioAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.divCamposEditorLaboratorioAdmin {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+@media (max-width: 720px) {
+    .divCamposEditorLaboratorioAdmin {
+        grid-template-columns: 1fr;
+    }
+}
+
+.listaPerguntasEditorLaboratorioAdmin {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.itemPerguntaEditorLaboratorioAdmin {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.12);
+}
+
+.cabecalhoPerguntaEditorLaboratorioAdmin {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.rotuloPerguntaEditorLaboratorioAdmin {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #E79839;
+}
+
+.textareaEnunciadoEditorLaboratorioAdmin {
+    resize: vertical;
+    min-height: 56px;
+    font-family: var(--fonteCorpoMontserrat);
+}
+
+.listaAlternativasEditorLaboratorioAdmin {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.itemAlternativaEditorLaboratorioAdmin {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.entradaAlternativaEditorLaboratorioAdmin {
+    flex: 1;
+    min-width: 0;
+}
+
+/* A letra da alternativa é o próprio botão de "correta": círculo vazado,
+   preenchido de laranja quando marcada. O radio fica só para o teclado e
+   o leitor de tela. */
+.labelCorretaEditorLaboratorioAdmin {
+    position: relative;
+    flex: none;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgba(252, 248, 245, 0.35);
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.75rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.labelCorretaEditorLaboratorioAdmin:hover {
+    border-color: #E79839;
+}
+
+.labelCorretaMarcadaEditorLaboratorioAdmin {
+    border-color: #E79839;
+    background: #E79839;
+    color: #730835;
+}
+
+.labelCorretaEditorLaboratorioAdmin:focus-within {
+    outline: 2px solid #E79839;
+    outline-offset: 2px;
+}
+
+.radioCorretaEditorLaboratorioAdmin {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+}
+
+.botaoAdicionarEditorLaboratorioAdmin {
+    align-self: flex-start;
+    background: transparent;
+    border: none;
+    padding: 2px 0;
+    color: #E79839;
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.botaoAdicionarEditorLaboratorioAdmin:hover {
+    text-decoration: underline;
+}
+
+.divRodapeEditorLaboratorioAdmin {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.textoContagemEditorLaboratorioAdmin {
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+/* ── Folhas de impressão ────────────────────────────────────────────
+   Mesmas folhas A4 da Mostra (classes do mostraTecnicaAdmin.css), num
+   portal próprio que só aparece com `imprimindoLaboratoriosAdmin` no
+   <body> (ver LaboratoriosQuizAdmin.jsx). */
+
+.portalImpressaoLaboratoriosAdmin {
+    display: none;
+}
+
+@media print {
+    body.imprimindoLaboratoriosAdmin > *:not(.portalImpressaoLaboratoriosAdmin) {
+        display: none !important;
+    }
+
+    body.imprimindoLaboratoriosAdmin > .portalImpressaoLaboratoriosAdmin {
+        display: block !important;
+    }
+
+    body.imprimindoLaboratoriosAdmin .folhaA4MostraAdmin {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
+.linkTestarLaboratorioQuizAdmin {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}

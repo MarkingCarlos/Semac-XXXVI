@@ -26,6 +26,7 @@ const ConjuntoDetalhe = lazy(() => import('./pages/Financas/conjuntos/ConjuntoDe
 const Participantes = lazy(() => import('./pages/Participantes/Participantes.jsx'));
 const PaginaTime = lazy(() => import('./pages/Time/time.jsx'));
 const PaginaVisitaMostra = lazy(() => import('./pages/Mostra/PaginaVisitaMostra.jsx'));
+const PaginaQuizLaboratorio = lazy(() => import('./pages/Laboratorio/PaginaQuizLaboratorio.jsx'));
 const PaginaPerguntas = lazy(() => import('./pages/Perguntas/PaginaPerguntas.jsx'));
 
 function CarregandoRota() {
@@ -90,6 +91,14 @@ function RotaTesteDesafioCifra() {
         : <Redirect to="/inscricoes?tab=entrar&next=/admin" />;
 }
 
+/* Modo teste do Quiz dos Laboratórios, aberto em nova guia pelo botão
+   "Testar" do /admin. Mesmo público que cadastra os laboratórios. */
+function RotaTesteQuizLaboratorio() {
+    return temAcessoGamificacao()
+        ? <PaginaQuizLaboratorio modoTeste />
+        : <Redirect to="/inscricoes?tab=entrar&next=/admin" />;
+}
+
 function RotaParticipantes() {
     return temAcessoParticipante()
         ? <Participantes />
@@ -111,6 +120,15 @@ function RotaVisitaMostra() {
     return temAcessoParticipante()
         ? <PaginaVisitaMostra />
         : <Redirect to={`/inscricoes?tab=entrar&next=${encodeURIComponent(`/mostra/${codigo}`)}`} />;
+}
+
+/* /laboratorio/<codigo> é o link do QR code de cada laboratório (Quiz dos
+   Laboratórios): quem não está logado entra e volta direto para o quiz. */
+function RotaQuizLaboratorio() {
+    const { codigo } = useParams();
+    return temAcessoParticipante()
+        ? <PaginaQuizLaboratorio />
+        : <Redirect to={`/inscricoes?tab=entrar&next=${encodeURIComponent(`/laboratorio/${codigo}`)}`} />;
 }
 
 function RotaCheckin() {
@@ -164,6 +182,8 @@ render(
             <Route path="/checkin"><RotaCheckin /></Route>
             <Route path="/time"><RotaTime /></Route>
             <Route path="/mostra/:codigo"><RotaVisitaMostra /></Route>
+            <Route path="/laboratorio/teste"><RotaTesteQuizLaboratorio /></Route>
+            <Route path="/laboratorio/:codigo"><RotaQuizLaboratorio /></Route>
             {/* Pública: professores e convidados perguntam sem login. */}
             <Route path="/perguntas"><PaginaPerguntas /></Route>
             <Route path="/termo/teste"><RotaTesteTermo/></Route>
