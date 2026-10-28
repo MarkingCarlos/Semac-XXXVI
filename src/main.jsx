@@ -10,6 +10,7 @@ import { temAcessoFinanceiro, temAcessoPrevisao, temAcessoAdmin, temAcessoPartic
    /sorteio ou /checkin — hoje tudo isso ia num chunk único pra qualquer
    visitante do site. */
 const Admin = lazy(() => import('./pages/Admin/Admin.jsx'));
+const ResumoParticipanteAdmin = lazy(() => import('./pages/Admin/ResumoParticipanteAdmin.jsx'));
 const Inscricao = lazy(() => import('./pages/Inscricao/Inscricao.jsx'));
 const PaginaCotas = lazy(() => import('./pages/PaginaCotas/PaginaCotas.jsx'));
 const Checkin = lazy(() => import('./components/qrcode/ModalQrCode.jsx'));
@@ -73,6 +74,16 @@ function RotaAdmin() {
     return temAcessoAdmin()
         ? <Admin />
         : <Redirect to="/inscricoes?tab=entrar&next=/admin" />;
+}
+
+/* Resumo de um participante (pontos, time, conquistas e presenças),
+   aberto pelo botão "Resumo" da tabela de participantes. Mesmo público
+   que vê as conquistas: diretores e presidência. */
+function RotaResumoParticipanteAdmin() {
+    const { id } = useParams();
+    return temAcessoDiretoria()
+        ? <ResumoParticipanteAdmin />
+        : <Redirect to={`/inscricoes?tab=entrar&next=${encodeURIComponent(`/admin/participante/${id}`)}`} />;
 }
 
 /* Modo teste do Termo, aberto em nova guia pelo botão "Testar" do
@@ -173,6 +184,7 @@ render(
         <Switch>
             {/*<Route path="/sorteio"><Admin /></Route>*/}
             <Route path="/admin"><RotaAdmin /></Route>
+            <Route path="/admin/participante/:id"><RotaResumoParticipanteAdmin /></Route>
             <Route path="/financeiro"><RotaFinanceiro /></Route>
             <Route path="/financeiro/conjuntos"><RotaConjuntosCotacao /></Route>
             <Route path="/financeiro/conjuntos/:id"><RotaConjuntoDetalhe /></Route>

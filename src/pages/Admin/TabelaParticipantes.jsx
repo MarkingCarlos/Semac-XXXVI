@@ -17,6 +17,7 @@
 
 import { useState, useMemo, useEffect } from 'preact/hooks'
 import { createPortal } from 'preact/compat'
+import { useLocation } from 'wouter'
 import { atribuirRole, desconfirmarParticipante, excluirParticipante, buscarComprovante } from './data/apiParticipantes.js'
 import { listarTiposInscricao } from './data/apiTipoInscricao.js'
 import { formatarCentavos } from '../Financas/utils/moeda.js'
@@ -112,7 +113,7 @@ function textoTelefone(telefone) {
 function LinhaParticipante({
     participante, aoAbrirConfirmacao, aoExcluir, confirmandoExcluir, processandoExcluir,
     aoDesconfirmar, confirmandoDesconfirmar, processandoDesconfirmar,
-    podeVerConquistas, aoVerConquistas,
+    podeVerConquistas, aoVerConquistas, aoVerResumo,
     podeEditarParticipante, aoEditarParticipante,
 }) {
     const confirmado = participante.role === 'PARTICIPANTE'
@@ -213,6 +214,22 @@ function LinhaParticipante({
                             </svg>
                         </button>
                     )}
+                    {podeVerConquistas && confirmado && (
+                        <button
+                            type="button"
+                            class="botaoAcaoLinhaFinancas"
+                            aria-label={`Ver resumo de ${participante.nome}`}
+                            title="Resumo"
+                            onClick={() => aoVerResumo(participante)}
+                        >
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                                <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                                <path d="M8 13h8" />
+                                <path d="M8 17h5" />
+                            </svg>
+                        </button>
+                    )}
                     <button
                         type="button"
                         class={`botaoAcaoLinhaFinancas ${confirmandoExcluir ? 'botaoConfirmarExclusaoFinancas' : ''}`}
@@ -250,6 +267,10 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
     /* Ver e revogar conquista fica com diretores e presidência — revogar
        mexe no xp e no ranking (ver SecurityConfig). */
     const podeVerConquistas = temAcessoDiretoria()
+    /* A página de resumo (pontos, time, conquistas, presenças) tem o
+       mesmo público das conquistas. */
+    const [, navegar] = useLocation()
+    const abrirResumoParticipante = participante => navegar(`/admin/participante/${participante.id}`)
     /* Corrigir cadastro e mexer em minicurso de outra pessoa fica com a
        diretoria de site e a presidência (ver SecurityConfig). */
     const podeEditarParticipante = temAcessoGestaoParticipantes()
@@ -405,6 +426,7 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
                                 processandoDesconfirmar={idProcessandoDesconfirmar === participante.id}
                                 podeVerConquistas={podeVerConquistas}
                                 aoVerConquistas={setParticipanteVendoConquistas}
+                                aoVerResumo={abrirResumoParticipante}
                                 podeEditarParticipante={podeEditarParticipante}
                                 aoEditarParticipante={setParticipanteEmEdicao}
                             />
@@ -427,6 +449,7 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
                     aoAbrirConfirmacao={setParticipanteEmConfirmacao}
                     aoEditarParticipante={setParticipanteEmEdicao}
                     aoVerConquistas={setParticipanteVendoConquistas}
+                    aoVerResumo={abrirResumoParticipante}
                     aoDesconfirmar={desconfirmar}
                     confirmandoDesconfirmar={idConfirmandoDesconfirmar === participanteDetalhado.id}
                     processandoDesconfirmar={idProcessandoDesconfirmar === participanteDetalhado.id}
@@ -476,7 +499,7 @@ export default function TabelaParticipantes({ participantes, aoConfirmar, aoExcl
 function ModalDetalhesParticipante({
     participante, aoFechar, erro,
     podeVerConquistas, podeEditarParticipante,
-    aoAbrirConfirmacao, aoEditarParticipante, aoVerConquistas,
+    aoAbrirConfirmacao, aoEditarParticipante, aoVerConquistas, aoVerResumo,
     aoDesconfirmar, confirmandoDesconfirmar, processandoDesconfirmar,
     aoExcluir, confirmandoExcluir, processandoExcluir,
 }) {
@@ -562,6 +585,15 @@ function ModalDetalhesParticipante({
                                 onClick={() => fecharDetalhes(() => aoVerConquistas(participante))}
                             >
                                 Conquistas
+                            </button>
+                        )}
+                        {podeVerConquistas && confirmado && (
+                            <button
+                                type="button"
+                                class="botaoAcaoItemModalInferiorAdmin"
+                                onClick={() => fecharDetalhes(() => aoVerResumo(participante))}
+                            >
+                                Resumo do participante
                             </button>
                         )}
 

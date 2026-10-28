@@ -214,3 +214,13 @@ export async function removerParticipanteMinicurso(id, eventoId) {
         throw new Error(corpo?.mensagem || 'Não foi possível remover do minicurso.');
     }
 }
+
+/* Resumo de um participante para a página /admin/participante/:id:
+   { id, nome, email, xp, nivel, time, conquistas[], presencas[] }.
+   `time` vem null enquanto os times não foram sorteados. */
+export async function buscarResumoParticipante(id) {
+    const resposta = await apiFetch(`${API_URL}/api/pessoa/${id}/resumo`, { headers: cabecalhosAuth() });
+    if (resposta.status === 404) throw new Error('Participante não encontrado.');
+    if (!resposta.ok) throw new Error('Falha ao carregar o resumo do participante.');
+    return resposta.json();
+}

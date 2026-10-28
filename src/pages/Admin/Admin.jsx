@@ -50,7 +50,12 @@ export default function Admin() {
         navegar('/');
     }
 
-    const [secaoAtiva, setSecaoAtiva] = useState('inicio');
+    /* `?secao=<id>` abre direto numa seção — o "Voltar" da página de
+       resumo do participante volta para Pessoas em vez do Início. */
+    const [secaoAtiva, setSecaoAtiva] = useState(() => {
+        const secaoUrl = new URLSearchParams(window.location.search).get('secao');
+        return secoesVisiveis.some(s => s.id === secaoUrl && !s.rota) ? secaoUrl : 'inicio';
+    });
 
     // Itens com `rota` levam para outra página; os demais trocam a seção.
     function irParaSecaoAdmin(idSecao) {
