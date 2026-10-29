@@ -183,7 +183,7 @@ export default function SecaoInicioParticipantes({
                                         <span className="professorCardMinicursoInicioParticipantes">{curso.professor}</span>
                                         <span className="tituloCardMinicursoInicioParticipantes">{curso.titulo}</span>
                                         <div className="rodapeCardMinicursoInicioParticipantes">
-                                            <span className="horarioCardMinicursoInicioParticipantes">{curso.horarioLocal}</span>
+                                            <span  style={{textAlign:"center"}} className="horarioCardMinicursoInicioParticipantes">{curso.horarioLocal}</span>
                                         </div>
                                     </button>
                                 ))}
@@ -268,6 +268,11 @@ export default function SecaoInicioParticipantes({
                         <span className="rotuloBlocoInicioParticipantes">RANKING</span>
                         <span className="acaoBlocoInicioParticipantes" onClick={onVerRanking}>Ver todos</span>
                     </div>
+                    {ranking.oculto && (
+                        <p className="avisoOcultoRankingBarraLateralInicioParticipantes">
+                            Ranking oculto pela organização por enquanto. Seu XP continua contando!
+                        </p>
+                    )}
                     <div className="listaRankingBarraLateralInicioParticipantes">
                         {ranking.lista.map((pessoa) => (
                             <div

@@ -979,7 +979,13 @@
 .blocoXpCardNivelInicioParticipantes { align-items: flex-end; text-align: right; }
 
 .rotuloNivelCardNivelInicioParticipantes { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; color: rgba(252, 248, 245, 0.7); }
-.nomeNivelCardNivelInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 28px; color: var(--brancoQuenteParticipantes); line-height: 1; }
+.nomeNivelCardNivelInicioParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 28px;
+  color: var(--brancoQuenteParticipantes);
+  line-height: 1;
+  text-align: left;
+}
 .valorXpCardNivelInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 24px; color: var(--AmareloAuxApoio); line-height: 1; }
 .posicaoCardNivelInicioParticipantes { font-size: 11px; color: rgba(252, 248, 245, 0.8); }
 
@@ -1036,7 +1042,12 @@
   letter-spacing: 0.1em;
   color: var(--Branco);
 }
-.tituloCardAconteceAgoraInicioParticipantes { font-family: var(--fonteTituloBungee); font-size: 17px; line-height: 1.15; }
+.tituloCardAconteceAgoraInicioParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 17px;
+  line-height: 1.15;
+  text-align: center;
+}
 
 .tagsCardAconteceAgoraInicioParticipantes {
   display: flex;
@@ -1296,6 +1307,13 @@
 /* ranking na barra lateral */
 .listaRankingBarraLateralInicioParticipantes { display: flex; flex-direction: column; gap: 6px; }
 
+.avisoOcultoRankingBarraLateralInicioParticipantes {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgba(252, 248, 245, 0.65);
+}
+
 .itemRankingBarraLateralInicioParticipantes {
   display: flex;
   align-items: center;
@@ -1551,6 +1569,31 @@
 .itemListaVoceRankingParticipantes .posicaoItemListaRankingParticipantes { color: var(--rosaMarketing); }
 .nomeItemListaRankingParticipantes { flex: 1; font-size: 12px; font-weight: 600; }
 .xpItemListaRankingParticipantes { font-family: var(--fonteTituloBungee); font-size: 12px; }
+
+/* Ranking oculto no /admin: no lugar do pódio e da lista. */
+.cardOcultoRankingParticipantes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px 20px;
+  border-radius: var(--radius-md, 16px);
+  border: 1px dashed rgba(252, 248, 245, 0.3);
+  background: rgba(252, 248, 245, 0.06);
+  text-align: center;
+}
+
+.tituloCardOcultoRankingParticipantes {
+  font-family: var(--fonteTituloBungee);
+  font-size: 16px;
+  color: var(--AmareloAuxApoio);
+}
+
+.textoCardOcultoRankingParticipantes {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(252, 248, 245, 0.75);
+}
 
 .blocoComoGanharXpRankingParticipantes {
   background: var(--vermelhoAux2Participantes);
