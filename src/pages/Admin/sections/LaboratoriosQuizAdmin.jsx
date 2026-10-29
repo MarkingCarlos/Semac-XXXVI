@@ -24,9 +24,9 @@ import './laboratoriosQuizAdmin.css';
    nasce fechado: a comissão cadastra antes e libera na hora ("Abrir quiz"
    no modal da lista).
 
-   "Imprimir QR codes" monta uma folha A4 por laboratório num portal no
-   <body>, ligado só durante a impressão (classe
-   `imprimindoLaboratoriosAdmin`), como na Mostra. */
+   "Imprimir QR codes" monta um cartão 7×7 cm por laboratório (QR + nome),
+   em grade na A4, num portal no <body> ligado só durante a impressão
+   (classe `imprimindoLaboratoriosAdmin`), como na Mostra. */
 
 const ANO_ATUAL = new Date().getFullYear();
 const CLASSE_BODY_IMPRESSAO = 'imprimindoLaboratoriosAdmin';
@@ -214,23 +214,14 @@ export default function LaboratoriosQuizAdmin() {
             {createPortal(
                 <div className="portalImpressaoLaboratoriosAdmin">
                     {laboratorios.map((laboratorio) => (
-                        <div key={laboratorio.id} className="folhaA4MostraAdmin">
-                            <span className="rotuloEventoFolhaMostraAdmin">QUIZ DOS LABORATÓRIOS · SEMAC XXXVI</span>
-                            <h1 className="tituloFolhaMostraAdmin">{laboratorio.nome}</h1>
-                            {laboratorio.responsaveis && (
-                                <p className="apresentadoresFolhaMostraAdmin">{laboratorio.responsaveis}</p>
-                            )}
+                        <div key={laboratorio.id} className="cartaoQrImpressaoLaboratoriosAdmin">
                             {svgsQrCodePorCodigo[laboratorio.codigoQr] && (
                                 <div
-                                    className="divQrFolhaMostraAdmin"
+                                    className="divQrCartaoImpressaoLaboratoriosAdmin"
                                     dangerouslySetInnerHTML={{ __html: svgsQrCodePorCodigo[laboratorio.codigoQr] }}
                                 />
                             )}
-                            <p className="instrucaoFolhaMostraAdmin">
-                                Aponte a câmera do celular e responda o quiz deste laboratório.
-                                Acertou todas? Ganhe 2 XP no ranking!
-                            </p>
-                            <span className="linkFolhaMostraAdmin">{linkQuizLaboratorio(laboratorio.codigoQr)}</span>
+                            <span className="spanNomeCartaoImpressaoLaboratoriosAdmin">{laboratorio.nome}</span>
                         </div>
                     ))}
                 </div>,

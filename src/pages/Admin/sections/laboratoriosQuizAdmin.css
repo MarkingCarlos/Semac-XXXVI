@@ -187,13 +187,55 @@
     opacity: 0.7;
 }
 
-/* ── Folhas de impressão ────────────────────────────────────────────
-   Mesmas folhas A4 da Mostra (classes do mostraTecnicaAdmin.css), num
-   portal próprio que só aparece com `imprimindoLaboratoriosAdmin` no
-   <body> (ver LaboratoriosQuizAdmin.jsx). */
+/* ── Cartões de impressão ───────────────────────────────────────────
+   Um cartão de 7×7 cm por laboratório (QR de 5,8 cm + nome), em grade
+   na A4, com borda tracejada para recortar. O portal só aparece com
+   `imprimindoLaboratoriosAdmin` no <body> (ver LaboratoriosQuizAdmin.jsx). */
 
 .portalImpressaoLaboratoriosAdmin {
     display: none;
+}
+
+.cartaoQrImpressaoLaboratoriosAdmin {
+    width: 70mm;
+    height: 70mm;
+    box-sizing: border-box;
+    padding: 2mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 0.3mm dashed #999999;
+    color: #111111;
+    background: #ffffff;
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.divQrCartaoImpressaoLaboratoriosAdmin {
+    width: 58mm;
+    height: 58mm;
+    flex: none;
+}
+
+.divQrCartaoImpressaoLaboratoriosAdmin svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Até duas linhas no espaço que sobra embaixo do QR. */
+.spanNomeCartaoImpressaoLaboratoriosAdmin {
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 100%;
+    font-family: var(--fonteCorpoMontserrat);
+    font-size: 3.4mm;
+    font-weight: 700;
+    line-height: 1.15;
+    text-align: center;
 }
 
 @media print {
@@ -202,10 +244,13 @@
     }
 
     body.imprimindoLaboratoriosAdmin > .portalImpressaoLaboratoriosAdmin {
-        display: block !important;
+        display: grid !important;
+        grid-template-columns: repeat(2, 70mm);
+        justify-content: center;
+        gap: 6mm;
     }
 
-    body.imprimindoLaboratoriosAdmin .folhaA4MostraAdmin {
+    body.imprimindoLaboratoriosAdmin .cartaoQrImpressaoLaboratoriosAdmin {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
