@@ -77,7 +77,7 @@ import {
 
 import { certificadosMockParticipante } from './mockParticipante.js';
 
-const RANKING_VAZIO_PARTICIPANTES = { totalParticipantes: 0, atualizadoEm: '', podio: [], lista: [] };
+const RANKING_VAZIO_PARTICIPANTES = { oculto: false, totalParticipantes: 0, atualizadoEm: '', podio: [], lista: [] };
 
 const ABAS_PARTICIPANTES = [
     { id: 'inicio', rotulo: 'Início' },

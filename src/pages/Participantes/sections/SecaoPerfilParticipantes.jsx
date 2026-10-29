@@ -39,7 +39,9 @@ function CardMeuTimeSecaoPerfil({ meuTime }) {
             href="/time"
             className="cardMeuTimeSecaoPerfilParticipantes"
             style={{ '--corMeuTimeSecaoPerfil': meuTime.cor || 'var(--AmareloAuxApoio)' }}
-            aria-label={`Seu time: ${meuTime.nome}, ${meuTime.posicao}º lugar entre ${meuTime.totalTimes} times`}
+            aria-label={meuTime.rankingOculto
+                ? `Seu time: ${meuTime.nome}`
+                : `Seu time: ${meuTime.nome}, ${meuTime.posicao}º lugar entre ${meuTime.totalTimes} times`}
         >
             <span className="circuloMascoteMeuTimeSecaoPerfilParticipantes">
                 {urlMascote ? (
@@ -60,9 +62,13 @@ function CardMeuTimeSecaoPerfil({ meuTime }) {
             <span className="textosMeuTimeSecaoPerfilParticipantes">
                 <span className="rotuloMeuTimeSecaoPerfilParticipantes">SEU TIME</span>
                 <span className="nomeMeuTimeSecaoPerfilParticipantes">{meuTime.nome}</span>
-                <span className="posicaoMeuTimeSecaoPerfilParticipantes">
-                    <strong>{meuTime.posicao}º lugar</strong> entre {meuTime.totalTimes} times · {meuTime.xpTime} de XP
-                </span>
+                {meuTime.rankingOculto ? (
+                    <span className="posicaoMeuTimeSecaoPerfilParticipantes">Ranking dos times oculto por enquanto</span>
+                ) : (
+                    <span className="posicaoMeuTimeSecaoPerfilParticipantes">
+                        <strong>{meuTime.posicao}º lugar</strong> entre {meuTime.totalTimes} times · {meuTime.xpTime} de XP
+                    </span>
+                )}
             </span>
         </Link>
     );

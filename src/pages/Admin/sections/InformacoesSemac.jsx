@@ -49,6 +49,10 @@ import {
     salvarPerguntasDebateAbertas,
 } from '../data/apiPerguntasDebate.js';
 import {
+    lerRankingOculto,
+    salvarRankingOculto,
+} from '../data/apiRankingOculto.js';
+import {
     listarConquistas,
     atualizarConquista,
     alterarAtivaConquista,
@@ -167,6 +171,11 @@ export default function InformacoesSemac() {
     const [salvandoPerguntasDebateAbertas, setSalvandoPerguntasDebateAbertas] = useState(false);
     const [erroPerguntasDebateAbertas, setErroPerguntasDebateAbertas] = useState('');
 
+    /* ── Ranking oculto (null = carregando) ───────────────────── */
+    const [rankingOculto, setRankingOculto] = useState(null);
+    const [salvandoRankingOculto, setSalvandoRankingOculto] = useState(false);
+    const [erroRankingOculto, setErroRankingOculto] = useState('');
+
     const [painelAberto, setPainelAberto] = useState(false);
     const [formulario, setFormulario] = useState(FORMULARIO_VAZIO);
     const [idEmEdicao, setIdEmEdicao] = useState(null);
@@ -275,6 +284,9 @@ export default function InformacoesSemac() {
         lerPerguntasDebateAbertas(ANO_ATUAL)
             .then((abertas) => { if (ativo) setPerguntasDebateAbertas(abertas); })
             .catch((e) => { if (ativo) setErroPerguntasDebateAbertas(e.message); });
+        lerRankingOculto(ANO_ATUAL)
+            .then((oculto) => { if (ativo) setRankingOculto(oculto); })
+            .catch((e) => { if (ativo) setErroRankingOculto(e.message); });
         listarNiveis()
             .then((lista) => { if (ativo) setNiveisParticipante([...lista].sort(porXpMinimoCrescente)); })
             .catch((e) => { if (ativo) setErroNiveisParticipante(e.message); })
@@ -317,6 +329,21 @@ export default function InformacoesSemac() {
             setErroPerguntasDebateAbertas(e.message);
         } finally {
             setSalvandoPerguntasDebateAbertas(false);
+        }
+    };
+
+    /* ── Ranking oculto ───────────────────────────────────────── */
+
+    const alternarRankingOculto = async (novoValor) => {
+        setSalvandoRankingOculto(true);
+        setErroRankingOculto('');
+        try {
+            const salvo = await salvarRankingOculto(ANO_ATUAL, novoValor);
+            setRankingOculto(salvo);
+        } catch (e) {
+            setErroRankingOculto(e.message);
+        } finally {
+            setSalvandoRankingOculto(false);
         }
     };
 
@@ -1014,6 +1041,40 @@ export default function InformacoesSemac() {
                             {perguntasDebateAbertas === null
                                 ? 'Carregando…'
                                 : perguntasDebateAbertas ? 'Perguntas abertas' : 'Perguntas fechadas'}
+                        </span>
+                    </label>
+                </div>
+            </section>
+
+            {/* ── Ranking ─────────────────────────────────────── */}
+            <section className="blocoInfoSemac" aria-label="Ranking">
+                <div className="cabecalhoBlocoInfoSemac">
+                    <div>
+                        <h2 className="tituloBlocoInfoSemac">Ranking</h2>
+                        <p className="notaBlocoInfoSemac">
+                            Ligado, ninguém vê a pontuação dos outros: o ranking de participantes e
+                            de times some do /participantes e do /time, no lugar fica um aviso. Cada
+                            participante continua vendo o próprio XP, e o XP segue sendo contado
+                            normalmente.
+                        </p>
+                    </div>
+                </div>
+
+                {erroRankingOculto && <p className="avisoErroAdmin" role="alert">{erroRankingOculto}</p>}
+
+                <div className="cartaoPrecoCamisetaInfoSemac">
+                    <span className="rotuloPrecoCamisetaInfoSemac">Ocultar ranking</span>
+                    <label className="campoCheckboxInfoSemac">
+                        <input
+                            type="checkbox"
+                            checked={Boolean(rankingOculto)}
+                            disabled={rankingOculto === null || salvandoRankingOculto}
+                            onInput={(e) => alternarRankingOculto(e.currentTarget.checked)}
+                        />
+                        <span>
+                            {rankingOculto === null
+                                ? 'Carregando…'
+                                : rankingOculto ? 'Ranking oculto' : 'Ranking visível'}
                         </span>
                     </label>
                 </div>

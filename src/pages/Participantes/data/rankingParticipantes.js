@@ -20,6 +20,8 @@ export function montarRankingExibicao(resposta) {
     const vizinhanca = montarVizinhancaVoce(completa).filter((pessoa) => !posicoesJaMostradas.has(pessoa.posicao));
 
     return {
+        // Ranking escondido no /admin: a lista vem vazia e a UI mostra um aviso.
+        oculto: Boolean(resposta?.oculto),
         totalParticipantes: resposta?.totalParticipantes ?? completa.length,
         atualizadoEm: resposta?.atualizadoEm ?? '',
         podio,

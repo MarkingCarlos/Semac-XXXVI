@@ -40,13 +40,24 @@ export default function SecaoRankingParticipantes({ ranking, regrasXp }) {
         <div className="secaoRankingParticipantes">
             <div className="cabecalhoSecaoRankingParticipantes">
                 <span className="tituloSecaoRankingParticipantes">RANKING</span>
-                <span className="subtituloSecaoRankingParticipantes">
-                    {ranking.totalParticipantes} participantes · atualizado às {ranking.atualizadoEm}
-                </span>
+                {!ranking.oculto && (
+                    <span className="subtituloSecaoRankingParticipantes">
+                        {ranking.totalParticipantes} participantes · atualizado às {ranking.atualizadoEm}
+                    </span>
+                )}
             </div>
 
             <div className="corpoSecaoRankingParticipantes">
                 <div className="colunaPrincipalRankingParticipantes">
+                    {ranking.oculto ? (
+                        <div className="cardOcultoRankingParticipantes" role="status">
+                            <span className="tituloCardOcultoRankingParticipantes">RANKING OCULTO</span>
+                            <p className="textoCardOcultoRankingParticipantes">
+                                Seu XP continua contando
+                                normalmente: aguarde a revelação!
+                            </p>
+                        </div>
+                    ) : (<>
                     <div className="podioRankingParticipantes">
                         {ranking.podio.map((pessoa) => (
                             <div key={pessoa.posicao} className="colunaPodioRankingParticipantes">
@@ -75,6 +86,7 @@ export default function SecaoRankingParticipantes({ ranking, regrasXp }) {
                             );
                         })}
                     </div>
+                    </>)}
                 </div>
 
                 {regrasEmPontos.length > 0 && (

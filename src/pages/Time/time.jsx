@@ -218,17 +218,23 @@ export default function PaginaTime() {
                                 <span className="valorNumeroTime">{meuTime.integrantes}</span>
                                 <span className="rotuloNumeroTime">INTEGRANTES</span>
                             </div>
+                            {/* Ranking oculto no /admin: posição e XP do time
+                                vêm zerados do backend e trocam por "?". */}
                             <div className="cartaoNumeroTime">
-                                <span className="valorNumeroTime">{meuTime.posicao}º</span>
+                                <span className="valorNumeroTime">{meuTime.rankingOculto ? '?' : `${meuTime.posicao}º`}</span>
                                 <span className="rotuloNumeroTime">ENTRE TIMES</span>
                             </div>
                             <div className="cartaoNumeroTime">
-                                <span className="valorNumeroTime">{meuTime.xpTime.toLocaleString('pt-BR')}</span>
+                                <span className="valorNumeroTime">{meuTime.rankingOculto ? '?' : meuTime.xpTime.toLocaleString('pt-BR')}</span>
                                 <span className="rotuloNumeroTime">XP MÉDIO</span>
                             </div>
                         </div>
 
-                        <p className="notaXpTime">Cada presença sua também conta na média do time.</p>
+                        <p className="notaXpTime">
+                            {meuTime.rankingOculto
+                                ? 'O ranking dos times está oculto por enquanto, mas cada presença sua continua contando na média do time.'
+                                : 'Cada presença sua também conta na média do time.'}
+                        </p>
 
                         <div className="acoesRevelacaoTime">
                             <a className="botaoPrincipalTime" href="/participantes">IR PARA A PLATAFORMA</a>
