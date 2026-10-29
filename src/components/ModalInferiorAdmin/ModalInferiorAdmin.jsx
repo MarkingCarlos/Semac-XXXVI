@@ -15,9 +15,9 @@ import './modalInferiorAdmin.css';
    Foco inicial: o primeiro elemento com `data-foco-inicial`, ou o X.
 
    `centralizadoNoDesktop`: acima de 820px o painel vira um modal no
-   centro da tela, com 50% da largura e da altura, entrando e saindo com
-   fade e escala. No mobile continua subindo de baixo. Sem a prop, nada
-   muda para quem já usa o componente. */
+   centro da tela, com 80% da largura (até 1100px) e 85% da altura,
+   entrando e saindo com fade e escala. No mobile continua subindo de
+   baixo. Sem a prop, nada muda para quem já usa o componente. */
 
 const DURACAO_SAIDA_MODAL_INFERIOR_MS = 260;
 

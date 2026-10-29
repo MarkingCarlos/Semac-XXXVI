@@ -118,16 +118,17 @@
 }
 
 /* ── Centralizado no desktop (prop centralizadoNoDesktop) ───────
-   Acima do corte do mobile: no meio da tela, 50% da largura e da
-   altura, com fade + escala. Abaixo dele segue o painel de baixo. */
+   Acima do corte do mobile: no meio da tela, 80% da largura (até
+   1100px) e 85% da altura, com fade + escala. Abaixo dele segue o
+   painel de baixo. */
 @media (min-width: 821px) {
     .sobreposicaoCentralizadaModalInferiorAdmin {
         align-items: center;
     }
 
     .sobreposicaoCentralizadaModalInferiorAdmin .painelModalInferiorAdmin {
-        width: 50vw;
-        height: 50dvh;
+        width: min(80vw, 1100px);
+        height: 85dvh;
         max-height: none;
         border-radius: 16px;
         border: 1px solid rgba(255, 255, 255, 0.12);
