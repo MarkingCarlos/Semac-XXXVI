@@ -307,6 +307,8 @@
 }
 
 .textoAlternativaQuizLaboratorio {
+    flex: 1;
+    text-align: left;
     font-size: 15px;
     line-height: 1.4;
     overflow-wrap: anywhere;
