@@ -13,9 +13,8 @@ import './paginaQuizLaboratorio.css';
    pelo login e volta, ver main.jsx) e responde o quiz do laboratório.
 
    Uma pergunta por tela; só envia com todas respondidas. É uma tentativa
-   só: depois do envio (ou ao reabrir o QR) a tela mostra o placar. A
-   correção pergunta a pergunta só aparece logo após o envio — o backend
-   guarda apenas o placar. Quem acerta todas ganha 2 XP.
+   só: depois do envio (ou ao reabrir o QR) a tela mostra só o placar
+   ("3/5"), sem dizer quais errou nem a correta. Cada acerto vale 1 XP.
 
    Modo teste (`modoTeste`, rota /laboratorio/teste?laboratorio={id}),
    aberto pelo botão "Testar" do /admin: a comissão responde mesmo com o
@@ -33,6 +32,8 @@ export default function PaginaQuizLaboratorio({ modoTeste = false }) {
     const [passoQuizLaboratorio, setPassoQuizLaboratorio] = useState('carregando');
     const [quizLaboratorio, setQuizLaboratorio] = useState(null);
     const [resultadoQuizLaboratorio, setResultadoQuizLaboratorio] = useState(null);
+    /* true quando o placar veio do envio desta tela; false ao reabrir o QR já respondido. */
+    const [acabouDeEnviarQuizLaboratorio, setAcabouDeEnviarQuizLaboratorio] = useState(false);
     const [mensagemErroQuizLaboratorio, setMensagemErroQuizLaboratorio] = useState('');
     const [tentativaCarregarQuizLaboratorio, setTentativaCarregarQuizLaboratorio] = useState(0);
 
@@ -89,6 +90,7 @@ export default function PaginaQuizLaboratorio({ modoTeste = false }) {
                 : await enviarRespostasQuizLaboratorio(codigo, escolhas);
             if (!resultado) return;
             setResultadoQuizLaboratorio(resultado);
+            setAcabouDeEnviarQuizLaboratorio(true);
             setPassoQuizLaboratorio('resultado');
         } catch (e) {
             setMensagemErroQuizLaboratorio(e.message);
@@ -108,13 +110,11 @@ export default function PaginaQuizLaboratorio({ modoTeste = false }) {
     /* Só no teste: volta para a 1ª pergunta sem respostas. */
     const testarNovamente = () => {
         setResultadoQuizLaboratorio(null);
+        setAcabouDeEnviarQuizLaboratorio(false);
         setEscolhasQuizLaboratorio({});
         setIndicePerguntaAtual(0);
         setPassoQuizLaboratorio('respondendo');
     };
-
-    const textoAlternativa = (pergunta, alternativaId) =>
-        pergunta.alternativas.find((a) => a.id === alternativaId)?.texto ?? '—';
 
     return (
         <main className="paginaQuizLaboratorio">
@@ -254,9 +254,7 @@ export default function PaginaQuizLaboratorio({ modoTeste = false }) {
                 {passoQuizLaboratorio === 'resultado' && resultadoQuizLaboratorio && quizLaboratorio && (
                     <section className="passoCentralQuizLaboratorio" aria-live="polite">
                         <span className="chamadaQuizLaboratorio">
-                            {resultadoQuizLaboratorio.correcao
-                                ? (resultadoQuizLaboratorio.gabaritou ? 'GABARITOU!' : 'QUIZ ENVIADO')
-                                : 'VOCÊ JÁ RESPONDEU ESTE QUIZ'}
+                            {acabouDeEnviarQuizLaboratorio ? 'QUIZ ENVIADO' : 'VOCÊ JÁ RESPONDEU ESTE QUIZ'}
                         </span>
 
                         <div className="cartaoLaboratorioQuizLaboratorio">
@@ -278,33 +276,8 @@ export default function PaginaQuizLaboratorio({ modoTeste = false }) {
                             </div>
                         ) : (
                             <p className="descricaoPassoQuizLaboratorio">
-                                Só quem acerta todas ganha XP. Aproveite os outros laboratórios!
+                                Cada acerto vale 1 XP. Aproveite os outros laboratórios!
                             </p>
-                        )}
-
-                        {resultadoQuizLaboratorio.correcao && (
-                            <ol className="listaCorrecaoQuizLaboratorio">
-                                {resultadoQuizLaboratorio.correcao.map((item, indice) => {
-                                    const pergunta = perguntas.find((p) => p.id === item.perguntaId);
-                                    if (!pergunta) return null;
-                                    return (
-                                        <li
-                                            key={item.perguntaId}
-                                            className={item.acertou
-                                                ? 'itemCorrecaoQuizLaboratorio itemAcertoQuizLaboratorio'
-                                                : 'itemCorrecaoQuizLaboratorio itemErroQuizLaboratorio'}
-                                        >
-                                            <span className="enunciadoCorrecaoQuizLaboratorio">
-                                                {indice + 1}. {pergunta.enunciado}
-                                            </span>
-                                            <span className="respostaCorrecaoQuizLaboratorio">
-                                                {item.acertou ? '✓ ' : '✗ '}
-                                                {textoAlternativa(pergunta, item.alternativaEscolhidaId)}
-                                            </span>
-                                        </li>
-                                    );
-                                })}
-                            </ol>
                         )}
 
                         <div className="acoesFinaisQuizLaboratorio">

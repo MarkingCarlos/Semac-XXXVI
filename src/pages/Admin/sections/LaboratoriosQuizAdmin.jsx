@@ -20,7 +20,7 @@ import './laboratoriosQuizAdmin.css';
    (quem monta ou não este componente é o InformacoesSemac.jsx).
 
    Cada laboratório ganha um QR com o link /laboratorio/<codigoQr>. O
-   participante lê, responde uma vez e, se gabaritar, ganha 2 XP. O quiz
+   participante lê, responde uma vez e ganha 1 XP por acerto. O quiz
    nasce fechado: a comissão cadastra antes e libera na hora ("Abrir quiz"
    no modal da lista).
 
@@ -151,8 +151,8 @@ export default function LaboratoriosQuizAdmin() {
             {erro && <p className="avisoErroAdmin" role="alert">{erro}</p>}
 
             <p className="textoExplicacaoMostraAdmin">
-                Cada laboratório ganha um QR code. O participante lê, responde uma vez e, se acertar todas,
-                ganha 2 XP. O quiz começa fechado: abra quando o laboratório estiver pronto.
+                Cada laboratório ganha um QR code. O participante lê, responde uma vez e ganha 1 XP por
+                acerto. O quiz começa fechado: abra quando o laboratório estiver pronto.
             </p>
 
             <div className="faixaResumoAdmin">

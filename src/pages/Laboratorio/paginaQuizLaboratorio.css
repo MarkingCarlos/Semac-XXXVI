@@ -328,49 +328,6 @@
     color: rgba(252, 248, 245, 0.65);
 }
 
-/* ── Correção ─────────────────────────────────────────────────────── */
-
-.listaCorrecaoQuizLaboratorio {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    text-align: left;
-}
-
-.itemCorrecaoQuizLaboratorio {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 12px 14px;
-    border-radius: 12px;
-    border-left: 4px solid;
-    background: rgba(0, 0, 0, 0.15);
-}
-
-.itemAcertoQuizLaboratorio {
-    border-left-color: #E79839;
-}
-
-.itemErroQuizLaboratorio {
-    border-left-color: rgba(252, 248, 245, 0.35);
-}
-
-.enunciadoCorrecaoQuizLaboratorio {
-    font-size: 13px;
-    font-weight: 700;
-    line-height: 1.35;
-    overflow-wrap: anywhere;
-}
-
-.respostaCorrecaoQuizLaboratorio {
-    font-size: 13px;
-    color: rgba(252, 248, 245, 0.85);
-    overflow-wrap: anywhere;
-}
-
 .acoesFinaisQuizLaboratorio {
     display: flex;
     flex-direction: column;
