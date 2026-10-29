@@ -7,7 +7,8 @@ import './resumoParticipanteAdmin.css';
    da tabela de participantes (/admin -> Pessoas).
 
    Topo: nome, pontos (xp e nível) e o time. Abaixo, as conquistas e as
-   presenças confirmadas, cada uma com o total. Só leitura — revogar
+   presenças confirmadas e os Termos e Cifras acertados, cada lista com o
+   total. Só leitura — revogar
    conquista continua no modal da tabela. */
 
 const formatadorDataHora = new Intl.DateTimeFormat('pt-BR', {
@@ -19,6 +20,48 @@ const formatadorDataHora = new Intl.DateTimeFormat('pt-BR', {
 
 function textoDataHora(valor) {
     return valor ? formatadorDataHora.format(new Date(valor)) : '—';
+}
+
+/* `data` do desafio vem como "AAAA-MM-DD" (LocalDate); montar a Date
+   pelas partes evita o fuso deslocar o dia. */
+function textoDataDesafio(valor) {
+    if (!valor) return '';
+    const [ano, mes, dia] = valor.split('-');
+    return `${dia}/${mes}/${ano}`;
+}
+
+/* Termo e Cifra do Dia acertados: mesma lista das conquistas, com o dia
+   (ou a palestra), o horário do acerto e as tentativas usadas. */
+function SecaoDesafiosVencidosResumoParticipante({ titulo, desafios, textoVazio }) {
+    return (
+        <section className="secaoListaResumoParticipanteAdmin">
+            <h2 className="tituloSecaoResumoParticipanteAdmin">
+                {titulo}
+                <span className="contadorSecaoResumoParticipanteAdmin">{desafios.length}</span>
+            </h2>
+            {desafios.length === 0 ? (
+                <p className="estadoResumoParticipanteAdmin">{textoVazio}</p>
+            ) : (
+                <ul className="listaItensResumoParticipanteAdmin">
+                    {desafios.map((desafio) => (
+                        <li className="itemListaResumoParticipanteAdmin" key={desafio.id}>
+                            <div className="textoItemResumoParticipanteAdmin">
+                                <span className="nomeItemResumoParticipanteAdmin">
+                                    {desafio.titulo}
+                                    {desafio.data && ` · ${textoDataDesafio(desafio.data)}`}
+                                </span>
+                                <span className="detalheItemResumoParticipanteAdmin">
+                                    Acertou {textoDataHora(desafio.acertadoEm)}
+                                    {` · ${desafio.tentativasUsadas} ${desafio.tentativasUsadas === 1 ? 'tentativa' : 'tentativas'}`}
+                                </span>
+                            </div>
+                            <span className="xpItemResumoParticipanteAdmin">+{desafio.xpCreditado ?? 0} xp</span>
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </section>
+    );
 }
 
 export default function ResumoParticipanteAdmin() {
@@ -143,6 +186,17 @@ export default function ResumoParticipanteAdmin() {
                                 </ul>
                             )}
                         </section>
+
+                        <SecaoDesafiosVencidosResumoParticipante
+                            titulo="Termo"
+                            desafios={resumo.termosVencidos}
+                            textoVazio="Nenhum Termo acertado."
+                        />
+                        <SecaoDesafiosVencidosResumoParticipante
+                            titulo="Cifra do Dia"
+                            desafios={resumo.cifrasVencidas}
+                            textoVazio="Nenhuma Cifra completada."
+                        />
                     </>
                 )}
             </div>

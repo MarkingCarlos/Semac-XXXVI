@@ -10,7 +10,6 @@
 }
 
 .conteudoResumoParticipanteAdmin {
-    max-width: 880px;
     margin: 0 auto;
     padding: 28px clamp(18px, 4vw, 52px) calc(60px + env(safe-area-inset-bottom));
     display: flex;

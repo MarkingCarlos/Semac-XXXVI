@@ -217,7 +217,9 @@ export async function removerParticipanteMinicurso(id, eventoId) {
 
 /* Resumo de um participante para a página /admin/participante/:id:
    { id, nome, email, xp, nivel, time, conquistas[], presencas[] }.
-   `time` vem null enquanto os times não foram sorteados. */
+   `time` vem null enquanto os times não foram sorteados.
+   `termosVencidos` e `cifrasVencidas`: [{ id, titulo, data, acertadoEm,
+   tentativasUsadas, xpCreditado }], só os desafios acertados. */
 export async function buscarResumoParticipante(id) {
     const resposta = await apiFetch(`${API_URL}/api/pessoa/${id}/resumo`, { headers: cabecalhosAuth() });
     if (resposta.status === 404) throw new Error('Participante não encontrado.');
