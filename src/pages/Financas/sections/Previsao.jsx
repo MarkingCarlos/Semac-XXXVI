@@ -487,7 +487,7 @@ export default function Previsao({ fornecedores, setFornecedores, somenteLeitura
                     <article className="cartaoIndicadorPrevisao">
                         <span className="rotuloIndicadorPrevisao">Projeção total</span>
                         <strong className="valorIndicadorPrevisao">{formatarCentavos(resumo.projecaoTotal)}</strong>
-                        <span className="notaIndicadorPrevisao">Previsto em aberto + compras já registradas</span>
+                        <span className="notaIndicadorPrevisao">Previsto em aberto + itens já pagos</span>
                     </article>
                     <article className="cartaoIndicadorPrevisao">
                         <span className="rotuloIndicadorPrevisao">Previsto em aberto</span>
@@ -497,7 +497,7 @@ export default function Previsao({ fornecedores, setFornecedores, somenteLeitura
                     <article className="cartaoIndicadorPrevisao">
                         <span className="rotuloIndicadorPrevisao">Realizado</span>
                         <strong className="valorIndicadorPrevisao">{formatarCentavos(resumo.realizado)}</strong>
-                        <span className="notaIndicadorPrevisao">Compras registradas</span>
+                        <span className="notaIndicadorPrevisao">Itens pagos</span>
                     </article>
                     <article className={estourouTeto ? 'cartaoIndicadorPrevisao cartaoIndicadorEstouroPrevisao' : 'cartaoIndicadorPrevisao'}>
                         <span className="rotuloIndicadorPrevisao">
@@ -1098,7 +1098,7 @@ export default function Previsao({ fornecedores, setFornecedores, somenteLeitura
                                 <strong className="valorNumeroDetalhePrevisao">
                                     {formatarCentavos(detalheCategoria.totalRealizado)}
                                 </strong>
-                                <span className="notaNumeroDetalhePrevisao">Compras registradas</span>
+                                <span className="notaNumeroDetalhePrevisao">Itens pagos</span>
                             </li>
                             <li className="numeroDetalheCategoriaPrevisao">
                                 <span className="rotuloNumeroDetalhePrevisao">Previsto em aberto</span>
