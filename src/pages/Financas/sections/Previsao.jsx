@@ -14,7 +14,7 @@ import {
 import { lerOrcamento } from '../data/apiOrcamento.js';
 import {
     listarPrevisoes, lerResumoPrevisao, criarPrevisao, atualizarPrevisao,
-    excluirPrevisao as excluirPrevisaoApi, converterPrevisaoEmCompra,
+    excluirPrevisao as excluirPrevisaoApi, converterPrevisaoEmCompra, reverterPrevisao,
 } from '../data/apiPrevisao.js';
 import { criarFornecedor } from '../data/apiFornecedores.js';
 import './previsao.css';
@@ -135,7 +135,7 @@ function TooltipPrevisao({ active, payload, label }) {
    `somenteLeitura`: diretores fora do financeiro veem indicadores,
    gráficos, tabela e parâmetros, mas nenhum botão que altere dados. A
    trava de verdade é no backend (só GET liberado para eles). */
-export default function Previsao({ fornecedores, setFornecedores, somenteLeitura = false }) {
+export default function Previsao({ fornecedores, setFornecedores, somenteLeitura = false, aoMudarCompras }) {
     const totalColunasTabela = somenteLeitura ? 5 : 6;
     const [itens, setItens] = useState([]);
     const [categorias, setCategorias] = useState([]);
@@ -148,6 +148,8 @@ export default function Previsao({ fornecedores, setFornecedores, somenteLeitura
     const [filtro, setFiltro] = useState('');
     const [filtroCategoria, setFiltroCategoria] = useState('');
     const [filtroStatus, setFiltroStatus] = useState('');
+    // '' = todos | 'comprados' = só PAGO | 'emAberto' = tudo que ainda não foi comprado
+    const [filtroCompra, setFiltroCompra] = useState('');
 
     const [painelAberto, setPainelAberto] = useState(false);
     const [formulario, setFormulario] = useState(FORMULARIO_VAZIO);
@@ -170,6 +172,7 @@ export default function Previsao({ fornecedores, setFornecedores, somenteLeitura
 
     const [idConfirmandoExclusao, setIdConfirmandoExclusao] = useState(null);
     const [idConfirmandoConversao, setIdConfirmandoConversao] = useState(null);
+    const [idConfirmandoReversao, setIdConfirmandoReversao] = useState(null);
 
     /* Guarda o id e não o item: a linha pode ser recarregada enquanto o
        painel está aberto, e o item exibido deve ser sempre o atual. */
@@ -273,7 +276,9 @@ export default function Previsao({ fornecedores, setFornecedores, somenteLeitura
         const bateTexto = !filtro.trim() || normalizar(item.descricao).includes(normalizar(filtro));
         const bateCategoria = !filtroCategoria || String(item.categoriaId) === filtroCategoria;
         const bateStatus = !filtroStatus || item.status === filtroStatus;
-        return bateTexto && bateCategoria && bateStatus;
+        const bateCompra = !filtroCompra
+            || (filtroCompra === 'comprados' ? item.status === 'PAGO' : item.status !== 'PAGO');
+        return bateTexto && bateCategoria && bateStatus && bateCompra;
     });
 
     const totalFiltrado = itensFiltrados.reduce((soma, item) => soma + item.valorTotal, 0);
@@ -356,8 +361,9 @@ export default function Previsao({ fornecedores, setFornecedores, somenteLeitura
         }
     };
 
-    /* Converter é irreversível (cria a compra e fecha a previsão), por
-       isso pede a segunda confirmação como a exclusão. */
+    /* Converter cria a compra e fecha a previsão; é reversível pelo botão
+       "Voltar para previsto", mas pede a segunda confirmação como a
+       exclusão para evitar clique acidental. */
     const converter = async (id) => {
         if (idConfirmandoConversao !== id) {
             setIdConfirmandoConversao(id);
@@ -367,10 +373,30 @@ export default function Previsao({ fornecedores, setFornecedores, somenteLeitura
         try {
             await converterPrevisaoEmCompra(id);
             await recarregar();
+            aoMudarCompras?.();
         } catch (e) {
             setErroAcao(e.message);
         } finally {
             setIdConfirmandoConversao(null);
+        }
+    };
+
+    /* Desfaz a conversão: o backend apaga a compra e devolve o item para
+       PREVISTO. Edições feitas na compra depois de criada se perdem. */
+    const reverter = async (id) => {
+        if (idConfirmandoReversao !== id) {
+            setIdConfirmandoReversao(id);
+            return;
+        }
+        setErroAcao('');
+        try {
+            await reverterPrevisao(id);
+            await recarregar();
+            aoMudarCompras?.();
+        } catch (e) {
+            setErroAcao(e.message);
+        } finally {
+            setIdConfirmandoReversao(null);
         }
     };
 
@@ -686,6 +712,11 @@ export default function Previsao({ fornecedores, setFornecedores, somenteLeitura
                         <option key={categoria.id} value={String(categoria.id)}>{categoria.nome}</option>
                     ))}
                 </select>
+                <select className="selectFiltroFinancas" value={filtroCompra} onChange={(e) => setFiltroCompra(e.currentTarget.value)} aria-label="Filtrar por compra">
+                    <option value="">Comprados e em aberto</option>
+                    <option value="comprados">Só já comprados</option>
+                    <option value="emAberto">Só em aberto</option>
+                </select>
                 <select className="selectFiltroFinancas" value={filtroStatus} onChange={(e) => setFiltroStatus(e.currentTarget.value)} aria-label="Filtrar por estágio">
                     <option value="">Todos os estágios</option>
                     {STATUS.map((status) => (
@@ -714,7 +745,7 @@ export default function Previsao({ fornecedores, setFornecedores, somenteLeitura
                         {!carregando && itensFiltrados.length === 0 && (
                             <tr>
                                 <td colSpan={totalColunasTabela} className="celulaVaziaFinancas">
-                                    {filtro.trim() || filtroCategoria || filtroStatus
+                                    {filtro.trim() || filtroCategoria || filtroStatus || filtroCompra
                                         ? 'Nenhuma previsão encontrada para esse filtro.'
                                         : categorias.length === 0 && !somenteLeitura
                                             ? 'Nenhuma categoria cadastrada — crie a primeira em “Categorias” para poder lançar previsões.'
@@ -764,6 +795,32 @@ export default function Previsao({ fornecedores, setFornecedores, somenteLeitura
                                 {!somenteLeitura && (
                                 <td>
                                     <div className="grupoAcoesLinhaFinancas">
+                                        {item.status === 'PAGO' && (
+                                            <button
+                                                type="button"
+                                                className={
+                                                    idConfirmandoReversao === item.id
+                                                        ? 'botaoAcaoLinhaFinancas botaoConfirmarConversaoPrevisao'
+                                                        : 'botaoAcaoLinhaFinancas'
+                                                }
+                                                aria-label={
+                                                    idConfirmandoReversao === item.id
+                                                        ? `Confirmar volta de ${item.descricao} para previsto`
+                                                        : `Voltar ${item.descricao} para previsto`
+                                                }
+                                                title={
+                                                    idConfirmandoReversao === item.id
+                                                        ? 'Clique novamente para confirmar — apaga a compra e volta o item para previsto'
+                                                        : 'Voltar para previsto'
+                                                }
+                                                onClick={() => reverter(item.id)}
+                                            >
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="9 14 4 9 9 4" />
+                                                    <path d="M20 20v-7a4 4 0 0 0-4-4H4" />
+                                                </svg>
+                                            </button>
+                                        )}
                                         {item.status !== 'PAGO' && (
                                             <button
                                                 type="button"

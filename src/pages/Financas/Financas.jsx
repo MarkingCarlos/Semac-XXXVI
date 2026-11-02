@@ -3,7 +3,6 @@ import { useLocation } from 'wouter';
 import { limparSessao, temAcessoFinanceiro, temAcessoAdmin, temAcessoDoacao } from '../../auth/sessao.js';
 import Resumo from './sections/Resumo.jsx';
 import Patrocinios from './sections/Patrocinios.jsx';
-import Compras from './sections/Compras.jsx';
 import Cotacoes from './sections/Cotacoes.jsx';
 import Fornecedores from './sections/Fornecedores.jsx';
 import Inscricoes from './sections/Inscricoes.jsx';
@@ -25,7 +24,6 @@ const SECOES = [
     { id: 'resumo', rotulo: 'Resumo', marca: 'R', classeMarcador: 'marcadorAmareloMenuFabModulos' },
     { id: 'previsao', rotulo: 'Previsão', marca: 'PV', classeMarcador: 'marcadorAzulMenuFabModulos' },
     { id: 'patrocinios', rotulo: 'Patrocínios', marca: 'PT', classeMarcador: 'marcadorRosaMenuFabModulos' },
-    { id: 'compras', rotulo: 'Compras', marca: 'CP', classeMarcador: 'marcadorVermelhoMenuFabModulos' },
     { id: 'cotacoes', rotulo: 'Cotação', marca: 'CT', classeMarcador: 'marcadorPetroleoMenuFabModulos' },
     { id: 'fornecedores', rotulo: 'Fornecedores', marca: 'F', classeMarcador: 'marcadorAmareloMenuFabModulos' },
     { id: 'inscricoes', rotulo: 'Inscrições', marca: 'I', classeMarcador: 'marcadorAzulMenuFabModulos' },
@@ -268,6 +266,7 @@ export default function Financas() {
                             fornecedores={fornecedores}
                             setFornecedores={setFornecedores}
                             somenteLeitura={!podeEditarFinanceiro}
+                            aoMudarCompras={() => listarCompras().then(setCompras).catch(() => {})}
                         />
                     )}
                     {secaoAtiva === 'patrocinios' && (
@@ -276,16 +275,6 @@ export default function Financas() {
                             setPatrocinadores={setPatrocinadores}
                             carregando={carregandoPatrocinios}
                             erro={erroPatrocinios}
-                        />
-                    )}
-                    {secaoAtiva === 'compras' && (
-                        <Compras
-                            compras={compras}
-                            setCompras={setCompras}
-                            fornecedores={fornecedores}
-                            setFornecedores={setFornecedores}
-                            carregando={carregandoCompras}
-                            erro={erroCompras}
                         />
                     )}
                     {secaoAtiva === 'cotacoes' && (
